@@ -1,5 +1,5 @@
 <script>
-    import {readdir} from 'fs/promises';
+    //import {readdir} from 'fs/promises';
 
     const getDirectories  = async source => (await readdir(source, {withFileTypes: true}))
     .filter(dirent => dirent.isDirectory())
