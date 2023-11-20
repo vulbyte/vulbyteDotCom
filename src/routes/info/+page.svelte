@@ -1,0 +1,17 @@
+<div>
+    <div>
+        disclaimer
+    </div>
+    <div>
+        accessibility
+    </div>
+    <div>
+        colors 
+    </div>
+    <div>
+        branding
+    </div>
+    <div>
+        logos 
+    </div>
+</div>
