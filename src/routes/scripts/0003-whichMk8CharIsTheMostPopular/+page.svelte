@@ -481,7 +481,7 @@
     </div>
     <div>
     <p>
-        if you want to save your data, just copy the link above! it contains the data you entered
+        if you want to save your data, just copy the page link! it contains the data you entered
     </p>
     </div>
 </div>
