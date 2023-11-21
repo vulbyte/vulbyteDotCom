@@ -282,7 +282,7 @@
             "value": 0,
         },
         {
-            "name": "pauline", 
+            "name": "woman", 
             "index": "47",
             "icon": "https://static.wikia.nocookie.net/mk-tour/images/1/10/MKT_Icon_PaulineRose.png",
             "value": 0,
@@ -323,12 +323,61 @@
        characters[index].value = characters[index].value-1; 
        updateUrl();
     }
+
+    //lof sad the data
     /**
     */
     function initUrlData(){
-        updateUrl();
+        if (document.URL.includes("?")) {
+            console.log("assigning values");
+
+            /**
+            *@param {number} index
+            *@param {number} value
+            */
+            for (let i = 0; i < characters.length; i++) {
+                let index = i;
+                //console.log("i: ", i);
+                let value = characters[i].value; 
+                //console.log("value: ", value);
+
+                let url = document.URL
+                //console.log("url: " + url);
+                
+                let query = index + "=";
+                //console.log("query: " + query);
+
+                let indexOfSub = url.indexOf(query);
+                //console.log("indexOfSub: " + indexOfSub);
+
+                let charValueRange = [];
+
+                if (index == 47) {
+                    console.log("if");
+                    charValueRange = [
+                        url.indexOf("=", indexOfSub)+1,
+                        url.length,
+                    ];
+                }
+                else {
+                    console.log("else");
+                    charValueRange = [
+                        url.indexOf("=", indexOfSub)+1,
+                        url.indexOf("&", indexOfSub),
+                    ];
+                }
+                console.log("charValueRange: " + charValueRange);
+
+                let restoredValue = parseInt(
+                    url.substring(charValueRange[0], charValueRange[1]).toString()
+                );
+                //console.log("restoredValue: " + restoredValue);
+
+                characters[i].value = restoredValue;
+            };
+        }
     }
- 
+
     /**
     *   
     */
@@ -350,7 +399,7 @@
     function voidFunc(){};
 
     onMount(() => {
-        //initUrlData(urlData);
+        initUrlData();
     });
 
 </script>
