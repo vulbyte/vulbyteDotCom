@@ -56,7 +56,7 @@ export default function Scripts() {
         </li>
         <li>
           <a
-            href="/projects/scripts/0028-linux-zer0_to_hero.md"
+            href="/projects/scripts/0028-linux-zero_to_hero"
             className="text-teal"
           >
             {`

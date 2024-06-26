@@ -1,8 +1,4 @@
-<span style="color:#ff0051;">
-
 # linux - zer0 to hero
-
-</span>
 
 ## part 0 | intro
 
