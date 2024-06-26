@@ -1,6 +1,6 @@
 import Navbar from "@/components/navbar";
-import { remark } from "remark";
-import html from "remark-html";
+//import { remark } from "remark";
+//import html from "remark-html";
 
 //export async function getPostData(id: any) {
 //  const fullPath = path.join("./", "script.md");
