@@ -5,27 +5,9 @@ export default function Home() {
   return (
     <div>
       <Navbar />
-      <main className="bg-slate-950 h-screen">
-        <div>
-          <br />
-          <div className="warning bg-yellow-500 text-white font-bold p-8">
-            <h6>
-              {`please know this site is currently being reworked to add lots of
-              new features and stuff.`}
-              <br />
-            </h6>
-            <p>
-              {`you'll likely encounter bugs and glitches while i [vulbyte] am sorting everything out. but until then please enjoy yourself and feel free to check out my `}
-              <a className="text-teal" href="/links">
-                {`links!`}
-              </a>
-              <br />
-              {`or poke around`}
-            </p>
-          </div>
-          <br />
-        </div>
+      <main className="bg-[%222] h-screen">
         <div className="w-fit m-auto">
+          <br /> <br />
           <p> welcome to </p>
           <h1 className="text-white">
             <span className="text-[#ff0000]">v</span>
@@ -38,9 +20,28 @@ export default function Home() {
             {`'s website`}
           </h1>
           <br />
-          {`
-                the website is under heavy maintenance right now. but feel free to look around
+          <p className="bg-yellow-50 p-5 max-w-[60em]">
+            {`
+		please know that this site is a project website, which i use mainly as a dump. many parts of this aren't meant to be "consumer facing", so if you encounter roughness, sorry! but i'm also probably not gonna fix it lolz
             `}
+          </p>
+        </div>
+        <div>
+          <h2>
+            {`
+							bored? don't know what to do? check out these things:
+						`}
+          </h2>
+          <ul>
+            <li>
+              <a href="vulbyte.com/links/">
+                {`my socials (especally my youtube)`}
+              </a>
+            </li>
+            <li>
+              <a href="vulbyte.com/projects/">{`some of my random projects`}</a>
+            </li>
+          </ul>
         </div>
       </main>
       <Footer />

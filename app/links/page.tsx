@@ -17,8 +17,8 @@ import Navbar from "@/components/navbar";
 import "./links.css";
 
 import React from "react";
-//import mailIcon from '$lib/mailIcon.svg';
-//import vulbytesIcon from './lib/1614160340.iminsert_000,042_-_thatlazyrat.jpg';
+//import mailIcon from "@/lib/mailIcon.svg";
+// import vulbytesIcon from "https://github.com/vulbyte/vulbyteDotCom/blob/main/lib/1614160340.iminsert_000,042_-_thatlazyrat.jpg?raw=true";
 
 const links = [
   //{{{1
@@ -141,7 +141,7 @@ const links = [
   {
     name: "Patreon",
     link: "https://www.patreon.com/vulbyte",
-    icon: "https://c15.patreon.com/fhd_Patreon_Symbol_6fff9723d3.png",
+    icon: "https://seeklogo.com/images/P/patreon-logo-C0B52F951B-seeklogo.com.png",
     status: "inactive",
     note: "",
   },
@@ -195,17 +195,17 @@ const links = [
     note: "",
   },
   // contact links
-  {
-    name: "Discord",
-    link: "https://discord.gg/ryX4UgaS",
-    icon: "https://assets-global.website-files.com/6257adef93867e50d84d30e2/636e0a6ca814282eca7172c6_icon_clyde_white_RGB.svg",
-    status: "contact",
-    note: "",
-  },
+  // {
+  //   name: "Discord",
+  //   link: "https://discord.gg/ryX4UgaS",
+  //   icon: "https://assets-global.website-files.com/6257adef93867e50d84d30e2/636e0a6ca814282eca7172c6_icon_clyde_white_RGB.svg",
+  //   status: "contact",
+  //   note: "",
+  // },
   {
     name: "Email",
     link: "mailto:vulbyt3@gmail.com",
-    //'icon': mailIcon,
+    icon: "https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/a97a9c89ac2af52dcb6dc604fae3e2cda0338409/lib/mailIcon.svg",
     status: "contact",
     note: "",
   },
@@ -530,9 +530,9 @@ export default function LinksPage() {
             "
       >
         <img
-          src="{vulbytesIcon}"
+          src="https://github.com/vulbyte/vulbyteDotCom/blob/main/lib/1614160340.iminsert_000,042_-_thatlazyrat.jpg?raw=true"
           alt="icon of vulbyte"
-          className="rounded-full m-h-10 m-w-xl text-center m-auto"
+          className="rounded-full m-h-10 m-w-xl max-w-60 text-center m-auto"
         />
       </div>
       <h1>
@@ -547,7 +547,7 @@ export default function LinksPage() {
         </span>
       </h1>
       <p className="max-w-xl m-auto text-center">
-        wishing you all the best, Vulbyte
+        thanks for checking out my stuff
       </p>
 
       <div className="m-auto">

@@ -7,11 +7,11 @@
 
 okay, you want to switch to linux. either because you're:
 
-- interested in a developer career,
-- fed up with microsofts bs,
-- want to try something new
-- have a low spec system
-- or heck, just want to play around with something new because you're bored
+- interested in a developer career, []()
+- fed up with microsofts bs, []()
+- want to try something new []()
+- have a low spec system []()
+- or heck, just want to play around with something new because you're bored []()
 
 this video will get from beginner to not an expert, as being an expert will take years of experience that no single video can teach you, but to a point where you'll be able to competently be able to use linux and understand how to diagnose any issue you might have and solve your problems.
 
@@ -156,6 +156,8 @@ please keep in mind as much as you might be tempted to choose a meme distro like
 BUBS: [Kernel please, talk about common distros, flavors]
 another thing to know is that a lot of distros have flavors which are either community made or are an official branch made by the official team. the gold standard for this in my opinion is manjaro, where if you go to their site you can see the main official versions made by the team, then listed just below those are all the community versions which use other popular but not directly supported desktop environments.
 
+> > [https://manjaro.org/download/](https://manjaro.org/download/)
+
 the reason i mention this is because let's say you really like the idea of say fedora linux, but you don't like gnome due to it's more intrusive ui, and you want something more windows like such as kde, you can then look up your distro plus the de you want, then you can find a derivative.
 
 BUBS: [WSL is not linux]
@@ -279,6 +281,7 @@ once you do so, you'll need to select change your boot priority to be your thumb
 
 after you do so then feel free to reboot and you should see some unfamiliar things happen, don't be complacent as you'll likely see by surprise a pop up menu with a timer. generally the options are something like what follows:
 
+- try {distro}
 - boot into distro (open source drivers) - generally the best option
 - boot into distro (nvidia/nonfree drivers) - best option if you have an nvidia gpu
 - install
@@ -302,7 +305,7 @@ if after some more poking around/testing you seem happy, wonderful! let's get to
 traditionally, on the vast majority of distros:
 
 - if you're not using a distro with a window manager: press `super` and search for `install`
-- if you are, i'm unfamiliar with the process so you'll need to do the equivalent to the above
+- if you are, it varies based on manager, but the most common i3, you press super+space, then search for install
 
 after this, you'll need to walk through the options presented.
 
