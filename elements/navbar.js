@@ -18,7 +18,7 @@ export function Navbar() {
 	}
 
 
-	window.addEventListener('load', function() {
+	window.addEventListener('load', function () {
 		try {
 			let head = document.getElementsByTagName("head");
 
@@ -70,7 +70,7 @@ export function Navbar() {
 
 		// TODO: add: HOME, LINKS, PROJECTS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 
 		let locations = [
-			"home",
+
 			"content",
 			"links",
 		];
