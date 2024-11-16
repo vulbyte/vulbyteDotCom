@@ -1,0 +1,12 @@
+#content_dropdown {
+	filter: opacity(0);
+	padding: var(--padding);
+	/*from global*/
+	position: absolute;
+	background-color: black;
+	transform: translateY(5rem);
+}
+
+navbar>a:has(ul):hover #content_dropdown {
+	filter: opacity(1);
+}

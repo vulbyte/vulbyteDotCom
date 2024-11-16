@@ -1,0 +1,125 @@
+    /*#linksPage {
+        text-align: center;
+        margin: auto;
+    }*/
+
+    /*#allTheLinks>p {
+        max-width: 30rem;
+        margin: auto;
+        text-align: left;
+    }*/
+
+    /*#iconContainer {
+        max-height: 25%;
+        min-width: 128px;
+        max-width: 50%;
+        margin: auto;
+    }*/
+
+    /*#iconContainer>img {
+        border-radius: 100%;
+        max-height: 50%;
+        max-width: 50%;
+    }*/
+
+    /*.linkContainer>a>div {
+        background-color: #333;
+        border-radius: 50px;
+        color: white;
+        margin: auto;
+        margin-top: 3rem;
+        margin-bottom: 3rem;
+        padding: 1em;
+        width: 20rem;
+    }*/
+
+    /*.generatedLink {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        max-height: 3rem;
+        width: 5rem;
+    }*/
+
+    /*.generatedLink>img {
+        max-height: 2rem;
+        margin: 0.5rem;
+    }*/
+
+    /*#activeLinks>a>div {
+        background-image: linear-gradient(-45deg, #222, #333);
+        border: 2px solid #aaa;
+        color: white;
+        font-weight: bold;
+    }*/
+
+    /*#monitoredLinks>a>div {
+        background-image: linear-gradient(-45deg, #222, #333);
+    }*/
+
+    /*#monitoredLinks>a>div>img {
+        filter: invert(1) brightness(100);
+    }*/
+
+    /*#inactiveLinks {
+        display: grid;
+        gap: 1em;
+        grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+        margin: auto;
+        width: 60%;
+    }
+
+    @media only screen and (max-width: 600px) {
+        #inactiveLinks {
+            width: 100%;
+        }
+    }*/
+
+    /*#inactiveLinks>a>div {
+        aspect-ratio: 1/1;
+        height: auto;
+        min-height: 8rem;
+        max-height: auto;
+        width: auto;
+        min-width: 8rem;
+        max-width: auto;
+        background-image: linear-gradient(-45deg, #111, #222);
+        /*border: 1px solid white;/
+        border-radius: 1rem;
+        padding: 0px;
+        margin: auto;
+    }*/
+
+    /*#inactiveLinks.linkContainer>a>.generatedLink {
+        display: flex;
+        flex-direction: column;
+    }*/
+
+    /*#inactiveLinks.linkContainer>a>.generatedLink>img {
+        aspect-ratio: 1/1;
+        height: 2rem;
+        width: 2rem;
+        filter: invert(1) brightness(100);
+        margin-left: auto;
+        margin-right: auto;
+    }*/
+
+    /*#linkNewgrounds>img {
+        filter: invert(0) brightness(1) !important;
+    }
+
+    #linkPatreon>img {
+        filter: grayscale(1) invert(1) brightness(100) !important;
+    }
+
+    #linkSoundcloud>img {
+        height: 1.2rem !important;
+    }
+
+    #linkTelegram>img {
+        filter: invert(1) brightness(10);
+    }*/
+
+    a {
+        background-color: transparent;
+    }

@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<style>
+	#popupContainer {
+		bottom: 50%;
+		right: 50%;
+		display: flex;
+		justify-content: center;
+		justify-items: center;
+		position: fixed;
+	}
+
+	.popup {
+		background-color: var(--color_background_primary);
+		border: var(--border);
+		height: auto;
+		padding: var(--padding);
+		margin: auto;
+		/*max-width: 60em;
+		min-width: 10em;*/
+	}
+</style>
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script type="module" src="/client_management.js"></script>
+	<title>Vulbyte | rng_list </title>
+</head>
+
+<body>
+	<div style='width:100%'>
+		<h2>input</h2>
+		<div id='input_form' style='width:100%;'>
+			<label>title</label><br>
+			<input id='input_title' type='text' style='width:30em; margin:auto;'>
+			<br>
+			<label>description</label><br>
+			<input id='input_des' type='paragraph' style='width:80%; margin:auto;'>
+			<div id='input_info'></div>
+			<br>
+			<br>
+			<button id='submit_li'>submit input</button>
+		</div>
+	</div>
+
+	<div>
+		<h2>rng_display</h2>
+		<div id='rng_display' style='
+				animation-duration: 80ms;
+				border:var(--border);
+				display:grid;
+				grid-template-columns: repeat(auto-fill, minmax(8em, 1fr));
+				margin: auto;
+				min-height:3em;
+				padding:1em;
+				width:80%;
+				'>
+			<span>
+				no items yet!
+			</span>
+		</div>
+		<div style='margin:auto; display:flex; justify-items:center;'>
+			<button id='SPINTHEWHEEL' style=''>SPIN THE WHEEL</button>
+		</div>
+	</div>
+
+	<div>
+		<h3>list_contents</h3>
+		<ul id='list_contents'>
+		</ul>
+	</div>
+
+
+	<div>
+		special thank you to:
+		<ul>
+			<li>Butyok Kapitany: <a target='_black'
+					href='https://www.youtube.com/channel/UClIEmQKx0SgXWYEYV3I6XaQ'>https://www.youtube.com/channel/UClIEmQKx0SgXWYEYV3I6XaQ</a>
+			</li>
+			<li>Atom1kcreeper: <a target='_black'
+					href='https://www.youtube.com/channel/UCZhPTzaPNEem78Is1jLgglg'>https://www.youtube.com/channel/UCZhPTzaPNEem78Is1jLgglg</a>
+			</li>
+		</ul>
+		for allowing me to do this in a timely manner
+	</div>
+
+	<script type='module'>
+		//#####################################################################// 
+		//var declaration
+		//#####################################################################// 
+		let d = document;
+		var list = {};
+
+		//#####################################################################// 
+		//listener bindings
+		//#####################################################################// 
+
+		d.getElementById('submit_li').addEventListener('click', (e) => {SubmitInput();});
+
+		d.getElementById('input_title').addEventListener('change', (e) => {
+			CheckInput({
+				'type': 'title',
+				'value': d.getElementById('input_title').value,
+			})
+		});
+
+
+
+		d.getElementById('input_des').addEventListener('change', (e) => {
+			CheckInput({
+				'type': 'des',
+				'value': d.getElementById('input_des').value,
+			})
+		});
+
+		d.getElementById('SPINTHEWHEEL').addEventListener('click', (e) => {
+			SpinTheWheel();
+		});
+
+		//pain with async
+		//console.log('log a')
+		//const promise = new Promise((resolve, reject) => {
+		//	setTimeout(() => {console.log('log y')});
+		//	resolve('');
+		//}).then(
+		//	console.log('log z')
+		//)
+		//async function LogB() {console.log('log b')};
+		//await LogB();
+		//function LogC() {console.log('log c')};
+		//LogC();
+
+
+		//#####################################################################// 
+		//fn calls
+		//#####################################################################// 
+
+
+		function Alert(strs = ['no string given']) {
+			console.log('creating popup');
+
+			let popupContainer = document.createElement('div');
+			popupContainer.id = 'popupContainer';
+			document.getElementsByTagName('body')[0].appendChild(popupContainer);
+
+			let popup = document.createElement('div');
+			popup.className = 'popup';
+			document.getElementById('popupContainer').appendChild(popup);
+			//style is in style tag
+
+			popup.innerText = CompoundText(strs);
+			function CompoundText(strs) {
+				let str = '';
+				for (let i = 0; i < strs.length; ++i) {
+					str += strs[i];
+				}
+				return str;
+			}
+
+			let closeBtn = document.createElement('button');
+			closeBtn.innerText = 'x';
+			closeBtn.addEventListener('click', (e) => {
+				console.log('closing popups');
+				document.getElementById('popupContainer').outerHTML = '';
+			})
+
+			popup.appendChild(closeBtn)
+		}
+
+
+
+		function CheckInput(args = {
+			'type': undefined,
+			'value': undefined
+		}) {
+			console.log('checking input');
+			if (args.type == undefined) {
+				Alert('input type undefined');
+				return (false);
+			}
+
+			let min, max;
+
+			if (args.type == 'title') {min = 3; max = min * 6}
+			else if (args.type == 'des') {min = 8; max = 2 ^ 8}
+			else {
+				Alert('unknown input type');
+				return (false);
+			}
+
+			let inputForm = d.getElementById('input_form');
+			let title = d.getElementById('input_title');
+			let des = d.getElementById('input_des');
+
+			//check_title
+			if (args.value < min || args.valued > max) {
+				document.getElementById('input_info').innerText = 'input is too long or short!'
+				return (false);
+			}
+
+			//if (args.value[args.value.length] == ' ') {
+			//	//for(let i = args.value.length; --i)
+			//}
+
+			return (args.value);
+		}
+
+
+
+
+		function SubmitInput() {
+			console.log('submit button pressed');
+
+			let title = document.getElementById('input_title');
+			let des = document.getElementById('input_des');
+
+			let checkedTitle = CheckInput({'type': 'title', 'value': title.value}) == false
+			console.log('✨', checkedTitle);
+
+			if (
+				checkedTitle == false &&
+				CheckInput({'type': 'des', 'value': des.value}) == false
+			) {
+				Alert('cannot update due to invalid inputs');
+			}
+
+			//add to dic
+
+
+			AddToList();
+			UpdateDisplay();
+			UpdateList();
+		}
+
+
+
+		function UpdateDisplay() {
+			console.log('updating display');
+			let display = document.getElementById('rng_display');
+
+			//display.innerHTML = '';
+			document.getElementById('rng_display').innerHTML = '';
+
+			for (let i = 0; i < Object.keys(list).length; ++i) {
+				let item = document.createElement('div');
+				item.style.border = 'var(--border)';
+				item.style.borderColor = 'var(--color_secondary)';
+				item.style.height = '6em';
+				item.style.padding = '0.5em';
+				item.style.width = '8em';
+
+				let itemTitle = document.createElement('div');
+				let title = Object.keys(list)[i];
+				itemTitle.innerText = Object.keys(list)[i]; // ERROR HERE
+				itemTitle.title = list[Object.keys(list)[i]];
+				item.appendChild(itemTitle);
+
+				display.appendChild(item);
+			}
+		}
+
+
+
+		function UpdateList() {
+			console.log('updating list');
+			let display = d.getElementById('list_contents');
+
+			display.innerHTML = '';
+
+			for (let i = 0; i < Object.keys(list).length; ++i) {
+				//con
+				let item = document.createElement('li');
+				item.id = `li_${i}`
+				item.style.display = 'flex';
+				item.style.width = '80%';
+				item.style.justifyContent = 'space-between';
+
+				//remove item
+				let button = document.createElement('button');
+				button.innerText = '-';
+				button.addEventListener('click', () => {
+					console.log('removing list item');
+
+
+					RemoveFromList(`li_${i}`);
+				})
+				item.appendChild(button);
+
+				//tit
+				let itemTitle = document.createElement('span');
+				itemTitle.innerText = Object.keys(list)[i];
+				item.appendChild(itemTitle);
+
+				//des
+				let itemDes = document.createElement('span');
+				itemDes.innerText = Object.values(list)[i];
+				item.appendChild(itemDes);
+
+				display.appendChild(item);
+			}
+		}
+
+		function AddToList() {
+			console.log('adding item to list');
+
+			let title = document.getElementById('input_title').value;
+			//title = title.replace(` `, '_');
+			title = title.trim();
+
+			for (let i = 0; i < title.length; ++i) {
+				console.log('evaling: ', title[i]);
+				if (title[i] == ' ') {
+					let beginning = title.slice(0, i);
+					let end = title.slice(i + 1, title.length);
+					title = beginning + '_' + end;
+				}
+			}
+
+			let des = document.getElementById('input_des').value;
+			des = des.replace(' ', '_');
+
+			console.log('formatted title: ', title);
+
+			if (list[title] != undefined || list[title] != null) {
+				return (false);
+			}
+			list[title] = des;
+
+			console.log(list);
+		}
+
+
+
+		function RemoveFromList(keyToRemove = undefined) {
+			if (keyToRemove == undefined || keyToRemove == null) {
+				return;
+			}
+
+			let key = document.getElementById(keyToRemove).getElementsByTagName('span')[0].innerText;
+			console.log(key)
+			document.getElementById(keyToRemove).outerHTML = '';
+			//list.prototype.delete(keyToRemove);
+			delete list[key];
+
+			UpdateDisplay();
+			UpdateList();
+		}
+
+
+
+		function SpinTheWheel() {
+			console.log('💀 SPIN THE WHEEL 💀');
+			let spin = new Audio('/assets/spin_the_wheel.mp3');
+			spin.volume = 0.5;
+			spin.play();
+
+			let rng_items = document.getElementById('rng_display');
+			let children = rng_items.children;
+			let amount = children.length;
+
+			console.log('rng_items: ', rng_items);
+			console.log('children: ', children);
+			console.log('amount: ', amount);
+
+			let clickTime = 10; //in ms
+			let steppingAmnt = 0.1 // decimal percent
+			let clickLimit = 550 //in ms
+
+			let thing = Click();
+
+
+
+			function Click() {
+				for (let i = 0; i < amount; ++i) {
+					children[i].style.backgroundColor = 'transparent';
+				}
+
+				clickTime += clickTime * steppingAmnt;
+
+				console.log('clickTime: ', clickTime);
+
+				let rng = Math.random();
+
+				console.log(
+					'rng: ' + rng,
+					'amount: ' + amount,
+					'result: ' + (Math.floor(rng * amount)),
+				);
+
+				children[Math.floor(rng * amount)].style.backgroundColor = 'var(--color_secondary)';
+
+				let pitch_variance = 0.2; //this is +/-
+
+				var audio = new Audio('/assets/beep.mp3');
+				audio.volume = 0.5;
+				audio.playbackRate = (
+					(Math.random() * pitch_variance) - (pitch_variance / 2) + (1 - pitch_variance)
+				)
+				audio.play();
+
+				if (clickTime < clickLimit) {
+					setTimeout(() => {
+						Click()
+					}, clickTime);
+				}
+				else {
+					Alert([
+						Object.keys(list)[Math.floor(rng)],
+						'\n',
+						list[Object.keys(list)[Math.floor(rng)]]
+					]);
+				}
+			}
+
+		}
+	</script>
+</body>
+
+</html>

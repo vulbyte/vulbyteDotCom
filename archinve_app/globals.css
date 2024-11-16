@@ -1,0 +1,180 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+	border-radius: 1rem;
+	transition-duration: 300ms;
+	transition-timing-function: ease-in-out;
+}
+
+:root {
+	--foreground-rgb: 0, 0, 0;
+	--background-start-rgb: 214, 219, 220;
+	--background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--foreground-rgb: 255, 255, 255;
+		--background-start-rgb: 0, 0, 0;
+		--background-end-rgb: 0, 0, 0;
+	}
+}
+
+body {
+	color: rgb(var(--foreground-rgb));
+	background: linear-gradient(to bottom,
+			transparent,
+			rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
+}
+
+.warning {
+	background-image: linear-gradient(-38deg, olive 0%, olive 25%, black 25%, black 50%, olive 50%, olive 75%, black 75%, black 100%);
+	background-size: 20%;
+	background-position-x: 0%;
+
+	animation-name: scroll;
+	animation-duration: 10s;
+	animation-iteration-count: infinite;
+	animation-timing-function: linear;
+}
+
+@keyframes scroll {
+	0% {
+		background-position-x: 0%
+	}
+
+	100% {
+		background-position-x: 100%
+	}
+}
+
+@layer base {
+	h1 {
+		@apply text-5xl;
+		color: #ff0000;
+		padding-bottom: 2rem;
+	}
+
+	h2 {
+		@apply text-4xl;
+		color: #ffff00;
+		padding-bottom: 1.6rem;
+	}
+
+	h3 {
+		@apply text-3xl;
+		color: #00ff00;
+		padding-bottom: 1.3rem;
+	}
+
+	h4 {
+		@apply text-2xl;
+		color: #00ffff;
+		padding-bottom: 1rem;
+	}
+
+	h5 {
+		@apply text-xl;
+		color: #0000ff;
+		padding-bottom: 0.8rem;
+	}
+
+	h6 {
+		@apply text-base;
+		color: #ff00ff;
+		padding-bottom: 6rem;
+	}
+
+	p {
+		@apply text-base;
+		padding-bottom: 0.5rem;
+	}
+
+	a {
+		background-color: #f00;
+		color: #000;
+		padding-top: 0.1rem;
+		padding-bottom: 0.01rem;
+		padding-left: 0.5rem;
+		padding-right: 0.5rem;
+		/*color: #0ff;*/
+		text-decoration: underline;
+		text-decoration-color: #0ff;
+	}
+
+	a:hover {
+		color: #00f;
+	}
+
+	a:visited:hover {
+		color: #ff00ff;
+	}
+
+	aside {
+		color: #ff0;
+	}
+
+	details>summary {
+		background-color: #000;
+		padding: 0.25em;
+	}
+
+	/*details {
+        background-color: #00f;
+        padding: 0.2em;
+    }*/
+
+	details {
+		border: #00f solid 2px;
+		padding: 0.2em;
+	}
+
+	details>p {
+		/*background-color: #000;*/
+		margin-top: 0.2em;
+		padding: 0.2em;
+	}
+
+	hr {
+		border-radius: 0px;
+		padding-top: 0rem;
+		padding-bottom: 1rem;
+	}
+
+	input {
+		color: black;
+	}
+
+	initial-value {
+		padding-left: 1em;
+	}
+
+	ul {
+		list-style: circle;
+		list-style-position: outside;
+		text-decoration: solid;
+	}
+
+	ul>li {
+		list-style: circle;
+		list-style-position: outside;
+		text-decoration: solid;
+	}
+
+	ol>li {
+		list-style: decimal-leading-zero;
+		list-style-position: outside;
+		text-decoration: solid;
+	}
+
+	li {
+		padding: 0.5em;
+	}
+
+	li::marker {
+		color: #999;
+		padding: 0px;
+	}
+}

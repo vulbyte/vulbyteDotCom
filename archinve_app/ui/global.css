@@ -1,0 +1,12 @@
+:root {
+    --colorPrimary1: #ff0000;
+    --colorPrimary2: #00ff00;
+    --colorPrimary3: #0000ff;
+    --colorSecondary1: #ffff00;
+    --colorSecondary2: #ff00ff;
+    --colorSecondary3: #00ffff;
+}
+
+* {
+    transition-duration: 300ms;
+}

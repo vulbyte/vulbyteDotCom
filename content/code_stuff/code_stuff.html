@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>vulbyte | code_stuff</title>
+	<script type="module" src="/client_management.js"></script>
+</head>
+
+<body>
+	<hgroup>
+		<h1>code_stuff</h1>
+		<h6>this is stuff that does things</h6>
+	</hgroup>
+	<ul id="code_stuff_links"></ul>
+	<script>
+		let pages = [
+			"i_dont_want_sex",
+			"time_calculator",
+			"rng_list",
+		];
+
+		pages.forEach((v) => {
+			let links = document.getElementById("code_stuff_links");
+
+			let newElem = document.createElement("li");
+			let link = document.createElement("a");
+
+			link.href = "./" + v + ".html";
+			link.innerText = v;
+
+			newElem.appendChild(link);
+			links.appendChild(newElem);
+		})
+	</script>
+</body>
+
+</html>
