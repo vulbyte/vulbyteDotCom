@@ -8,7 +8,7 @@
 	--border: 0.1em solid var(--color_font_primary);
 	--border_interactive: 0.1em solid var(--color_secondary);
 
-	--color_background_primary: #111;
+	--color_background_primary: #000;
 	--color_background_secondary: #000;
 
 	--color_primary: #bb0051;
@@ -35,7 +35,8 @@
 	--color_font_tertiary: color-mix(in oklab,
 			var(--color_tertiary),
 			var(--color_font_primary));
-	--color_keys: #131516;
+	--color_keys: #000;
+	/*#131516;*/
 	--padding: 1em;
 	--margin: 0px;
 	--h_size: function([argument]);
@@ -49,7 +50,7 @@
 	padding: 0;
 	margin: 0;
 	max-width: 100%;
-	transition-duration: 120ms;
+	transition-duration: auto;
 	transition-timing-function: ease-in-out;
 	margin-bottom: 1em;
 }
@@ -80,7 +81,7 @@ abbr {
 	color: var(--color_font_tertiary);
 }
 
-acronym {
+acron000 {
 	/*DEPRECIATED*/
 }
 

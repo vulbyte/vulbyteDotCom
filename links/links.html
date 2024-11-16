@@ -1,10 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title> vulbyte | links</title>
+	<script type='module' src='../client_management.js'></script>
+</head>
+
+<body>
+	<h1>links:</h1>
+	<div id='link_container'>
+		<div id='active_container'>
+			<style>
+				#active_container>*>div {
+					border: var(--border);
+					display: flex;
+					height: 4.3em;
+					margin: auto;
+					margin-top: 1em;
+					padding: 0.5em;
+					padding-top: 1em;
+					vertical-align: center;
+					width: 80%;
+					max-width: 30em;
+				}
+
+				#active_container>a>div>h3 {
+					background-color: transparent;
+					font-size: 1.5em;
+					height: 100;
+					margin: auto;
+					text-align: center;
+					text-shadow: none;
+					vertical-align: center;
+					word-wrap: none;
+					word-break: keep-all;
+				}
+
+				#active_container>a>div>.icon_container {
+					aspect-ratio: 1/1;
+					margin: auto;
+					max-height: 80%;
+					max-width: 80%;
+				}
+
+				#active_container>a>div>.icon_container>img {
+					aspect-ratio: auto;
+					max-height: 100%;
+					max-width: 100%;
+				}
+			</style>
+			<h2>active links</h2>
+		</div>
+		<div id='monitored_container'>
+			<style>
+				#monitored_container>*>div {
+					border: var(--border);
+					display: flex;
+					height: 4.3em;
+					margin: auto;
+					margin-top: 1em;
+					padding: 0.5em;
+					padding-top: 1em;
+					vertical-align: center;
+					width: 80%;
+					max-width: 30em;
+				}
+
+				#monitored_container>a>div>h3 {
+					background-color: transparent;
+					font-size: 1.5em;
+					height: 100;
+					margin: auto;
+					text-align: center;
+					text-shadow: none;
+					vertical-align: center;
+					word-wrap: none;
+					word-break: keep-all;
+				}
+
+				#monitored_container>a>div>.icon_container {
+					aspect-ratio: 1/1;
+					margin: auto;
+					max-height: 80%;
+					max-width: 80%;
+				}
+
+				#monitored_container>a>div>.icon_container>img {
+					aspect-ratio: auto;
+					filter: brightness(1) grayscale(1) invert(1);
+					max-height: 100%;
+					max-width: 100%;
+				}
+			</style>
+			<h2>monitored links</h2>
+		</div>
+		<div id='inactive_container'>
+			<style>
+				#inactive_container>*>div {
+					border: var(--border);
+					display: flex;
+					height: 4.3em;
+					margin: auto;
+					margin-top: 1em;
+					padding: 0.5em;
+					padding-top: 1em;
+					vertical-align: center;
+					width: 80%;
+					max-width: 30em;
+				}
+
+				#inactive_container>a>div>h3 {
+					background-color: transparent;
+					font-size: 1.5em;
+					height: 100;
+					margin: auto;
+					text-align: center;
+					text-shadow: none;
+					vertical-align: center;
+					word-wrap: none;
+					word-break: keep-all;
+				}
+
+				#inactive_container>a>div>.icon_container {
+					aspect-ratio: 1/1;
+					margin: auto;
+					max-height: 80%;
+					max-width: 80%;
+				}
+
+				#inactive_container>a>div>.icon_container>img {
+					aspect-ratio: auto;
+					filter: brightness(1) grayscale(1) invert(1);
+					max-height: 100%;
+					max-width: 100%;
+				}
+			</style>
+			<h2>inactive links</h2>
+		</div>
+		<div id='contact_container'>
+			<style>
+				#contact_container>*>div {
+					border: var(--border);
+					display: flex;
+					height: 4.3em;
+					margin: auto;
+					margin-top: 1em;
+					padding: 0.5em;
+					padding-top: 1em;
+					vertical-align: center;
+					width: 80%;
+					max-width: 30em;
+				}
+
+				#contact_container>a>div>h3 {
+					background-color: transparent;
+					font-size: 1.5em;
+					height: 100;
+					margin: auto;
+					text-align: center;
+					text-shadow: none;
+					vertical-align: center;
+					word-wrap: none;
+					word-break: keep-all;
+				}
+
+				#contact_container>a>div>.icon_container {
+					aspect-ratio: 1/1;
+					margin: auto;
+					max-height: 80%;
+					max-width: 80%;
+				}
+
+				#contact_container>a>div>.icon_container>img {
+					aspect-ratio: auto;
+					max-height: 100%;
+					max-width: 100%;
+				}
+			</style>
+			<h2>contact links</h2>
+		</div>
+	</div>
+</body>
+
 <script>
 	const links = [
 		//{{{1
 		// ... (same as in Svelte code)
 		// Active links
 		{
-			name: "Discord Server",
+			name: "Discord",
 			link: "https://discord.gg/yyFmxV2uFC",
 			icon: "https://assets-global.website-files.com/6257adef93867e50d84d30e2/636e0a6ca814282eca7172c6_icon_clyde_white_RGB.svg",
 			status: "active",
@@ -204,5 +390,58 @@
 		//  'note': '',
 		//},
 		//}}}1
-	]
+	];
+
+	console.log('adding links');
+
+	for (let i = 0; i < links.length; ++i) {
+		if (links[i].status == 'active') {AddElement(links[i])}
+		else if (links[i].status == 'monitored') {AddElement(links[i])}
+		else if (links[i].status == 'inactive') {AddElement(links[i])}
+		else if (links[i].status == 'contact') {AddElement(links[i])}
+		else {
+			console.log('ERROR, link status type makes no damn sense');
+		}
+	}
+
+	function AddElement(elem = {
+		'name': null,
+		'link': null,
+		'icon': null,
+		'status': null,
+		'note': null
+	}) {
+		if (
+			elem.name == null ||
+			elem.link == null ||
+			elem.icon == null ||
+			elem.status == null
+		) {
+			console.warn(`ERROR, element ${elem.name} is null in some property, ignoring add`);
+		}
+
+		let link = document.createElement('a');
+		link.href = elem.link;
+
+		let container = document.createElement('div');
+		container.title = elem.note;
+		link.appendChild(container);
+
+		let icon_container = document.createElement('div');
+		icon_container.className = 'icon_container';
+		container.appendChild(icon_container);
+
+		let icon = document.createElement('img');
+		icon.src = elem.icon;
+		icon_container.appendChild(icon);
+
+		let title = document.createElement('h3');
+		title.innerText = elem.name;
+		container.appendChild(title);
+
+		document.getElementById(`${elem.status}_container`).appendChild(link);
+	}
+
 </script>
+
+</html>

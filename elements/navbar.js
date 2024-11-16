@@ -69,13 +69,12 @@ export function Navbar() {
 		//home_anchor.appendChild(home_text);
 
 		// TODO: add: HOME, LINKS, PROJECTS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 
-		let locations = [
+		let locations = {
+			"content": '/content/content.html',
+			"links": '/links/links.html',
+		};
 
-			"content",
-			"links",
-		];
-
-		locations.forEach((l) => {
+		Object.keys(locations).forEach((l) => {
 			let newElem = document.createElement('a');
 
 			newElem.innerText = l;
