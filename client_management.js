@@ -10,6 +10,7 @@ import { Navbar } from '../elements/navbar.js';
 //	var(s)
 //############################################################ global_vars {{{1
 let timeout = 0;
+let favicon_link = '/assets/icon.svg';
 
 //############################################################ 
 //	funciton(s)
@@ -28,6 +29,7 @@ async function ErrPopUp(txt = "there was an error!", err = "hey dipshit, your si
 				errPopUp.style.left = ((window.innerWidth - errPopUp.getBoundingClientRect().width) / 2 + "px");
 				resolve('')
 			}, 10000);
+			reject();
 		}).then((msg) => {
 			console.log(msg);
 		})
@@ -97,7 +99,7 @@ try {
 }
 catch (err) {
 	console.warn(err);
-	ErrPopUp("error adding styling!", err);
+	await ErrPopUp("error adding styling!", err);
 }
 //}}}2
 
@@ -114,7 +116,7 @@ try {
 }
 catch (err) {
 	console.error(err);
-	ErrPopUp("error adding navbar", err);
+	await ErrPopUp("error adding navbar", err);
 
 }
 //}}}2
@@ -129,6 +131,32 @@ try {
 }
 catch {
 
+}
+//}}}2
+//{{{2 edit_favicon
+try {
+	console.log('editing favicon');
+	let favicon_link = document.querySelector(`link[rel~='icon']`);
+
+	if (!favicon_link) {
+		favicon_link = document.createElement('link');
+		favicon_link.rel = 'icon'
+		favicon_link = document.head.appendChild(favicon_link);
+	}
+
+	favicon_link.href = 'https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/87f720d5b632e48df864177af9337aca4a8fae50/assets/icon.svg';
+	console.log('favicon changed');
+}
+catch (err) {
+	console.warn('failed to change favicon', err);
+}
+//}}}2
+//{{{2 set font
+try {
+
+}
+catch (err) {
+	console.warn(err);
 }
 //}}}2
 //}}}1

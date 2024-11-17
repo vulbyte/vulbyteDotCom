@@ -59,8 +59,29 @@ export function Navbar() {
 		//console.log("navbar ROOT_DIR: ", localStorage.getItem("ROOT_DIR"));
 
 		home_logo.src = `/assets/icon.svg`;
-		home_logo.style = 'max-width: 4.2em; max-height: 4.2em;'
+		home_logo.style = 'max-width: 4.2em; max-height: 4.2em; display:flex; flex-direction:column;'
 		home_anchor.appendChild(home_logo);
+
+		let random_strings = [
+			'fuck you, you got an rng of 0', //make something special
+			'hey, joey salads here',
+			`what you lookin' at?`,
+			'yip yap yop',
+			'peanut jelly',
+			'made you look',
+			':3',
+			'you look nice today :)',
+			`this isn't a minecraft reference`,
+			'¡¿por que maria?!',
+			'sushi!',
+			'tacos!',
+			'hashbrowns!',
+		]
+
+		let home_string = document.createElement('span');
+		home_string.innerText = random_strings[Math.floor(Math.random() * random_strings.length)];
+		home_anchor.appendChild(home_string);
+
 
 		// TODO:ADD LOGIC FOR HOMETEXT WITH MOBILE SCREENS
 		//let home_text = document.createElement('p');
@@ -95,7 +116,7 @@ export function Navbar() {
 
 					let content_dirs = [
 						"code_stuff",
-						"video_scripts", // BUG: bjroked
+						"video_scripts",
 					];
 
 					content_dirs.forEach((i) => {

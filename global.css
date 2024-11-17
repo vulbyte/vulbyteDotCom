@@ -388,6 +388,7 @@ header>*>img {
 
 h1 {
 	font-size: 2.5rem;
+	background-color: var(--color_font_primary);
 }
 
 h2 {
@@ -416,7 +417,22 @@ h3,
 h4,
 h5,
 h6 {
-	background-color: var(--color_font_primary);
+	background-color: var(--color_font_secondary);
+	color: var(--color_primary);
+	display: block;
+	margin-bottom: var(--padding);
+	padding: var(--padding);
+	user-select: none;
+	text-transform: uppercase;
+}
+
+h1:nth-of-type(odd),
+h2:nth-of-type(odd),
+h3:nth-of-type(odd),
+h4:nth-of-type(odd),
+h5:nth-of-type(odd),
+h6:nth-of-type(odd) {
+	background-color: var(--color_font_tertiary);
 	color: var(--color_primary);
 	display: block;
 	margin-bottom: var(--padding);
@@ -440,7 +456,7 @@ hgroup>h3,
 hgroup>h4,
 hgroup>h5,
 hgroup>h6 {
-	background-color: transparent;
+	background-color: transparent !important;
 	color: var(--color_background_primary);
 	padding: 0;
 }
