@@ -421,6 +421,7 @@ h6 {
 	display: block;
 	margin-bottom: var(--padding);
 	padding: var(--padding);
+	user-select: none;
 	text-transform: uppercase;
 }
 
@@ -596,9 +597,14 @@ nav {}
 	padding-top: 0.5rem;
 	padding-bottom: 0.5rem;
 	position: fixed;
+	user-select: none;
 	top: 0px;
 	width: 100vw;
 	z-index: 9999;
+}
+
+.navbar>* {
+	user-select: none;
 }
 
 noframes {

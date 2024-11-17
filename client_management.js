@@ -7,19 +7,34 @@ import { Navbar } from '../elements/navbar.js';
 
 
 //############################################################ 
+//	var(s)
+//############################################################ global_vars {{{1
+let timeout = 0;
+
+//############################################################ 
 //	funciton(s)
 //############################################################ functions {{{1
-function ErrPopUp(txt = "there was an error!", err = "hey dipshit, your site is broken") {
-	let errPopUp = document.createElement('div');
-	errPopUp.innerText = txt;
+async function ErrPopUp(txt = "there was an error!", err = "hey dipshit, your site is broken") {
+	try {
+		let myPromise = new Promise((resolve, reject) => {
+			setTimeout(() => {
+				let errPopUp = document.createElement('div');
+				errPopUp.innerText = txt;
 
-	//position && styling
-	errPopUp.style.width = "20em";
-	errPopUp.style.height = "auto";
-	errPopUp.style.position = "absolute";
-	errPopUp.style.left = ((window.innerWidth - errPopUp.getBoundingClientRect().width) / 2 + "px");
-
-	//add "x" button
+				//position && styling
+				errPopUp.style.width = "20em";
+				errPopUp.style.height = "auto";
+				errPopUp.style.position = "absolute";
+				errPopUp.style.left = ((window.innerWidth - errPopUp.getBoundingClientRect().width) / 2 + "px");
+				resolve('')
+			}, 10000);
+		}).then((msg) => {
+			console.log(msg);
+		})
+	}
+	catch (err) {
+		console.warn(err);
+	}
 }
 
 //############################################################ 
@@ -32,6 +47,7 @@ function ErrPopUp(txt = "there was an error!", err = "hey dipshit, your site is 
 console.log("client_management loaded");
 
 //{{{2 root dir for file mgmt and access
+
 var ROOT_DIR;
 try {
 	//let loc = document.location.href;
@@ -99,6 +115,19 @@ try {
 catch (err) {
 	console.error(err);
 	ErrPopUp("error adding navbar", err);
+
+}
+//}}}2
+//{{{2 add darkreader disable
+try {
+	console.log('darkreader disabled');
+	//<meta name="darkreader-lock">
+	let dr_dis = document.createElement('meta');
+	dr_dis.name = 'darkreader-lock';
+
+	document.getElementsByTagName('head')[0].appendChild(dr_dis);
+}
+catch {
 
 }
 //}}}2
