@@ -147,6 +147,9 @@ try {
 	if (String(window.location).includes('vulbyte.com')) {
 		favicon_link.href = 'https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/87f720d5b632e48df864177af9337aca4a8fae50/assets/icon.svg';
 	}
+	else if (String(window.location).includes('pages.dev')) {
+		favicon_link.src = `/assets/cloudflare_icon.svg`;
+	}
 	else {
 		console.log('non-pup environment detected');
 		favicon_link.href = '/assets/dev_icon.svg';

@@ -61,6 +61,9 @@ export function Navbar() {
 		if (String(window.location).includes('vulbyte.com')) {
 			home_logo.src = `/assets/icon.svg`;
 		}
+		else if (String(window.location).includes('pages.dev')) {
+			home_logo.src = `/assets/cloudflare_icon.svg`;
+		}
 		else {
 			console.log('non-pup environment detected');
 			home_logo.src = `/assets/dev_icon.svg`;
@@ -84,6 +87,39 @@ export function Navbar() {
 			'sushi!',
 			'tacos!',
 			'hashbrowns!',
+			`>vulbyte_was_here<`,
+			`rush 2049`,
+			`i didn't slap you`,
+			`sonic for hire`,
+			`dead men tell some tales`,
+			`~wiggle wiggle~`,
+			`*shits pants*`,
+			`gotta go fast!`,
+			`now blasingly fast!`,
+			`no longer using hamsters!`,
+			"buy spotify premium",
+			"linus said the hard R",
+			"shout out to @bubbshalub",
+			"subscribe to youtube",
+			"incredibles 2 sucked",
+			"192.168.0.1",
+			"sonadow",
+			"markiplier's #1 fan",
+			"drink milk",
+			"jesus loves tacos",
+			"its called twitter",
+			"mike tyson won",
+			"dont refresh the page",
+			"DONT LOOK BEHIND YOU",
+			"i shid pant",
+			`your ip is: 192.169.0.9`,
+			`console.log('installing virus')`,
+			`9+10=21`,
+			`4x4=12`,
+			`while(1<2)`,
+			'some_title',
+			`random_website_title`,
+			`The Boy Bands Have Won, and All the Copyists and the Tribute Bands and the TV Talent Show Producers Have Won, If We Allow Our Culture to Be Shaped by Mimicry, Whether from Lack of Ideas or from Exaggerated Respect. You Should Never Try to Freeze Culture. What You Can Do Is Recycle That Culture. Take Your Older Brother's Hand - Me - Down Jacket and Re - Style It, Re - Fashion It to the Point Where It Becomes Your Own.But Don't Just Regurgitate Creative History, or Hold Art and Music and Literature as Fixed, Untouchable and Kept Under Glass. The People Who Try to 'Guard' Any Particular Form of Music Are, Like the Copyists and Manufactured Bands, Doing It the Worst Disservice, Because the Only Thing That You Can Do to Music That Will Damage It Is Not Change It, Not Make It Your Own. Because Then It Dies, Then It's Over, Then It's Done, and the Boy Bands Have Won`,
 		]
 
 		let home_string = document.createElement('span');
