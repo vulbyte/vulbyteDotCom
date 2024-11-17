@@ -8,6 +8,16 @@
 	<script type='module' src='../client_management.js'></script>
 </head>
 
+<style>
+	.icon_container {
+		border: none;
+	}
+
+	.icon_container>* {
+		border: none;
+	}
+</style>
+
 <body>
 	<h1>links:</h1>
 	<div id='link_container'>
@@ -42,7 +52,7 @@
 					aspect-ratio: 1/1;
 					margin: auto;
 					max-height: 80%;
-					max-width: 80%;
+					/*max-width: 80%;*/
 				}
 
 				#active_container>a>div>.icon_container>img {
@@ -101,6 +111,7 @@
 				#inactive_container>*>div {
 					border: var(--border);
 					display: flex;
+					filter: saturate(0.2);
 					height: 4.3em;
 					margin: auto;
 					margin-top: 1em;
@@ -291,14 +302,14 @@
 		},
 		{
 			name: "Ko-fi",
-			link: "https://ko-fi.com/insert",
+			link: "https://ko-fi.com/vulbyte",
 			icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Cib-ko-fi_%28CoreUI_Icons_v1.0.0%29.svg/2048px-Cib-ko-fi_%28CoreUI_Icons_v1.0.0%29.svg.png",
 			status: "inactive",
 			note: "",
 		},
 		{
 			name: "Newgrounds",
-			link: "https://iminsert.newgrounds.com/",
+			link: "https://vulbyte.newgrounds.com/",
 			icon: "https://static.wikia.nocookie.net/mcleodgaming/images/f/f2/Newgrounds_Tank.png",
 			status: "inactive",
 			note: "",
@@ -422,6 +433,7 @@
 
 		let link = document.createElement('a');
 		link.href = elem.link;
+		link.target = '_blank';
 
 		let container = document.createElement('div');
 		container.title = elem.note;

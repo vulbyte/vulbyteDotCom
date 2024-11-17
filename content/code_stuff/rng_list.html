@@ -351,8 +351,17 @@
 
 
 		function SpinTheWheel() {
+			// SPIN THE WHEEL
+			let the99 = '/assets/spin_the_wheel.mp3';
+			let the1 = '/assets/shrek-do-the-roar.mp3';
+
+			let sfx = the99;
+			if ((Math.floor(Math.random() * 200)) < 2) {
+				sfx = the1
+			}
+
 			console.log('💀 SPIN THE WHEEL 💀');
-			let spin = new Audio('/assets/spin_the_wheel.mp3');
+			let spin = new Audio();
 			spin.volume = 0.5;
 			spin.play();
 
@@ -393,7 +402,8 @@
 
 				let pitch_variance = 0.2; //this is +/-
 
-				var audio = new Audio('/assets/beep.mp3');
+
+				let audio = new Audio('/assets/bullshit/beep.mp3');
 				audio.volume = 0.5;
 				audio.playbackRate = (
 					(Math.random() * pitch_variance) - (pitch_variance / 2) + (1 - pitch_variance)

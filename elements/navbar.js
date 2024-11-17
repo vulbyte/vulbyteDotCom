@@ -58,7 +58,15 @@ export function Navbar() {
 		//the link here is relivant to the html file or the project core, NOT this file
 		//console.log("navbar ROOT_DIR: ", localStorage.getItem("ROOT_DIR"));
 
-		home_logo.src = `/assets/icon.svg`;
+		if (String(window.location).includes('vulbyte.com')) {
+			home_logo.src = `/assets/icon.svg`;
+		}
+		else {
+			console.log('non-pup environment detected');
+			home_logo.src = `/assets/dev_icon.svg`;
+		}
+
+
 		home_logo.style = 'max-width: 4.2em; max-height: 4.2em; display:flex; flex-direction:column;'
 		home_anchor.appendChild(home_logo);
 
