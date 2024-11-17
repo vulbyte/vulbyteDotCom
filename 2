@@ -14,38 +14,35 @@
 	</hgroup>
 
 	<div>
-		<ul id='scripts_list'>
-			<li>channel_intro.md</li>
-			<li>comparing_video_editors.md</li>
-			<li>finding_the_fun_cs2.md</li>
-			<li>godot_make_a_mistake_-_itsyahboidonnie.md</li>
+		<ul>
+			<li>
+				<details>
+					<summary></summary>
+				</details>
+			</li>
+			<li>
+				<details>
+					<summary></summary>
+				</details>
+			</li>
+			<li>
+				<details>
+					<summary></summary>
+				</details>
+			</li>
+			<li>
+				<details>
+					<summary></summary>
+				</details>
+			</li>
 			<!--
 			<li>
 				<details>
 					<summary></summary>
 				</details>
 			</li>
-			-->
-			<script>
-				let d = document;
-				let list = d.getElementById('scripts_list');
-				let scripts = list.getElementsByTagName('li');
-
-				//console.log(scripts)
-
-				for (let i = 0; i < scripts.length; ++i) {
-					let link = d.createElement('a');
-					link.innerText = scripts[i].innerText.trim();
-
-					scripts[i].innerText = 'download: ';
-					scripts[i].appendChild(link)
-
-					scripts[i].addEventListener('click', () => {
-						window.open(`/content/video_scripts/${scripts[i].getElementsByTagName('a')[0].innerText.trim()}`, '_blank').focus();
-					})
-				}
-			</script>
 		</ul>
+-->
 
 	</div>
 	<!--

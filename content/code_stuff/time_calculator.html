@@ -13,55 +13,6 @@
 	<h1> time calc</h1>
 
 	<div class="time_calc">
-		<script type="text/javascript">
-			let ts1, ts2;
-
-			function update_ts(index, v) {
-				console.log('updating val');
-
-				//update
-				console.log('correcting input');
-				v = v.replace(/^[0-9]$/, '');
-
-				//format for humans
-				if (v.length % 2 != 0) {
-					v = "0" + v;
-				}
-
-				for (let i = 2; i < v.length + 1; i = i + 3) {
-					if (i >= v.length) {
-						break;
-					}
-
-					console.log(v);
-					v = (
-						v.slice(0, i) +
-						":" +
-						v.slice(i, v.length)
-					);
-				}
-
-				switch (index) {
-					case (1):
-						console.log("index found");
-						ts1 = v;
-						document.getElementById("timeslot_1-display").innerText = v;
-						break;
-
-					case (2):
-						console.log("index found");
-						ts2 = v;
-						document.getElementById("timeslot_2-display").innerText = v;
-						break;
-
-					default:
-						console.log("index not found");
-						return;
-				}
-
-			}
-		</script>
-
 		<input id="timeslot_1" type="text" placeholder="YY:MM:DD:HH:mm:SS" onchange="update_ts(1, this.value)">
 		<div id="timeslot_1-display"></div>
 		<br>
@@ -74,16 +25,36 @@
 
 
 		<input id="timeslot_2" type="text" placeholder="YY:MM:DD:HH:mm:SS" onchange="update_ts(2, this.value)">
-		<div id="timeslot_1-display"></div>
+		<div id="timeslot_2-display"></div>
 		<br>
 
-		<input id="timeslot_submit" type="submit">
+		<button id='submit_timestamp' style='backgroundColor:blue; padding:0.5em;'>
+			<script>
+				let d = document;
+
+				d.getElementById('submit_timestamp').addEventListener('click', () => {
+					let startTime, endTime;
+
+					startTime = d.getElementById('timeslot_1-display');
+					endTime = d.getElementById('timeslot_2-display');
+
+					d.getElementById('timeslot_output').innerText =
+						("total = " + Math.round(
+							(
+								(endTime - startTime /*- breakTime*/)
+								% 60
+							) * 4 * 24) / 4);
+				});
+			</script>
+			Submit
+		</button>
 		<br>
 		<br>
 
 		<output id="timeslot_output"> no output! </output>
 		<br>
 		<br>
+
 
 		<details>
 			<summary>examples</summary>
@@ -106,5 +77,53 @@
 		</details>
 	</div>
 </body>
+
+<script type="text/javascript">
+	let ts1, ts2;
+
+	function update_ts(index, v) {
+		console.log('updating val');
+
+		//update
+		console.log('correcting input');
+		v = v.replace(/^[0-9]$/, '');
+
+		//format for humans
+		if (v.length % 2 != 0) {
+			v = "0" + v;
+		}
+
+		for (let i = 2; i < v.length + 1; i = i + 3) {
+			if (i >= v.length) {
+				break;
+			}
+
+			console.log(v);
+			v = (
+				v.slice(0, i) +
+				":" +
+				v.slice(i, v.length)
+			);
+		}
+
+		switch (index) {
+			case (1):
+				console.log("index found");
+				ts1 = v;
+				document.getElementById("timeslot_1-display").innerText = v;
+				break;
+
+			case (2):
+				console.log("index found");
+				ts2 = v;
+				document.getElementById("timeslot_2-display").innerText = v;
+				break;
+
+			default:
+				console.log("index not found");
+				return;
+		}
+	}
+</script>
 
 </html>
