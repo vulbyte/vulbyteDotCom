@@ -62,7 +62,7 @@ export function Navbar() {
 			home_logo.src = `/assets/icon.svg`;
 		}
 		else if (String(window.location).includes('pages.dev')) {
-			home_logo.src = `/assets/cloudflare_icon.svg`;
+			home_logo.src = `/assets/preview_icon.svg`;
 		}
 		else {
 			console.log('non-pup environment detected');
