@@ -152,7 +152,7 @@ try {
 	}
 	else {
 		console.log('non-pup environment detected');
-		favicon_link.href = '/assets/dev_icon.svg';
+		favicon_link.href = 'https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/448122708492d8ef4ca957826b73a4e532fde45f/assets/dev_icon.svg';
 	}
 
 	console.log('favicon changed');
