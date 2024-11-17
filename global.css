@@ -42,11 +42,17 @@
 	--h_size: function([argument]);
 }
 
+@font-face {
+	font-family: 'test09-v1r42';
+	src: local('/assets/test09-v1r42.otf') format('opentype');
+	/*local('new font'),*/
+}
+
 * {
 	/*background-color: var(--color_background_primary);*/
 	border-radius: 1em;
 	color: var(--color_font_primary);
-	font-family: 'new font';
+	font-family: 'helvetica', 'arial';
 	padding: 0;
 	margin: 0;
 	max-width: 100%;
