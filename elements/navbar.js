@@ -62,7 +62,7 @@ export function Navbar() {
 			home_logo.src = `/assets/icon.svg`;
 		}
 		else if (String(window.location).includes('pages.dev')) {
-			home_logo.src = `/assets/preview_icon.svg`;
+			home_logo.src = `https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/209022ef5f7b1dd9f61e0892cd3555a1a27f47a3/assets/preview_icon.svg`;
 		}
 		else {
 			console.log('non-pup environment detected');
