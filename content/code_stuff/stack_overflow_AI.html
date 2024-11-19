@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>stack overflow ai | vulbyte</title>
+	<script type="module" src="/client_management.js"></script>
+</head>
+
+<body>
+	<h1>stack overflow ai</h1>
+	<p>so i have been interested in llms since the first day they came out, and i was rather tired of how tedious it is to
+		ask questions their and how long it takes, so i made this web portal to answer all your programming questions <em>to
+			the same quality or higher</em> as what you would find on stack overflow. and made it free to use out of protest.
+		<br>
+		enjoy the AI
+	</p>
+
+	<div>
+		<label>input:</label>
+		<input id='llm_input' type='paragraph'>
+		<br>
+		<button id='submit'>submit question</button>
+		<br>
+		<label>output:</label>
+		<output id='llm_output'> ask something to get a response!</output>
+		<style>
+			#llm_input {
+				padding: var(--padding);
+				margin: var(--margin);
+			}
+
+			#llm_return,
+			#llm_input {
+				display: block;
+				width: 80% !important;
+				max-width: 60rem !important;
+			}
+		</style>
+	</div>
+
+</body>
+
+<script type='module'>
+	const replies = [
+		"Try using Google, it's like a super powerful browser.",
+		"Have you tried turning it off and on again?",
+		"Check your internet connection, maybe it's down.",
+		"Your code is probably broken. That's what I'd do if I were you.",
+		"Just rewrite the entire thing from scratch. It'll be faster that way.",
+		"I'm not a professional, but I can tell you what my cat would say: 'Meow'.",
+		"Check your syntax. No, really, check it again. And maybe one more time for good measure.",
+		"Try using a different browser. Chrome is probably the problem.",
+		"This is a complex issue that requires an entire book of code to solve. I can't help you with that.",
+		"Maybe just ask someone else? They might know what they're doing.",
+		"I'm busy right now, come back later.",
+		"Your question doesn't meet my minimum intelligence threshold.",
+		"Have you tried using a different programming language?",
+		"Is your code formatted in Comic Sans? If so, it's probably the problem.",
+		"Maybe the answer is hidden in the Matrix. Try looking for clues there.",
+		"I've never seen that error message before. That means I'm not responsible.",
+		"Did you try asking a question on Stack Overflow?",
+		"Just add more `console.log`s to your code and you'll figure it out.",
+		"That's not how programming works. Don't bother trying.",
+		"Have you tried using a different version of Node.js?",
+		"Maybe the problem is with your operating system. Try reinstalling that.",
+		"I'm on a deadline, can you just fix it yourself?",
+		"Your code looks fine to me. It's probably working as intended.",
+		"Try checking for typos in your JavaScript code. There might be one somewhere.",
+		"Is this a homework assignment? If so, I can give you some general advice.",
+		"I've already answered this question three times today. You must be my stalker.",
+		"Your issue is not reproducible on my machine. It's probably a hardware problem.",
+		"Can you provide more context about your code and the error message?",
+		"Have you tried using a different text editor?",
+		"Maybe the answer is in the comments of that one Stack Overflow question from 2008.",
+		"I'll give you a hint: it's not a bug, it's a feature."
+	];
+
+	let input = document.getElementById('llm_input');
+	let output = document.getElementById('llm_output');
+
+	function RandInRange(minmax = {'min': 0.3, 'max': 4}) {
+		let randVal = (minmax.max - minmax.min) * Math.random() + minmax.min;
+		console.log('rand: ', randVal);
+		return (randVal);
+	}
+
+	document.getElementById('submit').addEventListener('click', () => {
+		GenerateReply();
+	});
+
+	function GenerateReply() {
+		//loading
+
+		let loading = setInterval(() => {
+			switch (Math.floor(RandInRange({'min': 0, 'max': 4}))) {
+				case (1):
+					output.innerText = '.'
+				case (2):
+					output.innerText = '..'
+				case (3):
+					output.innerText = '...'
+				case (0):
+				default:
+					output.innerText = ''
+					break;
+			}
+		}, (Math.floor(RandInRange({'min': 0, 'max': 300}))));
+
+		setTimeout(() => {
+			console.log('clearing loading');
+			clearInterval(loading);
+		}, (RandInRange({'min': 3, 'max': 7000})));
+
+		// generate the response
+	}
+</script>
+
+</html>
