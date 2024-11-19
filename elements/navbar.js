@@ -206,6 +206,7 @@ export function Navbar() {
 
 
 		spacer.style.height = navbar.getBoundingClientRect().height + "px";
+
 	});
 
 }

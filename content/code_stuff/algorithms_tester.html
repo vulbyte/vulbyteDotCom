@@ -39,12 +39,34 @@
 
 	<div>
 		<h2>generate list</h2>
-		<label>how many items would you like in the list</label>
-		<input type='number' placeholder='100000'></input>
+		<label style='display:inline;'>how many items would you like in the list:</label>
+		<input id='list_length' type='' placeholder='100000' min='1' max='1000000'></input>
+		<button id='generate_button'>click to generate list</button>
+		<span id='gen_duration'></span>
 
 		<details>
-			<summary>click here to view list</summary>
-			<span id='list_preview'>no list generate yet!</span>
+			<summary>click here to view list</summary><br>
+			<span id='list_preview' style='
+					border:var(--border); 
+					display:block; 
+					padding:var(--padding); 
+					max-height: 30em; 
+					overflow-y:scroll; 
+					width:90%;'>
+				no list generated yet!
+			</span>
+			<div id='preview_opts' style='
+				display:flex; 
+				flex-direction:row; 
+				justify-content:space-around; 
+				width:100%;'>
+				<div>
+					<label id='page_display'>page #/0:</label><input id='page_num' type='number' placeholder='1' min='1'></input>
+				</div>
+				<div>
+					<label>items / page:</label><input id='page_amnt' type='number' placeholder='1000'></input>
+				</div>
+			</div>
 		</details>
 	</div>
 
@@ -67,6 +89,51 @@
 	</div>
 </body>
 <script type='module'>
+	//############################################################
+	// event listeners
+	//############################################################
+	document.getElementById('list_length').addEventListener('change', () => {
+		console.log('formating input');
+
+		let input = document.getElementById('list_length');
+		let amount = input.value;
+
+		if (isNaN(input.value) || input.value == '') {
+			input.value = input.placeholder;
+		}
+
+		if (amount == undefined || amount == null) {
+			amount = document.getElmentById('list_length').placeholder
+		}
+
+		if (amount < 0) {
+			input.value = 0;
+		}
+		else if (amount > 10 ** 6) {
+			input.value = 10 ** 6;
+		}
+
+	});
+
+	document.getElementById('generate_button').addEventListener('click', () => {
+		let page, end;
+
+		page = new Date();
+		GenerateList();
+		end = new Date();
+
+		document.getElementById('gen_duration').innerText = (end.getTime() - page.getTime()) + 'ms';
+	})
+
+	document.getElementById('page_num').addEventListener('change', () => {
+		UpdateList();
+	})
+
+	//############################################################
+	// vars
+	//############################################################
+	let list = [];
+
 	let sorting_algorithms = {
 		"random_sort (WARNING: REALLY REALLY SLOW)": "random_sort",
 		"bubble_sort": "bubble_sort",
@@ -74,18 +141,87 @@
 	};
 
 	let searching_algorithms = {
-		"binary search": 'binary_search',
-		"linear (for(let i = 0; i < list.length; ++i))": "linear",
-		"linear (for(let i = 0; i < list.length; i++))": "linear",
+		'binary search': 'binary_search',
+		'linear (for(let i = 0; i < list.length; ++i))': 'linear',
+		'linear (for(let i = 0; i < list.length; i++))': 'linear',
 	};
 
+	//############################################################
+	// function
+	//############################################################
 	function GenerateList() {
+		list = [];
 
+		let amount = document.getElementById('list_length').value;
+
+		if (amount == undefined || amount == null) {
+			amount = document.getElmentById('list_length').placeholder
+		}
+
+		if (amount < 0) {
+			amount = 0;
+		}
+		else if (amount > 10 ** 6) {
+			amount = 10 ** 6;
+		}
+
+		for (let i = 0; i < amount; ++i) {
+			console.log('adding number');
+			list.push(Math.random());
+		}
+
+		console.log(list.length);
+
+		UpdateList();
 	}
 
 	function UpdateList() {
+		console.log('updating list');
+		if (list.length == 0) {
+			document.getElementById('list_preview').innerHTML = 'list is empty!';
+			return;
+		}
 
+		document.getElementById('list_preview').innerHTML = '';
+
+
+
+		//let pageAmnt = document.getElementById('page_amnt').value;
+		//if (pageAmnt == '' || pageAmnt == undefined) {
+		//	pageAmnt = document.getElementById('page_amnt').placeholder;
+		//}
+		//let page = (document.getElementById('page_num').value - 1);
+		//let start = page * pageAmnt;
+		//let end = Number(Number(page) * Number(pageAmnt) + Number(pageAmnt));
+
+		//document.getElementById('page_num').max = Math.floor(list.length / pageAmnt);
+		//document.getElementById('page_display').max = `page #/${Math.floor(list.length / pageAmnt)}`;
+
+		//let ol = document.createElement('ol');
+		//ol.id = 'list';
+		//ol.page = page;
+		//ol.start = start;
+
+		//console.log(
+		//	'page: ' + page + '\n',
+		//	'end: ' + end + '\n',
+		//	'pageAmnt: ' + pageAmnt + '\n',
+		//);
+
+		//for (let i = start; i < end; ++i) {
+		//	console.log('loop');
+		//	let li = document.createElement('li');
+		//	li.innerText = list[i];
+		//	ol.appendChild(li);
+		//};
+
+
+
+
+		document.getElementById('list_preview').appendChild(ol);
 	}
+
+
 
 	function SearchInList() {
 
