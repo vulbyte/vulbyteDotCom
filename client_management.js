@@ -10,7 +10,22 @@ import { Navbar } from '../elements/navbar.js';
 //	var(s)
 //############################################################ global_vars {{{1
 let timeout = 0;
-let favicon_link = '/assets/icon.svg';
+let favicon_links = [
+	//red
+	'https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/87deeda52a94496a53f0cbb26e17862dc6548b53/assets/icon_red.svg',
+	//yellow
+	'https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/87deeda52a94496a53f0cbb26e17862dc6548b53/assets/icon_yellow.svg',
+	//green
+	'https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/87deeda52a94496a53f0cbb26e17862dc6548b53/assets/icon_green.svg',
+	//cyan
+	'https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/87deeda52a94496a53f0cbb26e17862dc6548b53/assets/icon_cyan.svg',
+	//blue
+	'https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/87deeda52a94496a53f0cbb26e17862dc6548b53/assets/icon_blue.svg',
+	//magenta
+	'https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/87deeda52a94496a53f0cbb26e17862dc6548b53/assets/icon_magenta.svg',
+	//white
+	'https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/87deeda52a94496a53f0cbb26e17862dc6548b53/assets/icon.svg',
+];
 
 //############################################################ 
 //	funciton(s)
@@ -134,6 +149,7 @@ catch {
 }
 //}}}2
 //{{{2 edit_favicon
+let animatible = false;
 try {
 	console.log('editing favicon');
 	let favicon_link = document.querySelector(`link[rel~='icon']`);
@@ -144,15 +160,18 @@ try {
 		favicon_link = document.head.appendChild(favicon_link);
 	}
 
+	favicon_link.id = 'favicon'
+
 	if (String(window.location).includes('vulbyte.com')) {
-		favicon_link.href = 'https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/87f720d5b632e48df864177af9337aca4a8fae50/assets/icon.svg';
+		animatible = true;
+		favicon_link.href = favicon_links[0];
 	}
 	else if (String(window.location).includes('pages.dev')) {
-		favicon_link.href = `https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/209022ef5f7b1dd9f61e0892cd3555a1a27f47a3/assets/preview_icon.svg`;
+		favicon_link.href = favicon_links[1];
 	}
 	else {
 		console.log('non-pup environment detected');
-		favicon_link.href = 'https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/448122708492d8ef4ca957826b73a4e532fde45f/assets/dev_icon.svg';
+		favicon_link.href = favicon_links[3];
 	}
 
 	console.log('favicon changed');
@@ -169,4 +188,18 @@ catch (err) {
 	console.warn(err);
 }
 //}}}2
+if (animatible == true) {
+	let icon = 0;
+
+	setInterval(() => {
+		if (icon <= 5) {
+			icon += 1;
+		}
+		else {
+			icon = 0;
+		}
+
+		document.getElementById('favicon').href = favicon_links[icon];
+	}, 300);
+};
 //}}}1

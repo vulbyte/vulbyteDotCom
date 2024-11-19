@@ -120,7 +120,7 @@
 	}
 	function LoadReply() {
 		// generate the response
-		let reply = replies[Math.floor(Math.random())];
+		let reply = replies[Math.floor(Math.random() * replies.length)];
 
 		let i = 1;
 
