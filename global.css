@@ -564,7 +564,10 @@ kbd {
 
 keygen {}
 
-label {}
+label {
+	display: block;
+	font-weight: bold;
+}
 
 legend {}
 

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script type='module' src='/client_management.js'></script>
+	<title> vulbyte | algorithms_tester </title>
+</head>
+
+<body>
+	<h1>algorithm_tester</h1>
+	<p>
+		this is just a quick little thing i made to test and benchmark algorithms.
+		what you will need to do to use it is:
+	<ol>
+		<li>click 'generate' to make a list</li>
+		<li>optionally check list to see if the list is to your liking</li>
+		<li>if you with to benchmark a sorting algorithm, select the algorithm and click 'sort', to which you'll see the
+			result at the bottom of the <em>section</em></li>
+		<li>same as above, but with the search algorithm</li>
+	</ol>
+
+	<details>
+		<summary><em>WARNING</em></summary>
+		please note this runs locally, so if you choose a number like 1,000,000,000 you will likely lock the tab until
+		completed.
+		<br>
+		so do yourself a favor and choose a number that is reasonable for your system
+	</details>
+
+	<details>
+		<summary>METHODOLOGY</summary>
+		<ul>
+			<li></li>
+		</ul>
+	</details>
+	</p>
+
+	<div>
+		<h2>generate list</h2>
+		<label>how many items would you like in the list</label>
+		<input type='number' placeholder='100000'></input>
+
+		<details>
+			<summary>click here to view list</summary>
+			<span id='list_preview'>no list generate yet!</span>
+		</details>
+	</div>
+
+	<div>
+		<h2>sort list (optional, depending)</h2>
+		<label>Choose a searching Algorithm</label>
+		<select>
+			<option>linear search in for loop</option>
+			<option>linear search in forEach loop</option>
+		</select>
+	</div>
+
+	<div>
+		<h2>find within list</h2>
+		<label>Choose a searching Algorithm</label>
+		<select>
+			<option>linear search in for loop </option>
+			<option>linear search in forEach loop</option>
+		</select>
+	</div>
+</body>
+<script type='module'>
+	let sorting_algorithms = {
+		"random_sort (WARNING: REALLY REALLY SLOW)": "random_sort",
+		"bubble_sort": "bubble_sort",
+		"quick_sort": "quick_sort",
+	};
+
+	let searching_algorithms = {
+		"binary search": 'binary_search',
+		"linear (for(let i = 0; i < list.length; ++i))": "linear",
+		"linear (for(let i = 0; i < list.length; i++))": "linear",
+	};
+
+	function GenerateList() {
+
+	}
+
+	function UpdateList() {
+
+	}
+
+	function SearchInList() {
+
+	}
+
+	function FindInList() {
+
+	}
+
+</script>
+
+</html>

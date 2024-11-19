@@ -59,14 +59,14 @@ export function Navbar() {
 		//console.log("navbar ROOT_DIR: ", localStorage.getItem("ROOT_DIR"));
 
 		if (String(window.location).includes('vulbyte.com')) {
-			home_logo.src = `/assets/icon.svg`;
+			home_logo.src = `https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/0b0fcb64b46a2665d622ce094517332ab6b6cb7f/assets/icon.svg`;
 		}
 		else if (String(window.location).includes('pages.dev')) {
 			home_logo.src = `https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/209022ef5f7b1dd9f61e0892cd3555a1a27f47a3/assets/preview_icon.svg`;
 		}
 		else {
-			console.log('non-pup environment detected');
-			home_logo.src = `/assets/dev_icon.svg`;
+			console.log('non-pub environment detected');
+			home_logo.src = `https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/0b0fcb64b46a2665d622ce094517332ab6b6cb7f/assets/dev_icon.svg`;
 		}
 
 
