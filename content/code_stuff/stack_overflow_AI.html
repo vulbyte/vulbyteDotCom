@@ -97,10 +97,13 @@
 			switch (Math.floor(RandInRange({'min': 0, 'max': 4}))) {
 				case (1):
 					output.innerText = '.'
+					break;
 				case (2):
 					output.innerText = '..'
+					break;
 				case (3):
 					output.innerText = '...'
+					break;
 				case (0):
 				default:
 					output.innerText = ''
@@ -111,9 +114,26 @@
 		setTimeout(() => {
 			console.log('clearing loading');
 			clearInterval(loading);
+			LoadReply();
 		}, (RandInRange({'min': 3, 'max': 7000})));
 
+	}
+	function LoadReply() {
 		// generate the response
+		let reply = replies[Math.floor(Math.random())];
+
+		let i = 1;
+
+		let response = setInterval(() => {
+			if (i >= reply.length) {
+				console.log('reply complete')
+				clearInterval(response);
+			};
+
+			i += (Math.floor(RandInRange({'min': 2, 'max': 7})));
+
+			output.innerText = reply.slice(0, i);
+		}, (RandInRange({'min': 3, 'max': 400})));
 	}
 </script>
 
