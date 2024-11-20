@@ -39,7 +39,12 @@ document.getElementById('generate_button').addEventListener('click', () => {
 })
 
 document.getElementById('page_num').addEventListener('change', () => {
-	UpdateList();
+	updatelist();
+})
+
+document.getElementById('sort_trigger').addEventListener('click', () => {
+	let type = document.getElementById('sort_selection').value;
+	SortList(type);
 })
 
 //############################################################
@@ -48,8 +53,8 @@ document.getElementById('page_num').addEventListener('change', () => {
 let list = [];
 
 let sorting_algorithms = {
-	"random_sort (WARNING: REALLY REALLY SLOW)": "random_sort",
 	"bubble_sort": "bubble_sort",
+	"random_sort (WARNING: REALLY REALLY SLOW)": "random_sort",
 	"quick_sort": "quick_sort",
 };
 
@@ -141,13 +146,14 @@ function UpdateList() {
 }
 //}}}2
 
-//{{{2 SortInList
-function SortInList() {
-	let sort_algo = '';
-	switch (sort_algo) {
+//{{{2 SortList
+function SortList(type = '') {
+
+	switch (type) {
 		case ('bubble'):
 		case ('bubble_sort'):
-
+		case ('bubble sort'):
+			BubbleSort(list);
 			break;
 		default:
 			window.alert('invalid sort input');
@@ -230,7 +236,7 @@ function CreateCanvas(args = { 'list': list, 'index': 0 }) {
 //}}}2
 
 //{{{2 UpdateCanvas
-let retried = false;
+//let retried = false;
 export function UpdateCanvas(args = { 'list': list, 'index': 0 }) {
 	if (args.list == undefined) {
 		console.warn('unable to sort, list undefined');
@@ -240,26 +246,26 @@ export function UpdateCanvas(args = { 'list': list, 'index': 0 }) {
 	let cc = document.getElementById('cc');
 	let c = document.getElementById('c');
 
-	if (cc == undefined || c == undefined) {
-		if (retried == false) {
-			CreateCanvas();
-			retried = true
-			UpdateCanvas();
-			return;
-		}
-		if (retried == true) {
-			console.warn('no canvas can be made');
-			return;
-		}
-	}
+	//if (cc == undefined || c == undefined) {
+	//	if (retried == false) {
+	//		CreateCanvas();
+	//		retried = true
+	//		UpdateCanvas();
+	//		return;
+	//	}
+	//	if (retried == true) {
+	//		console.warn('no canvas can be made');
+	//		return;
+	//	}
+	//}
 
 	let height = c.height;
 	let width = c.width;
 
 	let ctx = c.getContext('2d');
-	ctx.clearRect(0, 0, ctx.width, ctx.height);
 
-	console.log('canvas is:')
+	console.log('canvas is:', width, 'x', height)
+	ctx.clearRect(0, 0, width, height);
 
 	for (let i = 0; i < args.list.length; ++i) {
 		console.log('rendering item to list');
@@ -281,6 +287,8 @@ export function UpdateCanvas(args = { 'list': list, 'index': 0 }) {
 		)
 		ctx.fill();
 	}
+
+	return;
 }
 
 //############################################################
