@@ -18,7 +18,7 @@ export function Navbar() {
 	}
 
 
-	window.addEventListener('load', function () {
+	window.addEventListener('load', function() {
 		try {
 			let head = document.getElementsByTagName("head");
 
@@ -120,6 +120,9 @@ export function Navbar() {
 			'some_title',
 			`random_website_title`,
 			'now with 100% more ai!',
+			`shutup i'm listening to cheerleeder`,
+			`currently chasing a dog down the road`,
+			`macbook in da carr`,
 			`The Boy Bands Have Won, and All the Copyists and the Tribute Bands and the TV Talent Show Producers Have Won, If We Allow Our Culture to Be Shaped by Mimicry, Whether from Lack of Ideas or from Exaggerated Respect. You Should Never Try to Freeze Culture. What You Can Do Is Recycle That Culture. Take Your Older Brother's Hand - Me - Down Jacket and Re - Style It, Re - Fashion It to the Point Where It Becomes Your Own.But Don't Just Regurgitate Creative History, or Hold Art and Music and Literature as Fixed, Untouchable and Kept Under Glass. The People Who Try to 'Guard' Any Particular Form of Music Are, Like the Copyists and Manufactured Bands, Doing It the Worst Disservice, Because the Only Thing That You Can Do to Music That Will Damage It Is Not Change It, Not Make It Your Own. Because Then It Dies, Then It's Over, Then It's Done, and the Boy Bands Have Won`,
 		]
 
