@@ -304,6 +304,6 @@ export async function UpdateCanvas(args = { 'list': list, 'index': 0 }) {
 //}}}2
 
 //############################################################
-// runtime
+// Runtime
 //############################################################
 CreateCanvas();
