@@ -12,7 +12,13 @@
 	<h1>WICKED.COM BINGO</h1>
 	<p>let's see how cliche the movie is...</p>
 
-	<div id='bingo_container' style='display:grid; width:100%; grid-template-columns: repeat(5, 1fr)'></div>
+	<div id='bingo_container' style='
+			display:grid; 
+			width:100hw; 
+			max-width:40rem; 
+			font-size:16px; 
+			grid-template-columns: repeat(5, 1fr);'>
+	</div>
 	<script>
 		let d = document;
 		let bc = d.getElementById('bingo_container');
@@ -49,7 +55,17 @@
 
 		while (preds.length >= 1) {
 			let item = d.createElement('div');
-			item.style.width = 'auto';
+			item.style.width = '95%';
+			item.style.border = 'var(--border)';
+			item.style.height = '0';
+			item.style.position = 'relative';
+			//item.style.padding = '0.3rem';
+			item.style.paddingBottom = '100%';
+			item.style.userSelect = 'none';
+			item.style.fontSize = '12px';
+			item.style.overflowX = 'none';
+			item.style.overflowY = 'scroll';
+
 
 			let rng = Math.floor(Math.random() * preds.length);
 
@@ -57,14 +73,20 @@
 			item.innerText = str;
 			preds.splice(rng, 1);
 
+
 			item.addEventListener('click', ((e) => {
-				if (item.style.background == '#440000ff') {
-					console.log('making trans')
-					item.style.backgroundColor = '#00000000';
+				console.log(
+					item.style.backgroundColor, '\n',
+					String(item.style.backgroundColor) == 'rgb(68, 0, 0)'
+				)
+
+				if (String(item.style.backgroundColor) == 'rgb(68, 0, 0)') {
+					console.log('making black')
+					item.style.backgroundColor = '#000000';
 				}
 				else {
 					console.log('making red')
-					item.style.backgroundColor = '#440000ff';
+					item.style.backgroundColor = '#440000';
 				}
 			}))
 
