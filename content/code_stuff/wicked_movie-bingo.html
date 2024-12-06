@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script type='module' src='/client_management.js'></script>
+	<title>Whicked.com bingo | vulbyte</title>
+</head>
+
+<body>
+	<h1>WICKED.COM BINGO</h1>
+	<p>let's see how cliche the movie is...</p>
+
+	<div id='bingo_container' style='display:grid; width:100%; grid-template-columns: repeat(5, 1fr)'></div>
+	<script>
+		let d = document;
+		let bc = d.getElementById('bingo_container');
+
+		let predictions = [
+			'overuse of pop music',
+			'ariandas character is stupid to the point its frustrating',
+			'the wizard is "evil" for obviously flawed reasons',
+			'spits in the face of the original',
+			'completely misses the point of the original',
+			'STARPOWER (way too many mainstream celeberties)',
+			'aweful cgi',
+			'characters "enchanted" by some mundane cgi',
+			'theres a twist "villian"',
+			'the trailer gave away the whole movie',
+			'ariandas character is conveniantly contrived',
+			'the main character is just "misunderstood"',
+			'ends with the witch being "evil" and outcasted to attempt to stay canon',
+			'no blood or injuries (outside something mundane like a paper cut)',
+			'some bully gets a spell casted on them which emberasses them',
+			'THERES A MONSTER IN THE HALLS',
+			'harry potter reference',
+			'wilhelm scream',
+			'some clieche song plays when the main character decides to be herself',
+			'movie is extremely pc',
+			'a reference to an lgtb character but only enough it doesnt piss off the right',
+			'"magic is dangerous, you cant abuse it!"',
+			'a dumb betrayal',
+			'movie ends with the witch looking up at the camera grinning (vine boom)',
+			'ip crossover'
+		];
+
+		let preds = predictions;
+
+		while (preds.length >= 1) {
+			let item = d.createElement('div');
+			item.style.width = 'auto';
+
+			let rng = Math.floor(Math.random() * preds.length);
+
+			let str = preds[rng];
+			item.innerText = str;
+			preds.splice(rng, 1);
+
+			item.addEventListener('click', ((e) => {
+				if (item.style.background == '#440000ff') {
+					console.log('making trans')
+					item.style.backgroundColor = '#00000000';
+				}
+				else {
+					console.log('making red')
+					item.style.backgroundColor = '#440000ff';
+				}
+			}))
+
+			bc.appendChild(item);
+		}
+	</script>
+</body>
+
+</html>
