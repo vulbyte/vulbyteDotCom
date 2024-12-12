@@ -2,7 +2,7 @@
 //	imports
 //############################################################ imports {{{1
 console.info("url:", document.location.href);
-import { Navbar } from '/elements/navbar.js';
+import { Navbar } from './elements/navbar.js';
 // http://127.0.0.1:9999/tests/styles_proper
 
 
