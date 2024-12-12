@@ -2,7 +2,7 @@
 //	imports
 //############################################################ imports {{{1
 console.info("url:", document.location.href);
-import { Navbar } from '../elements/navbar.js';
+import { Navbar } from '/elements/navbar.js';
 // http://127.0.0.1:9999/tests/styles_proper
 
 
@@ -121,7 +121,7 @@ catch (err) {
 //{{{2 add navbar
 try {
 	//navbar if no navbar present
-	console.log(`d.gebcn("nb"): `, document.getElementsByClassName('navbar').length);
+	console.log(`d.getElementByClassName("navbar"): `, document.getElementsByClassName('navbar').length);
 	if (document.getElementsByClassName('navbar').length <= 1) {
 		Navbar();
 	}
