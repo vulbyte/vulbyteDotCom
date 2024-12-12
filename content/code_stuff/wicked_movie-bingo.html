@@ -14,10 +14,12 @@
 
 	<div id='bingo_container' style='
 			display:grid; 
-			width:100hw; 
 			max-width:40rem; 
 			font-size:16px; 
-			grid-template-columns: repeat(5, 1fr);'>
+			grid-template-columns: repeat(5, 1fr);
+			width:100hw; 
+			margin:auto;
+'>
 	</div>
 	<script>
 		let d = document;
@@ -55,16 +57,19 @@
 
 		while (preds.length >= 1) {
 			let item = d.createElement('div');
-			item.style.width = '95%';
+
 			item.style.border = 'var(--border)';
-			item.style.height = '0';
-			item.style.position = 'relative';
-			//item.style.padding = '0.3rem';
-			item.style.paddingBottom = '100%';
-			item.style.userSelect = 'none';
 			item.style.fontSize = '12px';
+			item.style.height = '0';
 			item.style.overflowX = 'none';
 			item.style.overflowY = 'scroll';
+			//item.style.padding = '0.3rem';
+			item.style.paddingBottom = '100%';
+			item.style.position = 'relative';
+			item.style.transitionDuration = '50ms';
+			item.style.transitionTimingFunction = 'linear';
+			item.style.userSelect = 'none';
+			item.style.width = '95%';
 
 
 			let rng = Math.floor(Math.random() * preds.length);

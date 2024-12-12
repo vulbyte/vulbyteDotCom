@@ -50,7 +50,7 @@
 
 * {
 	/*background-color: var(--color_background_primary);*/
-	border-radius: 1em;
+	/*border-radius: 1em;*/
 	color: var(--color_font_primary);
 	font-family: 'helvetica', 'arial';
 	padding: 0;
@@ -824,3 +824,4 @@ ul>li:nth-child(even)::marker {
 	video {}
 
 	wbr {}
+}

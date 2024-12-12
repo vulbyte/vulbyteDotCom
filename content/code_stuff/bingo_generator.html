@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Bingo Generator | Vulbyte </title>
+	<script type='module' src='/client_management.js'></script>
+</head>
+
+<body style=''>
+	<div id='' style='
+	background-color: var(--color_primary);
+	bottom: 0px;
+	border-radius: 0px;
+	overflow-x:clip;
+	position:absolute;
+	width:100%;
+'>
+		<div style='
+			display:grid; grid-template-columns: repeat(auto-fill, minmax(15em, 1fr));
+			margin: auto;
+			padding:1em;
+			width:90%;
+		'>
+			<div id='toolbar' style='background-color:red;'>
+				<!-- {{{1 drop listener -->
+				<label>if you have a file drop it here:
+				</label><input type='file' accpet='.json' id='file_input'>
+				<script type='module'>
+					try {
+						document.addEventListener('drop', ((e) => {
+							console.log('file received');
+
+						}));
+						console.log('file listener added');
+					}
+					catch (err) {console.log(err)}
+				</script>
+				<!-- }}}1 -->
+			</div>
+			<div style='background-color:green;'>
+				<button style=''>load config</button><br>
+				<button style=''>save config</button>
+			</div>
+			<div style='background-color:blue'>
+				<button style=''> 🎲 generate bingo 🎲 </button><br>
+				<div style='align-items:center; background-color:var(--color_background_primary); margin:auto;'>
+					<output style='
+						align-items:center;
+						border: none;
+						min-height:0px;
+						max-height: 100%;
+						margin:auto; 
+						padding:0.8em;
+						word-break:none;
+					'>
+						nothing yet, do something!
+					</output>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<h1>Bingo Generator</h1>
+	<div id='bingo_container'> add some stuff to make a bingo :3</div>
+</body>
+
+
+<!-- {{{1 generate bingo sheet -->
+<script>
+	// example of filtering based on amount:
+	let gridConfig = {
+		freeSpaceEnabled: true,
+		freeSpaceLocation: center,
+		gridX: 5,
+		gridY: 5,
+		gridSpaces: function CalcGridSpaces() {return (gridX * gridY)},
+	}
+
+	/**
+	* @return {string} returns a string if valid input, undefined if invalid
+	*/
+	function AmountMessage(arr) {
+
+		if (arr !== Array) {return (undefined);}
+
+		if (arr < 25) {return ('too little items, items will be douplicated');}
+		else if (arr = 24) {return ('perfect amount with free space');}
+		else if (arr = 25) {return ('perfect amount with no free space');}
+		else {return ('arr has too many items,\n card will be missing some items')}
+	}
+
+	let d = document;
+	let bc = d.getElementById('bingo_container');
+
+	let predictions = [];
+
+	let preds = predictions;
+
+	while (preds.length >= 1) {
+		let item = d.createElement('div');
+
+		item.style.border = 'var(--border)';
+		item.style.fontSize = '12px';
+		item.style.height = '0';
+		item.style.overflowX = 'none';
+		item.style.overflowY = 'scroll';
+		//item.style.padding = '0.3rem';
+		item.style.paddingBottom = '100%';
+		item.style.position = 'relative';
+		item.style.transitionDuration = '50ms';
+		item.style.transitionTimingFunction = 'linear';
+		item.style.userSelect = 'none';
+		item.style.width = '95%';
+
+
+		let rng = Math.floor(Math.random() * preds.length);
+
+		let str = preds[rng];
+		item.innerText = str;
+		preds.splice(rng, 1);
+
+
+		item.addEventListener('click', ((e) => {
+			console.log(
+				item.style.backgroundColor, '\n',
+				String(item.style.backgroundColor) == 'rgb(68, 0, 0)'
+			)
+
+			if (String(item.style.backgroundColor) == 'rgb(68, 0, 0)') {
+				console.log('making black')
+				item.style.backgroundColor = '#000000';
+			}
+			else {
+				console.log('making red')
+				item.style.backgroundColor = '#440000';
+			}
+		}))
+
+		bc.appendChild(item);
+	}
+</script>
+<!-- }}}1 -->
+
+</html>
