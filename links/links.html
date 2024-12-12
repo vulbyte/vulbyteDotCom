@@ -160,7 +160,7 @@
 					margin-top: 1em;
 					padding: 0.5em;
 					padding-top: 1em;
-					vertical-align: center;
+					justify-content: space-evenly vertical-align: middle;
 					width: 80%;
 					max-width: 30em;
 				}
@@ -169,25 +169,27 @@
 					background-color: transparent;
 					font-size: 1.5em;
 					height: 100;
-					margin: auto;
-					text-align: center;
+					text-align: right;
 					text-shadow: none;
-					vertical-align: center;
+					vertical-align: middle;
 					word-wrap: none;
 					word-break: keep-all;
 				}
 
 				#contact_container>a>div>.icon_container {
 					aspect-ratio: 1/1;
+					align-items: left;
+					align-content: left;
+					text-align: left;
 					margin: auto;
 					max-height: 80%;
-					max-width: 80%;
+					max-width: 50%;
 				}
 
 				#contact_container>a>div>.icon_container>img {
-					aspect-ratio: auto;
-					max-height: 100%;
-					max-width: 100%;
+					aspect-ratio: 1/1;
+					/*max-height: 100%;
+					max-width: 100%;*/
 				}
 			</style>
 			<h2>contact links</h2>
@@ -445,6 +447,12 @@
 
 		let icon = document.createElement('img');
 		icon.src = elem.icon;
+		icon.height = "128";
+		icon.width = "128";
+		icon.style.aspectRatio = "1/1"
+		icon.style.height = "100%";
+		//icon.style.width = 'auto';
+		//icon.style.weight = "0%";
 		icon_container.appendChild(icon);
 
 		let title = document.createElement('h3');
