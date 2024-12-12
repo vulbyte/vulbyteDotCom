@@ -124,7 +124,11 @@ try {
 	console.log("trying to load navbar")
 	if (document.getElementsByClassName('navbar').length <= 1) {
 		console.log('no navbar yet');
-		Navbar();
+		try {
+			Navbar();
+		} catch (err) {
+			console.log("error adding navbar: ", err);
+		}
 	}
 	else {
 		console.warn("navbar detected, not adding");

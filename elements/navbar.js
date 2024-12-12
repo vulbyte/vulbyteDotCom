@@ -1,60 +1,58 @@
 export function Navbar() {
-	let spacer = document.createElement('div');
-	spacer.style.height = '0px';
-	let spacer_height_target = "120px";
-	let spacer_height_increment = 10;
+	try {
+		console.log("adding navbar styling");
+		let head = document.getElementsByTagName("head");
 
-	async function add_to_spacer_height() {
-		while (parseInt(spacer.style.height, 10) < spacer_height_target) {
-			// Use a promise to delay the loop
-			await new Promise(resolve => setTimeout(resolve, 100));
+		let navbar_style = document.createElement("link");
+		navbar_style.rel = "stylesheet"; //stylesheet?
+		navbar_style.href = "/elements/navbar.css"
 
-			// Increase the spacer height
-			let currentHeight = parseInt(spacer.style.height, 10); // Convert "50px" to 50
-			spacer.style.height = currentHeight + spacer_height_increment + "px";
+		head[0].appendChild(navbar_style);
 
-			console.log("Adding height to spacer: ", spacer.style.height);
-		}
+		console.log("added navbar.css");
 	}
+	catch (err) {
+		console.warn("error adding navbar_style: ", err);
+	}
+	try {
+		console.log("adding navbar");
+		let spacer = document.createElement('div');
+		spacer.id = "spacer"
+		//spacer.style.height = '0px';
+		//let spacer_height_target = "120px";
+		//let spacer_height_increment = 10;
+
+		/*async function add_to_spacer_height() {
+			while (parseInt(spacer.style.height, 10) < spacer_height_target) {
+				// Use a promise to delay the loop
+				await new Promise(resolve => setTimeout(resolve, 200));
+
+				// Increase the spacer height
+				let currentHeight = parseInt(spacer.style.height, 10); // Convert "50px" to 50
+				spacer.style.height = currentHeight + spacer_height_increment + "px";
+
+				console.log("Adding height to spacer: ", spacer.style.height);
+			}
+		}*/
 
 
-	window.addEventListener('load', function() {
-		try {
-			let head = document.getElementsByTagName("head");
-
-			let navbar_style = document.createElement("link");
-			navbar_style.rel = "stylesheet"; //stylesheet?
-			navbar_style.href = "/elements/navbar.css"
-
-			head[0].appendChild(navbar_style);
-
-			console.log("added navbar.css");
-		}
-		catch (err) {
-			console.warn("error adding navbar_style: ", err);
-		}
-
+		window.addEventListener('load', function() { })
 		//navbar Element
 		let navbar = document.createElement('navbar');
 		//navbar.textContent = "⑤navbar navbar navbar";
 		navbar.classList += "navbar";
-		navbar.style.opacity = "0.0";
 
 		let home_anchor = document.createElement('a');
+		home_anchor.id = "home_anchor";
+
 		home_anchor.href = "/";
 		home_anchor.target = "";
-		home_anchor.style = "background-color: var(--color_background_primary); padding: 0.2em; text-decoration: none;";
 		navbar.appendChild(home_anchor);
-		home_anchor.style.borderRight = '6px solid var(--color_secondary)';
-
-		//let home_bg = document.createElement('span');
-		//home_bg.style.zIndex = `${(home_anchor.style.zIndex) - 1}`
-		//home_bg.style.width = `${(home_anchor.getBoundingClientRect().width)}px`
-		//home_bg.style.backgroundColor = `var(--color_secondary)`
-		//home_bg.style.width = '5em';
-		//home_anchor.appendChild(home_bg);
 
 		let home_logo = document.createElement('img');
+		home_logo.id = "home_logo";
+		home_logo.height = "256";
+		home_logo.width = "256";
 		//the link here is relivant to the html file or the project core, NOT this file
 		//console.log("navbar ROOT_DIR: ", localStorage.getItem("ROOT_DIR"));
 
@@ -69,8 +67,6 @@ export function Navbar() {
 			home_logo.src = `https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/0b0fcb64b46a2665d622ce094517332ab6b6cb7f/assets/dev_icon.svg`;
 		}
 
-
-		home_logo.style = 'max-width: 4.2em; max-height: 4.2em; display:flex; flex-direction:column;'
 		home_anchor.appendChild(home_logo);
 
 		let random_strings = [
@@ -121,13 +117,22 @@ export function Navbar() {
 			`random_website_title`,
 			'now with 100% more ai!',
 			`shutup i'm listening to cheerleeder`,
+			`eat the soap :3 (don't)`,
 			`currently chasing a dog down the road`,
 			`macbook in da carr`,
 			`The Boy Bands Have Won, and All the Copyists and the Tribute Bands and the TV Talent Show Producers Have Won, If We Allow Our Culture to Be Shaped by Mimicry, Whether from Lack of Ideas or from Exaggerated Respect. You Should Never Try to Freeze Culture. What You Can Do Is Recycle That Culture. Take Your Older Brother's Hand - Me - Down Jacket and Re - Style It, Re - Fashion It to the Point Where It Becomes Your Own.But Don't Just Regurgitate Creative History, or Hold Art and Music and Literature as Fixed, Untouchable and Kept Under Glass. The People Who Try to 'Guard' Any Particular Form of Music Are, Like the Copyists and Manufactured Bands, Doing It the Worst Disservice, Because the Only Thing That You Can Do to Music That Will Damage It Is Not Change It, Not Make It Your Own. Because Then It Dies, Then It's Over, Then It's Done, and the Boy Bands Have Won`,
 		]
 
 		let home_string = document.createElement('span');
+		home_string.id = "home_string";
 		home_string.innerText = random_strings[Math.floor(Math.random() * random_strings.length)];
+		// below is for testing the worst case scenerio
+		//home_string.innerText = random_strings[random_strings.length - 1];
+		let len = home_string.innerText.length;
+		//console.log("🏠:", len);
+		let default_font_size = 16;
+		home_string.style.fontSize = ((Math.abs((len / 900) - 1)) * 12) + 4 + "px";
+
 		home_anchor.appendChild(home_string);
 
 
@@ -145,15 +150,10 @@ export function Navbar() {
 
 		Object.keys(locations).forEach((l) => {
 			let newElem = document.createElement('a');
+			newElem.id = "navbar_dropdown_link"
 
 			newElem.innerText = l;
 			newElem.href = "/" + l + "/" + l + ".html";
-			newElem.style.cursor = "pointer";
-			newElem.style.alignItems = "center";
-			newElem.style.display = "flex";
-			newElem.style.height = "6em";
-			newElem.style.textAlign = "center";
-			newElem.style.justifyContent = "center";
 
 			// switch for different specalties
 			switch (l) {
@@ -199,16 +199,13 @@ export function Navbar() {
 		//}), 500);
 		console.log("navbar height: ", navbar.getBoundingClientRect().height);
 		spacer.id = "spacer_for_header";
-		spacer_height_target = `${navbar.getBoundingClientRect().height}px`;
-		document.getElementsByTagName('body')[0].insertAdjacentElement("afterbegin", spacer);
-
-		console.log("navbar load done, animating in");
-
-		navbar.style.transitionDuration += "2000";
-		navbar.style.opacity = "1";
-
 
 		spacer.style.height = navbar.getBoundingClientRect().height + "px";
 
-	});
+		console.log("navbar added");
+
+	}
+	catch (err) {
+		console.error('cannot add navbar:', err);
+	}
 }

@@ -7,6 +7,41 @@
 	transform: translateY(5rem);
 }
 
-navbar>a:has(ul):hover #content_dropdown {
+#spacer {
+	/*height: 0px;*/
+	height: 120px;
+	background-color: transparent;
+	color: transparent;
+}
+
+.navbar {
+	filter: opacity(1);
+}
+
+#home_anchor {
+	background-color: var(--color_background_primary);
+	padding: 0.2em;
+	text-decoration: none;
+	border-right: 6px solid var(--color_secondary);
+	max-width: 16em;
+	display: flex;
+	flex-direction: column;
+}
+
+#home_logo {
+	max-width: 4.2em;
+	max-height: 4.2em;
+}
+
+#navbar_dropdown_link {
+	cursor: pointer;
+	align-items: center;
+	display: flex;
+	height: 6em;
+	text-align: center;
+	justify-content: center;
+}
+
+.navbar>a:has(ul):hover #content_dropdown {
 	filter: opacity(1);
 }
