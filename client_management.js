@@ -121,8 +121,9 @@ catch (err) {
 //{{{2 add navbar
 try {
 	//navbar if no navbar present
-	console.log(`d.getElementByClassName("navbar"): `, document.getElementsByClassName('navbar').length);
+	console.log("trying to load navbar")
 	if (document.getElementsByClassName('navbar').length <= 1) {
+		console.log('no navbar yet');
 		Navbar();
 	}
 	else {
