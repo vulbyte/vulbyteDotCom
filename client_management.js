@@ -60,7 +60,7 @@ function Navbar() {
 		let head = document.getElementsByTagName("head");
 
 		let navbar_style = document.createElement("link");
-		navbar_style.rel = "stylesheet"; //stylesheet?
+		navbar_style.rel = "stylesheet";
 		navbar_style.href = "/elements/navbar.css"
 
 		head[0].appendChild(navbar_style);
@@ -71,12 +71,12 @@ function Navbar() {
 		console.warn("error adding navbar_style: ", err);
 	}
 	try {
-		console.log("adding navbar");
+		console.log("adding spacer");
 		let spacer = document.createElement('div');
 		spacer.id = "spacer"
-		//spacer.style.height = '0px';
-		//let spacer_height_target = "120px";
-		//let spacer_height_increment = 10;
+		spacer.style.height = '0px';
+		let spacer_height_target = "120px";
+		let spacer_height_increment = 10;
 
 		/*async function add_to_spacer_height() {
 			while (parseInt(spacer.style.height, 10) < spacer_height_target) {
@@ -91,7 +91,13 @@ function Navbar() {
 			}
 		}*/
 
+		document.getElementsByTagName("body")[0].prepend(spacer);
+	} catch (err) {
+		console.error('cannot add spacer', err);
+	}
 
+
+	try {
 		window.addEventListener('load', function() { })
 		//navbar Element
 		let navbar = document.createElement('navbar');
@@ -253,7 +259,7 @@ function Navbar() {
 		//setTimeout((() => {
 		//}), 500);
 		console.log("navbar height: ", navbar.getBoundingClientRect().height);
-		spacer.id = "spacer_for_header";
+		let spacer = document.getElementById("spacer");
 
 		spacer.style.height = navbar.getBoundingClientRect().height + "px";
 

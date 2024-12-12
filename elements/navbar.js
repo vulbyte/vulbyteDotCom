@@ -1,3 +1,5 @@
+// DUE TO SAFARI THIS SCRIPT HAS BEEN MERGED WITH /client_management.js
+
 export function Navbar() {
 	try {
 		console.log("adding navbar styling");
