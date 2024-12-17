@@ -1,4 +1,4 @@
-//############################################################ 
+//############################################################
 //	imports
 //############################################################ imports {{{1
 console.info("url:", document.location.href);
@@ -10,22 +10,6 @@ console.info("url:", document.location.href);
 //	var(s)
 //############################################################ global_vars {{{1
 let timeout = 0;
-let favicon_links = [
-	//red
-	'https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/87deeda52a94496a53f0cbb26e17862dc6548b53/assets/icon_red.svg',
-	//yellow
-	'https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/87deeda52a94496a53f0cbb26e17862dc6548b53/assets/icon_yellow.svg',
-	//green
-	'https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/87deeda52a94496a53f0cbb26e17862dc6548b53/assets/icon_green.svg',
-	//cyan
-	'https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/87deeda52a94496a53f0cbb26e17862dc6548b53/assets/icon_cyan.svg',
-	//blue
-	'https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/87deeda52a94496a53f0cbb26e17862dc6548b53/assets/icon_blue.svg',
-	//magenta
-	'https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/87deeda52a94496a53f0cbb26e17862dc6548b53/assets/icon_magenta.svg',
-	//white
-	'https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/87deeda52a94496a53f0cbb26e17862dc6548b53/assets/icon.svg',
-];
 
 //############################################################ 
 //	funciton(s)
@@ -371,8 +355,71 @@ catch {
 
 }
 //}}}2
-//{{{2 edit_favicon
-let animatible = false;
+//{{{2 see if images in storage, if not then load
+
+let favicon_links = [
+	'icon_red',
+	'icon_yellow',
+	'icon_green',
+	'icon_cyan',
+	'icon_blue',
+	'icon_magenta',
+	'icon',
+];
+
+(async () => {
+	try {
+		console.log('attempting to get icons from github');
+
+		for (let i = 0; i < favicon_links.length; ++i) {
+			try {
+				const url = `https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/87deeda52a94496a53f0cbb26e17862dc6548b53/assets/${favicon_links[i]}.svg`;
+
+				// Fetch the image
+				const response = await fetch(url);
+				if (!response.ok) {
+					throw new Error(`Failed to fetch ${url}: ${response.status}`);
+				}
+
+				// Convert to Blob and create a URL
+				const imageBlob = await response.blob();
+				const src = URL.createObjectURL(imageBlob);
+
+				// Set the Blob URL to favicon_links[i]
+				favicon_links[i] = src;
+
+				console.log(`Successfully set icon for ${favicon_links[i]}`);
+			} catch (err) {
+				console.error(`Couldn't get icon for ${favicon_links[i]}:`, err);
+			}
+		}
+
+		console.log('got icons from github');
+	} catch (err) {
+		console.error('failed to get icons, setting to default', err);
+		favicon_links = ['./assets/icon.svg']; // Reset to default
+	}
+})();
+
+// favicon_links = [
+//	//red
+//	'https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/87deeda52a94496a53f0cbb26e17862dc6548b53/assets/icon_red.svg',
+//	//yellow
+//	'https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/87deeda52a94496a53f0cbb26e17862dc6548b53/assets/icon_yellow.svg',
+//	//green
+//	'https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/87deeda52a94496a53f0cbb26e17862dc6548b53/assets/icon_green.svg',
+//	//cyan
+//	'https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/87deeda52a94496a53f0cbb26e17862dc6548b53/assets/icon_cyan.svg',
+//	//blue
+//	'https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/87deeda52a94496a53f0cbb26e17862dc6548b53/assets/icon_blue.svg',
+//	//magenta
+//	'https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/87deeda52a94496a53f0cbb26e17862dc6548b53/assets/icon_magenta.svg',
+//	//white
+//	'https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/87deeda52a94496a53f0cbb26e17862dc6548b53/assets/icon.svg',
+//];
+//}}}2
+//{{{2 determine if is animatible
+let animatible = true;
 try {
 	console.log('editing favicon');
 	let favicon_link = document.querySelector(`link[rel~='icon']`);
