@@ -39,6 +39,13 @@ async function ErrPopUp(txt = "there was an error!", err = "hey dipshit, your si
 }
 //{{{2 Navbar
 function Navbar() {
+	if (document.getElementsByClassName('navbar').length >= 1) {
+		console.log('no navbar yet');
+		return;
+	}
+
+	console.warn("navbar detected, not adding");
+
 	try {
 		console.log("adding navbar styling");
 		let head = document.getElementsByTagName("head");
@@ -256,6 +263,86 @@ function Navbar() {
 }
 //}}}2
 
+
+//{{{2 footer
+function Footer() {
+	try {
+		console.log('adding footer');
+		if (
+			document.getElementById('footer') >= 1 &&
+			document.getElementsByTagName('footer') <= 0
+		) {
+			console.log('footer already added, ignoring');
+		}
+
+		let f = document.createElement('footer');
+		f.style.backgroundColor = 'var(--color_secondary)';
+		f.style.bottom = '0px';
+		f.style.display = 'grid';
+		f.style.gridTemplateColumns = 'repeat(auto-fit, minmax(256px, 1fr))';
+		f.style.height = 'auto';
+		f.style.left = '0px';
+		f.style.paddingTop = '1.5em';
+		f.style.position = 'fixed';
+		f.style.width = '100%';
+
+		let f_h = document.createElement('h6');
+		f_h.innerText = 'Footer';
+		f.appendChild(f_h);
+
+		let about = document.createElement('div');
+		//about.innerText = 'about';
+		let a_h = document.createElement('h6');
+		//a_h.style.backgroundColor = 'transparent';
+		//a_h.style.color = 'var(--color_text_primary)';
+		a_h.innerText = 'about';
+		about.appendChild(a_h);
+		let a_text = document.createElement('p');
+		a_text.innerText = 'this is a website made by vulbyte to show off projects, network things, and offer some forms of transparency and what not. hope you enjoy :3'
+		about.appendChild(a_text);
+		f.appendChild(about);
+
+		let n = document.createElement('div');
+		//n.innerText = 'navigation';
+		let n_h = document.createElement('h6');
+		n_h.innerText = 'navigation';
+		n.appendChild(n_h);
+		let n_l = document.createElement('ul');
+		let footer_links = {
+			'content': '/content/content.html',
+			'links': '/links/links.html',
+			'policies': '/policies.html',
+			//'': '',
+		};
+		try {
+			console.log('adding nav items for footer');
+			for (let i = 0; i < Object.keys(footer_links).length; ++i) {
+				console.log('loop');
+				let a = document.createElement('a');
+				a.style.display = 'block';
+				a.innerText = Object.keys(footer_links)[i];
+				a.href = Object.values(footer_links)[i];
+				a.target = '_blank';
+				n_l.appendChild(a);
+			}
+			console.log('added nav items for footer');
+			n.appendChild(n_l);
+		}
+		catch (err) {
+			console.log('error adding nav items to footer: ', err);
+		}
+		f.appendChild(n);
+
+		document.body.appendChild(f);
+		console.log('🦶 footer added');
+	}
+	catch (err) {
+		console.log('error adding footer', err);
+	}
+}
+//}}}2
+
+
 //############################################################ 
 //	runtime
 //############################################################ runtime {{{1
@@ -323,26 +410,24 @@ catch (err) {
 //{{{2 add navbar
 try {
 	//navbar if no navbar present
-	console.log("trying to load navbar")
-	if (document.getElementsByClassName('navbar').length <= 1) {
-		console.log('no navbar yet');
-		try {
-			Navbar();
-		} catch (err) {
-			console.log("error adding navbar: ", err);
-		}
-	}
-	else {
-		console.warn("navbar detected, not adding");
-	}
+	console.log("trying to load navbar");
+	Navbar();
 }
 catch (err) {
 	console.error(err);
 	await ErrPopUp("error adding navbar", err);
-
 }
 //}}}2
-//{{{2 add darkreader disable
+//{{{2
+try {
+	console.log('trying to add footer');
+	Footer();
+}
+catch (err) {
+	console.log('error adding footer');
+}
+//}}}2
+//{{{2 add dark reader disable
 try {
 	console.log('darkreader disabled');
 	//<meta name="darkreader-lock">
