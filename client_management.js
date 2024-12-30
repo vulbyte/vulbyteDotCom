@@ -277,13 +277,14 @@ function Footer() {
 
 		let f = document.createElement('footer');
 		f.style.backgroundColor = 'var(--color_secondary)';
-		f.style.bottom = '0px';
+		//f.style.bottom = '0px';
 		f.style.display = 'grid';
 		f.style.gridTemplateColumns = 'repeat(auto-fit, minmax(256px, 1fr))';
 		f.style.height = 'auto';
-		f.style.left = '0px';
+		//f.style.left = '0px';
 		f.style.paddingTop = '1.5em';
-		f.style.position = 'fixed';
+		f.style.margin = 'auto';
+		//f.style.position = 'fixed';
 		f.style.width = '100%';
 
 		let f_h = document.createElement('h6');
@@ -333,7 +334,7 @@ function Footer() {
 		}
 		f.appendChild(n);
 
-		document.body.appendChild(f);
+		document.body.insertAdjacentHTML('afterend', f.outerHTML);
 		console.log('🦶 footer added');
 	}
 	catch (err) {
