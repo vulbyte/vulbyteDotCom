@@ -45,7 +45,14 @@ document.getElementById('page_num').addEventListener('change', async () => {
 
 document.getElementById('sort_trigger').addEventListener('click', () => {
 	let type = document.getElementById('sort_selection').value;
+	let st, et
+
+	st = new Date();
 	SortList(type);
+	et = new Date();
+
+	document.getElementById('sort_time').innerText = (et.getTime() - st.getTime()) + 'ms';
+
 })
 
 //############################################################
@@ -73,6 +80,9 @@ function GenerateList() {
 	list = [];
 
 	let amount = document.getElementById('list_length').value;
+	if (amount == 0 || amount == null || amount == undefined) {
+		amount = document.getElementById('list_length').placeholder;
+	}
 
 	if (amount == undefined || amount == null) {
 		amount = document.getElmentById('list_length').placeholder
@@ -279,8 +289,13 @@ export async function UpdateCanvas(args = { 'list': list, 'index': 0 }) {
 			for (let i = 0; i < args.list.length; ++i) {
 				console.log('rendering item to list');
 
-				let fill_color = '#ffffff';
-
+				let fill_color = `rgb(` +
+					`${parseInt(String((list[i])) * 255)}` + ` ` +
+					`${parseInt(String((list[i])) * 255) - 255}` + ` ` +
+					`255` + ` ` +
+					//`${ parseInt(String((list[i] * height) - height * -1), 8) } ` +
+					`)`;
+				console.log('fill color: ', fill_color);
 				if (i == args.index) {
 					fill_color = '#ff00ff'
 				}
