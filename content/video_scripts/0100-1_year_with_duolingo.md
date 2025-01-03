@@ -2,27 +2,47 @@
 
 ## skit
 so i-
+
 > door bursts open 
 > duo: appears
 > duo: "order a coffee two cream one sugar"
+
 "i ughh, 
+
 Por favor un taza de cafe, dos liche con una azucair?"
+
 > duo: stares
+
 "uhmm... gracias..?"
+
 > duo: "ask where the universities library is"
+
 "uhmm, donde esta universidads bibleotecha?"
+
 > duo: stares
+
 "is tha-"
+
 > duo: "how is your brother doing?"
+
 "they-"
+
 > duo: "in spanish"
+
 "is that really nessisary?"
+
 > duo: "92"
+
 "... what?"
+
 > duo: "92"
+
 "... 93?"
+
 > duo: "the first 2 digits of your ip address"
+
 "mi hermano es bien"
+
 > duo: recedes
 
 ## intro
