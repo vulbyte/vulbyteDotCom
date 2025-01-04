@@ -142,12 +142,12 @@
 
 				container.addEventListener('click', (e) => {
 					console.log('click event happend');
-					if (document.getElementById(`bingo_tile${i}`).style.backgroundColor != 'white') {
-						document.getElementById(`bingo_tile${i}`).style.backgroundColor = 'white';
+					if (document.getElementById(`bingo_tile${i}`) == tranparent) {
+						document.getElementById(`bingo_tile${i}`).style.background = 'white';
 						document.getElementById(`bingo_tile${i}`).style.color = 'black';
 					}
 					else {
-						document.getElementById(`bingo_tile${i}`).style.backgroundColor = 'transparent';
+						document.getElementById(`bingo_tile${i}`).style.background = 'transparent';
 						document.getElementById(`bingo_tile${i}`).style.color = 'white';
 					}
 				});

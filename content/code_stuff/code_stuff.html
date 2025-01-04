@@ -20,7 +20,7 @@
 			"bingo_generator",
 			"i_dont_want_sex",
 			"rng_list",
-			"stack_overflow_ai",
+			"stack_overflow_AI",
 			"time_calculator",
 			'wicked_movie-bingo',
 		];
@@ -32,7 +32,13 @@
 			let link = document.createElement("a");
 
 			link.href = "./" + v + ".html";
-			link.innerText = v;
+
+			if (v == "stack_overflow_AI") {
+				link.innerText = v + ' (vc money please)';
+			}
+			else {
+				link.innerText = v;
+			}
 
 			newElem.appendChild(link);
 			links.appendChild(newElem);
