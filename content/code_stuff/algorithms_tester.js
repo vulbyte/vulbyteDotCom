@@ -203,6 +203,7 @@ function CreateCanvas(args = { 'list': list, 'index': 0 }) {
 	canvas_container.style.transform = 'translate(0)';
 	canvas_container.style.display = 'flex';
 	canvas_container.style.justifyContent = 'center';
+	canvas_container.style.zIndex = '1000';
 	//canvas_container.style.animationDuration = '180ms';
 	//canvas_container.style.animationTimingFuncation = 'ease';
 
@@ -217,21 +218,23 @@ function CreateCanvas(args = { 'list': list, 'index': 0 }) {
 	canvas.style.width = '100vw';
 	canvas.style.border = 'none';
 	canvas.style.borderRadius = '1rem';
+	canvas.style.zIndex = '1000';
 	canvas.style.backgroundColor = '#000000';
 	canvas_container.appendChild(canvas);
 
 
 	let canvas_toggle = document.createElement('button');
-	canvas_toggle.innerText = '🔀';
+	canvas_toggle.innerText = '🔀 toggle graph visibility';
+	canvas_toggle.style.color = 'white';
 	canvas_toggle.id = 'ct';
 	canvas_toggle.style.backgroundColor = 'var(--color_primary)';
 	canvas_toggle.style.position = 'fixed';
 	canvas_toggle.style.transform = 'translateY(-4rem)';
 	canvas_toggle.style.height = '3rem';
-	canvas_toggle.style.width = '3rem';
 	canvas_toggle.style.zIndex = '999';
 	canvas_toggle.style.bottom = '-5rem';
 	canvas_toggle.style.left = '0';
+	canvas_toggle.style.zIndex = '1001';
 
 	document.body.appendChild(canvas_toggle);
 	document.body.appendChild(canvas_container);

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html>algo
 <html lang="en">
 
 <head>
@@ -8,7 +8,11 @@
 	<title> vulbyte | algorithms tester </title>
 </head>
 
-<body>
+<body style="
+	width:80%;
+	min-width:12rem;
+max-width:80rem;
+">
 	<h1>algorithm tester</h1>
 	<p>
 		this is just a quick little thing i made to test and benchmark algorithms.
@@ -35,7 +39,12 @@
 	<details>
 		<summary>METHODOLOGY</summary>
 		<ul>
-			<li></li>
+			<li>test is single threaded [for now...]</li>
+			<li>test uses a promise</li>
+			<li>test has basic saftey guards to prevent bricking ones device</li>
+			<li>all tests are local</li>
+			<li>some minor side processing is also happening for the colors and what not [however tha tis a consistent
+				workload]</li>
 		</ul>
 	</details>
 	</p>
@@ -45,7 +54,9 @@
 		<label style='display:inline;'>how many items would you like in the list:</label>
 		<input id='list_length' type='' placeholder='1000' min='1' max='1000000'></input>
 		<button id='generate_button'>click to generate list</button>
-		<output id='gen_duration'>...ms</output>
+		<div style="margin-top:1em; margin-bottom:2em;">
+			<output id='gen_duration' style="">...ms</output>
+		</div>
 
 		<details>
 			<summary>click here to view list</summary><br>
@@ -67,29 +78,47 @@
 					<label id='page_display'>page #/0:</label><input id='page_num' type='number' placeholder='1' min='1'></input>
 				</div>
 				<div>
+					<!-- BUG: this isn't working -->
 					<label>items / page:</label><input id='page_amnt' type='number' placeholder='1000'></input>
 				</div>
 			</div>
 		</details>
 	</div>
 
-	<div>
-		<h2>sort list (optional, depending)</h2>
-		<label>Choose a searching Algorithm</label>
-		<select id='sort_selection'>
-			<option>bubble sort</option>
-		</select>
-		<output id='sort_time'>...ms</output>
-		<button id='sort_trigger'> click to sort list </button>
-	</div>
+	<div style="
+		display:grid;
+		grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+justify-content: space-arouund;
+gap:3em;
+	">
+		<div>
+			<h2>sort list (optional, depending)</h2>
+			<label>Choose a searching Algorithm</label>
+			<select id='sort_selection'>
+				<option>bubble sort</option>
+			</select>
+			<div style="margin-top:1em; margin-bottom:2em;">
+				<output id='sort_time'>...ms</output>
+			</div>
+			<button id='sort_trigger'> click to sort list </button>
+		</div>
 
-	<div>
-		<h2>find within list</h2>
-		<label>Choose a searching Algorithm</label>
-		<select>
-			<option>linear search in for loop </option>
-			<option>linear search in forEach loop</option>
-		</select>
+		<!--<div style="
+	background-color:white;
+	width: 0.3em !important;
+	height: 100%;
+	margin-left: 1em;
+	margin-right: 1em
+"></div>-->
+
+		<div>
+			<h2>find within list</h2>
+			<label>Choose a searching Algorithm</label>
+			<select>
+				<option>linear search in for loop </option>
+				<option>linear search in forEach loop</option>
+			</select>
+		</div>
 	</div>
 </body>
 <script type='module' src='./algorithms_tester.js'></script>
