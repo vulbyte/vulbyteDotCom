@@ -148,6 +148,7 @@ export function Navbar() {
 		let locations = {
 			"content": '/content/content.html',
 			"links": '/links/links.html',
+			"account": "/account/page.html",
 		};
 
 		Object.keys(locations).forEach((l) => {
