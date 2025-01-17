@@ -199,6 +199,7 @@ function Navbar() {
 		let locations = {
 			"content": '/content/content.html',
 			"links": '/links/links.html',
+			"support": '/support/support.html',
 			"account": '/account/page.html',
 		};
 
