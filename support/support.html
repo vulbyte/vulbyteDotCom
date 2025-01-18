@@ -195,6 +195,7 @@
 					'perks': {
 						'https://svgl.app/library/discord.svg': `custom role for the discord server! (no exlusive channels tho, i don't think those are cool-)`,
 						'/assets/headshot_doodle.png': `at the end of each video and stream, you'll get a little black and white doodle headshot of your guy/gal/other!`,
+						'/assets/nope.svg': `no nsfw stuff! suggestive is fine as long as it's youtube safe! \nsubstitution might be available tho so reach out!`,
 						'/assets/attribution.svg': `in the supporters -> "coffee tier supporters" section of the video: 3(opt out available)`,
 						'/assets/stream.svg': `you'll have access to the supporters exclusive art stream (unlisted yt video)`,
 						'/assets/the_archive.svg': `access to 'the archive', a place where you can download or stream all the videos and streams that have happened before! in the highest quality possible of course`
@@ -210,6 +211,7 @@
 					'perks': {
 						'/assets/plus.svg': 'all previous rewards! plus also...',
 						'/assets/headshot_flats.png': `at the end of each video and stream, you'll get a colored bust of your character of choice (oc's included :3)`,
+						'/assets/nope.svg': `no nsfw stuff! suggestive is fine as long as it's youtube safe! \nsubstitution might be available tho so reach out!`,
 						'/assets/attribution_plus.svg': `aswell as you'll now be in the supporters -> "cheese tier supporters" section of the of the video :3 (opt out available)`
 					},
 					'join': 'link',
@@ -223,6 +225,7 @@
 					'perks': {
 						'/assets/plusplus.svg': 'all previous rewards! plus plus...',
 						'/assets/headshot_shaded.png': `at the end of each video and stream, you'll get a shaded bust of your character of choice (oc's included :3)!`,
+						'/assets/nope.svg': `no nsfw stuff! suggestive is fine as long as it's youtube safe! \nsubstitution might be available tho so reach out!`,
 						'/assets/attribution_plusplus.svg': `aswell as you'll now be in the supporters -> "crab tier supporters" producers section of the of the video :3 (opt out available)`,
 					},
 					'join': 'link',
@@ -310,7 +313,6 @@
 				//perks.appendChild(flav);
 
 				let perk_list = tiers[i].perks;
-				console.log(perk_list.length);
 				for (let j = 0; j < Object.keys(perk_list).length; ++j) {
 					console.log('j loop')
 					let perk = document.createElement('li');
