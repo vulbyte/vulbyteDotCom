@@ -69,7 +69,7 @@ function Navbar() {
 		let spacer_height_target = "120px";
 		let spacer_height_increment = 10;
 
-		/*async function add_to_spacer_height() {
+		/*async function add_to_spacer_height()
 			while (parseInt(spacer.style.height, 10) < spacer_height_target) {
 				// Use a promise to delay the loop
 				await new Promise(resolve => setTimeout(resolve, 200));
@@ -95,17 +95,23 @@ function Navbar() {
 		//navbar.textContent = "⑤navbar navbar navbar";
 		navbar.classList += "navbar";
 
+		let icon_container = document.createElement('div');;
+		icon_container.id = 'navbar_icon_container';
+
 		let home_anchor = document.createElement('a');
 		home_anchor.id = "home_anchor";
 
 		home_anchor.href = "/";
 		home_anchor.target = "";
-		navbar.appendChild(home_anchor);
+		icon_container.appendChild(home_anchor);
+		navbar.appendChild(icon_container);
 
+		let home_logo_div = document.createElement('div');;
 		let home_logo = document.createElement('img');
 		home_logo.id = "home_logo";
 		home_logo.height = "256";
 		home_logo.width = "256";
+		home_logo.style.margin = 'auto';
 		//the link here is relivant to the html file or the project core, NOT this file
 		//console.log("navbar ROOT_DIR: ", localStorage.getItem("ROOT_DIR"));
 
@@ -120,7 +126,12 @@ function Navbar() {
 			home_logo.src = `https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/0b0fcb64b46a2665d622ce094517332ab6b6cb7f/assets/dev_icon.svg`;
 		}
 
-		home_anchor.appendChild(home_logo);
+		home_logo_div.style.margin = 'auto';
+		home_logo_div.style.alignContent = 'center';
+		home_logo_div.style.alignItems = 'center';
+		home_logo_div.style.textAlign = 'center';
+		home_logo_div.appendChild(home_logo);
+		home_anchor.appendChild(home_logo_div);
 
 		let random_strings = [
 			'fuck you, you got an rng of 0', //make something special
@@ -168,7 +179,7 @@ function Navbar() {
 			`while(1<2)`,
 			'some_title',
 			`random_website_title`,
-			'now with 100% more ai!',
+			'now with 100% more ai! (100% more of 0 is 0)',
 			`shutup i'm listening to cheerleeder`,
 			`eat the soap :3 (don't)`,
 			`currently chasing a dog down the road`,
@@ -179,6 +190,9 @@ function Navbar() {
 		let home_string = document.createElement('span');
 		home_string.id = "home_string";
 		home_string.innerText = random_strings[Math.floor(Math.random() * random_strings.length)];
+		home_string.style.display = 'block';
+		home_string.style.margin = 'auto';
+		home_string.style.padding = '0px';
 		// below is for testing the worst case scenerio
 		//home_string.innerText = random_strings[random_strings.length - 1];
 		let len = home_string.innerText.length;
@@ -187,6 +201,15 @@ function Navbar() {
 		home_string.style.fontSize = ((Math.abs((len / 900) - 1)) * 12) + 4 + "px";
 
 		home_anchor.appendChild(home_string);
+
+		let support_link = document.createElement('a');
+		support_link.innerText = 'support me :3';
+		support_link.href = '/support.html'
+		support_link.style.margin = 'auto';
+		support_link.style.color = 'var(--color_tertiary)';
+		support_link.style.cursor = 'pointer';
+		// TODO:: fix this when done
+		// icon_container.appendChild(support_link);
 
 
 		// TODO:ADD LOGIC FOR HOMETEXT WITH MOBILE SCREENS
@@ -197,18 +220,22 @@ function Navbar() {
 
 		// TODO: add: HOME, LINKS, PROJECTS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<< 
 		let locations = {
-			"content": '/content/content.html',
-			"links": '/links/links.html',
-			//"support": '/support/support.html',
-			"account": '/account/page.html',
+			"content": '/content.html',
+			"links": '/links.html',
+			"account": '/account.html',
 		};
 
 		Object.keys(locations).forEach((l) => {
 			let newElem = document.createElement('a');
 			newElem.id = `navbar_dropdown_link_${l}`;
+			newElem.style.textAlign = 'center';
+			newElem.style.verticalAlign = 'center';
+			newElem.style.display = 'flex';
+			newElem.style.justifyContent = 'center';
+			newElem.style.alignItems = 'center';
 
 			newElem.innerText = l;
-			newElem.href = "/" + l + "/" + l + ".html";
+			newElem.href = "/" + l + ".html";
 
 			// switch for different specalties
 			switch (l) {
@@ -265,7 +292,7 @@ function Navbar() {
 		console.log("navbar height: ", navbar.getBoundingClientRect().height);
 		let spacer = document.getElementById("spacer");
 
-		spacer.style.height = navbar.getBoundingClientRect().height + "px";
+		spacer.style.height = navbar.getBoundingClientRect().height * 0.3 + "px";
 
 		console.log("navbar added");
 
@@ -499,23 +526,6 @@ let favicon_links = [
 		favicon_links = ['./assets/icon.svg']; // Reset to default
 	}
 })();
-
-// favicon_links = [
-//	//red
-//	'https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/87deeda52a94496a53f0cbb26e17862dc6548b53/assets/icon_red.svg',
-//	//yellow
-//	'https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/87deeda52a94496a53f0cbb26e17862dc6548b53/assets/icon_yellow.svg',
-//	//green
-//	'https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/87deeda52a94496a53f0cbb26e17862dc6548b53/assets/icon_green.svg',
-//	//cyan
-//	'https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/87deeda52a94496a53f0cbb26e17862dc6548b53/assets/icon_cyan.svg',
-//	//blue
-//	'https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/87deeda52a94496a53f0cbb26e17862dc6548b53/assets/icon_blue.svg',
-//	//magenta
-//	'https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/87deeda52a94496a53f0cbb26e17862dc6548b53/assets/icon_magenta.svg',
-//	//white
-//	'https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/87deeda52a94496a53f0cbb26e17862dc6548b53/assets/icon.svg',
-//];
 //}}}2
 //{{{2 determine if is animatible
 let animatible = true;

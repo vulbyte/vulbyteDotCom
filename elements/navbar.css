@@ -18,7 +18,7 @@
 	filter: opacity(1);
 }
 
-#home_anchor {
+#navbar_icon_container {
 	background-color: var(--color_background_primary);
 	padding: 0.2em;
 	text-decoration: none;
