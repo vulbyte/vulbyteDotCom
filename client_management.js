@@ -353,7 +353,7 @@ function Footer() {
 			'content': '/content/content.html',
 			'links': '/links/links.html',
 			'policies': '/policies.html',
-			//'': '',
+			'useful_links': '/useful_resources.html',
 		};
 		try {
 			console.log('adding nav items for footer');
