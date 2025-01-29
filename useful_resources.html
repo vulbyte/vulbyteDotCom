@@ -9,6 +9,8 @@
 </head>
 
 <script>
+
+	// TODO: add software section 
 	const timeout = 3000;
 	async function list_prom(args = {
 		'id': '',
@@ -172,21 +174,6 @@
 		</script>
 	</details>
 	<details>
-		<summary>game dev stuff</summary>
-		<ul id='unreal_game_dev_stuff'></ul>
-		<script type='module'>
-			list_prom(
-				{
-					'id': 'unreal_game_dev_stuff',
-					'list': {
-						'https://www.youtube.com/@MathewWadsteinTutorials': 'an amazing channel that has made a tutorial for almost every unreal node',
-						'https://www.youtube.com/@MatthewPalaje': 'amazing tutorials on miniqing mechanics',
-						'https://www.youtube.com/@DeanAshford/videos': 'textuers, shaders, particles, and things of that like!'
-					}
-				});
-		</script>
-	</details>
-	<details>
 		<summary>general design stuff</summary>
 		<ul id='general_design_stuff'></ul>
 		<script type='module'>
@@ -239,6 +226,21 @@
 						'https://compressor.io/': 'cute tool to compress images (max 10MB)',
 						'https://www.alternativeto.net': 'a great site for finding alternative softwares',
 						'https://www.screensizes.app/?compare=iphone': 'device info, sizes, marketshare, etcetc'
+					}
+				});
+		</script>
+	</details>
+	<details>
+		<summary>unreal game dev stuff</summary>
+		<ul id='unreal_game_dev_stuff'></ul>
+		<script type='module'>
+			list_prom(
+				{
+					'id': 'unreal_game_dev_stuff',
+					'list': {
+						'https://www.youtube.com/@MathewWadsteinTutorials': 'an amazing channel that has made a tutorial for almost every unreal node',
+						'https://www.youtube.com/@MatthewPalaje': 'amazing tutorials on miniqing mechanics',
+						'https://www.youtube.com/@DeanAshford/videos': 'textuers, shaders, particles, and things of that like!'
 					}
 				});
 		</script>
