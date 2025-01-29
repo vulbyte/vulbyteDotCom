@@ -44,15 +44,20 @@
 
 @font-face {
 	font-family: 'test09-v1r42';
-	src: local('/assets/test09-v1r42.otf') format('opentype');
+	src:
+		local('/assets/test09-v1r42.otf'),
+		url('https://vulbyte.com/assets/test09-v1r42.otf') format('opentype');
 	/*local('new font'),*/
+	font-display: swap;
 }
 
 * {
 	/*background-color: var(--color_background_primary);*/
 	/*border-radius: 1em;*/
 	color: var(--color_font_primary);
-	font-family: 'helvetica', 'arial';
+	font-family: 'test09-v1r42',
+		/*'helvetica', 'sans-serif', 'arial'*/
+	;
 	padding: 0;
 	margin: 0;
 	max-width: 100%;
