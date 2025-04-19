@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="../../client_management.js" type="module"></script>
+	<title>wheel | vulbyte</title>
+</head>
+
+<body>
+	<h1>
+		<span style="">wheel</span>
+		<span style="padding-left:3em;">of</span>
+		<span style="padding-left:6em;">pain</span>
+	</h1>
+	<style>
+		#new_item>* {
+			display: inline;
+		}
+	</style>
+	<div id="new_item">
+		<label>create an item</label>
+		<input id="label" placeholder="label" type="text">
+		<input id="description" placeholder="description" type="text">
+		<label>ideal percent</label>
+		<input id="percent" default="50" type="range" min="1" max="100">
+		<span id="percent_display" style="padding-top:1rem;"></span>
+		<button>+</button>
+	</div>
+
+</body>
+
+</html>

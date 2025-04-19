@@ -1,0 +1,11 @@
+{
+	"do you like tacos?": {
+		"answer": "yes",
+		"reasoning": "of course you like tacos, are you insane?",
+		"fakes": [
+			"kinda",
+			"not really",
+			"no"
+		]
+	}
+}

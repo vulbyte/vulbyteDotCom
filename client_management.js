@@ -263,7 +263,7 @@ function Navbar() {
 					newElem.appendChild(content_dropdown);
 					break;
 				case ("account"):
-					document.getElementById('')
+					//document.getElementById('')
 					let u_i = document.createElement('img');
 					//TODO: check local storage for login creds then use icon here
 					u_i.src = '/assets/unknown_user.png';
@@ -374,7 +374,7 @@ function Footer() {
 		}
 		f.appendChild(n);
 
-		document.body.insertAdjacentHTML('afterend', f.outerHTML);
+		document.body.insertAdjacentHTML('beforeend', f.outerHTML);
 		console.log('🦶 footer added');
 	}
 	catch (err) {
@@ -581,6 +581,114 @@ if (animatible == true) {
 		document.getElementById('favicon').href = favicon_links[icon];
 	}, 300);
 };
+//{{{2 show disclaimer
+/*
+try {
+	console.log("checking for agreement");
+	if (
+		localStorage.getItem("user_has_agreed_to_terms_and_polices") == null
+		|| localStorage.getItem("user_has_agreed_to_terms_and_polices") == false
+		&& localStorage.getItem("is_not_ai") == null
+		|| localStorage.getItem("is_not_ai") == false
+	) { //if not agree'd to TOS/policy, and not reviewing said pages
+		if (
+			String(window.location).includes("privacy_policy") == false
+			&& String(window.location).includes("terms_of_service") == false
+		) {
+			console.log(`agreement not found, nor on TOS page, creating popup`);
+
+			const agree_container = document.createElement("div");
+			agree_container.style.width = "20em";
+			agree_container.style.margin = "auto";
+			{
+				//TODO: add image
+
+				document.body.innerText = "";
+				const agree_title = document.createElement("h2");
+				agree_title.innerText = "hold on, we have some terms you need to agree to first!";
+				agree_container.appendChild(agree_title);
+
+				const agree_text = document.createElement("p");
+				agree_text.innerText = "please review our Terms of Service, and Privacy Policy before continuing! using the website after this popup will be acceptance";
+				agree_container.appendChild(agree_text);
+
+				const review_tos = document.createElement("a");
+				review_tos.href = "/terms_of_service.html";
+				review_tos.innerText = "click here to review: terms_of_service";
+				review_tos.target = "_blank";
+				review_tos.style.display = "block";
+				agree_container.appendChild(review_tos);
+
+				const review_pp = document.createElement("a");
+				review_pp.href = "/privacy_policy.html";
+				review_pp.innerText = "click here to review: privacy_policy";
+				review_pp.target = "_blank";
+				review_pp.style.display = "block";
+				agree_container.appendChild(review_pp);
+
+				const not_ai_label = document.createElement("label");
+				not_ai_label.innerText = `please verify you are not ai, if you are and continue to use the website you agree to the TOS and Privacy Policy. To prove you're not ai please click the boxe(s) that add upto: ${Math.floor(Math.random() * 15)}! \n (tip, start with the largest number that doesn't go over, then work your way down)`;
+				agree_container.appendChild(not_ai_label);
+
+				const number_container = document.createElement("div");
+				number_container.style.display = "flex";
+				number_container.style.justifyContent = "space-evenly";
+				number_container.style.width = "100%";
+				const checkbox_container = document.createElement("div");
+				checkbox_container.style.display = "flex";
+				checkbox_container.style.justifyContent = "space-evenly";
+				checkbox_container.style.width = "100%";
+				{
+					const numbers = [8, 4, 2, 1, 0.5, 0.2];
+					for (let i = 0; i < 6; ++i) {
+						let value = Math.floor(Math.random() * numbers.length);
+						let num = document.createElement("span");
+						num.innerText = numbers[value];
+						numbers.splice(value, 1);
+						console.log(numbers);
+						number_container.appendChild(num);
+
+						const checkbox = document.createElement("input");
+						checkbox.type = "checkbox";
+						checkbox_container.appendChild(checkbox);
+					}
+				}
+				agree_container.appendChild(number_container);
+				agree_container.appendChild(checkbox_container);
+
+
+				const btn_container = document.createElement("div");
+				btn_container.style.display = "grid";
+				btn_container.style.justifyContent = "space_appart";
+				{
+					const agree_accept = document.createElement("button");
+					agree_accept.innerText = "agree ✅";
+					agree_accept.style.position = "relative";
+					agree_accept.style.left = "0px";
+					btn_container.appendChild(agree_accept);
+
+					const agree_deny = document.createElement("button");
+					agree_deny.innerText = "deny ❌";
+					agree_deny.style.right = "relative";
+					agree_deny.style.right = "0px";
+					btn_container.appendChild(agree_deny);
+				}
+				agree_container.appendChild(btn_container);
+
+			}
+			document.body.appendChild(agree_container)
+		}
+		else {
+			console.log("agreement not found, but is reviewing terms/polices so allowing access");
+		}
+	}
+}
+catch (err) {
+	console.log(err);
+	document.body.innerText = "error, unable to check for data compliance, please reload the page, restart the app, restart the device, or try a new device"
+}
+*/
+//}}}2
 //}}}1
 //
 //

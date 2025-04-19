@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>flash cards</title>
+	<script src="../../client_management.js" type="module"></script>
+	<script> var cards; //object to hold all the flashcards</script>
+</head>
+
+<body>
+	<h1>flash cards</h1>
+	<details>
+		<summary>setup</summary>
+		<label>collection name</label>
+		<input id="collection_name" type="text" placeholder="sick_mix_trick_mix_98">
+		<div>
+			<label>prompt</label>
+			<input id="prompt" type="text" placeholder="what do you call elon musk?">
+			<label>answer</label>
+			<input id="answer" type="text" placeholder="an idiot">
+			<label>reasoning</label>
+			<input id="answer_reasoning" type="text" placeholder="answer reasoning (optional)" <br>
+			<label>fake options for multi-choice</label>
+			<sub>if you don't enter any options below, clicking will simply reveal the answer</sub><br>
+			<input id="fake_option_1" type="fake_option_1" placeholder="fake_option_1 (optional)">
+			<input id="fake_option_2" type="fake_option_2" placeholder="fake_option_2 (optional)">
+			<input id="fake_option_3" type="fake_option_3" placeholder="fake_option_3 (optional)">
+			<br>
+			<button id="submit">submit</button>
+		</div>
+		<hr>
+		<div>
+			<label>import old flashcard data</label>
+			<sub>will only work if generated from this site!</sub><br>
+			<script>
+				function QuickCheck(file) {
+					try {
+						console.log("evaling": document.getElementById("input_data").value)
+						if (!document.getElementById("input_data").value.includes(".json")) {
+							throw ("cannot parse, wrong file type!");
+						}
+						parsed = JSON.parse(file);
+					}
+					catch (err) {
+						console.warn(err);
+						document.getElementById("file_errors").innerText = err;
+					}
+				}
+			</script>
+			<input id="input_data" type="file" placeholder="save_file_for_old_data" ondrop="QuickCheck(event)">
+			<div>
+				<span>errors: </span>
+				<span id="file_errors"></span>
+			</div>
+			<button id="load_file" ondrop="(data) => {LoadFile(data)}">load_file</button>
+			<script type="module">
+				function LoadFile(data) {
+				}
+			</script>
+		</div>
+		<hr>
+		<div>
+			<label>download current flashcard data (to use later!</label>
+			<button>click to download flashcard data</button>
+		</div>
+	</details>
+	<hr>
+	<details>
+		<summary>test</summary>
+		<div>
+			<h3>options</h3>
+			<label>test length:</label>
+			<select id="test_length">
+				<option value="one_of_each"> one of each </option>
+				<option value="each_right"> until got each right at least once </option>
+				<option value="percentage"> min percentage </option>
+				<option value="infinite"> infinite </option>
+			</select>
+			<div id="percentage_options" style="">
+				<label>percentage target</label>
+				<input id="percentage_target" type="range" min="50" max="100" default="82">
+				<label>percentage evaluation window</label>
+				<sub>aka, how many questions it'll keep track of to calculate the percentage</sub><br>
+				<input id="percentage_window" type="range" min="3" max="30" default="5">
+			</div>
+			<script>
+				function GEBI(id) {
+					return document.getElementById(id);
+				}
+
+				try {
+					window.addEventListener("load", () => {
+						console.log("WINDOW ADDED ADDING LISTENERS");
+						const tl = GEBI("test_length");
+						tl.addEventListener("click", (e) => {
+							console.log("evaling if should show percentage options");
+
+							let po = GEBI("percentage_options");
+							if (tl.value == "percentage") {
+								po.style.height = "auto";
+								po.style.visibility = "visible";
+							}
+							else {
+								po.style.height = "0px";
+								po.style.visibility = "hidden";
+							}
+						});
+						tl.click();
+					});
+				}
+				catch (err) {
+					console.error(err);
+				}
+			</script>
+		</div>
+		<button>start quizzing</button>
+		<div id="test_area"></div>
+	</details>
+	<br>
+</body>
+
+</html>
