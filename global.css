@@ -11,13 +11,13 @@
 	--color_background_primary: #000;
 	--color_background_secondary: #000;
 
-	--color_primary: #bb0051;
-	--color_secondary: #66f;
+	--color_primary: #ff00ff;
+	--color_secondary: #00ffff;
 	--color_interactable: var(--color_secondary);
 	--color_tertiary: #ffff00;
 
-	--color_error_primary: #909;
-	--color_error_secondary: #222;
+	--color_error_primary: #ff0000;
+	--color_error_secondary: #ffff00;
 	--pattern_error_image:
 		linear-gradient(45deg, var(--color_error_primary) 25%, transparent 25%),
 		linear-gradient(-45deg, var(--color_error_primary) 25%, transparent 25%),
@@ -162,15 +162,53 @@ button {
 	/*background-color: color-mix(in oklab, var(--color_primary), #fff);*/
 	background-color: var(--color_secondary);
 	border: none;
-	color: black;
+	font-family: 'Courier New', Courier, monospace;
+	font-weight: bolder;
 	padding-top: var(--padding);
 	padding-bottom: var(--padding);
 	padding-left: var(--padding);
 	padding-right: var(--padding);
+	background:
+		/* Top-left corner */
+		linear-gradient(to right, var(--color_secondary) 2px, transparent 2px) 0 0,
+		linear-gradient(to bottom, var(--color_secondary) 2px, transparent 2px) 0 0,
+		/* Top-right corner */
+		linear-gradient(to left, var(--color_secondary) 2px, transparent 2px) 100% 0,
+		linear-gradient(to bottom, var(--color_secondary) 2px, transparent 2px) 100% 0,
+		/* Bottom-left corner */
+		linear-gradient(to right, var(--color_secondary) 2px, transparent 2px) 0 100%,
+		linear-gradient(to top, var(--color_secondary) 2px, transparent 2px) 0 100%,
+		/* Bottom-right corner */
+		linear-gradient(to left, var(--color_secondary) 2px, transparent 2px) 100% 100%,
+		linear-gradient(to top, var(--color_secondary) 2px, transparent 2px) 100% 100%;
+	background-size: 10px 10px;
+	background-repeat: no-repeat;
+}
+
+button:disabled {
+	background:
+		/* Top-left corner */
+		linear-gradient(to right, red 2px, transparent 2px) 0 0,
+		linear-gradient(to bottom, red 2px, transparent 2px) 0 0,
+		/* Top-right corner */
+		linear-gradient(to left, red 2px, transparent 2px) 100% 0,
+		linear-gradient(to bottom, red 2px, transparent 2px) 100% 0,
+		/* Bottom-left corner */
+		linear-gradient(to right, red 2px, transparent 2px) 0 100%,
+		linear-gradient(to top, red 2px, transparent 2px) 0 100%,
+		/* Bottom-right corner */
+		linear-gradient(to left, red 2px, transparent 2px) 100% 100%,
+		linear-gradient(to top, red 2px, transparent 2px) 100% 100%;
+	background-size: 10px 10px;
+	background-repeat: no-repeat;
 }
 
 /* TODO: add glow around mouse cursor on button*/
-button:hover {}
+button:hover {
+	transition-duration: 300ms;
+	transition-timing-function: ease-in-out;
+	background-color: var(--color_secondary);
+}
 
 button:active {
 	background-color: color-mix(in oklab, var(--color_secondary), #000);
@@ -380,9 +418,7 @@ header>a {
 	width: 40%;
 }
 
-header>a:hover {
-	background-color: color-mix(in oklab, var(--color_background_primary), var(--color_primary));
-}
+header>a:hover {}
 
 header>a>p {
 	padding: var(--padding);
@@ -398,27 +434,39 @@ header>*>img {
 
 h1 {
 	font-size: 2.5rem;
-	background-color: var(--color_font_primary);
+	color: var(--color_primary);
 }
 
 h2 {
+	color: var(--color_secondary);
 	font-size: 2.0rem;
+	font-weight: 200;
 }
 
 h3 {
+	color: var(--color_tertiary);
 	font-size: 1.75rem;
+	font-weight: 100;
+	font-family: 'Courier New', Courier, monospace;
 }
 
 h4 {
+	color: var(--color_primary);
 	font-size: 1.5rem;
+	font-weight: 300;
 }
 
 h5 {
+	color: var(--color_secondary);
 	font-size: 1.25rem;
+	font-weight: 200;
 }
 
 h6 {
+	color: var(--color_tertiary);
 	font-size: 1.1rem;
+	font-weight: 100;
+	font-family: 'Courier New', Courier, monospace;
 }
 
 h1,
@@ -427,11 +475,11 @@ h3,
 h4,
 h5,
 h6 {
-	background-color: var(--color_font_secondary);
-	color: var(--color_primary);
 	display: block;
+	/*
 	margin-bottom: var(--padding);
 	padding: var(--padding);
+*/
 	user-select: none;
 	text-transform: uppercase;
 	max-width: 100%;
@@ -443,8 +491,6 @@ h3:nth-of-type(odd),
 h4:nth-of-type(odd),
 h5:nth-of-type(odd),
 h6:nth-of-type(odd) {
-	background-color: var(--color_font_tertiary);
-	color: var(--color_primary);
 	display: block;
 	margin-bottom: var(--padding);
 	padding: var(--padding);
@@ -521,14 +567,91 @@ img {
 	width: 25em;
 }
 
-input {
-	border: var(--border_interactive);
+input,
+input[type=submit],
+input[type=button],
+input[type=reset],
+input[type="range"],
+input[type=color] {
+	/*border: var(--border_interactive);*/
+	border: none;
 	padding: var(--padding);
 	background-color: var(--color_background_primary);
+	background:
+		/* Top-left corner */
+		linear-gradient(to right, var(--color_secondary) 2px, transparent 2px) 0 0,
+		linear-gradient(to bottom, var(--color_secondary) 2px, transparent 2px) 0 0,
+		/* Top-right corner */
+		linear-gradient(to left, var(--color_secondary) 2px, transparent 2px) 100% 0,
+		linear-gradient(to bottom, var(--color_secondary) 2px, transparent 2px) 100% 0,
+		/* Bottom-left corner */
+		linear-gradient(to right, var(--color_secondary) 2px, transparent 2px) 0 100%,
+		linear-gradient(to top, var(--color_secondary) 2px, transparent 2px) 0 100%,
+		/* Bottom-right corner */
+		linear-gradient(to left, var(--color_secondary) 2px, transparent 2px) 100% 100%,
+		linear-gradient(to top, var(--color_secondary) 2px, transparent 2px) 100% 100%;
+	background-size: 10px 10px;
+	background-repeat: no-repeat;
 }
 
-input[type='submit'] {
-	color: var(--color_font_interactable);
+input[type=color] {
+	aspect-ratio: 1/1;
+	height: 5em;
+	width: 5em;
+}
+
+input:disabled {
+	background:
+		/* Top-left corner */
+		linear-gradient(to right, red 2px, transparent 2px) 0 0,
+		linear-gradient(to bottom, red 2px, transparent 2px) 0 0,
+		/* Top-right corner */
+		linear-gradient(to left, red 2px, transparent 2px) 100% 0,
+		linear-gradient(to bottom, red 2px, transparent 2px) 100% 0,
+		/* Bottom-left corner */
+		linear-gradient(to right, red 2px, transparent 2px) 0 100%,
+		linear-gradient(to top, red 2px, transparent 2px) 0 100%,
+		/* Bottom-right corner */
+		linear-gradient(to left, red 2px, transparent 2px) 100% 100%,
+		linear-gradient(to top, red 2px, transparent 2px) 100% 100%;
+	background-size: 10px 10px;
+	background-repeat: no-repeat;
+}
+
+/* Special handling for range input */
+input[type="range"] {
+	-webkit-appearance: none;
+	appearance: none;
+	height: 2em;
+	/* Increased height to show corners */
+	background-color: transparent;
+	/* Remove default background */
+	margin: 0.5em 0;
+	/* Add vertical spacing */
+}
+
+/* Track styling */
+input[type="range"]::-webkit-slider-runnable-track,
+input[type="range"]::-moz-range-track {
+	height: 0.5em;
+	background-image: linear-gradient(90deg, var(--color_primary), var(--color_secondary));
+	border-radius: 0.25em;
+}
+
+/* Thumb styling */
+input[type="range"]::-webkit-slider-thumb,
+input[type="range"]::-moz-range-thumb {
+	-webkit-appearance: none;
+	appearance: none;
+	width: 1.2em;
+	height: 1.2em;
+	background: var(--color_tertiary);
+	/*border: 0.2em #000 solid;*/
+	border-radius: 100%;
+	border-color: var(--color_background_primary);
+	border-style: solid;
+	border-width: 0.2em;
+	margin-top: -0.35em;
 }
 
 input:hover {
@@ -618,7 +741,7 @@ meter {
 nav {}
 
 .navbar {
-	background-color: var(--color_primary);
+	background-color: #000;
 	border-radius: 0px;
 	box-shadow: 0px 0.5em 1.0em 0.3em color-mix(in oklab, var(--color_background_primary), transparent);
 	display: flex;
@@ -673,15 +796,15 @@ output {
 }
 
 p {
+	color: #555;
+	font-family: 'Courier New', Courier, monospace;
 	padding: var(--padding);
 }
 
-p:hover {
-	color: var(--color_font_hover);
-}
-
-p>*:hover {
-	color: var(--color_font_hover);
+p.visible {
+	color: #fff;
+	transition-duration: 2s !important;
+	transition-timing-function: ease-out;
 }
 
 param {
@@ -773,13 +896,44 @@ template {}
 
 textarea {
 	background-color: var(--color_background_primary);
-	border: var(--border_interactive);
+	background:
+		linear-gradient(to right, var(--color_secondary) 2px, transparent 2px) 0 0,
+		linear-gradient(to bottom, var(--color_secondary) 2px, transparent 2px) 0 0,
+		linear-gradient(to left, var(--color_secondary) 2px, transparent 2px) 100% 0,
+		linear-gradient(to bottom, var(--color_secondary) 2px, transparent 2px) 100% 0,
+		linear-gradient(to right, var(--color_secondary) 2px, transparent 2px) 0 100%,
+		linear-gradient(to top, var(--color_secondary) 2px, transparent 2px) 0 100%,
+		linear-gradient(to left, var(--color_secondary) 2px, transparent 2px) 100% 100%,
+		linear-gradient(to top, var(--color_secondary) 2px, transparent 2px) 100% 100%;
+	background-size: 10px 10px;
+	background-repeat: no-repeat;
+	border: none;
 	color: var(--color_font_interactable);
 	height: 3rem;
 	/*width: 40rem;*/
 	min-width: 0px;
 	max-width: 100%;
 	padding: var(--padding);
+}
+
+textarea::after,
+textarea::-webkit-resizer {
+	content: "";
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	width: 16px;
+	height: 16px;
+	background:
+		linear-gradient(135deg,
+			transparent 0%,
+			transparent 50%,
+			var(--color_secondary) 50%,
+			var(--color_secondary) 100%);
+	cursor: nwse-resize;
+	/* Resize cursor */
+	z-index: 2;
+	/* Ensure it's above the textarea */
 }
 
 tfoot {}

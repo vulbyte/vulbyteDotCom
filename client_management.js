@@ -690,5 +690,214 @@ catch (err) {
 */
 //}}}2
 //}}}1
-//
+//{{{1 styling
+//{{{2 header marqee
+
+/**
+ * Creates a marquee effect for any HTML element while preserving the original element type
+ * @param {HTMLElement} element - The element to transform into a marquee
+ * @param {Object} options - Optional configuration
+ * @param {number} options.speed - Animation speed in pixels per second (default: 100)
+ * @param {number} options.bufferMultiplier - How many times to repeat the content (default: 3)
+ * @param {string} options.direction - Direction of movement: 'left' or 'right' (default: 'left')
+ * @returns {HTMLElement} - The original element with marquee functionality
+ */
+function makeMarquee(element, options = {}) {
+	// Default options
+	const settings = {
+		speed: options.speed || 100,
+		bufferMultiplier: options.bufferMultiplier || 3,
+		direction: options.direction || 'left'
+	};
+
+	// Save the original element's content and tag name
+	const originalContent = element.innerHTML;
+	const originalTagName = element.tagName.toLowerCase();
+	const originalId = element.id;
+	const originalClasses = element.className;
+
+	// Clear the original element's content but preserve its attributes
+	const originalAttributes = {};
+	for (let i = 0; i < element.attributes.length; i++) {
+		const attr = element.attributes[i];
+		if (attr.name !== 'id' && attr.name !== 'class') {
+			originalAttributes[attr.name] = attr.value;
+		}
+	}
+
+	// Convert the element to a marquee container
+	element.style.overflow = 'hidden';
+	element.style.whiteSpace = 'nowrap';
+
+	// Create the inner container for animation
+	const marqueeInner = document.createElement('div');
+	marqueeInner.style.display = 'inline-block';
+	marqueeInner.style.whiteSpace = 'nowrap';
+	marqueeInner.style.position = 'relative';
+
+	// Clear original content and add the inner container
+	element.innerHTML = '';
+	element.appendChild(marqueeInner);
+
+	// Function to create a single item with the original content
+	function createItem() {
+		// Create a span for inline display
+		const item = document.createElement('span');
+		item.style.display = 'inline-block';
+		item.style.verticalAlign = 'top';
+		item.style.paddingLeft = '1em';
+
+		// Create the original element type to maintain proper rendering
+		const originalTypeElement = document.createElement(originalTagName);
+
+		// Set original ID and classes on the first item only if this is the first item
+		if (marqueeInner.children.length === 0) {
+			if (originalId) originalTypeElement.id = originalId + '-content';
+			if (originalClasses) originalTypeElement.className = originalClasses + ' marquee-item';
+		} else {
+			originalTypeElement.className = 'marquee-item';
+		}
+
+		// Apply original attributes
+		for (const [name, value] of Object.entries(originalAttributes)) {
+			originalTypeElement.setAttribute(name, value);
+		}
+
+		// Set content
+		originalTypeElement.innerHTML = originalContent;
+
+		// Reset specific styles to prevent inheritance issues
+		originalTypeElement.style.margin = '0';
+		originalTypeElement.style.padding = originalTypeElement.style.padding || '0';
+		originalTypeElement.style.display = 'inline-block';
+
+		// Add to the span wrapper
+		item.appendChild(originalTypeElement);
+
+		return item;
+	}
+
+	// Function to ensure we have enough content for continuous scrolling
+	function ensureFullWidth() {
+		// Add first item to measure width
+		const firstItem = createItem();
+		marqueeInner.appendChild(firstItem);
+
+		// Wait a moment for the browser to render and calculate width
+		setTimeout(() => {
+			// Get the width of one item
+			const contentWidth = firstItem.offsetWidth;
+
+			// Calculate how many repetitions we need based on container width
+			const viewportWidth = window.innerWidth;
+			const minRequired = Math.ceil((viewportWidth * 2) / contentWidth);
+			const totalNeeded = Math.max(minRequired, settings.bufferMultiplier);
+
+			// Clear existing content and add the first item back
+			marqueeInner.innerHTML = '';
+			marqueeInner.appendChild(firstItem);
+
+			// Add enough copies to ensure continuous scrolling
+			for (let i = 1; i < totalNeeded; i++) {
+				const clone = createItem();
+				marqueeInner.appendChild(clone);
+			}
+
+			// Set animation duration based on content width and speed
+			const animationDuration = contentWidth / settings.speed;
+
+			// Apply the animation
+			const animationName = `marquee-${Math.random().toString(36).substr(2, 9)}`;
+
+			// Create and inject keyframe animation
+			const styleSheet = document.createElement('style');
+			styleSheet.textContent = `
+        @keyframes ${animationName} {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(${settings.direction === 'right' ? '' : '-'}${contentWidth}px); }
+        }
+      `;
+			document.head.appendChild(styleSheet);
+
+			// Apply animation to the inner container
+			marqueeInner.style.animation = `${animationName} ${animationDuration}s linear infinite`;
+		}, 20); // Slightly longer timeout to ensure rendering
+	}
+
+	// Initial setup
+	if (document.readyState === 'complete') {
+		ensureFullWidth();
+	} else {
+		window.addEventListener('load', ensureFullWidth);
+	}
+
+	// Adjust when window is resized
+	window.addEventListener('resize', () => {
+		// Clear and rebuild on resize
+		marqueeInner.innerHTML = '';
+		ensureFullWidth();
+	});
+
+	// Return the original element with marquee functionality
+	return element;
+}
+
+let elem;
+let headers;
+
+headers = document.getElementsByTagName('h1');
+for (let i = 0; i < headers.length; ++i) {
+	elem = headers[i];
+	makeMarquee(elem);
+}
+headers = document.getElementsByTagName('h2');
+for (let i = 0; i < headers.length; ++i) {
+	elem = headers[i];
+	makeMarquee(elem);
+}
+headers = document.getElementsByTagName('h3');
+for (let i = 0; i < headers.length; ++i) {
+	elem = headers[i];
+	makeMarquee(elem);
+}
+headers = document.getElementsByTagName('h4');
+for (let i = 0; i < headers.length; ++i) {
+	elem = headers[i];
+	makeMarquee(elem);
+}
+headers = document.getElementsByTagName('h5');
+for (let i = 0; i < headers.length; ++i) {
+	elem = headers[i];
+	makeMarquee(elem);
+}
+headers = document.getElementsByTagName('h6');
+for (let i = 0; i < headers.length; ++i) {
+	elem = headers[i];
+	makeMarquee(elem);
+}
+
+//}}}2 header marqee
+//{{{2
+let Ps = document.getElementsByTagName("p");
+window.addEventListener('scroll', () => {
+	let p
+	for (let i = 0; i < Ps.length; ++i) {
+		p = Ps[i];
+		const rect = p.getBoundingClientRect();
+		const isVisible = (
+			rect.top < window.innerHeight &&
+			rect.bottom > 0
+		);
+
+		if (isVisible) {
+			console.log("element is now visible");
+			p.classList.add("visible");
+		} else {
+			console.log("element not visible");
+			p.classList.remove("visible");
+		}
+	}
+});
+//}}}2
+//}}1
 //
