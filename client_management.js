@@ -746,6 +746,8 @@ function makeMarquee(element, options = {}) {
 		item.style.display = 'inline-block';
 		item.style.verticalAlign = 'top';
 		item.style.paddingLeft = '1em';
+		item.style.paddingBottom = "none";
+		item.style.marginBottom = "none";
 
 		// Create the original element type to maintain proper rendering
 		const originalTypeElement = document.createElement(originalTagName);

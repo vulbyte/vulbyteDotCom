@@ -482,6 +482,11 @@ h6 {
 */
 	user-select: none;
 	text-transform: uppercase;
+	text-shadow:
+		1px 1px 0px var(--color_background_primary),
+		1px -1px 0px var(--color_background_primary),
+		-1px 1px 0px var(--color_background_primary),
+		-1px -1px 0px var(--color_background_primary);
 	max-width: 100%;
 }
 
