@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>tts_tester | vulbyte</title>
+	<script type='module' src="/client_management.js"></script>
+</head>
+
+<body>
+	<br>
+	<br>
+	<br>
+	<div>
+		<h1>READ ME</h1>
+		<p>tldr is this is a section of code copy pasted from my streamer tts app, so if stuff seems like it doesn't belong
+			that's because it doesn't!<br>
+			the tldr is that here you can test the voices, pitch, and the like.<br>
+			<em>please note this only works on chrome based browsers, on firefox the JS simply will not work and you won't be
+				able to test anything</em><br>
+			i'm pro firefox, but i needed to use chromes audio context api to do this.
+			if you just wanna test voices jump to <a href="/content/code_stuff/tts_tester.html#preview_tts">"preview all the
+				tts voices here"</a>
+		</p>
+	</div>
+
+	<div>
+		<details>
+			<summary>tts setting here</summary>
+			<details>
+				<summary>view all the tags here</summary>
+				<sub>
+					note: the values if a range use integral notation.
+					the tldr is: <br>
+					[ or ] means to that value including it,<br>
+					( or ) means to that value excluding it,<br>
+					a number without a decimal means that number must be an integer<br>
+					while a number with a decimal means that number can be a float (have a decimal)<br>
+					and the numbers between are the range.<br><br>
+					eg: (0, 1000] means the range is 0-1000, including 1000 but excluding 0.
+					eg: [0.1, 7.0] means the range 0.1-7.0 is valid and anything between.
+
+				</sub>
+				<table>
+					<tbody>
+						<tr>
+							<th>flag</th>
+							<th>values</th>
+							<th>description</th>
+						</tr>
+						<tr>
+							<td>-p</td>
+							<td>[0.1, 2.0]</td>
+							<td>the <em>p</em>itch a message will be read with</td>
+						</tr>
+						<tr>
+							<td>-r</td>
+							<td>[0.1, 10.0]</td>
+							<td>the <em>r</em>ate at which a message is read</td>
+						</tr>
+						<tr>
+							<td>-v</td>
+							<td>[0, 175]</td>
+							<td>the <em>v</em>oice a tts message will use</td>
+						</tr>
+						<tr>
+							<td>-l</td>
+							<td id='tts_languages'></td>
+							<td>the language for the tts bot. largely isn't used and wont make a difference, though some bots might
+								change behavior based on the setting</td>
+						</tr>
+					</tbody>
+				</table>
+			</details>
+			<br>
+			<label>tts trigger token: </label>
+			<br>
+			<sub>make this unique unless you want people to accidentally use it! i recommend !tts due to being similar to bots
+				in discord</sub>
+			<input id='tts_trigger_token' placeholder='!tts'>
+			<br>
+			<input id='tts_delimiting_token' placeholder=';;'>
+			<sub>this will be the token used to tell what the end of the user commands for the bot. ie: <code>!tts -p 1.2
+					;;</code> would make it so that the tts will be called with the pitch changed, and with the ;; found it can
+				quickly move on wasting less system resources</sub>
+			<sub>warning! it is very very very bad practice to make the delimiting character an 'invisable' character. as
+				these are often formatted and impossible to read. so <em>do not</em> use things like spaces, new lines,
+				etcetc.</sub>
+			<br>
+			<impl>impl ⬇️</impl>
+			<label>strict adherence to limiter and delimiter?</label>
+			<input id='tts_strict_delimiters' type='checkbox' default='false'>
+			<sub>this will make it so that if a tts message cannot find a limiter and delimiter it will <em>not</em> run the
+				tts for that message.
+				command. ie if your limiter is: '!tts' and your delimiter is ';;', if the message cannot find the ';;' it will
+				refuse to add the message to queue</sub>
+			<br>
+			<impl>impl ⬇️</impl>
+			<label>strict flags?</label>
+			<input id='tts_strict_flags' type='checkbox' default='false'>
+			<sub>if a flag is not recognized, ignore the rest of the rest of the tts, even if the flags are valid</sub>
+			<br>
+			<impl>impl ⬇️</impl>
+			<label>token location: </label>
+			<!-- {{{2  options for token location-->
+			<select id='tts_trigger_token' placeholder='beginning' default='beginning'>
+				<option value='beginning'>
+					beginning - requires the tts token to be at the very beginning of the message, then will read the whole
+					message
+				</option>
+				<option value='anywhere-after'>
+					anywhere_all - the tts token can be ANYWHERE in the message to trigger the tts, then will read what's
+					after
+					the token.
+				</option>
+				<option value='anywhere-before'>
+					anywhere_before - the tts token can be ANYWHERE in the message to trigger the tts, then will read what's
+					before the token.
+				</option>
+				<option value='anywhere-all'>
+					anywhere_all - the tts token can be ANYWHERE in the message to trigger the tts, then will read the whole
+					message.
+				</option>
+				<option value='end'>
+					end - requires the tts token to be at the end of the message to be read, then will read the whole message.
+				</option>
+			</select>
+			<!-- }}}2 -->
+			<br>
+			<label>default tts voice: </label>
+			<input id='tts_voice_num' input='number' placeholder='18'>
+			<!-- {{{2 preview generator for tts voices -->
+			<label>tts speed: </label>
+			<input id='tts_speed' input='number' increment='0.1' value='1' min='0.1' max='2'>
+			<label>tts pitch: </label>
+			<input id='tts_pitch' input='number' increment='0.1' value='1' min='0.1' max='2'>
+			<!-- {{{2 preview generator for tts voices -->
+			<details>
+				<summary id="preview_tts">preview all the voices here!</summary>
+				<br>
+				<div>test message:
+					<input id='tts_test_text' value='the quick brown fox jumped over the brown lazy dog' style='width:80%;'>
+				</div>
+				<ol id='voices_preview'></ol>
+				<script>
+					console.log('loading voices preview');
+					let voices = window.speechSynthesis.getVoices();
+					if (!voices.length) {
+						new Promise(resolve => {
+							window.speechSynthesis.onvoiceschanged = () => {
+								voices = window.speechSynthesis.getVoices();
+								console.log('loaded voices');
+								GenerateVoicesPreview();
+								resolve();
+							};
+						});
+					}
+
+
+					async function CallTTS(message, args = {'voice_num': ''}) {
+						let speech = new SpeechSynthesisUtterance(message);
+
+						// Ensure voices are loaded
+						let voices = window.speechSynthesis.getVoices();
+						if (!voices.length) {
+							await new Promise(resolve => {
+								window.speechSynthesis.onvoiceschanged = () => {
+									voices = window.speechSynthesis.getVoices();
+									resolve();
+								};
+							});
+						}
+
+						// Default message if empty
+						if (!message || message.trim() === "") {
+							message = "nah, i ain't reading that... I'm sorry or congratulations";
+						}
+						speech.text = message;
+
+						// Fallback values
+						speech.lang = "en";
+						speech.pitch = 1.1;
+						speech.rate = 1.1;
+						if (args.voice_num) {
+							speech.voice = voices[args.voice_num];
+						}
+						speech.volume = 0.6;
+
+						// Emit voice
+						window.speechSynthesis.speak(speech);
+					}
+
+					console.log(`voices.length: `, voices.length);
+
+					function GenerateVoicesPreview() {
+						const d = document;
+						for (let i = 0; i < voices.length; ++i) {
+							//console.log(`adding voice preview for voice: ${i}`);
+							let li = document.createElement('li');
+							li.style.border = '1px solid white';
+
+							let label_for_name = document.createElement('span');
+							label_for_name.innerText = 'name: ';
+							li.appendChild(label_for_name);
+
+							let label_name = document.createElement('span');
+							label_name.innerText = voices[i].name;
+							li.appendChild(label_name);
+
+							let label_lang = document.createElement('span');
+							label_lang.style.minWidth = '10rem';
+							label_lang.style.paddingLeft = '0.2rem';
+							label_lang.style.paddingRight = '0.2rem';
+							label_lang.innerText = voices[i].lang;
+							li.appendChild(label_lang);
+
+							//append to list for tts options if not already added
+							let added_langs = document.getElementById('tts_languages');
+							let lang_added = false;
+							let child;
+							//see if item exists
+							for (let j = 0; j < added_langs.children.length; ++j) {
+								try {
+									child = added_langs.children[j];
+									if (child.innerHTML == label_lang.innerText) { // span tags don't have innerText for some reason
+										lang_added = true;
+										break;
+									}
+								}
+								catch (err) {
+									console.warn(err);
+									break;
+								}
+							}
+							//if not, add it in an alphabetical order
+							if (lang_added == false) {
+								console.log('lang not found, adding to list');
+								let added_into_list = false;
+
+								for (let j = 0; j < added_langs.children.length; ++j) {
+									if (added_langs.children[j].innerHTML.toLowerCase() > label_lang.innerText.toLowerCase()) {
+										console.log('inserted alphabetically');
+										added_into_list = true;
+										added_langs.insertBefore(label_lang, added_langs.children[j]);
+										break;
+									}
+								}
+
+								if (!added_into_list) {
+									console.log('compare not found, inserting at end');
+									added_langs.appendChild(label_lang);
+								}
+							}
+
+
+							let pvb = document.createElement('button');
+							pvb.type = 'button';
+							pvb.innerText = `preview voice #${i}`;
+							pvb.style.backgroundColor = 'darkgreen';
+							pvb.addEventListener('click', (e) => {
+								CallTTS(
+									document.getElementById('tts_test_text').value ||
+									'couldnt read preview text so heres this instead',
+									{
+										'voice_num': i
+									}
+								);
+							});
+							li.appendChild(pvb);
+
+							document.getElementById('voices_preview').appendChild(li);
+						}
+					}
+				</script>
+			</details>
+			<!-- {{{2 preview generator for tts voices -->
+			<br>
+			<impl>impl ⬇️</impl>
+			<label>read who message is from?</label>
+			<input type='checkbox' checked='true'>
+			<br>
+			<impl>impl ⬇️</impl>
+			<label>read date message was received?</label>
+			<input type='checkbox' checked='true'>
+			<br>
+			<impl>impl ⬇️</impl>
+			<label>read date platform message was from?</label>
+			<input type='checkbox' checked='true'>
+			<br>
+			<impl>impl ⬇️</impl>
+			<label>read date platform message was from?</label>
+			<input type='checkbox' checked='true'>
+			<br>
+		</details>
+	</div>
+
+</body>
+
+</html>
