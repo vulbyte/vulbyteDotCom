@@ -727,37 +727,47 @@ window.addEventListener('scroll', () => {
  * @returns {HTMLElement} - The original element with marquee functionality
  */
 function makeMarquee(element, options = {}) {
-	// Default options
+	// Safety check - prevent processing null elements or already processed elements
+	if (!element || element.classList.contains('marquee-processed')) {
+		console.warn('Invalid element or already processed element provided to makeMarquee');
+		return element;
+	}
+
+	console.log("Starting marquee creation for", element);
+
+	// Default options with safer merging
 	const settings = {
-		speed: options.speed || 100,
-		bufferMultiplier: options.bufferMultiplier || 3,
-		direction: options.direction || 'left'
+		speed: options.speed !== undefined ? options.speed : 100,
+		bufferMultiplier: options.bufferMultiplier !== undefined ? options.bufferMultiplier : 3,
+		direction: options.direction === 'right' ? 'right' : 'left'
 	};
 
-	// Save the original element's content and tag name
+	// Save the original element's content and attributes
 	const originalContent = element.innerHTML;
 	const originalTagName = element.tagName.toLowerCase();
 	const originalId = element.id;
 	const originalClasses = element.className;
 
-	// Clear the original element's content but preserve its attributes
+	// Store original attributes safely (excluding id and class which we handle separately)
 	const originalAttributes = {};
-	for (let i = 0; i < element.attributes.length; i++) {
-		const attr = element.attributes[i];
+	Array.from(element.attributes).forEach(attr => {
 		if (attr.name !== 'id' && attr.name !== 'class') {
 			originalAttributes[attr.name] = attr.value;
 		}
-	}
+	});
 
-	// Add marquee container class to original element
-	element.classList.add('marquee-container');
+	// Mark the element as processed to prevent multiple processing
+	element.classList.add('marquee-processed', 'marquee-container');
 
-	// Convert the element to a marquee container
+	// Set up the marquee container
 	element.style.overflow = 'hidden';
 	element.style.whiteSpace = 'nowrap';
-	element.style.lineHeight = '1'; // Normalize line height
-	element.style.padding = '0';    // Remove padding
-	element.style.margin = '0';     // Remove margin
+	element.style.position = 'relative';
+	element.style.display = 'block';
+	element.style.width = '100%';
+	element.style.lineHeight = '1';
+	element.style.padding = '0';
+	element.style.margin = '0';
 
 	// Create the inner container for animation
 	const marqueeInner = document.createElement('div');
@@ -765,43 +775,40 @@ function makeMarquee(element, options = {}) {
 	marqueeInner.style.display = 'inline-block';
 	marqueeInner.style.whiteSpace = 'nowrap';
 	marqueeInner.style.position = 'relative';
-	marqueeInner.style.paddingBottom = '0';
-	marqueeInner.style.paddingRight = '3em';
-	marqueeInner.style.marginBottom = '0';
-	marqueeInner.style.lineHeight = '1';
-	marqueeInner.style.fontSize = '0'; // Remove space between inline elements
 
 	// Clear original content and add the inner container
 	element.innerHTML = '';
 	element.appendChild(marqueeInner);
+
+	// Generate a unique ID for this marquee instance
+	const instanceId = Math.random().toString(36).substring(2, 11);
+	element.dataset.marqueeId = instanceId;
 
 	// Counter for unique item IDs
 	let itemCounter = 0;
 
 	// Function to create a single item with the original content
 	function createItem() {
-		// Create a span for inline display
+		// Create a wrapper span for inline display
 		const item = document.createElement('span');
 		item.classList.add('marquee-item-wrapper');
 		item.dataset.itemIndex = itemCounter++;
 		item.style.display = 'inline-block';
 		item.style.verticalAlign = 'top';
-		item.style.paddingBottom = '0';
-		item.style.paddingRight = '3em';
-		item.style.marginBottom = '0';
-		item.style.lineHeight = '1';
-		item.style.fontSize = 'inherit'; // Reset the font size
+		item.style.padding = '0';
+		item.style.margin = '0';
+		item.style.marginRight = '2em'; // Space between items
 
 		// Create the original element type to maintain proper rendering
 		const originalTypeElement = document.createElement(originalTagName);
 		originalTypeElement.classList.add('marquee-content');
 
-		// Set original ID and classes on the first item only if this is the first item
+		// Set original ID and classes on the first item only
 		if (marqueeInner.children.length === 0) {
 			if (originalId) originalTypeElement.id = originalId + '-content';
 			if (originalClasses) {
 				originalClasses.split(' ').forEach(cls => {
-					if (cls.trim()) {
+					if (cls.trim() && cls.trim() !== 'marquee') {
 						originalTypeElement.classList.add(cls.trim());
 					}
 				});
@@ -814,161 +821,241 @@ function makeMarquee(element, options = {}) {
 
 		// Apply original attributes
 		for (const [name, value] of Object.entries(originalAttributes)) {
-			originalTypeElement.setAttribute(name, value);
+			try {
+				originalTypeElement.setAttribute(name, value);
+			} catch (e) {
+				console.warn(`Failed to set attribute ${name}:`, e);
+			}
 		}
 
 		// Set content
 		originalTypeElement.innerHTML = originalContent;
 
-		// Reset specific styles to prevent inheritance issues
+		// Reset specific styles
 		originalTypeElement.style.margin = '0';
-		originalTypeElement.style.marginTop = '0';
-		originalTypeElement.style.marginBottom = '0';
-		originalTypeElement.style.marginLeft = '0';
-		originalTypeElement.style.marginRight = '0';
 		originalTypeElement.style.padding = '0';
-		originalTypeElement.style.paddingTop = '0';
-		originalTypeElement.style.paddingBottom = '0';
-		originalTypeElement.style.paddingLeft = '0';
-		originalTypeElement.style.paddingRight = '0';
-		originalTypeElement.style.lineHeight = '1';
 		originalTypeElement.style.display = 'inline-block';
 		originalTypeElement.style.verticalAlign = 'top';
 
-		// Add to the span wrapper
+		// Add to the wrapper
 		item.appendChild(originalTypeElement);
-
 		return item;
+	}
+
+	// Function to calculate and setup the marquee animation
+	function setupAnimation(contentWidth) {
+		// Prevent division by zero
+		if (!contentWidth || contentWidth <= 0) {
+			console.warn('Invalid content width detected:', contentWidth);
+			contentWidth = 200; // Fallback to a reasonable default
+		}
+
+		// Animation duration based on content width and speed
+		const animationDuration = contentWidth / settings.speed;
+
+		// Clean up any existing animation styles for this instance
+		const existingStyle = document.getElementById(`marquee-style-${instanceId}`);
+		if (existingStyle) {
+			existingStyle.remove();
+		}
+
+		// Create and inject keyframe animation
+		const styleSheet = document.createElement('style');
+		styleSheet.id = `marquee-style-${instanceId}`;
+		styleSheet.classList.add('marquee-animation-style');
+		styleSheet.textContent = `
+      @keyframes marquee-${instanceId} {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(${settings.direction === 'right' ? '' : '-'}${contentWidth}px); }
+      }
+    `;
+		document.head.appendChild(styleSheet);
+
+		// Apply animation to the inner container
+		marqueeInner.style.animation = `marquee-${instanceId} ${animationDuration}s linear infinite`;
+
+		// Store animation info on the element for potential updates
+		element.dataset.animationName = `marquee-${instanceId}`;
+		element.dataset.animationDuration = animationDuration;
+		element.dataset.contentWidth = contentWidth;
+
+		console.log(`Animation setup complete with width: ${contentWidth}px, duration: ${animationDuration}s`);
 	}
 
 	// Function to ensure we have enough content for continuous scrolling
 	function ensureFullWidth() {
+		console.log("Starting ensureFullWidth");
+
 		// Reset counter for new creation cycle
 		itemCounter = 0;
+
+		// Clear any existing content
+		marqueeInner.innerHTML = '';
 
 		// Add first item to measure width
 		const firstItem = createItem();
 		marqueeInner.appendChild(firstItem);
 
-		// Wait a moment for the browser to render and calculate width
-		setTimeout(() => {
-			// Get the width of one item
-			const contentWidth = firstItem.offsetWidth;
+		// Function to get width safely and continue setup
+		function getWidthAndContinue() {
+			// Get the width of one item (with safety checks)
+			let contentWidth = firstItem.offsetWidth;
 
-			// Calculate how many repetitions we need based on container width
-			const viewportWidth = window.innerWidth;
-			const minRequired = Math.ceil((viewportWidth * 2) / contentWidth);
+			// Safety check - if width is 0, element might not be rendered yet
+			if (contentWidth <= 0) {
+				// Try to get width from children
+				const children = firstItem.getElementsByTagName('*');
+				for (let i = 0; i < children.length; i++) {
+					const childWidth = children[i].offsetWidth;
+					if (childWidth > 0) {
+						contentWidth = childWidth;
+						break;
+					}
+				}
+
+				// If still 0, use a default width
+				if (contentWidth <= 0) {
+					console.warn('Could not detect element width, using default');
+					contentWidth = 200;
+				}
+			}
+
+			console.log(`Measured content width: ${contentWidth}px`);
+
+			// Calculate how many repetitions we need
+			const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+			const minRequired = Math.max(2, Math.ceil((viewportWidth * 2) / contentWidth));
 			const totalNeeded = Math.max(minRequired, settings.bufferMultiplier);
 
-			// Clear existing content and add the first item back
+			console.log(`Need ${totalNeeded} copies for continuous scrolling`);
+
+			// Clear existing content
 			marqueeInner.innerHTML = '';
 
 			// Reset counter again for final creation
 			itemCounter = 0;
-			const newFirstItem = createItem();
-			marqueeInner.appendChild(newFirstItem);
 
-			// Add enough copies to ensure continuous scrolling
-			for (let i = 1; i < totalNeeded; i++) {
-				const clone = createItem();
-				marqueeInner.appendChild(clone);
+			// Add enough copies to ensure continuous scrolling (with limit for safety)
+			const maxCopies = Math.min(totalNeeded, 50); // Safety limit to prevent freezing
+			for (let i = 0; i < maxCopies; i++) {
+				const newItem = createItem();
+				marqueeInner.appendChild(newItem);
 			}
 
-			// Set animation duration based on content width and speed
-			const animationDuration = contentWidth / settings.speed;
+			// Setup the animation
+			setupAnimation(contentWidth);
 
-			// Apply the animation
-			const animationId = Math.random().toString(36).substr(2, 9);
-			const animationName = `marquee-${animationId}`;
+			console.log("Completed ensureFullWidth");
+		}
 
-			// Create and inject keyframe animation
-			const styleSheet = document.createElement('style');
-			styleSheet.id = `marquee-style-${animationId}`;
-			styleSheet.classList.add('marquee-animation-style');
-			styleSheet.textContent = `
-        @keyframes ${animationName} {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(${settings.direction === 'right' ? '' : '-'}${contentWidth}px); }
-        }
-      `;
-			document.head.appendChild(styleSheet);
-
-			// Apply animation to the inner container
-			marqueeInner.style.animation = `${animationName} ${animationDuration}s linear infinite`;
-			marqueeInner.dataset.animationName = animationName;
-			marqueeInner.dataset.animationDuration = animationDuration;
-			marqueeInner.dataset.contentWidth = contentWidth;
-		}, 20); // Slightly longer timeout to ensure rendering
+		// Wait a moment for the browser to render and calculate width
+		// Use requestAnimationFrame for better timing
+		requestAnimationFrame(() => {
+			requestAnimationFrame(getWidthAndContinue);
+		});
 	}
 
-	// Include a CSS reset for all elements in the marquee
-	const resetStyleId = `marquee-reset-${Math.random().toString(36).substr(2, 9)}`;
-	const resetStyle = document.createElement('style');
-	resetStyle.id = resetStyleId;
-	resetStyle.classList.add('marquee-reset-style');
-	resetStyle.textContent = `
-    .marquee-container {
-      position: relative;
-      overflow: hidden !important;
-    }
-    
-    .marquee-inner {
-      display: inline-block !important;
-      white-space: nowrap !important;
-      margin: 0 !important;
-      padding: 0 !important;
-    }
-    
-    .marquee-item-wrapper {
-      display: inline-block !important;
-      vertical-align: top !important;
-      margin: 0 !important;
-      padding: 0 !important;
-    }
-    
-    .marquee-content {
-      margin: 0 !important;
-      padding: 0 !important;
-      line-height: 1 !important;
-      vertical-align: top !important;
-      display: inline-block !important;
-    }
-  `;
-	document.head.appendChild(resetStyle);
-
-	// Store references to created style elements on the original element for cleanup
-	element.dataset.resetStyleId = resetStyleId;
-
-	// Initial setup
-	if (document.readyState === 'complete') {
-		ensureFullWidth();
-	} else {
-		window.addEventListener('load', ensureFullWidth);
+	// Create global CSS reset for all marquees if it doesn't exist yet
+	if (!document.getElementById('marquee-global-styles')) {
+		const globalStyle = document.createElement('style');
+		globalStyle.id = 'marquee-global-styles';
+		globalStyle.textContent = `
+      .marquee-container {
+        position: relative;
+        overflow: hidden !important;
+        box-sizing: border-box;
+      }
+      
+      .marquee-inner {
+        display: inline-block !important;
+        white-space: nowrap !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      
+      .marquee-item-wrapper {
+        display: inline-block !important;
+        vertical-align: top !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      
+      .marquee-content {
+        margin: 0 ;
+        padding: 0 ;
+        vertical-align: top !important;
+        display: inline-block !important;
+	padding-right: 0.5em !important;
+      }
+    `;
+		document.head.appendChild(globalStyle);
 	}
 
-	// Adjust when window is resized
-	const resizeHandler = () => {
-		// Clear and rebuild on resize
-		marqueeInner.innerHTML = '';
-		ensureFullWidth();
+	// Create a debounced resize handler for performance
+	const debounce = (fn, delay) => {
+		let timeoutId;
+		return function(...args) {
+			clearTimeout(timeoutId);
+			timeoutId = setTimeout(() => fn.apply(this, args), delay);
+		};
 	};
 
+	// Debounced resize handler
+	const resizeHandler = debounce(() => {
+		console.log('Resize triggered, rebuilding marquee');
+		ensureFullWidth();
+	}, 250);
+
+	// Add resize listener
 	window.addEventListener('resize', resizeHandler);
 
 	// Store resize handler reference for potential cleanup
-	element.dataset.marqueeResizeHandler = resizeHandler;
+	element._marqueeResizeHandler = resizeHandler;
 
-	// Return the original element with marquee functionality
+	// Cleanup function to remove event listeners and styles
+	element._cleanupMarquee = function() {
+		window.removeEventListener('resize', this._marqueeResizeHandler);
+		const styleElement = document.getElementById(`marquee-style-${instanceId}`);
+		if (styleElement) styleElement.remove();
+		delete this._marqueeResizeHandler;
+		delete this._cleanupMarquee;
+	};
+
+	// Initial setup based on document readiness
+	if (document.readyState === 'complete' || document.readyState === 'interactive') {
+		ensureFullWidth();
+	} else {
+		// Wait for the DOM to be ready
+		document.addEventListener('DOMContentLoaded', ensureFullWidth, { once: true });
+	}
+
+	console.log("Marquee creation completed");
 	return element;
 }
 
-let elem;
-let headers;
+// Function to process marquees safely
+function processMarquees() {
+	console.log("Starting to process marquees");
+	const wannabe_marquee = document.getElementsByClassName('marquee');
 
-let wannabe_marquee = document.getElementsByClassName('marquee');
-console.warn(`making ${wannabe_marquee.length} marquees`);
-for (let i = 0; i < wannabe_marquee.length; ++i) {
-	makeMarquee(wannabe_marquee[i]);
+	// Convert collection to array first before processing
+	const elements = Array.from(wannabe_marquee);
+	console.log(`Found ${elements.length} marquee elements`);
+
+	// Process each element
+	elements.forEach(elem => {
+		elem.classList.remove('marquee');
+		makeMarquee(elem);
+	});
+
+	console.log("Finished processing all marquees");
+}
+
+// Run the processor when the DOM is ready
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+	processMarquees();
+} else {
+	document.addEventListener('DOMContentLoaded', processMarquees);
 }
 
 //}}}2 header marqee
