@@ -19,7 +19,7 @@
 </style>
 
 <body>
-	<h1>links:</h1>
+	<h1 className="marquee">links:</h1>
 	<div id='link_container'>
 		<div id='active_container'>
 			<style>
@@ -61,7 +61,7 @@
 					max-width: 100%;
 				}
 			</style>
-			<h2>active links</h2>
+			<h2 className='marquee'>active links</h2>
 		</div>
 		<div id='monitored_container'>
 			<style>
@@ -434,15 +434,18 @@
 		}
 
 		let link = document.createElement('a');
+		link.classList.add('no_marquee');
 		link.href = elem.link;
 		link.target = '_blank';
 
 		let container = document.createElement('div');
+		container.classList.add('no_marquee');
 		container.title = elem.note;
 		link.appendChild(container);
 
 		let icon_container = document.createElement('div');
 		icon_container.className = 'icon_container';
+		icon_container.classList.add('no_marquee');
 		container.appendChild(icon_container);
 
 		let icon = document.createElement('img');
@@ -455,7 +458,8 @@
 		//icon.style.weight = "0%";
 		icon_container.appendChild(icon);
 
-		let title = document.createElement('h3');
+		let title = document.createElement('p');
+		title.classList.add('no_marquee');
 		title.innerText = elem.name;
 		container.appendChild(title);
 

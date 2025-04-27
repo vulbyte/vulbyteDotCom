@@ -1,4 +1,4 @@
-//############################################################
+//##########################################################
 //	imports
 //############################################################ imports {{{1
 console.info("url:", document.location.href);
@@ -444,6 +444,7 @@ try {
 }
 catch (err) {
 	console.warn(err);
+	// WARN: do not remove make a module dummy
 	await ErrPopUp("error adding styling!", err);
 }
 //}}}2
@@ -691,6 +692,29 @@ catch (err) {
 //}}}2
 //}}}1
 //{{{1 styling
+//{{{2
+// WARN: THIS NEEDS TO BE BEFORE THE MARQUEE ELEMENT OR WEBSITE WILL HANG
+let Ps = document.getElementsByTagName("p");
+window.addEventListener('scroll', () => {
+	let p
+	for (let i = 0; i < Ps.length; ++i) {
+		p = Ps[i];
+		const rect = p.getBoundingClientRect();
+		const isVisible = (
+			rect.top < window.innerHeight &&
+			rect.bottom > 0
+		);
+
+		if (isVisible) {
+			console.log("element is now visible");
+			p.classList.add("visible");
+		} else {
+			console.log("element not visible");
+			p.classList.remove("visible");
+		}
+	}
+});
+//}}}2
 //{{{2 header marqee
 
 /**
@@ -725,39 +749,67 @@ function makeMarquee(element, options = {}) {
 		}
 	}
 
+	// Add marquee container class to original element
+	element.classList.add('marquee-container');
+
 	// Convert the element to a marquee container
 	element.style.overflow = 'hidden';
 	element.style.whiteSpace = 'nowrap';
+	element.style.lineHeight = '1'; // Normalize line height
+	element.style.padding = '0';    // Remove padding
+	element.style.margin = '0';     // Remove margin
 
 	// Create the inner container for animation
 	const marqueeInner = document.createElement('div');
+	marqueeInner.classList.add('marquee-inner');
 	marqueeInner.style.display = 'inline-block';
 	marqueeInner.style.whiteSpace = 'nowrap';
 	marqueeInner.style.position = 'relative';
+	marqueeInner.style.paddingBottom = '0';
+	marqueeInner.style.paddingRight = '3em';
+	marqueeInner.style.marginBottom = '0';
+	marqueeInner.style.lineHeight = '1';
+	marqueeInner.style.fontSize = '0'; // Remove space between inline elements
 
 	// Clear original content and add the inner container
 	element.innerHTML = '';
 	element.appendChild(marqueeInner);
 
+	// Counter for unique item IDs
+	let itemCounter = 0;
+
 	// Function to create a single item with the original content
 	function createItem() {
 		// Create a span for inline display
 		const item = document.createElement('span');
+		item.classList.add('marquee-item-wrapper');
+		item.dataset.itemIndex = itemCounter++;
 		item.style.display = 'inline-block';
 		item.style.verticalAlign = 'top';
-		item.style.paddingLeft = '1em';
-		item.style.paddingBottom = "none";
-		item.style.marginBottom = "none";
+		item.style.paddingBottom = '0';
+		item.style.paddingRight = '3em';
+		item.style.marginBottom = '0';
+		item.style.lineHeight = '1';
+		item.style.fontSize = 'inherit'; // Reset the font size
 
 		// Create the original element type to maintain proper rendering
 		const originalTypeElement = document.createElement(originalTagName);
+		originalTypeElement.classList.add('marquee-content');
 
 		// Set original ID and classes on the first item only if this is the first item
 		if (marqueeInner.children.length === 0) {
 			if (originalId) originalTypeElement.id = originalId + '-content';
-			if (originalClasses) originalTypeElement.className = originalClasses + ' marquee-item';
+			if (originalClasses) {
+				originalClasses.split(' ').forEach(cls => {
+					if (cls.trim()) {
+						originalTypeElement.classList.add(cls.trim());
+					}
+				});
+			}
+			originalTypeElement.classList.add('marquee-content-primary');
 		} else {
-			originalTypeElement.className = 'marquee-item';
+			originalTypeElement.classList.add('marquee-content-clone');
+			originalTypeElement.dataset.cloneIndex = marqueeInner.children.length;
 		}
 
 		// Apply original attributes
@@ -770,8 +822,18 @@ function makeMarquee(element, options = {}) {
 
 		// Reset specific styles to prevent inheritance issues
 		originalTypeElement.style.margin = '0';
-		originalTypeElement.style.padding = originalTypeElement.style.padding || '0';
+		originalTypeElement.style.marginTop = '0';
+		originalTypeElement.style.marginBottom = '0';
+		originalTypeElement.style.marginLeft = '0';
+		originalTypeElement.style.marginRight = '0';
+		originalTypeElement.style.padding = '0';
+		originalTypeElement.style.paddingTop = '0';
+		originalTypeElement.style.paddingBottom = '0';
+		originalTypeElement.style.paddingLeft = '0';
+		originalTypeElement.style.paddingRight = '0';
+		originalTypeElement.style.lineHeight = '1';
 		originalTypeElement.style.display = 'inline-block';
+		originalTypeElement.style.verticalAlign = 'top';
 
 		// Add to the span wrapper
 		item.appendChild(originalTypeElement);
@@ -781,6 +843,9 @@ function makeMarquee(element, options = {}) {
 
 	// Function to ensure we have enough content for continuous scrolling
 	function ensureFullWidth() {
+		// Reset counter for new creation cycle
+		itemCounter = 0;
+
 		// Add first item to measure width
 		const firstItem = createItem();
 		marqueeInner.appendChild(firstItem);
@@ -797,7 +862,11 @@ function makeMarquee(element, options = {}) {
 
 			// Clear existing content and add the first item back
 			marqueeInner.innerHTML = '';
-			marqueeInner.appendChild(firstItem);
+
+			// Reset counter again for final creation
+			itemCounter = 0;
+			const newFirstItem = createItem();
+			marqueeInner.appendChild(newFirstItem);
 
 			// Add enough copies to ensure continuous scrolling
 			for (let i = 1; i < totalNeeded; i++) {
@@ -809,10 +878,13 @@ function makeMarquee(element, options = {}) {
 			const animationDuration = contentWidth / settings.speed;
 
 			// Apply the animation
-			const animationName = `marquee-${Math.random().toString(36).substr(2, 9)}`;
+			const animationId = Math.random().toString(36).substr(2, 9);
+			const animationName = `marquee-${animationId}`;
 
 			// Create and inject keyframe animation
 			const styleSheet = document.createElement('style');
+			styleSheet.id = `marquee-style-${animationId}`;
+			styleSheet.classList.add('marquee-animation-style');
 			styleSheet.textContent = `
         @keyframes ${animationName} {
           0% { transform: translateX(0); }
@@ -823,8 +895,49 @@ function makeMarquee(element, options = {}) {
 
 			// Apply animation to the inner container
 			marqueeInner.style.animation = `${animationName} ${animationDuration}s linear infinite`;
+			marqueeInner.dataset.animationName = animationName;
+			marqueeInner.dataset.animationDuration = animationDuration;
+			marqueeInner.dataset.contentWidth = contentWidth;
 		}, 20); // Slightly longer timeout to ensure rendering
 	}
+
+	// Include a CSS reset for all elements in the marquee
+	const resetStyleId = `marquee-reset-${Math.random().toString(36).substr(2, 9)}`;
+	const resetStyle = document.createElement('style');
+	resetStyle.id = resetStyleId;
+	resetStyle.classList.add('marquee-reset-style');
+	resetStyle.textContent = `
+    .marquee-container {
+      position: relative;
+      overflow: hidden !important;
+    }
+    
+    .marquee-inner {
+      display: inline-block !important;
+      white-space: nowrap !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    
+    .marquee-item-wrapper {
+      display: inline-block !important;
+      vertical-align: top !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    
+    .marquee-content {
+      margin: 0 !important;
+      padding: 0 !important;
+      line-height: 1 !important;
+      vertical-align: top !important;
+      display: inline-block !important;
+    }
+  `;
+	document.head.appendChild(resetStyle);
+
+	// Store references to created style elements on the original element for cleanup
+	element.dataset.resetStyleId = resetStyleId;
 
 	// Initial setup
 	if (document.readyState === 'complete') {
@@ -834,11 +947,16 @@ function makeMarquee(element, options = {}) {
 	}
 
 	// Adjust when window is resized
-	window.addEventListener('resize', () => {
+	const resizeHandler = () => {
 		// Clear and rebuild on resize
 		marqueeInner.innerHTML = '';
 		ensureFullWidth();
-	});
+	};
+
+	window.addEventListener('resize', resizeHandler);
+
+	// Store resize handler reference for potential cleanup
+	element.dataset.marqueeResizeHandler = resizeHandler;
 
 	// Return the original element with marquee functionality
 	return element;
@@ -847,59 +965,12 @@ function makeMarquee(element, options = {}) {
 let elem;
 let headers;
 
-headers = document.getElementsByTagName('h1');
-for (let i = 0; i < headers.length; ++i) {
-	elem = headers[i];
-	makeMarquee(elem);
-}
-headers = document.getElementsByTagName('h2');
-for (let i = 0; i < headers.length; ++i) {
-	elem = headers[i];
-	makeMarquee(elem);
-}
-headers = document.getElementsByTagName('h3');
-for (let i = 0; i < headers.length; ++i) {
-	elem = headers[i];
-	makeMarquee(elem);
-}
-headers = document.getElementsByTagName('h4');
-for (let i = 0; i < headers.length; ++i) {
-	elem = headers[i];
-	makeMarquee(elem);
-}
-headers = document.getElementsByTagName('h5');
-for (let i = 0; i < headers.length; ++i) {
-	elem = headers[i];
-	makeMarquee(elem);
-}
-headers = document.getElementsByTagName('h6');
-for (let i = 0; i < headers.length; ++i) {
-	elem = headers[i];
-	makeMarquee(elem);
+let wannabe_marquee = document.getElementsByClassName('marquee');
+console.warn(`making ${wannabe_marquee.length} marquees`);
+for (let i = 0; i < wannabe_marquee.length; ++i) {
+	makeMarquee(wannabe_marquee[i]);
 }
 
 //}}}2 header marqee
-//{{{2
-let Ps = document.getElementsByTagName("p");
-window.addEventListener('scroll', () => {
-	let p
-	for (let i = 0; i < Ps.length; ++i) {
-		p = Ps[i];
-		const rect = p.getBoundingClientRect();
-		const isVisible = (
-			rect.top < window.innerHeight &&
-			rect.bottom > 0
-		);
-
-		if (isVisible) {
-			console.log("element is now visible");
-			p.classList.add("visible");
-		} else {
-			console.log("element not visible");
-			p.classList.remove("visible");
-		}
-	}
-});
-//}}}2
 //}}1
 //

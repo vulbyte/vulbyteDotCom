@@ -476,18 +476,16 @@ h4,
 h5,
 h6 {
 	display: block;
-	/*
 	margin-bottom: var(--padding);
+	max-width: 100%;
 	padding: var(--padding);
-*/
-	user-select: none;
 	text-transform: uppercase;
 	text-shadow:
 		1px 1px 0px var(--color_background_primary),
 		1px -1px 0px var(--color_background_primary),
 		-1px 1px 0px var(--color_background_primary),
 		-1px -1px 0px var(--color_background_primary);
-	max-width: 100%;
+	user-select: none;
 }
 
 h1:nth-of-type(odd),
@@ -495,13 +493,7 @@ h2:nth-of-type(odd),
 h3:nth-of-type(odd),
 h4:nth-of-type(odd),
 h5:nth-of-type(odd),
-h6:nth-of-type(odd) {
-	display: block;
-	margin-bottom: var(--padding);
-	padding: var(--padding);
-	user-select: none;
-	text-transform: uppercase;
-}
+h6:nth-of-type(odd) {}
 
 hgroup {
 	background-color: var(--color_primary);
@@ -518,14 +510,13 @@ hgroup>h3,
 hgroup>h4,
 hgroup>h5,
 hgroup>h6 {
-	background-color: transparent !important;
-	color: var(--color_background_primary);
-	padding: 0;
+	background-color: transparent;
+	color: var(--color_secondary);
 }
 
 
 hgroup>:first-child {
-	color: var(--color_font_primary);
+	/*color: var(--color_font_primary);*/
 	display: block;
 	text-shadow:
 		0.1em 0.1em 0px var(--color_background_primary);
@@ -730,6 +721,11 @@ mark {
 	padding-right: var(--padding);
 }
 
+.marquee_item {
+	padding: 0;
+	margin: 0;
+}
+
 menu {}
 
 menuitem {}
@@ -803,12 +799,12 @@ output {
 p {
 	color: #555;
 	font-family: 'Courier New', Courier, monospace;
-	padding: var(--padding);
+	padding: var(--color_secondary);
 }
 
 p.visible {
 	color: #fff;
-	transition-duration: 2s !important;
+	transition-duration: 300ms !important;
 	transition-timing-function: ease-out;
 }
 
