@@ -69,23 +69,17 @@ function Navbar() {
 		let spacer_height_target = "120px";
 		let spacer_height_increment = 10;
 
-		/*async function add_to_spacer_height()
-			while (parseInt(spacer.style.height, 10) < spacer_height_target) {
-				// Use a promise to delay the loop
-				await new Promise(resolve => setTimeout(resolve, 200));
-
-				// Increase the spacer height
-				let currentHeight = parseInt(spacer.style.height, 10); // Convert "50px" to 50
-				spacer.style.height = currentHeight + spacer_height_increment + "px";
-
-				console.log("Adding height to spacer: ", spacer.style.height);
-			}
-		}*/
-
-		document.getElementsByTagName("body")[0].prepend(spacer);
-	} catch (err) {
-		console.error('cannot add spacer', err);
+		document.body.prepend(document.createElement('br'));
+		document.body.prepend(document.createElement('br'));
+		document.body.prepend(document.createElement('br'));
+		document.body.prepend(document.createElement('br'));
+		document.body.prepend(document.createElement('br'));
+		// TODO: finish me
 	}
+	catch (err) {
+
+	}
+
 
 
 	try {

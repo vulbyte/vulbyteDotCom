@@ -21,6 +21,7 @@
 <body>
 	<h1>links:</h1>
 	<div id='link_container'>
+		<h2 id="active_title" class='marquee' style="border-color:transparent;">active links</h2>
 		<div id='active_container'>
 			<style>
 				#active_container>*>div {
@@ -34,6 +35,10 @@
 					vertical-align: center;
 					width: 80%;
 					max-width: 30em;
+				}
+
+				#active_container>*>h2 {
+					border: none !important;
 				}
 
 				#active_container>a>div>h3 {
@@ -61,8 +66,8 @@
 					max-width: 100%;
 				}
 			</style>
-			<h2 class='marquee'>active links</h2>
 		</div>
+		<h2 class='marquee'>monitored links</h2>
 		<div id='monitored_container'>
 			<style>
 				#monitored_container>*>div {
@@ -104,8 +109,8 @@
 					max-width: 100%;
 				}
 			</style>
-			<h2>monitored links</h2>
 		</div>
+		<h2 class="marquee">inactive links</h2>
 		<div id='inactive_container'>
 			<style>
 				#inactive_container>*>div {
@@ -148,8 +153,8 @@
 					max-width: 100%;
 				}
 			</style>
-			<h2>inactive links</h2>
 		</div>
+		<h2 class='marquee'>contact links</h2>
 		<div id='contact_container'>
 			<style>
 				#contact_container>*>div {
@@ -192,7 +197,6 @@
 					max-width: 100%;*/
 				}
 			</style>
-			<h2>contact links</h2>
 		</div>
 	</div>
 </body>
