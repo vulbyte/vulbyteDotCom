@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script type="module" src="/client_management.js"></script>
+	<title>linux_install_guide | vulbyte</title>
+	<style>
+		table {
+			border-collapse: collapse;
+			width: 100%;
+			margin: 1em 0;
+		}
+
+		th,
+		td {
+			border: 1px solid #ddd;
+			padding: 8px;
+			text-align: left;
+		}
+
+		th {
+			background-color: #f2f2f2;
+		}
+
+		code {
+			background-color: #f4f4f4;
+			padding: 2px 4px;
+			border-radius: 3px;
+			font-family: monospace;
+		}
+
+		details {
+			margin-bottom: 10px;
+		}
+	</style>
+</head>
+
+<body>
+	<h1>Linux Installation Guide</h1>
+	<em>BEFORE YOU PROCEEED</em>
+	<div>
+		<h2>who/what/when?</h2>
+	</div>
+	<div>
+		<h2>why?</h2>
+		</<ul>
+		<li><strong>Freedom & Open Source:</strong> Complete control over your system with access to source code</li>
+		<li><strong>No Forced Updates:</strong> You decide when and what to update</li>
+		<li><strong>Privacy Focused:</strong> No telemetry or data collection by default <em>on most distros</em></li>
+		<li><strong>Lightweight:</strong> Runs efficiently on old hardware (some distros need &lt;1GB RAM),</li>
+		<li><strong>Performance:</strong> Some applications such as blender run up to 100% faster </li>
+		<li><strong>Security:</strong> Fewer malware threats and granular permission controls</li>
+		<li><strong>Cost:</strong> Completely free - no licenses or subscriptions</li>
+		<li><strong>Customization:</strong> Change every aspect of your desktop environment</li>
+		<li><strong>Package Managers:</strong> Centralized software installation (no web hunting for installers)</li>
+		<li><strong>Stability:</strong> Many distros can run for years without rebooting</li>
+		<li><strong>Developer Friendly:</strong> Native support for programming languages and tools</li>
+		<li><strong>Transparency:</strong> You can inspect exactly what the system is doing</li>
+		<li><strong>Community Support:</strong> Helpful user communities and extensive documentation</li>
+		<li><strong>No Bloatware:</strong> Only install what you actually want</li>
+		<li><strong>Server Capabilities:</strong> Powers 90% of the internet and cloud infrastructure</li>
+		<li><strong>Live Environments:</strong> Test drive via USB without installation</li>
+		<li><strong>Windows/Mac Compatibility:</strong> Run many Windows apps via Wine/Proton</li>
+		<li><strong>Future-Proof Skills:</strong> Learning Linux means learning a more universal standard way of doing
+			things (might even save you tonnes of time with tedious work)</li>
+		</ul>
+	</div>
+	<ol>
+		<li>
+			<!-- {{{2 DE -->
+			<input type="checkbox">
+			<details>
+				<summary>Choose your favorite Desktop Environment (DE)</summary>
+				<table>
+					<tr>
+						<th>Name</th>
+						<th>OS Most Like</th>
+						<th>Longevity Potential</th>
+						<th>Pros</th>
+						<th>Cons</th>
+					</tr>
+					<tr>
+						<td>GNOME</td>
+						<td>Modern macOS/Windows</td>
+						<td>High (Default for many distros)</td>
+						<td>Clean, modern, excellent Wayland support</td>
+						<td>Resource-heavy, limited customization</td>
+					</tr>
+					<tr>
+						<td>KDE Plasma</td>
+						<td>Windows</td>
+						<td>High (Very active development)</td>
+						<td>Highly customizable, feature-rich</td>
+						<td>Can be overwhelming for beginners</td>
+					</tr>
+					<tr>
+						<td>XFCE</td>
+						<td>Windows XP/7</td>
+						<td>Medium (Stable but slow development)</td>
+						<td>Lightweight, stable, traditional</td>
+						<td>Looks dated, less modern features</td>
+					</tr>
+					<tr>
+						<td>Cinnamon</td>
+						<td>Windows 7</td>
+						<td>Medium (Linux Mint focus)</td>
+						<td>Traditional layout, user-friendly</td>
+						<td>Limited Wayland support</td>
+					</tr>
+				</table>
+			</details>
+		</li>
+		<!-- }}}2 -->
+		<!-- {{{2 distros -->
+		<li>
+			<input type="checkbox">
+			<details>
+				<summary>Find a distro that interests you</summary>
+				<table>
+					<tr>
+						<th>Distro</th>
+						<th>Based Upon</th>
+						<th>Difficulty</th>
+						<th>Longevity Potential</th>
+						<th>Pros</th>
+						<th>Cons</th>
+					</tr>
+					<tr>
+						<td>Ubuntu</td>
+						<td>Debian</td>
+						<td>Beginner</td>
+						<td>High</td>
+						<td>User-friendly, great documentation</td>
+						<td>Snap packages controversial</td>
+					</tr>
+					<tr>
+						<td>Linux Mint</td>
+						<td>Ubuntu/Debian</td>
+						<td>Beginner</td>
+						<td>High</td>
+						<td>Windows-like, stable</td>
+						<td>Conservative with updates</td>
+					</tr>
+					<tr>
+						<td>Fedora</td>
+						<td>Red Hat</td>
+						<td>Intermediate</td>
+						<td>Very High</td>
+						<td>Cutting-edge, corporate backing</td>
+						<td>Shorter support cycles</td>
+					</tr>
+					<tr>
+						<td>Debian</td>
+						<td>Independent</td>
+						<td>Intermediate</td>
+						<td>Very High</td>
+						<td>Extremely stable, vast repos</td>
+						<td>Old packages in stable</td>
+					</tr>
+					<tr>
+						<td>Arch Linux</td>
+						<td>Independent</td>
+						<td>Advanced</td>
+						<td>High</td>
+						<td>Rolling release, minimal</td>
+						<td>Steep learning curve</td>
+					</tr>
+				</table>
+			</details>
+		</li>
+		<!-- }}}2 -->
+		<!-- {{{2 download distro iso -->
+		<li>
+			<input type="checkbox">
+			<details>
+				<summary>Download your chosen distro ISO</summary>
+				<p>Official download links:</p>
+				<ul>
+					<li>Ubuntu: <a href="https://ubuntu.com/download">https://ubuntu.com/download</a></li>
+					<li>Linux Mint: <a href="https://linuxmint.com/download.php">https://linuxmint.com/download.php</a></li>
+					<li>Fedora: <a
+							href="https://fedoraproject.org/workstation/download/">https://fedoraproject.org/workstation/download/</a>
+					</li>
+					<li>Debian: <a href="https://www.debian.org/distrib/">https://www.debian.org/distrib/</a></li>
+					<li>Arch Linux: <a href="https://archlinux.org/download/">https://archlinux.org/download/</a></li>
+				</ul>
+				<p>Always verify checksums after download!</p>
+			</details>
+		</li>
+		<!-- }}}2 -->
+		<!-- {{{2 create bootable usb -->
+		<li>
+			<input type="checkbox">
+			<details>
+				<summary>Create bootable USB with Rufus (Windows) or dd (Linux/Mac)</summary>
+				<p>Windows: <a href="https://rufus.ie/en/">https://rufus.ie/en/</a></p>
+				<p>Linux/Mac command:</p>
+				<code>dd if=your-distro.iso of=/dev/sdX bs=4M status=progress oflag=sync</code>
+				<p><strong>Warning:</strong> Replace /dev/sdX with your actual USB device (e.g., /dev/sdb) - this will erase
+					all
+					data on the target device!</p>
+			</details>
+		</li>
+		<!-- }}}2 -->
+		<!-- {{{2 prepare system -->
+		<li>
+			<input type="checkbox">
+			<details>
+				<summary>Prepare your system for installation</summary>
+				<ul>
+					<li>Backup important data</li>
+					<li>Disable Secure Boot if needed (some distros require this)</li>
+					<li>Check disk space requirements (minimum 20GB recommended)</li>
+					<li>Identify your drive with this command (Windows):</li>
+				</ul>
+				<code>wmic diskdrive get Name, Manufacturer, Model, InterfaceType, MediaType, SerialNumber</code>
+			</details>
+		</li>
+		<!-- }}}2 -->
+		<!-- {{{2 boot from usb -->
+		<li>
+			<input type="checkbox">
+			<details>
+				<summary>Boot from USB</summary>
+				<ul>
+					<li>Plug USB into motherboard directly (not front panel)</li>
+					<li>Restart computer and enter BIOS/UEFI (typically F2, F12, DEL, or ESC)</li>
+					<li>Disable Secure Boot if needed</li>
+					<li>Select USB as boot device</li>
+					<li>Choose "Try" or "Install" option</li>
+				</ul>
+			</details>
+		</li>
+		<!-- }}}2 -->
+		<!-- {{{2 -->
+		<li>
+			<input type="checkbox">
+			<details>
+				<summary>Partition your drives</summary>
+				<!-- 
+				<p>Recommended scheme for UEFI systems:</p>
+				<ul>
+					<li>EFI System Partition: 500MB (FAT32)</li>
+					<li>Root partition (/): 30-50GB (ext4)</li>
+					<li>Home partition (/home): Remaining space (ext4)</li>
+					<li>Swap: Equal to RAM size (or use swap file)</li>
+				</ul>
+				<p>For dual boot:</p>
+				<ul>
+					<li>Shrink Windows partition from within Windows first</li>
+					<li>Leave Windows EFI partition untouched</li>
+				</ul>
+-->
+			</details>
+		</li>
+		<!-- }}}2 -->
+		<!-- {{{2 complete install -->
+		<li>
+			<input type="checkbox">
+			<details>
+				<summary>Complete installation</summary>
+				<ul>
+					<li>Select your timezone</li>
+					<li>Create user account (avoid root as primary user)</li>
+					<li>Choose whether to install proprietary drivers</li>
+					<li>Select additional software (office suite, media codecs, etc.)</li>
+					<li>Wait for installation to complete</li>
+					<li>Remove installation media when prompted</li>
+					<li>Reboot</li>
+				</ul>
+			</details>
+		</li>
+		<!-- }}}2 -->
+		<!-- {{{2  post install immediate -->
+		<li>
+			<input type="checkbox">
+			<details>
+				<summary>Post-installation setup</summary>
+				<ul>
+					<li>Run system updates:
+						<code>sudo apt update && sudo apt upgrade</code> (Debian/Ubuntu)
+						<code>sudo dnf upgrade</code> (Fedora)
+					</li>
+					<li>Install restricted extras (codecs, fonts):
+						<code>sudo apt install ubuntu-restricted-extras</code> (Ubuntu)
+					</li>
+					<li>Configure firewall:
+						<code>sudo ufw enable</code>
+					</li>
+					<li>Install favorite applications</li>
+					<li>Configure backups (Timeshift for system, Deja Dup for files)</li>
+				</ul>
+			</details>
+		</li>
+		<!-- }}}2 -->
+		<!-- {{{2 terminal essentials -->
+		<li>
+			<input type="checkbox">
+			<details>
+				<summary>Learn essential terminal commands</summary>
+				<table>
+					<tr>
+						<th>Command</th>
+						<th>Description</th>
+					</tr>
+					<tr>
+						<td><code>sudo [command]</code></td>
+						<td>Run command as superuser</td>
+					</tr>
+					<tr>
+						<td><code>sudo-rs [command]</code></td>
+						<td>Run command as superuser</td>
+					</tr>
+					<tr>
+						<td><code>apt install [package]</code><br><code>dnf install [package]</code></td>
+						<td>Install software (Debian/Ubuntu vs Fedora)</td>
+					</tr>
+					<tr>
+						<td><code>ls</code></td>
+						<td>List directory contents</td>
+					</tr>
+					<tr>
+						<td><code>cd [directory]</code></td>
+						<td>Change directory</td>
+					</tr>
+					<tr>
+						<td><code>nano [file]</code></td>
+						<td>Simple text editor, if you plan to do regular editing in a terminal i strongly recommend neovim (or
+							vim
+							works too but imo neovim has many quality of life improvements)</td>
+					</tr>
+
+					<tr>
+						<td><code>systemctl [start|stop|status] [service]</code></td>
+						<td>Manage system services</td>
+					</tr>
+				</table>
+			</details>
+		</li>
+		<!-- }}}2 -->
+		<!-- {{{2 packaging systems -->
+		<li>
+			<h2>universal packages and packaging systems (ie, EXEs, DLLs, DMGs, etc)</h2>
+			<table>
+				<tr>
+					<th>Package Type</th>
+					<th>TL;DR</th>
+					<th>Pros</th>
+					<th>Cons</th>
+					<th>Notes</th>
+				</tr>
+				<!-- {{{3 -->
+				<tr>
+					<td>
+						package managers
+					</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td>(think like an app store)</td>
+				</tr>
+				<tr>
+					<td>Flatpaks <br>(strongly recommended default)</td>
+					<td>Universal, sandboxed apps</td>
+					<td>
+						<ul>
+							<li>Cross-distro compatibility</li>
+							<li>Sandboxed for security</li>
+							<li>Automatic updates</li>
+							<li>Large app selection</li>
+							<li>large support base </li>
+						</ul>
+					</td>
+					<td>
+						<ul>
+							<li>Larger download sizes</li>
+							<li>Slight performance overhead</li>
+							<li>Theming might not match system</li>
+							<li>certain things such as GPU acceleration can be annoying</li>
+						</ul>
+					</td>
+					<td>Best for desktop applications, managed via <code>flatpak</code> command<br>
+						<em>
+							best for applications with low performance, <br>or applications that should be sandboxed ie
+							web-browsers.
+							needs
+							such as discord, spotify, etc
+						</em>
+					</td>
+				</tr>
+				<tr>
+					<td>Homebrew <br>
+						<em>not recommended</em>
+					</td>
+					<td>macOS-style package manager</td>
+					<td>
+						<ul>
+							<li>User-space installation</li>
+							<li>Huge formula collection</li>
+							<li>Good for development tools</li>
+						</ul>
+					</td>
+					<td>
+						<ul>
+							<li>Not Linux-native</li>
+							<li>Can conflict with system packages</li>
+							<li>Slower than native packages</li>
+						</ul>
+					</td>
+					<td>Popular for developers coming from macOS, can have mixed results on linux. </td>
+				</tr>
+				<tr>
+					<td>Snap
+						<br>
+						<em>just use flatpaks, or appimages unless serious issues with previous</em>
+					</td>
+					<td>Canonical's (the company developing ubuntu) universal packages</td>
+					<td>
+						<ul>
+							<li>Automatic updates</li>
+							<li>Cross-distro</li>
+							<li>Sandboxed</li>
+							<li>Large repository</li>
+						</ul>
+					</td>
+					<td>
+						<ul>
+							<li>Slow startup</li>
+							<li>Controlled by Canonical</li>
+							<li>Forced updates</li>
+							<li>Theming issues</li>
+						</ul>
+					</td>
+					<td>Default on Ubuntu, controversial in Linux community</td>
+				</tr>
+				<!-- }}}3 -->
+				<!-- {{{3 -->
+				<tr>
+					<td>
+						packages
+					</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td>(think like an EXE, DLL, or DMG file)</td>
+				</tr>
+				<!-- }}}3 -->
+				<tr>
+					<td>AppImages</td>
+					<td>Portable single-file apps</td>
+					<td>
+						<ul>
+							<li>No installation needed</li>
+							<li>Completely portable</li>
+							<li>No root required</li>
+							<li>No system dependencies</li>
+						</ul>
+					</td>
+					<td>
+						<ul>
+							<li>No automatic updates</li>
+							<li>No desktop integration by default</li>
+							<li>Large file sizes</li>
+						</ul>
+					</td>
+					<td>great for applications that you would like to run from say a usb</td>
+				</tr>
+				<tr>
+					<td>DEB
+						<br>
+						<em>not recommended outside of debian based distros</em>
+					</td>
+					<td>Debian/Ubuntu native</td>
+					<td>
+						<ul>
+							<li>Native performance</li>
+							<li>Tight system integration</li>
+							<li>Excellent dependency handling</li>
+						</ul>
+					</td>
+					<td>
+						<ul>
+							<li>Distro-specific</li>
+							<li>Dependency hell potential</li>
+							<li>Manual updates</li>
+						</ul>
+					</td>
+					<td>the reason i mention DEB's here is because DEBS are a closed package similar to appimages but for debian
+						based distros, so why mention it here?<br>
+						the reason why is because there is actually some ways to install DEB packages on distros like arch. just
+						know this is a more advanced thing that will <em>require</em> the terminal
+					</td>
+				</tr>
+				<tr>
+					<td>Source Compilation</td>
+					<td>Manual build from source</td>
+					<td>
+						<ul>
+							<li>Maximum customization</li>
+							<li>Latest versions</li>
+							<li>No dependency on packagers</li>
+						</ul>
+					</td>
+					<td>
+						<ul>
+							<li>Time-consuming</li>
+							<li>Dependency management</li>
+							<li>No automatic updates</li>
+						</ul>
+					</td>
+					<td>just avoid unless there's no other option</td>
+				</tr>
+			</table>
+			<!-- }}}2 -->
+			<!-- {{{2 -->
+	</ol>
+</body>
+
+</html>
