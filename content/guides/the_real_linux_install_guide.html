@@ -39,34 +39,61 @@
 
 <body>
 	<h1>Linux Installation Guide</h1>
-	<em>BEFORE YOU PROCEEED</em>
-	<div>
-		<h2>who/what/when?</h2>
-	</div>
-	<div>
-		<h2>why?</h2>
-		</<ul>
-		<li><strong>Freedom & Open Source:</strong> Complete control over your system with access to source code</li>
-		<li><strong>No Forced Updates:</strong> You decide when and what to update</li>
-		<li><strong>Privacy Focused:</strong> No telemetry or data collection by default <em>on most distros</em></li>
-		<li><strong>Lightweight:</strong> Runs efficiently on old hardware (some distros need &lt;1GB RAM),</li>
-		<li><strong>Performance:</strong> Some applications such as blender run up to 100% faster </li>
-		<li><strong>Security:</strong> Fewer malware threats and granular permission controls</li>
-		<li><strong>Cost:</strong> Completely free - no licenses or subscriptions</li>
-		<li><strong>Customization:</strong> Change every aspect of your desktop environment</li>
-		<li><strong>Package Managers:</strong> Centralized software installation (no web hunting for installers)</li>
-		<li><strong>Stability:</strong> Many distros can run for years without rebooting</li>
-		<li><strong>Developer Friendly:</strong> Native support for programming languages and tools</li>
-		<li><strong>Transparency:</strong> You can inspect exactly what the system is doing</li>
-		<li><strong>Community Support:</strong> Helpful user communities and extensive documentation</li>
-		<li><strong>No Bloatware:</strong> Only install what you actually want</li>
-		<li><strong>Server Capabilities:</strong> Powers 90% of the internet and cloud infrastructure</li>
-		<li><strong>Live Environments:</strong> Test drive via USB without installation</li>
-		<li><strong>Windows/Mac Compatibility:</strong> Run many Windows apps via Wine/Proton</li>
-		<li><strong>Future-Proof Skills:</strong> Learning Linux means learning a more universal standard way of doing
-			things (might even save you tonnes of time with tedious work)</li>
+	<!-- {{{2 before -->
+	<details>
+		<summary>
+			<em>BEFORE YOU PROCEEED</em>
+		</summary>
+		<h3>what you will need</h3>
+		<ul>
+			<li>a complete working computer</li>
+			<li>stable power</li>
+			<li>2 usbs of at least 32gb</li>
 		</ul>
-	</div>
+		<h3>preflight check</h3>
+		<ul>
+			<li>check if audio and video devices ares UVC</li>
+			<li>if you're a gamer, check your game library here: <a href='protondb.com'>protondb.com</a></li>
+			<li>if you use a lot of elgato gear, you might have a bad time</li>
+			<li>certain laptops such as acer wont let you control fan speeds (other brans tho like msi and asus are generally
+				fine)</li>
+			<li>have a eathernet adapter just in case</li>
+			<li></li>
+		</ul>
+
+
+	</details>
+	<!-- }}}2 -->
+	<!-- {{{2 -->
+	<details>
+		<summary>
+			<h2>who/what/when/why?</h2>
+		</summary>
+		<div>
+			<h2>why?</h2>
+			</<ul>
+			<li><strong>Freedom & Open Source:</strong> Complete control over your system with access to source code</li>
+			<li><strong>No Forced Updates:</strong> You decide when and what to update</li>
+			<li><strong>Privacy Focused:</strong> No telemetry or data collection by default <em>on most distros</em></li>
+			<li><strong>Lightweight:</strong> Runs efficiently on old hardware (some distros need &lt;1GB RAM),</li>
+			<li><strong>Performance:</strong> Some applications such as blender run up to 100% faster </li>
+			<li><strong>Security:</strong> Fewer malware threats and granular permission controls</li>
+			<li><strong>Cost:</strong> Completely free - no licenses or subscriptions</li>
+			<li><strong>Customization:</strong> Change every aspect of your desktop environment</li>
+			<li><strong>Package Managers:</strong> Centralized software installation (no web hunting for installers)</li>
+			<li><strong>Stability:</strong> Many distros can run for years without rebooting</li>
+			<li><strong>Developer Friendly:</strong> Native support for programming languages and tools</li>
+			<li><strong>Transparency:</strong> You can inspect exactly what the system is doing</li>
+			<li><strong>Community Support:</strong> Helpful user communities and extensive documentation</li>
+			<li><strong>No Bloatware:</strong> Only install what you actually want</li>
+			<li><strong>Server Capabilities:</strong> Powers 90% of the internet and cloud infrastructure</li>
+			<li><strong>Live Environments:</strong> Test drive via USB without installation</li>
+			<li><strong>Windows/Mac Compatibility:</strong> Run many Windows apps via Wine/Proton</li>
+			<li><strong>Future-Proof Skills:</strong> Learning Linux means learning a more universal standard way of doing
+				things (might even save you tonnes of time with tedious work)</li>
+			</ul>
+		</div>
+	</details>
 	<ol>
 		<li>
 			<!-- {{{2 DE -->
@@ -109,6 +136,12 @@
 						<td>Traditional layout, user-friendly</td>
 						<td>Limited Wayland support</td>
 					</tr>
+					<tr>
+						<td>Cosmic</td>
+						<td>Medium (made by system76)</td>
+						<td>most modern, and surprisingly quick moving</td>
+						<td>as of writing, in alpha and not very stable</td>
+					</tr>
 				</table>
 			</details>
 		</li>
@@ -118,6 +151,7 @@
 			<input type="checkbox">
 			<details>
 				<summary>Find a distro that interests you</summary>
+				<em>AVOID NICHE DISTROS</em>
 				<table>
 					<tr>
 						<th>Distro</th>
@@ -126,6 +160,17 @@
 						<th>Longevity Potential</th>
 						<th>Pros</th>
 						<th>Cons</th>
+						<th>links:</th>
+					</tr>
+					<tr>
+						<td>Manjaro (recommended for most)</td>
+						<td>Arch</td>
+						<td>mid level</td>
+						<td>High</td>
+						<td>Windows-like, slightly unstable</td>
+						<td>development team is very opinionated and scatter brained leaving the distro feeling a bit more "bodged"
+							then others at times</td>
+						<td><a href='https://manjaro.org/'>https://manjaro.org/</a></td>
 					</tr>
 					<tr>
 						<td>Ubuntu</td>
@@ -134,6 +179,7 @@
 						<td>High</td>
 						<td>User-friendly, great documentation</td>
 						<td>Snap packages controversial</td>
+						<td><a></a></td>
 					</tr>
 					<tr>
 						<td>Linux Mint</td>
@@ -142,6 +188,7 @@
 						<td>High</td>
 						<td>Windows-like, stable</td>
 						<td>Conservative with updates</td>
+						<td><a></a></td>
 					</tr>
 					<tr>
 						<td>Fedora</td>
@@ -150,6 +197,7 @@
 						<td>Very High</td>
 						<td>Cutting-edge, corporate backing</td>
 						<td>Shorter support cycles</td>
+						<td><a></a></td>
 					</tr>
 					<tr>
 						<td>Debian</td>
@@ -158,6 +206,7 @@
 						<td>Very High</td>
 						<td>Extremely stable, vast repos</td>
 						<td>Old packages in stable</td>
+						<td><a></a></td>
 					</tr>
 					<tr>
 						<td>Arch Linux</td>
@@ -166,6 +215,7 @@
 						<td>High</td>
 						<td>Rolling release, minimal</td>
 						<td>Steep learning curve</td>
+						<td><a></a></td>
 					</tr>
 				</table>
 			</details>
@@ -239,6 +289,7 @@
 			<input type="checkbox">
 			<details>
 				<summary>Partition your drives</summary>
+				DO NOT ENCRYPT
 				<!-- 
 				<p>Recommended scheme for UEFI systems:</p>
 				<ul>
@@ -299,7 +350,7 @@
 		<li>
 			<input type="checkbox">
 			<details>
-				<summary>Learn essential terminal commands</summary>
+				<summary>(optional) Learn essential terminal commands</summary>
 				<table>
 					<tr>
 						<th>Command</th>
@@ -342,179 +393,445 @@
 		<!-- }}}2 -->
 		<!-- {{{2 packaging systems -->
 		<li>
-			<h2>universal packages and packaging systems (ie, EXEs, DLLs, DMGs, etc)</h2>
-			<table>
-				<tr>
-					<th>Package Type</th>
-					<th>TL;DR</th>
-					<th>Pros</th>
-					<th>Cons</th>
-					<th>Notes</th>
-				</tr>
-				<!-- {{{3 -->
-				<tr>
-					<td>
-						package managers
-					</td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td>(think like an app store)</td>
-				</tr>
-				<tr>
-					<td>Flatpaks <br>(strongly recommended default)</td>
-					<td>Universal, sandboxed apps</td>
-					<td>
-						<ul>
-							<li>Cross-distro compatibility</li>
-							<li>Sandboxed for security</li>
-							<li>Automatic updates</li>
-							<li>Large app selection</li>
-							<li>large support base </li>
-						</ul>
-					</td>
-					<td>
-						<ul>
-							<li>Larger download sizes</li>
-							<li>Slight performance overhead</li>
-							<li>Theming might not match system</li>
-							<li>certain things such as GPU acceleration can be annoying</li>
-						</ul>
-					</td>
-					<td>Best for desktop applications, managed via <code>flatpak</code> command<br>
-						<em>
-							best for applications with low performance, <br>or applications that should be sandboxed ie
-							web-browsers.
-							needs
-							such as discord, spotify, etc
-						</em>
-					</td>
-				</tr>
-				<tr>
-					<td>Homebrew <br>
-						<em>not recommended</em>
-					</td>
-					<td>macOS-style package manager</td>
-					<td>
-						<ul>
-							<li>User-space installation</li>
-							<li>Huge formula collection</li>
-							<li>Good for development tools</li>
-						</ul>
-					</td>
-					<td>
-						<ul>
-							<li>Not Linux-native</li>
-							<li>Can conflict with system packages</li>
-							<li>Slower than native packages</li>
-						</ul>
-					</td>
-					<td>Popular for developers coming from macOS, can have mixed results on linux. </td>
-				</tr>
-				<tr>
-					<td>Snap
-						<br>
-						<em>just use flatpaks, or appimages unless serious issues with previous</em>
-					</td>
-					<td>Canonical's (the company developing ubuntu) universal packages</td>
-					<td>
-						<ul>
-							<li>Automatic updates</li>
-							<li>Cross-distro</li>
-							<li>Sandboxed</li>
-							<li>Large repository</li>
-						</ul>
-					</td>
-					<td>
-						<ul>
-							<li>Slow startup</li>
-							<li>Controlled by Canonical</li>
-							<li>Forced updates</li>
-							<li>Theming issues</li>
-						</ul>
-					</td>
-					<td>Default on Ubuntu, controversial in Linux community</td>
-				</tr>
-				<!-- }}}3 -->
-				<!-- {{{3 -->
-				<tr>
-					<td>
-						packages
-					</td>
-					<td></td>
-					<td></td>
-					<td></td>
-					<td>(think like an EXE, DLL, or DMG file)</td>
-				</tr>
-				<!-- }}}3 -->
-				<tr>
-					<td>AppImages</td>
-					<td>Portable single-file apps</td>
-					<td>
-						<ul>
-							<li>No installation needed</li>
-							<li>Completely portable</li>
-							<li>No root required</li>
-							<li>No system dependencies</li>
-						</ul>
-					</td>
-					<td>
-						<ul>
-							<li>No automatic updates</li>
-							<li>No desktop integration by default</li>
-							<li>Large file sizes</li>
-						</ul>
-					</td>
-					<td>great for applications that you would like to run from say a usb</td>
-				</tr>
-				<tr>
-					<td>DEB
-						<br>
-						<em>not recommended outside of debian based distros</em>
-					</td>
-					<td>Debian/Ubuntu native</td>
-					<td>
-						<ul>
-							<li>Native performance</li>
-							<li>Tight system integration</li>
-							<li>Excellent dependency handling</li>
-						</ul>
-					</td>
-					<td>
-						<ul>
-							<li>Distro-specific</li>
-							<li>Dependency hell potential</li>
-							<li>Manual updates</li>
-						</ul>
-					</td>
-					<td>the reason i mention DEB's here is because DEBS are a closed package similar to appimages but for debian
-						based distros, so why mention it here?<br>
-						the reason why is because there is actually some ways to install DEB packages on distros like arch. just
-						know this is a more advanced thing that will <em>require</em> the terminal
-					</td>
-				</tr>
-				<tr>
-					<td>Source Compilation</td>
-					<td>Manual build from source</td>
-					<td>
-						<ul>
-							<li>Maximum customization</li>
-							<li>Latest versions</li>
-							<li>No dependency on packagers</li>
-						</ul>
-					</td>
-					<td>
-						<ul>
-							<li>Time-consuming</li>
-							<li>Dependency management</li>
-							<li>No automatic updates</li>
-						</ul>
-					</td>
-					<td>just avoid unless there's no other option</td>
-				</tr>
+			<details>
+				<summary>
+					<h2>universal packages and packaging systems (ie, EXEs, DLLs, DMGs, etc)</h2>
+				</summary>
+				<table>
+					<tr>
+						<th>Package Type</th>
+						<th>TL;DR</th>
+						<th>Pros</th>
+						<th>Cons</th>
+						<th>Notes</th>
+					</tr>
+					<!-- {{{3 -->
+					<tr>
+						<td>
+							package managers
+						</td>
+						<td></td>
+						<td></td>
+						<td></td>
+						<td>(think like an app store)</td>
+					</tr>
+					<tr>
+						<td>Flatpaks <br>(strongly recommended default)</td>
+						<td>Universal, sandboxed apps</td>
+						<td>
+							<ul>
+								<li>Cross-distro compatibility</li>
+								<li>Sandboxed for security</li>
+								<li>Automatic updates</li>
+								<li>Large app selection</li>
+								<li>large support base </li>
+							</ul>
+						</td>
+						<td>
+							<ul>
+								<li>Larger download sizes</li>
+								<li>Slight performance overhead</li>
+								<li>Theming might not match system</li>
+								<li>certain things such as GPU acceleration can be annoying</li>
+							</ul>
+						</td>
+						<td>Best for desktop applications, managed via <code>flatpak</code> command<br>
+							<em>
+								best for applications with low performance, <br>or applications that should be sandboxed ie
+								web-browsers.
+								needs
+								such as discord, spotify, etc
+							</em>
+						</td>
+					</tr>
+					<tr href='https://alternativeto.net/'>
+						<td>Homebrew <br>
+							<em>not recommended</em>
+						</td>
+						<td>macOS-style package manager</td>
+						<td>
+							<ul>
+								<li>User-space installation</li>
+								<li>Huge formula collection</li>
+								<li>Good for development tools</li>
+							</ul>
+						</td>
+						<td>
+							<ul>
+								<li>Not Linux-native</li>
+								<li>Can conflict with system packages</li>
+								<li>Slower than native packages</li>
+							</ul>
+						</td>
+						<td>Popular for developers coming from macOS, can have mixed results on linux. </td>
+					</tr>
+					<tr>
+						<td>Snap
+							<br>
+							<em>just use flatpaks, or appimages unless serious issues with previous</em>
+						</td>
+						<td>Canonical's (the company developing ubuntu) universal packages</td>
+						<td>
+							<ul>
+								<li>Automatic updates</li>
+								<li>Cross-distro</li>
+								<li>Sandboxed</li>
+								<li>Large repository</li>
+							</ul>
+						</td>
+						<td>
+							<ul>
+								<li>Slow startup</li>
+								<li>Controlled by Canonical</li>
+								<li>Forced updates</li>
+								<li>Theming issues</li>
+							</ul>
+						</td>
+						<td>Default on Ubuntu, controversial in Linux community</td>
+					</tr>
+			</details>
+			<!-- }}}3 -->
+			<!-- {{{3 -->
+			<tr>
+				<td>
+					packages
+				</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td>(think like an EXE, DLL, or DMG file)</td>
+			</tr>
+			<!-- }}}3 -->
+			<tr>
+				<td>AppImages</td>
+				<td>Portable single-file apps</td>
+				<td>
+					<ul>
+						<li>No installation needed</li>
+						<li>Completely portable</li>
+						<li>No root required</li>
+						<li>No system dependencies</li>
+					</ul>
+				</td>
+				<td>
+					<ul>
+						<li>No automatic updates</li>
+						<li>No desktop integration by default</li>
+						<li>Large file sizes</li>
+					</ul>
+				</td>
+				<td>great for applications that you would like to run from say a usb</td>
+			</tr>
+			<tr>
+				<td>DEB
+					<br>
+					<em>not recommended outside of debian based distros</em>
+				</td>
+				<td>Debian/Ubuntu native</td>
+				<td>
+					<ul>
+						<li>Native performance</li>
+						<li>Tight system integration</li>
+						<li>Excellent dependency handling</li>
+					</ul>
+				</td>
+				<td>
+					<ul>
+						<li>Distro-specific</li>
+						<li>Dependency hell potential</li>
+						<li>Manual updates</li>
+					</ul>
+				</td>
+				<td>the reason i mention DEB's here is because DEBS are a closed package similar to appimages but for debian
+					based distros, so why mention it here?<br>
+					the reason why is because there is actually some ways to install DEB packages on distros like arch. just
+					know this is a more advanced thing that will <em>require</em> the terminal
+				</td>
+			</tr>
+			<tr>
+				<td>Source Compilation</td>
+				<td>Manual build from source</td>
+				<td>
+					<ul>
+						<li>Maximum customization</li>
+						<li>Latest versions</li>
+						<li>No dependency on packagers</li>
+					</ul>
+				</td>
+				<td>
+					<ul>
+						<li>Time-consuming</li>
+						<li>Dependency management</li>
+						<li>No automatic updates</li>
+					</ul>
+				</td>
+				<td>just avoid unless there's no other option</td>
+			</tr>
 			</table>
-			<!-- }}}2 -->
-			<!-- {{{2 -->
+		</li>
+		<!-- }}}2 -->
+		<!-- {{{2 setting up your system-->
+		<li>
+			<details>
+				<summary>setting up your system</summary>
+				<h3>Alternative Apps for Linux</h3>
+				<p>a generally great site to use if not listed here is:
+					<a href='https://alternativeto.net/'> https://alternativeto.net/</a>
+				</p>
+				<table>
+					<tr>
+						<th>Windows/Mac App</th>
+						<th>Linux Alternative</th>
+						<th>Pros</th>
+						<th>Cons</th>
+						<th>Notes</th>
+					</tr>
+					<tr>
+						<td>Microsoft Office</td>
+						<td>LibreOffice</td>
+						<td>Free, open-source, supports ODF format</td>
+						<td>MS Office compatibility not perfect</td>
+						<td>Also try OnlyOffice for better MS Office compatibility</td>
+					</tr>
+					<tr>
+						<td>Adobe Photoshop</td>
+						<td>GIMP</td>
+						<td>Powerful features, customizable</td>
+						<td>Different UI/UX, learning curve</td>
+						<td>Krita better for digital painting</td>
+					</tr>
+					<tr>
+						<td>Adobe Premiere</td>
+						<td>DaVinci Resolve</td>
+						<td>Professional-grade, free version available</td>
+						<td>Steep learning curve</td>
+						<td>Also: Kdenlive (open-source), Shotcut</td>
+					</tr>
+					<tr>
+						<td>Microsoft Teams</td>
+						<td>Jitsi Meet</td>
+						<td>Open-source, E2E encrypted</td>
+						<td>Less corporate features</td>
+						<td>Zoom also available natively</td>
+					</tr>
+					<tr>
+						<td>Spotify</td>
+						<td>Spotify (native)</td>
+						<td>Same service</td>
+						<td>Not open-source</td>
+						<td>Open-source alternatives: Strawberry, Tauon</td>
+					</tr>
+					<tr>
+						<td>Adobe Illustrator</td>
+						<td>Inkscape</td>
+						<td>Powerful vector tools, SVG native</td>
+						<td>Performance with complex files</td>
+						<td>Great for logos and vector art</td>
+					</tr>
+					<tr>
+						<td>Notepad++</td>
+						<td>Kate/Geany</td>
+						<td>Syntax highlighting, plugins</td>
+						<td>Different interface</td>
+						<td>VS Code also excellent choice</td>
+					</tr>
+					<tr>
+						<td>WinRAR/7-Zip</td>
+						<td>Ark/File Roller</td>
+						<td>Handles all major formats</td>
+						<td>Less brand recognition</td>
+						<td>Pre-installed on most distros</td>
+					</tr>
+					<tr>
+						<td>Microsoft Edge</td>
+						<td>Firefox</td>
+						<td>Privacy-focused, customizable</td>
+						<td>Not Chromium-based</td>
+						<td>Chromium also available</td>
+					</tr>
+					<tr>
+						<td>AutoCAD</td>
+						<td>FreeCAD</td>
+						<td>Parametric modeling</td>
+						<td>Not industry standard</td>
+						<td>For 2D: LibreCAD, QCAD</td>
+					</tr>
+					<tr>
+						<td>Visual Studio</td>
+						<td>VS Code</td>
+						<td>Same app, cross-platform</td>
+						<td>Not full Visual Studio</td>
+						<td>CLion for C++</td>
+					</tr>
+					<tr>
+						<td>iTunes</td>
+						<td>Rhythmbox</td>
+						<td>Music management</td>
+						<td>No iOS device sync</td>
+						<td>For Apple devices: gtkpod (legacy)</td>
+					</tr>
+					<tr>
+						<td>Adobe Acrobat</td>
+						<td>Okular</td>
+						<td>PDF annotation, lightweight</td>
+						<td>Less advanced editing</td>
+						<td>MasterPDF for advanced editing</td>
+					</tr>
+					<tr>
+						<td>Outlook</td>
+						<td>Thunderbird</td>
+						<td>Similar interface, extensions</td>
+						<td>No Exchange integration</td>
+						<td>Evolution for Exchange support</td>
+					</tr>
+					<tr>
+						<td>Discord</td>
+						<td>Discord (native)</td>
+						<td>Same app</td>
+						<td>Not open-source</td>
+						<td>Open-source: Revolt, Element</td>
+					</tr>
+					<tr>
+						<td>OBS Studio</td>
+						<td>OBS Studio</td>
+						<td>Same app, native</td>
+						<td>-</td>
+						<td>Linux has best OBS performance</td>
+					</tr>
+					<tr>
+						<td>TeamViewer</td>
+						<td>Remmina</td>
+						<td>Supports RDP, VNC, SSH</td>
+						<td>No proprietary protocols</td>
+						<td>AnyDesk also available</td>
+					</tr>
+					<tr>
+						<td>Adobe Lightroom</td>
+						<td>Darktable</td>
+						<td>Non-destructive editing</td>
+						<td>Different workflow</td>
+						<td>RawTherapee another option</td>
+					</tr>
+					<tr>
+						<td>CCleaner</td>
+						<td>BleachBit</td>
+						<td>System cleaning</td>
+						<td>Use with caution</td>
+						<td>Linux needs less "cleaning"</td>
+					</tr>
+					<tr>
+						<td>PuTTY</td>
+						<td>GNOME Terminal/Konsole</td>
+						<td>SSH built-in</td>
+						<td>No GUI for connections</td>
+						<td>For GUI: Termius, Tabby</td>
+					</tr>
+					<!-- Email Clients -->
+					<tr>
+						<td>Microsoft Outlook</td>
+						<td>Evolution</td>
+						<td>Exchange support, calendar integration</td>
+						<td>GNOME-centric interface</td>
+						<td>Best for corporate environments</td>
+					</tr>
+					<tr>
+						<td>Apple Mail</td>
+						<td>Geary</td>
+						<td>Simple, clean interface</td>
+						<td>Limited advanced features</td>
+						<td>Great for personal email</td>
+					</tr>
+					<tr>
+						<td>Spark Mail</td>
+						<td>Mailspring</td>
+						<td>Modern UI, unified inbox</td>
+						<td>Some premium features paywalled</td>
+						<td>Open-source core with pro upgrades</td>
+					</tr>
+					<tr>
+						<td>eM Client</td>
+						<td>Claws Mail</td>
+						<td>Lightweight, highly configurable</td>
+						<td>Outdated interface</td>
+						<td>Good for low-resource systems</td>
+					</tr>
+
+					<!-- Creative Tools -->
+					<tr>
+						<td>Adobe Photoshop</td>
+						<td>Krita</td>
+						<td>Excellent brush engine, HDR support</td>
+						<td>Not designed for photo editing</td>
+						<td>Best for digital painting</td>
+					</tr>
+					<tr>
+						<td>Apple Handoff</td>
+						<td>KDE Connect</td>
+						<td>File transfer, notification sync</td>
+						<td>Works best with KDE</td>
+						<td>Android/iOS apps available</td>
+					</tr>
+
+					<!-- DJ/Music Production -->
+					<tr>
+						<td>Serato DJ</td>
+						<td>Mixxx</td>
+						<td>Free, supports most controllers</td>
+						<td>Less polished interface</td>
+						<td>Supports vinyl control (DVS)</td>
+					</tr>
+					<tr>
+						<td>Ableton Live</td>
+						<td>Bitwig Studio</td>
+						<td>Similar workflow, modular design</td>
+						<td>Not free ($399)</td>
+						<td>Native Linux version</td>
+					</tr>
+					<tr>
+						<td>FL Studio</td>
+						<td>LMMS</td>
+						<td>Pattern-based workflow</td>
+						<td>No VST3 support</td>
+						<td>Good for electronic music</td>
+					</tr>
+					<tr>
+						<td>Logic Pro</td>
+						<td>Ardour</td>
+						<td>Professional recording/mixing</td>
+						<td>Steep learning curve</td>
+						<td>Donationware model</td>
+					</tr>
+					<tr>
+						<td>Native Instruments</td>
+						<td>Yoshimi/ZynAddSubFX</td>
+						<td>Advanced synthesis</td>
+						<td>No commercial sample libraries</td>
+						<td>Use with Carla plugin host</td>
+					</tr>
+					<tr>
+						<td>Pro Tools</td>
+						<td>REAPER</td>
+						<td>Low latency, highly customizable</td>
+						<td>$60 license (but unlimited trial)</t /d>
+						<td>Native Linux version</td>
+					</tr>
+				</table>
+				<p>
+					video codecs,
+					opengl and friends
+					amd/nvidia drivers
+					flatpak/flatseal
+					priority of packages (fp > appimage > pkg > build)
+					pipewire
+					wayland
+					xinput
+					dinput (aviation stuff)
+					quality of life (flatseal, qpw graph)
+				</p>
+			</details>
+		</li>
+		<!-- }}}2 -->
+		<!-- {{{2 -->
 	</ol>
 </body>
 
