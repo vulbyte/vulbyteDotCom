@@ -323,6 +323,21 @@ function Footer() {
 
 		let f_h = document.createElement('h6');
 		f_h.innerText = 'Footer';
+		let list = [
+			'gift_art',
+		];
+		let ol = document.createElement('ol');
+		for (let i = 0; i < list.length; ++i) {
+			let li = document.createElement('li');
+			let a = document.createElement('a');
+
+			a.innerText = list[i];
+			a.href = (list[i] + '.html');
+
+			li.appendChild(a);
+			f_h.appendChild(li);
+		}
+
 		f.appendChild(f_h);
 
 		let about = document.createElement('div');
@@ -372,7 +387,7 @@ function Footer() {
 		console.log('🦶 footer added');
 	}
 	catch (err) {
-		console.log('error adding footer', err);
+		console.error('error adding footer', err);
 	}
 }
 //}}}2
@@ -699,6 +714,7 @@ window.addEventListener('scroll', () => {
 			rect.bottom > 0
 		);
 
+		/*
 		if (isVisible) {
 			console.log("element is now visible");
 			p.classList.add("visible");
@@ -706,6 +722,7 @@ window.addEventListener('scroll', () => {
 			console.log("element not visible");
 			p.classList.remove("visible");
 		}
+		*/
 	}
 });
 //}}}2

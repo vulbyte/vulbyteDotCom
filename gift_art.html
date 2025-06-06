@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>gift_art</title>
+	<script src='/client_management.js' type="module" class='marquee'></script>
+</head>
+
+<body>
+	<h1 class='marquee'>gift art by super epic people - </h1>
+	<p>the tldr is that any art i get i'll upload here :3<br>
+		please just note only first few will load, then after that you'll need to expand the dialog; just trying to save
+		some bandwidth is all :3 <br>
+		some of these are commissions but i'm poor so it's rare :'3 i'll try to remember to disclose when that's the case
+	</p>
+
+	<ol id='art_gallery'>
+	</ol>
+	<script type='module'>
+		function GEBI(id) {
+			return document.getElementById(String(id));
+		}
+		function CE(args = { //returns HTML element
+			"class": undefined,
+			"id": undefined,
+			"innerHTML": undefined,
+			"innerText": undefined,
+			"style": undefined,
+			"type": undefined,
+			"onClick": undefined,
+		}) {
+			try {
+				if (args.type == undefined) args.type == "div";
+				let elem = document.createElement(args.type);
+
+				if (args.class != undefined) elem.className = args.class;
+				if (args.id != undefined) elem.id = args.id;
+				if (args.innerHTML != undefined) elem.innerHTML = args.innerHTML;
+				if (args.innerText != undefined) elem.innerText = args.innerText;
+				if (args.style != undefined) elem.style = args.style;
+				if (args.onClick != undefined) {
+					//if (typeof args.onConfirm == 'function') {
+					elem.addEventListener(
+						"click",
+						args.onClick
+					)
+					//}
+					//else {
+					//console.warn("onclick is NOT a function, cannot bind!");;
+					//}
+				}
+
+				return (elem);
+			}
+			catch (err) {
+				console.warn(err);
+			}
+		};
+
+
+
+		for (let i = 0; i < list.length; ++i) {
+
+		}
+
+	</script>
+
+
+
+</body>
+
+</html>
