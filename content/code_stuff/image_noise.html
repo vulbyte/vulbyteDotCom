@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>perlin noise | vulbyte</title>
+	<script type='module' src="/client_management.js"></script>
+</head>
+
+<body>
+	<h1 class="marquee">noise tests</h1>
+	<div id="noises">
+		<div>
+			<h2>seeded noise</h2>
+			<canvas id="seeded" width="" height=""></canvas>
+		</div>
+		<div>
+			<h2>value noise</h2>
+			<canvas id="value" width="" height=""></canvas>
+		</div>
+		<div>
+			<h2>perlin noise</h2>
+			<canvas id="perlin" width="" height=""></canvas>
+		</div>
+		<div>
+			<h2>impoved perlin noise</h2>
+			<canvas id="imp_perlin" width="" height=""></canvas>
+		</div>
+	</div>
+
+	<!-- this is going to follow the bottom of the screen -->
+	<style>
+		#noises {
+			display: flex;
+			flex-direction: row;
+			gap: 3em;
+		}
+
+		#noises>div {
+			width: 10vw;
+		}
+
+		#noises>*>h2 {
+			width: 10vw;
+		}
+
+		#tool_bar {
+			background-color: black;
+			bottom: 0px;
+			display: flex;
+			flex-direction: row;
+			padding: 0;
+			padding-top: 1em;
+			position: fixed;
+			margin: 0;
+			width: 100vw;
+			z-index: 100;
+		}
+	</style>
+	<div id="tool_bar">
+		<div>
+			<label>width</label>
+			<input id="width" placeholder="512">
+		</div>
+		<div>
+			<label>height</label>
+			<input id="height" placeholder="512">
+		</div>
+		<div>
+			<label>seed</label>
+			<input id="seed" placeholder="">
+		</div>
+		<button id="reload">reload all previews</button>
+		<button id="regen">gen/regen from seed</button>
+	</div>
+
+	<script type="module">
+		let d = document;
+		function GEBI(str) {return d.getElementById(str)}
+
+		let width = 512;
+		let height = 512;
+
+		let reload = GEBI('reload');
+		reload.addEventListener('click', (e) => {
+			regen_clicked();
+		})
+
+		let regen = GEBI('reload');
+		reload.addEventListener('click', (e) => {
+			reload_clicked();
+		})
+
+		let canvases = d.getElementsByTagName("canvas");
+
+		window.addEventListener('load', (e) => {
+			console.log("page loaded, assigning colors");
+			let ctx;
+			for (let i = 0; i < canvases.length; ++i) {
+				ctx = canvases[i].width = width;
+				ctx = canvases[i].height = height;
+
+				ctx = canvases[i].getContext('2d');
+				ctx.fillStyle = "#f90";
+				ctx.fillRect(0, 0, width, height);
+			}
+
+			GEBI('seed').value = parseInt(Math.random() * (2 ** 32));
+		});
+
+		class PcgHash {
+			static MULT_LOW = 0xd0f33173 >>> 0;
+			static MULT_HIGH = 0x4d595df4 >>> 0;
+			static INC_LOW = 0x88f553f1 >>> 0;
+			static INC_HIGH = 0x14057b7e >>> 0;
+
+			static add64(a_low, a_high, b_low, b_high) {
+				let low = (a_low + b_low) >>> 0;
+				let high = (a_high + b_high + (low < a_low ? 1 : 0)) >>> 0;
+				return [low, high];
+			}
+
+			static mul64(a_low, a_high, b_low, b_high) {
+				let p0 = (a_low & 0xFFFF) * (b_low & 0xFFFF);
+				let p1 = (a_low >>> 16) * (b_low & 0xFFFF);
+				let p2 = (a_low & 0xFFFF) * (b_low >>> 16);
+				let p3 = (a_low >>> 16) * (b_low >>> 16);
+				let carry = ((p0 >>> 16) + p1 + p2) >>> 0;
+				let low = ((p0 & 0xFFFF) + (carry << 16)) >>> 0;
+				let high = (a_high * b_low + a_low * b_high + (carry >>> 16) + p3) >>> 0;
+				return [low, high];
+			}
+
+			static rotr32(x, r) {
+				x = x >>> 0;
+				r = r % 32;
+				return (x >>> r | x << (32 - r)) >>> 0;
+			}
+
+			static hash(input) {
+				let state_low = input >>> 0;
+				let state_high = (input ^ 0xdeadbeef) >>> 0;
+				let [next_state_low, next_state_high] = PcgHash.mul64(state_low, state_high, PcgHash.MULT_LOW, PcgHash.MULT_HIGH);
+				[next_state_low, next_state_high] = PcgHash.add64(next_state_low, next_state_high, PcgHash.INC_LOW, PcgHash.INC_HIGH);
+				let xorshifted = (((next_state_high >>> 18) ^ next_state_low) >>> 27) >>> 0;
+				let rot = (next_state_high >>> 27) & 31;
+				return PcgHash.rotr32(xorshifted, rot);
+			}
+		}
+
+		function simpleStringToIntHash(str) {
+			let hash = 0;
+			for (let i = 0; i < str.length; i++) {
+				const char = str.charCodeAt(i);
+				hash = ((hash << 5) - hash) + char;
+				hash = hash >>> 0;
+			}
+			return hash;
+		}
+
+
+		function reload_clicked() {
+
+		}
+
+		function regen_clicked() {
+			let noise_grid = Array(width);
+
+			//generation
+			let height_arr = Array(height);
+			for (let i = 0; i < noise_grid.length; ++i) {
+				for (let j = 0; j < height.length; ++j) {
+					height_arr[j] = math.random();
+				}
+				noise_grid[i] = (height_arr);
+			}
+			//apply to noise
+			let ctx = canvases[0].getContext('2d');
+			ctx.clearRect(0, 0, width, height);
+			let seed = GEBI('seed').value;
+			let color, hash, numerator, denominator;
+			for (let x = 0; x < noise_grid.length; ++x) {
+				for (let y = 0; y < noise_grid[x].length; ++y) {
+					numerator = PcgHash.hash(seed ^ x ^ y);
+
+					//console.log(numerator)
+
+					denominator = parseInt(2 ** 32);
+					//console.log(numerator + "/" + denominator);
+					hash = (numerator / denominator);
+
+					color = String(parseInt(hash * 255).toString(16));
+					console.log("generated color: " + color);
+					ctx.fillStyle = "#" + color + color + color + "ff";
+					ctx.fillRect(x, y, 1, 1)
+				}
+			}
+			console.log("GENERATION COMPLETE");
+		}
+	</script>
+</body>
+
+</html>
