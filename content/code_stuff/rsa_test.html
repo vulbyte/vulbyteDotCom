@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script type="module" src="/client_management.js"></script>
+	<title>RSA test</title>
+</head>
+
+<body>
+	<h1>rsa play</h1>
+	<div id="description">
+		<div>
+			<h3>
+				tldr: RSA is a basic algorithm used to do:
+			</h3>
+			<details>
+				<summary>asymetric encruption</summary>
+				a type of encryption which can only be done one way.
+				a simple way to think of it is:
+				<code> a+b=c != c-b=a </code>
+				it's very over simplified but there you go.
+			</details><br>
+			with RSA the algorithm needs 3 key things:
+			<ol>
+				<li>a public key made up of 2 numbers. we'll represent these as:
+					<code>
+						[pub_prime, mod]
+					</code>
+					the first being prime;
+					the 2nd of which is shared with the-
+				</li>
+				<li>private key, made up of 1 prime number and a number shared with the public key. we'll represent these as:
+					<code>
+						[priv_prime, mod]
+					</code>
+				</li>
+				<li>a message to encrypt in this case we'll use the super special message:
+					<code>"i read sonic fan-fiction for the lore"</code>
+					as an example.
+				</li>
+			</ol>
+
+		</div>
+
+		<div>
+			<h4>so how does it work?</h4>
+			<ol>
+				<li>
+					for this we need to start off with 2 large primes, but for example sake we'll keep them small. you
+					<em>can</em> enter larger ones but this is only for demo purposes.
+					<div>
+						<label>pub:</label>
+						<input class="pub" type='number' value="7">
+						<label>priv:</label>
+						<input class="priv" type='number' value="13">
+					</div>
+					if you don't like these feel free to change them.
+				</li>
+				<li>
+					after that is complete, you then need a modulus that will be connected to both primes. the way we get this is
+					simply:
+					<code>
+						n = <br>
+						prime<sub>1</sub>(<input type="number" class="pub"></input>)
+						*
+						prime<sub>2</sub>(<input type="number" class="priv"></input>)
+						= mod(<output class="mod"></output>)
+					</code>
+					<aside>note: the check to see if prime is loose, i didn't want to waste performance on a perfect check, so it
+						is just a quick check. the further you get from 1 the less acurate it is</aside>
+				</li>
+				<li>
+					next, we then take the LCM (lowest common multiple), of p<sub>1</sub>-1 and p<sub>2</sub>-1. given our current
+					numbers that would be:
+					<output class="lcm"></output>
+				</li>
+				<li>l
+					after that we choose a random integer that
+					<code>
+						E = <br>
+						<div style="padding-left:3em;">
+							2 < integer < LCM(p<sub>1</sub>,p<sub>2</sub>) <br>
+								&& <br>
+								(GCF(integer, LCM(p<sub>1</sub>,
+								p<sub>2</sub>)) = 1) <br>
+						</div>
+						= <output class="e"></output>
+					</code>
+				</li>
+				<li>
+					now, we need to find out decryption exponent, for this we want to use the formula:
+					<code>
+						D*E = 1*mod(LCM(<input type='number' class="priv"></input><input type='number' class="pub"></input>))
+					</code>
+					to make this simpler let's rewrite the equation:
+					<code style="
+							display:flex; flex-direction:row; justify-content:center;">
+						<div style="padding-top:1.5em; padding-right:1em;
+isplay:flex; flex-direction:row; justify-content:center;
+						">
+							D =
+						</div>
+						<div>
+							<div style="margin:0px; padding:0px;">
+								1 % λ(n)
+							</div>
+							<hr>
+							<div style="margin:auto; text-align:center;">
+								E
+							</div>
+						</div>
+						<div style="padding:3em; padding-top:1.5em;">
+							aka:
+						</div>
+						<div style="padding-top:1.5em; padding-right:1em;
+isplay:flex; flex-direction:row; justify-content:center;
+						">
+							<output class="d"></output> =
+						</div>
+						<div>
+							<div style="margin:0px; padding:0px;">
+								1 % LCM(<input type="number" class="priv"></input>,<input type="number" class="pub"></input>)
+							</div>
+							<hr>
+							<div style="margin:auto; text-align:center;">
+								<output class="e"></output>
+							</div>
+						</div>
+					</code>
+				</li>
+				<li>
+					and with that we can take out final output and compare it test it on a message. so the encryption key works as
+					follows:
+					<code>
+						<em>en-crypt:</em> <br>
+						(message)<sup>E</sup> mod(N)
+						<br>
+						<em>de-crypt:</em> <br>
+						(message)<sup>E</sup> mod(N)
+
+					</code>
+				</li>
+
+			</ol>
+		</div>
+	</div>
+	<div>
+		<div id="inputs" style="display:flex; flex-direction:row; gap:1em;">
+			<div id="public_key">
+				<div>
+					<label>public exp</label>
+					<input class="pub" type="number"></input>
+				</div>
+				<div>
+					<label>mod</label>
+					<output class="mod" type="number"></output>
+				</div>
+			</div>
+			<div id="private_key">
+				<div>
+					<label>private exponent</label>
+					<input class="priv" type="number"></input>
+				</div>
+				<div>
+					<label>mod</label>
+					<output class="mod" type="number"></output>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<script type="module">
+	//global listeners for the page
+	document.addEventListener('DOMContentLoaded', () => {
+		console.log("PAGE LOADED, adding listeners")
+
+		let mods = document.getElementsByClassName("mod");
+		function UpdateMods() {
+			console.log("updating mods");
+			for (let i = 0; i < mods.length; ++i) {
+				let new_val = Number(
+					Number(
+						document.getElementsByClassName("pub")[0].value
+					)
+					* Number(
+						document.getElementsByClassName("priv")[0].value
+					)
+				)
+
+				//console.log(`mod[${i}] is of type: ${mods}`)
+				if (mods[i].tagName == "INPUT") {
+					mods[i].value = new_val;
+				}
+				else {
+					mods[i].innerText = new_val;
+				}
+
+				//update all lcms
+				let new_lcm = FindLCM(
+					Number(document.getElementsByClassName("priv")[0].value) - 1,
+					Number(document.getElementsByClassName("pub")[0].value) - 1,
+				);
+				//console.log("new_lcm = ", new_lcm);
+
+				document.getElementsByClassName("lcm")[0].innerText = new_lcm;
+
+			}
+
+			UpdateLCMs();
+		}
+		UpdateMods();//call to init on load so is not blank
+
+		let pubs = document.getElementsByClassName("pub");
+		for (let i = 0; i < pubs.length; ++i) {
+			pubs[i].addEventListener('change', (e) => {
+				//console.log("updating pubs");
+				for (let j = 0; j < pubs.length; ++j) {
+					pubs[j].value = pubs[i].value;
+					//quick warning
+					//let num = Number(pubs[i].value) % 10;
+					let num = Number(pubs[i].value);
+					/*
+					console.log(
+						"ABOUT TO TEST IF PRIME: "
+						+ num
+					);
+					*/
+					/*
+					if (
+						num == 0
+						|| num == 2
+						|| num == 4
+						|| num == 6
+						|| num == 8
+					) {
+						//console.log("pub is not likely prim");
+						pubs[j].style.backgroundColor = "#f00";
+					}
+					else if (
+					) {
+						//console.log("pub is not prim");
+						pubs[j].style.backgroundColor = "#f0f";
+					}
+					else {
+						//console.log("pub is likely prim")
+						pubs[j].style.backgroundColor = "transparent";
+					}
+					*/
+					if (
+						num > 1 &&
+						num % 2 !== 0 &&
+						num % 3 !== 0 &&
+						num !== 1
+					) {
+						console.log("TRANNSSSSSSS")
+						pubs[j].style.backgroundColor = "transparent";
+					}
+					else {
+						console.log("CISSSSSSSSSS")
+						pubs[j].style.backgroundColor = "#f00";
+					}
+				}
+				UpdateMods();
+			});
+		};
+
+		let privs = document.getElementsByClassName("priv");
+		for (let i = 0; i < privs.length; ++i) {
+			privs[i].addEventListener('change', (e) => {
+				//console.log("updating privs");
+				for (let j = 0; j < privs.length; ++j) {
+					privs[j].value = privs[i].value;
+					let num = Number(privs[i].value) % 10;
+					/*
+					console.log(
+						"ABOUT TO TEST IF PRIME: "
+						+ num
+					);
+					*/
+					if (
+						num == 0
+						|| num == 2
+						|| num == 4
+						|| num == 5
+						|| num == 6
+						|| num == 8
+					) {
+						//console.log("pub is not likely prim");
+						privs[j].style.backgroundColor = "#f00";
+					}
+					else if (
+						num % 3 == 0
+						|| num % 7 == 0
+						|| num % 9 == 0
+					) {
+						//console.log("pub is not prim");
+						privs[j].style.backgroundColor = "#f00";
+					}
+					else {
+						//console.log("pub is likely prim")
+						privs[j].style.backgroundColor = "transparent";
+					}
+				}
+				UpdateMods();
+			});
+		}
+
+		let lcm = document.getElementsByClassName("lcm");
+		for (let i = 0; i < lcm.length; ++i) {
+			lcm[i].addEventListener('change', (e) => {
+				console.log("updating lcm");
+				for (let j = 0; j < lcm.length; ++j) {
+					lcm[j].value = lcm[i].value;
+				}
+			});
+		}
+
+		function UpdateLCMs() {
+			let lcm = document.getElementsByClassName("lcm");
+			let priv = Number(document.getElementsByClassName("priv")[0].value);
+			let pub = Number(document.getElementsByClassName("pub")[0].value);
+			let new_val = FindLCM(
+				priv - 1, pub - 1
+			);
+			console.log("NEW LCM: " + new_val);
+			for (let i = 0; i < lcm.length; ++i) {
+				lcm[i].innerText = new_val;
+			}
+			UpdateE();
+		}
+
+		function UpdateE() {
+			console.log("updating e");
+			let Es = document.getElementsByClassName("e");
+
+			let lcm = document.getElementsByClassName("lcm")[0].innerText;
+			let init_val = Math.floor((Math.random() * (lcm - 3)) + 2);
+			let new_val = IntWithIntWhereLCFIsOne(
+				/*
+				init_val, //init_point
+				lcm, //other n
+				2, // min
+				lcm, // max
+				*/
+			)
+
+			for (let i = 0; i < Es.length; ++i) {
+				Es[i].value = new_val;
+			}
+
+			UpdateD();
+		}
+
+		function UpdateD() {
+			console.log("updating D");
+			let Ds = document.getElementsByClassName("d");
+
+			let lcm = document.getElementsByClassName("lcm")[0].value;
+			let e = document.getElementsByClassName("e")[0].value;
+
+			function modInverse(e, lambdaN) {
+				e = e % lambdaN;
+				for (let d = 1; d < lambdaN; d++) {
+					if ((e * d) % lambdaN === 1) {
+						return d; // Found the inverse!
+					}
+				}
+				return -1; // No inverse exists (shouldn't happen if e and λ(n) are coprime)
+			}
+			let d = modInverse(e, lcm);
+
+			console.log("Private exponent D:", d); // Output: 43
+
+			for (let i = 0; i < Ds.length; ++i) {
+				Ds[i].innerText = d;
+			}
+		}
+
+		function FindLCM(a, b) {
+			console.log("FindLCM inputs: " + a + ' ' + b);
+			if (a < b) {
+				a = a ^ b;
+				b = a ^ b;
+				a = b ^ a;
+			}
+
+			let lcf = FindLCF(a, b);
+			console.log("PRE CALC: " + a + " " + b + " " + lcf);
+			let res = (a * b) / lcf;
+			console.log("LCM a,b,res: " + a + " " + b + " " + res);
+			if (res != 0) {return res};
+			throw new Error("unable to find lcm");
+			//console.log("lcm: ")
+		}
+
+		function FindGCD(n1, n2) {
+			let num = ((n1 * n2) / (FindLCM(n1, n2)));
+			console.log(`GCD of ${n1} and ${n2} is : ${num}`);
+			return num;
+		}
+
+
+		function FindLCF(n1, n2) {
+			console.log("FindLCF inputs: " + n1 + ' ' + n2);
+			let numer;
+			let denom;
+			let remain;
+
+			if (n1 == n2) {
+				return n1;
+			}
+			if (n1 > n2) {
+				denom = n2;
+				numer = n1;
+			}
+			else {
+				denom = n1;
+				numer = n2;
+			}
+
+			function step(n = 0, d = 0) {
+				console.log("stepping with nd: " + n + " " + d);
+				if (n == 0 || d == 0 || n == NaN || d == NaN) {
+					throw new Error("FindLCF had 0 as an input");
+				}
+				console.log("nd: " + n + " " + d);
+				if (n < d) {
+					remain = d; //this doesn't matter rn so it'll be used as a swap
+					d = n;
+					n = remain;
+				}
+				remain = n % d;
+
+				if (remain == 0) {
+					d = parseInt(d);
+					console.log("LCF FOUND VALUE RETURNING: ", d);
+					return d;
+				}
+				if (n < 3 && d < 3) {
+					return (0);
+				}
+				return step(d, remain);
+			}
+
+			return step(numer, denom);
+		};
+
+		function IntWithIntWhereLCFIsOne() {
+			//WARN: doing the simple for testing, remove later
+			let lcm = parseInt(document.querySelector(".lcm").textContent);
+			let tester;
+			for (let i = 2; i < lcm; i++) {
+				if (
+					2 < i
+					&& i < lcm
+					&& FindGCD(i, lcm) == 1
+					/*&& i % 2 != 0
+					&& i % 3 != 0*/
+				) {
+					console.log("found return, return is: " + i);
+					return i;
+				}
+			}
+			console.log("cannot find one that meets conditions");
+			return -1;
+
+			console.log("attempted to find LCF = 1 for: " + other + " + " + init_point);
+			console.log(
+				"init state is: "
+				+ "other" + other + " "
+				+ "init_point" + init_point + " "
+				+ "min" + min + " "
+				+ "max" + max + " "
+			)
+			if (other == NaN) {
+				throw new Error(
+					"input is for 'other' is NaN: " + other
+				);
+			}
+			if (other != parseInt(other)) {
+				throw new Error(
+					"input for 'other' is NaN or not an int, " + other
+				);
+			}
+
+			let dir = Math.floor(Math.random() * 2); //decide up or down at random
+
+			let res;
+			if (dir == 0) {
+				res = IncrDown();
+				if (res == 0) {
+					res = IncrUp();
+					if (res == 0) {
+						throw new Error("A can not find LCM where i = 1");
+					}
+				}
+				return res
+			}
+			else if (dir > 0) {
+				res = IncrUp();
+				if (res == 0) {
+					res = IncrDown();
+					if (res == 0) {
+						throw new Error("B cannot find LCM where i = 1");
+					}
+				}
+				return res
+			}
+			else {
+				throw new Error("i have zero fuggin idea how you got this error");
+			}
+
+			function IncrDown() {
+				for (let i = init_point; i > min; --i) {
+					console.log("trying LCF: " + FindLCF(i, other))
+					if (FindLCF(other, i) == 1) {
+						console.log("found return, return is: " + i);
+						return i;
+					}
+				}
+				return 0;
+			}
+			function IncrUp() {
+				for (let i = init_point; i < max; ++i) {
+					console.log("trying LCF: " + FindLCF(i, other))
+					if (FindLCF(other, i) == 1) {
+						console.log("found return, return is: " + i);
+						return i;
+					}
+				}
+				return 0;
+			}
+		}
+	});
+
+</script>
+
+</html>

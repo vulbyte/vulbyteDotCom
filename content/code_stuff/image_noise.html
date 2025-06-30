@@ -12,20 +12,27 @@
 	<h1 class="marquee">noise tests</h1>
 	<div id="noises">
 		<div>
+			<h2>mechanical noise</h2>
+			<canvas id="mech_noise" width="" height=""></canvas>
+		</div>
+		<div>
 			<h2>seeded noise</h2>
-			<canvas id="seeded" width="" height=""></canvas>
+			<canvas id="seeded_noise" width="" height=""></canvas>
 		</div>
 		<div>
 			<h2>value noise</h2>
-			<canvas id="value" width="" height=""></canvas>
+			<span>to be implimented</span>
+			<canvas id="value_noise" width="" height=""></canvas>
 		</div>
 		<div>
 			<h2>perlin noise</h2>
-			<canvas id="perlin" width="" height=""></canvas>
+			<span>to be implimented</span>
+			<canvas id="perlin_noise" width="" height=""></canvas>
 		</div>
 		<div>
 			<h2>impoved perlin noise</h2>
-			<canvas id="imp_perlin" width="" height=""></canvas>
+			<span>to be implimented</span>
+			<canvas id="imp_perlin_noise" width="" height=""></canvas>
 		</div>
 	</div>
 
@@ -84,6 +91,8 @@
 
 		let reload = GEBI('reload');
 		reload.addEventListener('click', (e) => {
+			UpdateCanvases();
+
 			regen_clicked();
 		})
 
@@ -95,19 +104,24 @@
 		let canvases = d.getElementsByTagName("canvas");
 
 		window.addEventListener('load', (e) => {
-			console.log("page loaded, assigning colors");
-			let ctx;
-			for (let i = 0; i < canvases.length; ++i) {
-				ctx = canvases[i].width = width;
-				ctx = canvases[i].height = height;
-
-				ctx = canvases[i].getContext('2d');
-				ctx.fillStyle = "#f90";
-				ctx.fillRect(0, 0, width, height);
-			}
+			UpdateCanvases();
 
 			GEBI('seed').value = parseInt(Math.random() * (2 ** 32));
 		});
+
+		function UpdateCanvases() {
+			console.log("UPDATING CANVASES");
+			let ctx;
+			for (let i = 0; i < canvases.length; ++i) {
+				ctx = canvases[i];
+				ctx.width = GEBI('width').value;
+				ctx.height = GEBI('height').value;
+
+				ctx = canvases[i].getContext('2d');
+				ctx.fillStyle = "#f90";
+				ctx.fillRect(0, 0, GEBI("width").value, GEBI("height").value);
+			}
+		}
 
 		class PcgHash {
 			static MULT_LOW = 0xd0f33173 >>> 0;
@@ -165,35 +179,130 @@
 		}
 
 		function regen_clicked() {
-			let noise_grid = Array(width);
+			mechanical_noise();
+			seeded_noise();
+		}
+
+		// Assuming width, height, canvases, GEBI, PcgHash are defined in the scope
+
+		function seeded_noise() {
+			let noise_grid = Array(GEBI("width").value);
+			let ctx;
+			for (let i = 0; i < canvases.length; ++i) {
+				if (canvases[i].id == "seeded_noise") {
+					ctx = canvases[i].getContext('2d');
+					break;
+				}
+			}
+			ctx.clearRect(0, 0, GEBI("width").height, GEBI("height").value);// Clear the canvas
+
+			let seed_str = GEBI('seed').value;
+			let base_seed = parseInt(seed_str); // Use parseInt directly
+
+			if (isNaN(base_seed)) {
+				console.error("Invalid seed value. Please enter a number. Using default seed 0.");
+				base_seed = 0;
+			}
+
+			let numerator, hash_value;
+			// FIX HERE: Denominator must be 2^32 for a 32-bit hash output
+			const denominator = 2 ** 32;
+
+			// Use ImageData for performance
+			let imageData = ctx.createImageData(GEBI("width").value, GEBI("height").value);
+			let data = imageData.data;
+
+			for (let y = 0; y < GEBI("height").value; ++y) { // Iterate through rows first (y)
+				for (let x = 0; x < GEBI("width").value; ++x) { // Then through columns (x)
+					let pixel_input = (base_seed ^ (x * 0x4B37) ^ (y * 0x9D5F)) >>> 0;
+
+					numerator = PcgHash.hash(pixel_input); // PcgHash.hash expects 32-bit unsigned
+
+					hash_value = numerator / denominator;
+
+					let gray_val = Math.abs(Math.floor(hash_value * 255));
+
+					// Set pixel color directly in ImageData
+					let index = (y * GEBI("width").value + x) * 4;
+					data[index] = gray_val;     // Red
+					data[index + 1] = gray_val; // Green
+					data[index + 2] = gray_val; // Blue
+					data[index + 3] = 255;        // Alpha
+				}
+
+
+				value_noise(noise_grid);
+			}
+
+			ctx.putImageData(imageData, 0, 0);
+			console.log("GENERATION COMPLETE");
+		}
+
+		function value_noise(noise_grid) {
+			let value_grid = noise_grid;
+
+			console.log(noise_grid);
+		}
+
+		// Make sure your PcgHash class and simpleStringToIntHash (if you still use it) are defined.
+		// And your global variables width, height, canvases, GEBI.
+
+		// Example of how they might be defined:
+		// const width = 256;
+		// const height = 256;
+		// const canvases = [document.createElement('canvas')];
+		// canvases[0].width = width;
+		// canvases[0].height = height;
+		// document.body.appendChild(canvases[0]); // Add to DOM if not already there
+		// const GEBI = (id) => ({ value: '12345' }); // Mock GEBI for testing if no actual input element
+
+		// (Your PcgHash class here)
+		/*
+		class PcgHash {
+				// ... your compact PcgHash class ...
+		}
+		*/
+		function mechanical_noise() {
+			let noise_grid = Array(GEBI("width").value);
 
 			//generation
-			let height_arr = Array(height);
+			let height_arr = Array(GEBI("height").value);
 			for (let i = 0; i < noise_grid.length; ++i) {
-				for (let j = 0; j < height.length; ++j) {
-					height_arr[j] = math.random();
+				for (let j = 0; j < noise_grid[0].length; ++j) {
+					height_arr[j] = Math.random();
 				}
 				noise_grid[i] = (height_arr);
 			}
-			//apply to noise
-			let ctx = canvases[0].getContext('2d');
-			ctx.clearRect(0, 0, width, height);
+
 			let seed = GEBI('seed').value;
 			let color, hash, numerator, denominator;
 			for (let x = 0; x < noise_grid.length; ++x) {
 				for (let y = 0; y < noise_grid[x].length; ++y) {
 					numerator = PcgHash.hash(seed ^ x ^ y);
-
-					//console.log(numerator)
-
 					denominator = parseInt(2 ** 32);
 					//console.log(numerator + "/" + denominator);
 					hash = (numerator / denominator);
 
 					color = String(parseInt(hash * 255).toString(16));
-					console.log("generated color: " + color);
-					ctx.fillStyle = "#" + color + color + color + "ff";
-					ctx.fillRect(x, y, 1, 1)
+
+					//pass this on
+					noise_grid[x][y] = color;
+
+					//console.log("generated color: " + color);
+					let ctx;
+					for (let i = 0; i < canvases.length; ++i) {
+						if (canvases[i].id == "mech_noise") {
+							ctx = canvases[i].getContext('2d');
+							break;
+						}
+					}
+					for (let y = 0; y < GEBI("height").value; ++y) { // Iterate through rows first (y)
+						for (let x = 0; x < GEBI("width").value; ++x) { // Then through columns (x)
+							//ctx = GEBI("seeded").getContext('2d');
+							ctx.fillStyle = "#" + String(color) + String(color) + String(color) + "ff";
+							ctx.fillRect(x, y, 1, 1)
+						}
+					}
 				}
 			}
 			console.log("GENERATION COMPLETE");

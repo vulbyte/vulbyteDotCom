@@ -1,65 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<script type='module' src='../client_management.js'></script>
-	<title>account | vulbyte </title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<script type="module" src='/client_management.js'></script>
+    <title>Write Data Example</title>
 </head>
-
 <body>
-	<h1>account</h1>
-	<details>
-		<summary>sign in</summary>
-		<br>
-		<label>email</label>
-		<input id="sign_in_email" type="text">
-		<label>password</label>
-		<input id="sign_in_password" type="password">
-		<br>
-		<button>sign in</button>
-	</details>
-	<details>
-		<summary>sign up</summary>
-		<sub>please note! <br>
-			all non-necessary information is encrypted upon account creation.
-			<em>we can not help you recover your account if you loose/forget your recovery question!</em>
-		</sub>
-		<br>
-		<label>username</label>
-		<input id="sign_up_email" type="text">
-		<br>
-		<label>email</label>
-		<input id="sign_up_email" type="text">
-		<br>
-		<label>password</label>
-		<input id="sign_up_password" type="password">
-		<br>
-		<label>password again</label>
-		<input id="sign_up_password_again" type="password">
-		<br>
-		<label>date of birth</label>
-		<input id="sign_up_dob" type="password">
-		<br>
-		<label>recovery question</label>
-		<select>
-			<option value="pob">city/town of birth</option>
-			<option valye="fp">name of your first pet</option>
-			<option valye="fcg">favorite childhood game</option>
-			<option valye="fa">favorite artist</option>
-			<option valye="mln">mothers last name</option>
-		</select>
-		<br>
-		<label>recovery answer</label>
-		<input id="recovery_answer" type="text">
-		<br>
-		<label>click if you have read and understand <a href="/terms_of_service.html">the tos</a></label>
-		<input id="read_tos" type="checkbox">
-		<br>
-		<button>sign up</button>
-	</details>
+    <button id="writeDataButton">Write Data</button>
+    <script>
+        document.getElementById('writeDataButton').addEventListener('click', async () => {
+            const response = await fetch('https://your-supabase-url/functions/v1/read-write-data', {
+                method: 'POST',
+                headers: {
+                    'Authorization': 'Bearer YOUR_JWT_TOKEN', // Replace with actual JWT
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ column_name: 'value' }) // Replace with actual data
+            });
 
+            const result = await response.json();
+            console.log(result);
+        });
+    </script>
 </body>
-
 </html>
