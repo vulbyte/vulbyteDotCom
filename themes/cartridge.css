@@ -1,27 +1,212 @@
 /* IMPORTS */
 
+/* default */
 @font-face {
-	src: url("https://vulbyte.com/assets/GeistMono-Light.otf");
-	font-name: "Geist";
+	font-family: 'geist';
+	font-style: normal;
+	src: url("/assets/GeistMono-Light.otf") format("opentype");
+}
+
+/* code stuff */
+@font-face {
+	font-family: 'doto';
+	font-style: normal;
+	src: url("/assets/Doto-VariableFont_ROND.ttf");
+}
+
+/* headers */
+@font-face {
+	font-family: 'audiowide';
+	font-style: normal;
+	src: url("/assets/Audiowide-Regular.ttf");
 }
 
 /* VARS */
 :root {
-	--font-default: "Geist";
+	--border-default: solid 2px color-mix(in oklab,
+			var(--color-text-dark), black);
+
+	--color-text-light: #312;
+	--color-text-dark: #fed;
+
+	--color-flare-green: hsl(177 54% 56.1%);
+	--color-flare-yellow: hsl(66 80% 75.5%);
+	--color-flare-red: hsl(349 100% 72%);
+	--color-flare-diabled: hsl(0 0% 40%);
+
+	--font-default: 16px geist;
+	--font-code: 16px doto;
+	--font-family-header: audiowide;
 }
 
 /* GLOBAL */
 * {
-	font-family: var(--font-default);
+	font: var(--font-default);
 }
 
 /* LIGHT AND DARK MODE */
-@media (prefers-color-scheme: dark) {}
 
-@media (prefers-color-scheme: light) {}
+@media (prefers-color-scheme: dark) {
+	* {
+		color: var(--color-text-dark);
+	}
+
+	body {
+		background-image: url("/assets/Plastic_Rough_001_basecolor.jpg");
+		background-size: 50%;
+	}
+}
+
+@media (prefers-color-scheme: light) {
+	* {
+		color: var(--color-text-light);
+	}
+
+	body {
+		background-image: url("/assets/Plastic_004_basecolor.jpg");
+		background-size: 50%;
+	}
+}
+
 
 /* ID */
 
 /* CLASS */
 
 /* ELEMENT */
+body {
+	max-width: 100vw;
+	overflow-x: hidden;
+	padding-bottom: 0.6em;
+}
+
+button {
+	/**/
+	border-radius: 1em;
+	color: var(--color-text-light);
+	margin-bottom: 0.6em;
+}
+
+button[type=submit] {
+	background-color: var(--color-flare-green);
+	/*
+
+	border-radius: 1em;
+	background: linear-gradient(145deg, #75f0ef, #62cac9);
+	overflow: hidden;
+	box-shadow: 0.1em 0.1em 0.5em #448b8a,
+		-30px -30px 60px #96ffff;
+*/
+}
+
+button[type=reset] {
+	/*background-color: var(--color-flare-red);*/
+
+	border-radius: 150px;
+	background: linear-gradient(145deg, #f0f0f0, #cacaca);
+	box-shadow: 30px 30px 60px #8b8b8b,
+		-30px -30px 60px #ffffff;
+}
+
+button[type=button] {
+	/*background-color: var(--color-flare-yellow);*/
+
+	border-radius: 150px;
+	background: linear-gradient(145deg, #f0f0f0, #cacaca);
+	box-shadow: 30px 30px 60px #8b8b8b,
+		-30px -30px 60px #ffffff;
+}
+
+button[disabled=""] {
+	/*background-color: var(--color-flare-diabled);*/
+
+	border-radius: 150px;
+	background: linear-gradient(145deg, #f0f0f0, #cacaca);
+	box-shadow: 30px 30px 60px #8b8b8b,
+		-30px -30px 60px #ffffff;
+}
+
+code {
+	background-image: radial-gradient(#300 0%, #300 40%, black 61%, black 100%);
+	background-size: 1.6px 1.6px;
+	background-position-x: -1.5px;
+	background-position-y: -0.7px;
+	font: var(--font-code);
+}
+
+fieldset {
+	border: var(--border-default);
+}
+
+forms {
+	border: var(--border-default);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	color: hsl(349 100% 64%);
+	font-family: var(--font-family-header);
+}
+
+h1 {
+	font-size: 64px;
+}
+
+h2 {
+	font-size: 48px;
+}
+
+h3 {
+	font-size: 38px;
+}
+
+h4 {
+	font-size: 32px;
+}
+
+h5 {
+	font-size: 28px;
+}
+
+h6 {
+	font-size: 24px;
+}
+
+input {
+	border-radius: 1em;
+	margin-bottom: 0.6em;
+	padding-left: 0.6em;
+	padding-right: 0.4em;
+	color: var(--color-text-light);
+}
+
+input[type=submit] {
+	background-color: hsl(177 54% 56.1%);
+}
+
+input[type=reset] {
+	background-color: hsl(349 100% 72%);
+}
+
+input[type=button] {
+	background-color: hsl(66 80% 75.5%);
+}
+
+input[disabled=""] {
+	background-color: hsl(0 0% 50%);
+}
+
+legend {
+	border: var(--border-default);
+	padding-left: 0.4em;
+	padding-right: 0.5em;
+}
+
+p {
+	max-width: 60em;
+	margin: auto;
+}

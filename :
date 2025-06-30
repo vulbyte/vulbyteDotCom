@@ -492,28 +492,16 @@ try {
 		let og;
 		let style;
 		let new_style;
-		let og_rect;
 		for (let i = 0; i < buttons.length; ++i) {
 			og = buttons[i];
-			og_rect = buttons[i].getBoundingClientRect();
 			style = getComputedStyle(og);
 
-			async function ComputeNewStyle() {
-				let new_style;
-				new_style += "mix-blend-mode:multiply;"
-				new_style += `border-radius:${style.borderRadius
-					} `;
-				new_style += "box-shadow: inset 0 0 1em" + `${style.background}; `
-				new_style += "position: absolute;";
-				new_style += "height:" + `${og_rect.height}px;`;
-				new_style += "width:" + `${og_rect.width}px;`;
-
-				return (new_style);
-			}
-			new_style = await ComputeNewStyle();
-			let highLight = CE({ type: "div", style: new_style });
-			og.insertAdjacentElement('beforebegin', highLight)
+			new_style += "mix-blend-mode:multiply;"
+			new_style += `border-radius:${style.borderRadius;
+		} `;
+			new_style += `box - shadow: box - shadow: inset 0 0 10px ${ style.background }; `
 			/*
+			let highLight = CE({ style: og.style });
 
 			let lowLight = CE({ style: og.style });
 
@@ -587,31 +575,31 @@ let favicon_links = [
 			try {
 				const url = `https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/87deeda52a94496a53f0cbb26e17862dc6548b53/assets/${favicon_links[i]}.svg`;
 
-				// Fetch the image
-				const response = await fetch(url);
-				if (!response.ok) {
-					throw new Error(`Failed to fetch ${url}: ${response.status}`);
-				}
-
-				// Convert to Blob and create a URL
-				const imageBlob = await response.blob();
-				const src = URL.createObjectURL(imageBlob);
-
-				// Set the Blob URL to favicon_links[i]
-				favicon_links[i] = src;
-
-				console.log(`Successfully set icon for ${favicon_links[i]}`);
-			} catch (err) {
-				console.error(`Couldn't get icon for ${favicon_links[i]}:`, err);
-			}
+		// Fetch the image
+		const response = await fetch(url);
+		if (!response.ok) {
+			throw new Error(`Failed to fetch ${url}: ${response.status}`);
 		}
+
+		// Convert to Blob and create a URL
+		const imageBlob = await response.blob();
+		const src = URL.createObjectURL(imageBlob);
+
+		// Set the Blob URL to favicon_links[i]
+		favicon_links[i] = src;
+
+		console.log(`Successfully set icon for ${favicon_links[i]}`);
+	} catch (err) {
+		console.error(`Couldn't get icon for ${favicon_links[i]}:`, err);
+	}
+}
 
 		console.log('got icons from github');
 	} catch (err) {
-		console.error('failed to get icons, setting to default', err);
-		favicon_links = ['./assets/icon.svg']; // Reset to default
-	}
-})();
+	console.error('failed to get icons, setting to default', err);
+	favicon_links = ['./assets/icon.svg']; // Reset to default
+}
+}) ();
 //}}}2
 //{{{2 determine if is animatible
 let animatible = true;
