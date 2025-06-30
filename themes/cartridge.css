@@ -1,0 +1,27 @@
+/* IMPORTS */
+
+@font-face {
+	src: url("https://vulbyte.com/assets/GeistMono-Light.otf");
+	font-name: "Geist";
+}
+
+/* VARS */
+:root {
+	--font-default: "Geist";
+}
+
+/* GLOBAL */
+* {
+	font-family: var(--font-default);
+}
+
+/* LIGHT AND DARK MODE */
+@media (prefers-color-scheme: dark) {}
+
+@media (prefers-color-scheme: light) {}
+
+/* ID */
+
+/* CLASS */
+
+/* ELEMENT */

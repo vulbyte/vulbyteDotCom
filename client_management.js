@@ -446,7 +446,7 @@ catch (err) {
 try {
 	var global_style = document.createElement('link');
 	global_style.rel = `stylesheet`;
-	global_style.href = `/global.css`;
+	global_style.href = `/themes/cartridge.css`;
 
 	document.getElementsByTagName('head')[0].appendChild(global_style);
 	console.log('style added');
