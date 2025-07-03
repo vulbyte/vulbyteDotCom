@@ -322,9 +322,16 @@ function Navbar() {
 		//setTimeout((() => {
 		//}), 500);
 		console.log("navbar height: ", navbar.getBoundingClientRect().height);
-		let spacer = document.getElementById("spacer");
+		let spacer;
+		try {
+			spacer = document.getElementById("spacer");
+		}
+		catch (err) {
+			console.warn(err);
+			spacer = document.createElement("div");
+		}
 
-		spacer.style.height = navbar.getBoundingClientRect().height * 0.3 + "px";
+		spacer.style += `height: ${navbar.getBoundingClientRect().height * 0.3}px`;
 
 		console.log("navbar added");
 
@@ -579,42 +586,40 @@ let favicon_links = [
 	'icon',
 ];
 
-(async () => {
+let animatible = true;
+(() => {
 	try {
 		console.log('attempting to get icons from github');
 
 		for (let i = 0; i < favicon_links.length; ++i) {
-			try {
-				const url = `https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/87deeda52a94496a53f0cbb26e17862dc6548b53/assets/${favicon_links[i]}.svg`;
+			const url = `https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/87deeda52a94496a53f0cbb26e17862dc6548b53/assets/${favicon_links[i]}.svg`;
 
-				// Fetch the image
-				const response = await fetch(url);
-				if (!response.ok) {
-					throw new Error(`Failed to fetch ${url}: ${response.status}`);
-				}
-
-				// Convert to Blob and create a URL
-				const imageBlob = await response.blob();
-				const src = URL.createObjectURL(imageBlob);
-
-				// Set the Blob URL to favicon_links[i]
-				favicon_links[i] = src;
-
-				console.log(`Successfully set icon for ${favicon_links[i]}`);
-			} catch (err) {
-				console.error(`Couldn't get icon for ${favicon_links[i]}:`, err);
+			// Fetch the image
+			const response = fetch(url);
+			if (!response.ok) {
+				throw new Error(`Failed to fetch ${url}: ${response.status}`);
 			}
+
+			// Convert to Blob and create a URL
+			const imageBlob = response.blob();
+			const src = URL.createObjectURL(imageBlob);
+
+			// Set the Blob URL to favicon_links[i]
+			favicon_links[i] = src;
+
+			console.log(`Successfully set icon for ${favicon_links[i]}`);
 		}
 
 		console.log('got icons from github');
 	} catch (err) {
+		animatible = false;
 		console.error('failed to get icons, setting to default', err);
 		favicon_links = ['./assets/icon.svg']; // Reset to default
 	}
 })();
 //}}}2
 //{{{2 determine if is animatible
-let animatible = true;
+//animatable moved to above async check
 try {
 	console.log('editing favicon');
 	let favicon_link = document.querySelector(`link[rel~='icon']`);
@@ -642,6 +647,7 @@ try {
 	console.log('favicon changed');
 }
 catch (err) {
+	animatible = false;
 	console.warn('failed to change favicon', err);
 }
 //}}}2
@@ -666,7 +672,10 @@ if (animatible == true) {
 
 		document.getElementById('favicon').href = favicon_links[icon];
 	}, 300);
-};
+}
+else {
+	console.log("I'M NOT ANIMATING BECAUSE I DON'T HAVE INTERNET");
+}
 //{{{2 show disclaimer
 /*
 try {
