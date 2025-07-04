@@ -28,14 +28,15 @@
 
 	--color-text-light: #312;
 	--color-text-dark: #fed;
+	--color-input: #ffcc00;
 
 	--color-flare-green: hsl(177 54% 56.1%);
 	--color-flare-yellow: hsl(66 80% 75.5%);
 	--color-flare-red: hsl(349 100% 72%);
 	--color-flare-diabled: hsl(0 0% 40%);
 
-	--font-default: 16px geist;
-	--font-code: 16px doto;
+	--font-default: 1em geist;
+	--font-code: 1em doto;
 	--font-family-header: audiowide;
 }
 
@@ -128,8 +129,21 @@ button[disabled=""] {
 }
 
 code {
-	background-image: radial-gradient(#300 0%, #300 40%, black 61%, black 100%);
-	background-size: 1.6px 1.6px;
+	background-image: radial-gradient(#200 0%, #200 60%, black 61%, black 100%);
+	background-size: 0.1em 0.1em;
+	background-position-x: -1.5px;
+	background-position-y: -0.7px;
+	border-radius: 0.6em;
+	box-shadow:
+		inset -0.1em -0.1em 0.5em #ffffff33, inset 0.2em 0.2em 0.5em #77000033;
+	display: block;
+	font: var(--font-code);
+	padding: 0.5em;
+}
+
+code * {
+	background-image: radial-gradient(#300 0%, #300 60%, black 61%, black 100%);
+	background-size: 0.1em 0.1em;
 	background-position-x: -1.5px;
 	background-position-y: -0.7px;
 	font: var(--font-code);
@@ -178,12 +192,27 @@ h6 {
 }
 
 input {
-	border-radius: 1em;
+	background-image: radial-gradient(#300 0%, #300 60%, black 61%, black 100%);
+	background-size: 0.1em 0.1em;
+	background-position-x: -1.5px;
+	background-position-y: -0.7px;
+	font: var(--font-code);
+
+	border-radius: 0.4em;
+	box-shadow:
+		inset -0.1em -0.1em 0.5em #ffffff33, inset 0.2em 0.2em 0.5em #77000033;
+	color: var(--color-input);
 	margin-bottom: 0.6em;
 	padding-left: 0.6em;
 	padding-right: 0.4em;
-	color: var(--color-text-light);
 }
+
+input[type=number] {
+	text-align: center;
+	width: 6em;
+}
+
+
 
 input[type=submit] {
 	background-color: hsl(177 54% 56.1%);
@@ -207,7 +236,26 @@ legend {
 	padding-right: 0.5em;
 }
 
+
+output {
+	background-image: radial-gradient(#200 0%, #200 60%, black 61%, black 100%);
+	background-size: 0.1em 0.1em;
+	background-position-x: -1.5px;
+	background-position-y: -0.7px;
+	border-radius: 0.4em;
+	box-shadow:
+		inset -0.1em -0.1em 0.5em #ffffff33, inset 0.2em 0.2em 0.5em #77000033;
+	font: var(--font-code);
+	padding-left: 1em;
+	padding-right: 1em;
+
+}
+
 p {
 	max-width: 60em;
 	margin: auto;
+}
+
+sub {
+	font-size: 0.6em;
 }

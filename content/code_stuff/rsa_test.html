@@ -16,7 +16,7 @@
 				tldr: RSA is a basic algorithm used to do:
 			</h3>
 			<details>
-				<summary>asymetric encruption</summary>
+				<summary>asymmetric encryption</summary>
 				a type of encryption which can only be done one way.
 				a simple way to think of it is:
 				<code> a+b=c != c-b=a </code>
@@ -132,13 +132,16 @@ isplay:flex; flex-direction:row; justify-content:center;
 				</li>
 				<li>
 					and with that we can take out final output and compare it test it on a message. so the encryption key works as
-					follows:
+					follows:<br>
 					<code>
-						<em>en-crypt:</em> <br>
-						(message)<sup>E</sup> mod(N)
-						<br>
-						<em>de-crypt:</em> <br>
-						(message)<sup>E</sup> mod(N)
+						<div style="display:block;">
+							<em>en-crypt:</em>
+							(message)<sup>E</sup> mod(N)
+						</div>
+						<div style="display:block">
+							<em>de-crypt:</em>
+							(message)<sup>E</sup> mod(N)
+						</div>
 
 					</code>
 				</li>
@@ -464,7 +467,7 @@ isplay:flex; flex-direction:row; justify-content:center;
 				}
 			}
 			console.log("cannot find one that meets conditions");
-			return -1;
+			return -1; // EARLY RETURN 
 
 			console.log("attempted to find LCF = 1 for: " + other + " + " + init_point);
 			console.log(

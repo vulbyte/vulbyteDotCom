@@ -13,9 +13,26 @@
 	<p>this is meant to be a cute little tool to help you get a commission and poke around around with what you might
 		want!</p>
 	<p>PLEASE NOTE: THIS IS JUST FOR ESTIMATION, THE PRICE IS NOT MEANT TO BE FINAL</p>
+	<br>
+	<br>
+	<br>
 
 	<fieldset id="art_style_selection">
 		<style>
+			.art_style_preview {
+				width: 100% !important;
+				overflow: hidden;
+			}
+
+			.art_style_preview>img {
+				image-rendering: optimizeSpeed;
+				object-fit: fill !important;
+			}
+
+			#art_style_slection>div>div>h6 {
+				min-height: 2em;
+			}
+
 			#art_style_selection>div>div {
 				aspect-ratio: 1/1;
 				border: solid 0.5vw #555;
@@ -29,64 +46,59 @@
 				height: 35vw;
 			}
 
-			#art_style_selection>div>div>* {
-				height: 1em;
-			}
-
 			#art_style_selection>div>div>p {
 				text-align: center;
 				margin: auto;
 				width: 100%;
 			}
+
+			.art_style_selection_title {
+				height: 2.5em !important;
+			}
 		</style>
-		<legend style="border:var(--border); padding:0.2em; border-color:var(--color_secondary)">to start off, let's select
+		<legend>to start off, let's select
 			the art style you'd like:</legend>
 
 		<div style=" display:flex; flex-direction:row; justify-content:space-around; width:80%; margin: auto; ">
 
 			<div id="digital_2d_preview">
-				<div style="
-						height:20vw; 
-						width:20vw; 
-						overflow:hidden; 
-						">
+				<div class="art_style_preview">
 					<img src="https://pbs.twimg.com/media/FgHrjyraAAA1kmI?format=jpg&name=large" alt="digital 2d art"
 						style="width:25vw; height:20vw; transform:translateY(1em)">
 				</div>
-				<h6 style="margin:auto;">digital 2d art</h6>
+				<h6 class="art_style_selection_title" style="margin:auto;">digital 2d art</h6>
 				<p>starting at $20</p>
 				<input type="radio" style="margin: auto; width:100%; margin-top:1em; user-select:none;">
 			</div>
 
 
 			<div id="traditional_2d_preview">
-				<div style="
-					height:20vw; 
-					width:20vw; 
-					overflow:hidden; 
-					">
+				<div class="art_style_preview">
 					<img
 						src="https://cdnb.artstation.com/p/assets/images/images/034/774/359/large/insert-eti5qw-vcamyjgg.jpg?1613177828"
 						alt="traditional 2d" style="transform:translateY(-3vw); height:35vw; width:20vw;">
 				</div>
-				<h6 style="margin:auto">trad 2d art</h6>
+				<h6 class="art_style_selection_title" style="margin:auto">trad 2d art</h6>
 				<p>starting at $40</p>
 				<input type="radio" style="margin: auto; width:100%; margin-top:1em; user-select:none;">
 			</div>
 
 			<div id="digital_3d_preview">
-				<div style="
-					height:20vw; 
-					width:20vw; 
-					overflow:hidden; 
-					">
+				<div class="art_style_preview">
 					<img
 						src="https://yt3.ggpht.com/VW8zaggWr4YUkz5SdXQyMhB9BuV4ouEi4j1ZbVqWoJfScQ_mQz_wFA0tAB6G9ygO_rzQIXMjqsDj=s1358-c-fcrop64=1,10dc0000ef23ffff-rw-nd-v1"
 						alt="digital 3d art" style="transform:translateY(2vw); height:20vw; width:20vw;">
 				</div>
-				<h6 style="margin:auto;">digital 3d art</h6>
+				<h6 class="art_style_selection_title" style="margin:auto;">digital 3d art</h6>
 				<p>starting at $60</p>
 				<input type="radio" style="margin: auto; width:100%; margin-top:1em; user-select:none;">
+			</div>
+
+			<div id="more coming soon">
+				<div class="art_style_preview">
+					<p style="font-size:100px; margin:auto; width:100%; text-align:center;">?</p>
+				</div>
+				<h6 class="art_style_selection_title" style="margin:auto;">more coming soon</h6>
 			</div>
 
 			<script type="module">
