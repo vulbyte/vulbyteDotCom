@@ -9,6 +9,90 @@
 </head>
 
 <body>
+	<style>
+		/* Hide the default checkbox */
+		input[type="checkbox"] {
+			-webkit-appearance: none;
+			/* For Chrome/Safari */
+			-moz-appearance: none;
+			/* For Firefox */
+			appearance: none;
+			/* Standard property */
+			position: relative;
+			width: 8em;
+			/* Width of the switch track */
+			height: 4em;
+			/* Height of the switch track */
+			border-radius: 2em;
+			/* Fully rounded ends */
+			background-color: #555;
+			/* Base track color (off state) */
+			box-shadow: inset 0 0.2em 0.5em rgba(0, 0, 0, 0.5),
+				/* Inner shadow for depth */
+				inset 0 -0.2em 0.5em rgba(255, 255, 255, 0.1),
+				/* Highlight */
+				0 0.2em 0.5em rgba(0, 0, 0, 0.3);
+			/* Outer shadow */
+			cursor: pointer;
+			outline: none;
+			/* Remove outline on focus */
+			transition: background-color 0.3s ease-in-out;
+		}
+
+		/* The "knob" or "thumb" of the switch */
+		input[type="checkbox"]::before {
+			content: '';
+			position: absolute;
+			top: 50%;
+			left: 0.5em;
+			/* Initial position for "off" */
+			transform: translateY(-50%);
+			width: 3em;
+			/* Size of the knob */
+			height: 3em;
+			/* Size of the knob */
+			border-radius: 50%;
+			/* Make it round */
+			background: radial-gradient(pink, yellow, red);
+			/* Metallic gradient */
+			box-shadow: 0 0.2em 0.8em rgba(0, 0, 0, 0.4),
+				/* Outer shadow for knob */
+				inset 0 0.1em 0.3em rgba(255, 255, 255, 0.7),
+				/* Top highlight */
+				inset 0 -0.1em 0, 3em rgba(0, 0, 0, 0.5);
+			/* Bottom shadow */
+			transition: transform 0.3s ease-in-out, background 0.3s ease-in-out, left 0.3s ease-in-out;
+			border: 0.1em solid #999;
+		}
+
+		/* When the checkbox is checked (switch is "on") */
+		input[type="checkbox"]:checked {
+			background-color: #88B04B;
+			/* Green for "on" state */
+			box-shadow: inset 0 0.2em 0.5em rgba(0, 0, 0, 0.5),
+				/* Keep base shadows */
+				inset 0 -0.2em 0.5em rgba(255, 255, 255, 0.1),
+				0 0.2em 0.5em rgba(0, 0, 0, 0.3);
+		}
+
+		input[type="checkbox"]:checked::before {
+			left: calc(100% - 3em - 0.5em);
+			/* Move knob to the right: (track width - knob width - padding) */
+			background: radial-gradient(#aaffff, cyan, green);
+			/* Slightly brighter knob when "on" */
+		}
+
+		/* Optional: Add a subtle highlight when focused */
+		input[type="checkbox"]:focus {
+			box-shadow: 0 0 0 3px rgba(136, 176, 75, 0.5),
+				/* Outline for focus */
+				inset 0 2px 5px rgba(0, 0, 0, 0.5),
+				inset 0 -2px 5px rgba(255, 255, 255, 0.1),
+				0 2px 5px rgba(0, 0, 0, 0.3);
+		}
+	</style>
+	<label>helope</label>
+	<input type="checkbox" class='lever-switch'>there's a button here</input>
 	<h1>rsa play</h1>
 	<div id="description">
 		<div>
@@ -140,38 +224,66 @@ isplay:flex; flex-direction:row; justify-content:center;
 						</div>
 						<div style="display:block">
 							<em>de-crypt:</em>
-							(message)<sup>E</sup> mod(N)
+							<sup>E</sup> mod(N)
 						</div>
-
 					</code>
+					<p>here's our numbers plugged in so we can see the numbers in place</p>
+					<code>
+						<div style="display:block;">
+							<em>en-crypt:</em>
+							<input class="message" placeholder="your message here"><sup><output class="e"></output></sup> mod(<output
+								class="lcm"></output>)
+						</div>
+						<div style="display:block">
+							<em>de-crypt:</em>
+							<output class="cypher"></output><sup>E</sup> mod(<output class="lcm"></output>)
+						</div>
+					</code>
+				</li>
+				<li>
+					and with that, we not have our encryption!
+					so given your message: <input class="message">, <br>
+					we encrypt it to get: <output class="decypher"></output>,
+					and if we use the decrypt function we get:
+					<output class="decryption"></output>
 				</li>
 
 			</ol>
 		</div>
 	</div>
-	<div>
-		<div id="inputs" style="display:flex; flex-direction:row; gap:1em;">
-			<div id="public_key">
-				<div>
-					<label>public exp</label>
-					<input class="pub" type="number"></input>
-				</div>
-				<div>
-					<label>mod</label>
-					<output class="mod" type="number"></output>
-				</div>
-			</div>
-			<div id="private_key">
-				<div>
-					<label>private exponent</label>
-					<input class="priv" type="number"></input>
-				</div>
-				<div>
-					<label>mod</label>
-					<output class="mod" type="number"></output>
-				</div>
-			</div>
-		</div>
+	<!-- this is a container that sticks to the bottom of the page to show values of the rsa-->
+	<div style="
+			background-color:black;
+			/*background-image:linear-gradient(transparent, black,black, black);*/
+			/*border-top: solid #440033 0.1em;*/
+			border-top-right-radius: 1em;
+			border-top-left-radius: 1em;
+			box-shadow: inset 0em 0em 1em  #770066, inset -1em -1em 0em  #000;
+			margin:auto;
+			width:min-content; 
+			overflow:hidden; 
+			position:fixed; 
+			bottom:0px;">
+		<table>
+			<tr>
+				<th>P: </th>
+				<th>Q: </th>
+				<th>N: </th>
+				<th>λ(N): </th>
+				<th>E: </th>
+				<th>D: </th>
+				<th>message:</th>
+			</tr>
+			<tr>
+				<td> <input type="number" class="pub"></input> </td>
+				<td> <input type="number" class="priv"></input> </td>
+				<td> <output class="mod"></output> </td>
+				<td><output class="lcm"></output> </td>
+				<td><output class="e"></output> </td>
+				<td><output class="d"></output> </td>
+				<td><input class="message" placeholder="your message here"></input></td>
+			</tr>
+		</table>
 	</div>
 </body>
 <script type="module">
@@ -184,170 +296,87 @@ isplay:flex; flex-direction:row; justify-content:center;
 			console.log("updating mods");
 			for (let i = 0; i < mods.length; ++i) {
 				let new_val = Number(
-					Number(
-						document.getElementsByClassName("pub")[0].value
-					)
-					* Number(
-						document.getElementsByClassName("priv")[0].value
-					)
-				)
+					Number(document.getElementsByClassName("pub")[0].value) *
+					Number(document.getElementsByClassName("priv")[0].value)
+				);
 
-				//console.log(`mod[${i}] is of type: ${mods}`)
 				if (mods[i].tagName == "INPUT") {
 					mods[i].value = new_val;
-				}
-				else {
+				} else {
 					mods[i].innerText = new_val;
 				}
 
-				//update all lcms
-				let new_lcm = FindLCM(
+				// Update lambda(n) = LCM(p-1, q-1)
+				let new_lambda = FindLCM(
 					Number(document.getElementsByClassName("priv")[0].value) - 1,
-					Number(document.getElementsByClassName("pub")[0].value) - 1,
+					Number(document.getElementsByClassName("pub")[0].value) - 1
 				);
-				//console.log("new_lcm = ", new_lcm);
+				console.log("new lambda(n) = ", new_lambda);
 
-				document.getElementsByClassName("lcm")[0].innerText = new_lcm;
-
+				let lambdaElements = document.getElementsByClassName("lcm");
+				for (let j = 0; j < lambdaElements.length; ++j) {
+					lambdaElements[j].innerText = new_lambda;
+				}
 			}
 
-			UpdateLCMs();
+			UpdateE();
 		}
-		UpdateMods();//call to init on load so is not blank
+		UpdateMods(); // Initialize on load
+
+		// Prime checking function
+		function isPrime(n) {
+			if (n < 2) return false;
+			if (n === 2) return true;
+			if (n % 2 === 0) return false;
+			for (let i = 3; i * i <= n; i += 2) {
+				if (n % i === 0) return false;
+			}
+			return true;
+		}
 
 		let pubs = document.getElementsByClassName("pub");
 		for (let i = 0; i < pubs.length; ++i) {
 			pubs[i].addEventListener('change', (e) => {
-				//console.log("updating pubs");
 				for (let j = 0; j < pubs.length; ++j) {
 					pubs[j].value = pubs[i].value;
-					//quick warning
-					//let num = Number(pubs[i].value) % 10;
 					let num = Number(pubs[i].value);
-					/*
-					console.log(
-						"ABOUT TO TEST IF PRIME: "
-						+ num
-					);
-					*/
-					/*
-					if (
-						num == 0
-						|| num == 2
-						|| num == 4
-						|| num == 6
-						|| num == 8
-					) {
-						//console.log("pub is not likely prim");
-						pubs[j].style.backgroundColor = "#f00";
-					}
-					else if (
-					) {
-						//console.log("pub is not prim");
-						pubs[j].style.backgroundColor = "#f0f";
-					}
-					else {
-						//console.log("pub is likely prim")
-						pubs[j].style.backgroundColor = "transparent";
-					}
-					*/
-					if (
-						num > 1 &&
-						num % 2 !== 0 &&
-						num % 3 !== 0 &&
-						num !== 1
-					) {
-						console.log("TRANNSSSSSSS")
-						pubs[j].style.backgroundColor = "transparent";
-					}
-					else {
-						console.log("CISSSSSSSSSS")
+
+					if (isPrime(num)) {
+						pubs[j].style.backgroundColor = "lightgreen";
+					} else {
 						pubs[j].style.backgroundColor = "#f00";
 					}
 				}
 				UpdateMods();
 			});
-		};
+		}
 
 		let privs = document.getElementsByClassName("priv");
 		for (let i = 0; i < privs.length; ++i) {
 			privs[i].addEventListener('change', (e) => {
-				//console.log("updating privs");
 				for (let j = 0; j < privs.length; ++j) {
 					privs[j].value = privs[i].value;
-					let num = Number(privs[i].value) % 10;
-					/*
-					console.log(
-						"ABOUT TO TEST IF PRIME: "
-						+ num
-					);
-					*/
-					if (
-						num == 0
-						|| num == 2
-						|| num == 4
-						|| num == 5
-						|| num == 6
-						|| num == 8
-					) {
-						//console.log("pub is not likely prim");
+					let num = Number(privs[i].value);
+
+					if (isPrime(num)) {
+						privs[j].style.backgroundColor = "lightgreen";
+					} else {
 						privs[j].style.backgroundColor = "#f00";
-					}
-					else if (
-						num % 3 == 0
-						|| num % 7 == 0
-						|| num % 9 == 0
-					) {
-						//console.log("pub is not prim");
-						privs[j].style.backgroundColor = "#f00";
-					}
-					else {
-						//console.log("pub is likely prim")
-						privs[j].style.backgroundColor = "transparent";
 					}
 				}
 				UpdateMods();
 			});
-		}
-
-		let lcm = document.getElementsByClassName("lcm");
-		for (let i = 0; i < lcm.length; ++i) {
-			lcm[i].addEventListener('change', (e) => {
-				console.log("updating lcm");
-				for (let j = 0; j < lcm.length; ++j) {
-					lcm[j].value = lcm[i].value;
-				}
-			});
-		}
-
-		function UpdateLCMs() {
-			let lcm = document.getElementsByClassName("lcm");
-			let priv = Number(document.getElementsByClassName("priv")[0].value);
-			let pub = Number(document.getElementsByClassName("pub")[0].value);
-			let new_val = FindLCM(
-				priv - 1, pub - 1
-			);
-			console.log("NEW LCM: " + new_val);
-			for (let i = 0; i < lcm.length; ++i) {
-				lcm[i].innerText = new_val;
-			}
-			UpdateE();
 		}
 
 		function UpdateE() {
 			console.log("updating e");
 			let Es = document.getElementsByClassName("e");
+			let lambdaElements = document.getElementsByClassName("lcm");
 
-			let lcm = document.getElementsByClassName("lcm")[0].innerText;
-			let init_val = Math.floor((Math.random() * (lcm - 3)) + 2);
-			let new_val = IntWithIntWhereLCFIsOne(
-				/*
-				init_val, //init_point
-				lcm, //other n
-				2, // min
-				lcm, // max
-				*/
-			)
+			if (lambdaElements.length === 0) return;
+
+			let lambda = parseInt(lambdaElements[0].innerText);
+			let new_val = findCoprimeE(lambda);
 
 			for (let i = 0; i < Es.length; ++i) {
 				Es[i].value = new_val;
@@ -359,185 +388,243 @@ isplay:flex; flex-direction:row; justify-content:center;
 		function UpdateD() {
 			console.log("updating D");
 			let Ds = document.getElementsByClassName("d");
+			let lambdaElements = document.getElementsByClassName("lcm");
+			let Es = document.getElementsByClassName("e");
 
-			let lcm = document.getElementsByClassName("lcm")[0].value;
-			let e = document.getElementsByClassName("e")[0].value;
+			if (lambdaElements.length === 0 || Es.length === 0) return;
 
-			function modInverse(e, lambdaN) {
-				e = e % lambdaN;
-				for (let d = 1; d < lambdaN; d++) {
-					if ((e * d) % lambdaN === 1) {
-						return d; // Found the inverse!
-					}
-				}
-				return -1; // No inverse exists (shouldn't happen if e and λ(n) are coprime)
-			}
-			let d = modInverse(e, lcm);
+			let lambda = parseInt(lambdaElements[0].innerText);
+			let e = parseInt(Es[0].value);
 
-			console.log("Private exponent D:", d); // Output: 43
+			let d = modInverse(e, lambda);
+			console.log("Private exponent D:", d);
 
 			for (let i = 0; i < Ds.length; ++i) {
 				Ds[i].innerText = d;
 			}
 		}
 
+		function modInverse(e, lambda) {
+			// Extended Euclidean Algorithm
+			function extendedGCD(a, b) {
+				if (b === 0) {
+					return [a, 1, 0];
+				}
+				let [gcd, x1, y1] = extendedGCD(b, a % b);
+				let x = y1;
+				let y = x1 - Math.floor(a / b) * y1;
+				return [gcd, x, y];
+			}
+
+			let [gcd, x, y] = extendedGCD(e, lambda);
+			if (gcd !== 1) {
+				throw new Error("No modular inverse exists");
+			}
+			return ((x % lambda) + lambda) % lambda;
+		}
+
+		function UpdateCypher() {
+			console.log("UPDATING CYPHER");
+
+			let messageElements = document.getElementsByClassName("message");
+			let modElements = document.getElementsByClassName("mod");
+			let eElements = document.getElementsByClassName("e");
+
+			if (messageElements.length === 0 || modElements.length === 0 || eElements.length === 0) return;
+
+			let message = messageElements[0].value;
+			let n = parseInt(modElements[0].innerText || modElements[0].value);
+			let e = parseInt(eElements[0].value);
+
+			// Convert message to array of character codes
+			let utf8_arr = [];
+			for (let i = 0; i < message.length; ++i) {
+				utf8_arr.push(message.charCodeAt(i));
+			}
+			console.log("Character codes: " + utf8_arr);
+
+			// Create chunks - each char code as 3 digits, combine until we'd exceed n
+			let chunks = [];
+			let current = '';
+
+			for (let i = 0; i < utf8_arr.length; i++) {
+				let charCode = String(utf8_arr[i]).padStart(3, '0');
+				let testValue = parseInt(current + charCode);
+
+				if (testValue >= n && current !== '') {
+					// Current chunk would be too big, save what we have and start new
+					chunks.push(parseInt(current));
+					current = charCode;
+				} else {
+					current += charCode;
+				}
+			}
+
+			// Don't forget the last chunk
+			if (current !== '') {
+				chunks.push(parseInt(current));
+			}
+
+			console.log("Chunks before encryption: " + JSON.stringify(chunks));
+
+			// Encrypt chunks using modular exponentiation
+			let encryptedChunks = [];
+			for (let j = 0; j < chunks.length; ++j) {
+				let base = chunks[j];
+				if (isNaN(base)) {
+					console.warn("Skipping NaN chunk: ", base);
+					continue;
+				}
+				let encrypted = modPow(base, e, n);
+				encryptedChunks.push(encrypted);
+			}
+			console.log("Encrypted chunks: " + JSON.stringify(encryptedChunks));
+
+			// Update cipher display
+			let cyphers = document.getElementsByClassName("cypher");
+			let output = JSON.stringify(encryptedChunks);
+			for (let i = 0; i < cyphers.length; ++i) {
+				cyphers[i].innerText = output;
+			}
+
+			UpdateDecypher();
+		}
+
+		// Modular exponentiation (base^exp mod mod)
+		function modPow(base, exp, mod) {
+			let result = 1;
+			base = base % mod;
+			while (exp > 0) {
+				if (exp % 2 === 1) {
+					result = (result * base) % mod;
+				}
+				exp = Math.floor(exp / 2);
+				base = (base * base) % mod;
+			}
+			return result;
+		}
+
+		function UpdateDecypher() {
+			console.log("UPDATING DECYPHER");
+
+			let cypherElements = document.getElementsByClassName("cypher");
+			let dElements = document.getElementsByClassName("d");
+			let modElements = document.getElementsByClassName("mod");
+
+			if (cypherElements.length === 0 || dElements.length === 0 || modElements.length === 0) return;
+
+			let cypherText = cypherElements[0].innerText;
+			let encryptedChunks = JSON.parse(cypherText);
+			let d = parseInt(dElements[0].innerText);
+			let n = parseInt(modElements[0].innerText || modElements[0].value);
+
+			console.log("Decrypting chunks: ", encryptedChunks);
+			console.log("Using d =", d, "n =", n);
+
+			// Decrypt each chunk
+			let decryptedChunks = [];
+			for (let i = 0; i < encryptedChunks.length; ++i) {
+				let c = parseInt(encryptedChunks[i]);
+				let decrypted = modPow(c, d, n);
+				console.log(`Chunk ${i}: ${c} -> ${decrypted}`);
+				decryptedChunks.push(decrypted);
+			}
+			console.log("Decrypted chunks: ", decryptedChunks);
+
+			// Reconstruct message
+			let output = '';
+
+			for (let i = 0; i < decryptedChunks.length; i++) {
+				let chunkStr = String(decryptedChunks[i]);
+
+				// Pad to multiple of 3 if needed (except for last chunk)
+				if (i < decryptedChunks.length - 1) {
+					// For all but last chunk, pad to multiple of 3
+					let remainder = chunkStr.length % 3;
+					if (remainder !== 0) {
+						chunkStr = chunkStr.padStart(chunkStr.length + (3 - remainder), '0');
+					}
+				}
+
+				console.log(`Processing chunk ${i}: "${chunkStr}"`);
+
+				// Extract character codes (3 digits each)
+				for (let j = 0; j < chunkStr.length; j += 3) {
+					let codeStr = chunkStr.slice(j, j + 3);
+					if (codeStr.length === 3) {
+						let code = parseInt(codeStr);
+						if (!isNaN(code) && code > 0 && code < 256) {
+							output += String.fromCharCode(code);
+							console.log(`  Code ${codeStr} -> '${String.fromCharCode(code)}'`);
+						}
+					}
+				}
+			}
+
+			console.log("Final decrypted message: ", output);
+
+			// Update output display
+			let decrypted = document.getElementsByClassName("decryption");
+			for (let i = 0; i < decrypted.length; ++i) {
+				console.log("output:  " + output);
+				decrypted[i].innerText = output;
+			}
+		}
+
 		function FindLCM(a, b) {
 			console.log("FindLCM inputs: " + a + ' ' + b);
-			if (a < b) {
-				a = a ^ b;
-				b = a ^ b;
-				a = b ^ a;
-			}
-
-			let lcf = FindLCF(a, b);
-			console.log("PRE CALC: " + a + " " + b + " " + lcf);
-			let res = (a * b) / lcf;
-			console.log("LCM a,b,res: " + a + " " + b + " " + res);
-			if (res != 0) {return res};
-			throw new Error("unable to find lcm");
-			//console.log("lcm: ")
+			let gcd = FindGCD(a, b);
+			let lcm = (a * b) / gcd;
+			console.log("LCM result: " + lcm);
+			return lcm;
 		}
 
-		function FindGCD(n1, n2) {
-			let num = ((n1 * n2) / (FindLCM(n1, n2)));
-			console.log(`GCD of ${n1} and ${n2} is : ${num}`);
-			return num;
+		function FindGCD(a, b) {
+			while (b !== 0) {
+				let temp = b;
+				b = a % b;
+				a = temp;
+			}
+			return a;
 		}
 
+		function findCoprimeE(lambda) {
+			// Start with common choice of 65537, then try smaller values
+			let candidates = [65537, 17, 5, 3];
 
-		function FindLCF(n1, n2) {
-			console.log("FindLCF inputs: " + n1 + ' ' + n2);
-			let numer;
-			let denom;
-			let remain;
-
-			if (n1 == n2) {
-				return n1;
-			}
-			if (n1 > n2) {
-				denom = n2;
-				numer = n1;
-			}
-			else {
-				denom = n1;
-				numer = n2;
+			for (let candidate of candidates) {
+				if (candidate < lambda && FindGCD(candidate, lambda) === 1) {
+					return candidate;
+				}
 			}
 
-			function step(n = 0, d = 0) {
-				console.log("stepping with nd: " + n + " " + d);
-				if (n == 0 || d == 0 || n == NaN || d == NaN) {
-					throw new Error("FindLCF had 0 as an input");
-				}
-				console.log("nd: " + n + " " + d);
-				if (n < d) {
-					remain = d; //this doesn't matter rn so it'll be used as a swap
-					d = n;
-					n = remain;
-				}
-				remain = n % d;
-
-				if (remain == 0) {
-					d = parseInt(d);
-					console.log("LCF FOUND VALUE RETURNING: ", d);
-					return d;
-				}
-				if (n < 3 && d < 3) {
-					return (0);
-				}
-				return step(d, remain);
-			}
-
-			return step(numer, denom);
-		};
-
-		function IntWithIntWhereLCFIsOne() {
-			//WARN: doing the simple for testing, remove later
-			let lcm = parseInt(document.querySelector(".lcm").textContent);
-			let tester;
-			for (let i = 2; i < lcm; i++) {
-				if (
-					2 < i
-					&& i < lcm
-					&& FindGCD(i, lcm) == 1
-					/*&& i % 2 != 0
-					&& i % 3 != 0*/
-				) {
-					console.log("found return, return is: " + i);
+			// If none of the common values work, find one
+			for (let i = 3; i < lambda; i += 2) {
+				if (FindGCD(i, lambda) === 1) {
 					return i;
 				}
 			}
-			console.log("cannot find one that meets conditions");
-			return -1; // EARLY RETURN 
 
-			console.log("attempted to find LCF = 1 for: " + other + " + " + init_point);
-			console.log(
-				"init state is: "
-				+ "other" + other + " "
-				+ "init_point" + init_point + " "
-				+ "min" + min + " "
-				+ "max" + max + " "
-			)
-			if (other == NaN) {
-				throw new Error(
-					"input is for 'other' is NaN: " + other
-				);
-			}
-			if (other != parseInt(other)) {
-				throw new Error(
-					"input for 'other' is NaN or not an int, " + other
-				);
-			}
+			return 3; // Fallback
+		}
 
-			let dir = Math.floor(Math.random() * 2); //decide up or down at random
+		// Message input binding
+		let messages = document.getElementsByClassName("message");
+		for (let i = 0; i < messages.length; ++i) {
+			messages[i].addEventListener("change", (e) => {
+				console.log("updating messages");
+				UpdateMessages(messages[i].value);
+			});
+		}
 
-			let res;
-			if (dir == 0) {
-				res = IncrDown();
-				if (res == 0) {
-					res = IncrUp();
-					if (res == 0) {
-						throw new Error("A can not find LCM where i = 1");
-					}
-				}
-				return res
+		function UpdateMessages(new_mes = 'test message') {
+			let messages = document.getElementsByClassName("message");
+			for (let i = 0; i < messages.length; ++i) {
+				messages[i].value = new_mes;
 			}
-			else if (dir > 0) {
-				res = IncrUp();
-				if (res == 0) {
-					res = IncrDown();
-					if (res == 0) {
-						throw new Error("B cannot find LCM where i = 1");
-					}
-				}
-				return res
-			}
-			else {
-				throw new Error("i have zero fuggin idea how you got this error");
-			}
-
-			function IncrDown() {
-				for (let i = init_point; i > min; --i) {
-					console.log("trying LCF: " + FindLCF(i, other))
-					if (FindLCF(other, i) == 1) {
-						console.log("found return, return is: " + i);
-						return i;
-					}
-				}
-				return 0;
-			}
-			function IncrUp() {
-				for (let i = init_point; i < max; ++i) {
-					console.log("trying LCF: " + FindLCF(i, other))
-					if (FindLCF(other, i) == 1) {
-						console.log("found return, return is: " + i);
-						return i;
-					}
-				}
-				return 0;
-			}
+			UpdateCypher();
 		}
 	});
-
 </script>
 
 </html>

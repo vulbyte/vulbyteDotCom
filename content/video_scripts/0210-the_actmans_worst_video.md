@@ -528,3 +528,8 @@ giving gamers what they want:
 - sonic fronteirs (open world sonic)
 - halo infinate (open world halo)
 - listening to pro players (gamers not devs, tf2, r6 siege, overwatch)
+
+# RESTRUCTURE:
+
+misc notes:
+- [forged alliance forever is teh best posibility](https://www.faforever.com/)
