@@ -77,7 +77,9 @@
 
 /* ELEMENT */
 body {
-	max-width: 100vw;
+	width: 100vw;
+	max-width: 80vw;
+	margin: auto;
 	overflow-x: hidden;
 	padding-bottom: 0.6em;
 }
@@ -155,8 +157,11 @@ fieldset {
 	border: var(--border-default);
 }
 
-forms {
+form {
 	border: var(--border-default);
+	border-radius: 1em;
+	padding: 1em;
+	width: 100%;
 }
 
 h1,
@@ -225,7 +230,11 @@ input[type=reset] {
 }
 
 input[type=button] {
-	background-color: hsl(66 80% 75.5%);
+	background: linear-gradient(145deg, #f0f0f0, #cacaca);
+	border-radius: 1em;
+	color: var(--color-text-light);
+	margin-bottom: 0.6em;
+
 }
 
 input[disabled=""] {
@@ -268,4 +277,20 @@ p {
 
 sub {
 	font-size: 0.6em;
+}
+
+textarea {
+	background-image: radial-gradient(#300 0%, #300 60%, black 61%, black 100%);
+	background-size: 0.1em 0.1em;
+	background-position-x: -1.5px;
+	background-position-y: -0.7px;
+	font: var(--font-code);
+
+	border-radius: 0.4em;
+	box-shadow:
+		inset -0.1em -0.1em 0.5em #ffffff33, inset 0.2em 0.2em 0.5em #77000033;
+	color: var(--color-input);
+	margin-bottom: 0.6em;
+	padding-left: 0.6em;
+	padding-right: 0.4em;
 }

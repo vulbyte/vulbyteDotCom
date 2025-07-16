@@ -487,7 +487,7 @@ isplay:flex; flex-direction:row; justify-content:center;
 				cyphers[i].innerText = output;
 			}
 
-			UpdateDecypher();
+			UpdateDecypher(output);
 		}
 
 		// Modular exponentiation (base^exp mod mod)
@@ -504,7 +504,7 @@ isplay:flex; flex-direction:row; justify-content:center;
 			return result;
 		}
 
-		function UpdateDecypher() {
+		function UpdateDecypher(cypher) {
 			console.log("UPDATING DECYPHER");
 
 			let cypherElements = document.getElementsByClassName("cypher");
@@ -513,7 +513,7 @@ isplay:flex; flex-direction:row; justify-content:center;
 
 			if (cypherElements.length === 0 || dElements.length === 0 || modElements.length === 0) return;
 
-			let cypherText = cypherElements[0].innerText;
+			let cypherText = cypher;
 			let encryptedChunks = JSON.parse(cypherText);
 			let d = parseInt(dElements[0].innerText);
 			let n = parseInt(modElements[0].innerText || modElements[0].value);
