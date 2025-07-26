@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<title>Scug Death Counter</title>
+	<script type="module" src="/client_management.js"></script>
+</head>
+
+<body>
+	<h1>Scug Death Counter</h1>
+
+	<style>
+		button {
+			width: 3em;
+			height: 2em;
+			z-index: 999;
+		}
+
+		.dcr {
+			background-color: #f77;
+			border-top-color: #fcc;
+			border-left-color: #fcc;
+			border-bottom-color: #a34;
+			border-right-color: #a34;
+		}
+
+		.icr {
+			background-color: #7f7;
+			border-top-color: #cfc;
+			border-left-color: #cfc;
+			border-bottom-color: #3a4;
+			border-right-color: #3a4;
+		}
+
+		.counter-section {
+			text-align: center;
+			padding: 1em;
+		}
+
+		.counter-title {
+			font-weight: bold;
+			margin-bottom: 0.5em;
+		}
+
+		.count {
+			font-size: 2em;
+			margin: 0.5em 0;
+		}
+	</style>
+	<div style="
+			display:flex; 
+			flex-direction:row; 
+			gap:1em;
+			width:100%;">
+		<div class="counter-section">
+			<div class="counter-title">Animal Deaths</div>
+			<div id="animal-count" class="count">Loading...</div>
+			<div class="button-group">
+				<button id="animal-dec" class="dcr">-</button>
+				<button id="animal-inc" class="icr">+</button>
+			</div>
+		</div>
+
+		<div class="counter-section">
+			<div class="counter-title">Environmental Deaths</div>
+			<div id="environmental-count" class="count">Loading...</div>
+			<div class="button-group">
+				<button id="environmental-dec" class="dcr">-</button>
+				<button id="environmental-inc" class="icr">+</button>
+			</div>
+		</div>
+
+		<div class="counter-section">
+			<div class="counter-title">Plant Deaths</div>
+			<div id="plant-count" class="count">Loading...</div>
+			<div class="button-group">
+				<button id="plant_dec" class="dcr">-</button>
+				<button id="plant_inc" class="icr">+</button>
+			</div>
+		</div>
+
+		<div class="counter-section">
+			<div class="counter-title">BS Moments</div>
+			<div id="bs-count" class="count">Loading...</div>
+			<div class="button-group">
+				<button id="bs_dec" class="dcr">-</button>
+				<button id="bs_inc" class="icr">+</button>
+			</div>
+		</div>
+	</div>
+
+	<div id="error"></div>
+
+	<script type="module">
+		import {createClient} from 'https://esm.sh/@supabase/supabase-js'
+
+		const supabase = createClient(
+			'https://dhryeahkbuhctqmophxm.supabase.co',
+			'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRocnllYWhrYnVoY3RxbW9waHhtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM0ODc3NzQsImV4cCI6MjA2OTA2Mzc3NH0.dXD3l5L6-IUYPHPhz2sp0IX81_Zc20-QvLe7-flkHUo'
+		)
+
+		const errorEl = document.getElementById('error')
+
+		// Prevent multiple simultaneous updates
+		let isUpdating = false
+
+		// Debounce object to prevent rapid clicking
+		const debounceTimers = {}
+
+		// Counter data structure
+		const counters = {
+			animal: {
+				field: 'animal_deaths',
+				countEl: document.getElementById('animal-count'),
+				incBtn: document.getElementById('animal-inc'),
+				decBtn: document.getElementById('animal-dec'),
+				value: 0
+			},
+			environmental: {
+				field: 'environment_deaths',
+				countEl: document.getElementById('environmental-count'),
+				incBtn: document.getElementById('environmental-inc'),
+				decBtn: document.getElementById('environmental-dec'),
+				value: 0
+			},
+			plant: {
+				field: 'plant_deaths',
+				countEl: document.getElementById('plant-count'),
+				incBtn: document.getElementById('plant_inc'),
+				decBtn: document.getElementById('plant_dec'),
+				value: 0
+			},
+			bs: {
+				field: 'bs_moments',
+				countEl: document.getElementById('bs-count'),
+				incBtn: document.getElementById('bs_inc'),
+				decBtn: document.getElementById('bs_dec'),
+				value: 0
+			}
+		}
+
+		async function fetchAllCounts() {
+			// First, let's see all records to debug
+			const {data: allData, error: allError} = await supabase
+				.from('scug_death_counter_table')
+				.select('*')
+
+			console.log('All records:', allData, 'Error:', allError)
+
+			// Try different approaches to find the record
+			// Approach 1: Try with string '1'
+			let {data, error} = await supabase
+				.from('scug_death_counter_table')
+				.select('animal_deaths, environment_deaths, plant_deaths, bs_moments')
+				.eq('id', '1')
+				.maybeSingle()
+
+			console.log('Fetched with string id:', {data, error})
+
+			// Approach 2: If that fails, try with number 1
+			if (!data && !error) {
+				const result = await supabase
+					.from('scug_death_counter_table')
+					.select('animal_deaths, environment_deaths, plant_deaths, bs_moments')
+					.eq('id', 1)
+					.maybeSingle()
+
+				data = result.data
+				error = result.error
+				console.log('Fetched with number id:', {data, error})
+			}
+
+			// Approach 3: If still no data, try getting the first record
+			if (!data && !error && allData && allData.length > 0) {
+				data = allData[0]
+				console.log('Using first record:', data)
+			}
+
+			if (error) {
+				Object.values(counters).forEach(counter => {
+					counter.countEl.textContent = 'Error'
+				})
+				errorEl.textContent = 'Failed to fetch counts: ' + error.message
+				return
+			}
+
+			if (data) {
+				// Update all counters
+				Object.entries(counters).forEach(([key, counter]) => {
+					counter.value = data[counter.field] || 0
+					counter.countEl.textContent = counter.value
+				})
+				errorEl.textContent = ''
+			} else {
+				Object.values(counters).forEach(counter => {
+					counter.countEl.textContent = 'No Data'
+				})
+				errorEl.textContent = 'Record exists but cannot be accessed. Check console for all records.'
+			}
+		}
+
+		async function updateValue(counterType, newValue) {
+			// Prevent multiple simultaneous updates
+			if (isUpdating) {
+				console.log('Update already in progress, skipping...')
+				return
+			}
+
+			isUpdating = true
+			const counter = counters[counterType]
+
+			// Update UI immediately for responsiveness
+			const oldValue = counter.value
+			counter.value = newValue
+			counter.countEl.textContent = newValue
+
+			const updateData = {}
+			updateData[counter.field] = newValue
+
+			const {error} = await supabase
+				.from('scug_death_counter_table')
+				.update(updateData)
+				.eq('id', 1)
+
+			if (error) {
+				// Try with string ID
+				const {error: error2} = await supabase
+					.from('scug_death_counter_table')
+					.update(updateData)
+					.eq('id', '1')
+
+				if (error2) {
+					// Revert UI on error
+					counter.value = oldValue
+					counter.countEl.textContent = oldValue
+					errorEl.textContent = `Update error: ${error2.message}`
+					console.error('Update failed:', error2)
+				} else {
+					errorEl.textContent = ''
+				}
+			} else {
+				errorEl.textContent = ''
+			}
+
+			isUpdating = false
+		}
+
+		// Set up event listeners for all counters
+		Object.entries(counters).forEach(([key, counter]) => {
+			// Add some debugging
+			console.log(`Setting up listeners for ${key}:`, counter.incBtn, counter.decBtn)
+
+			if (counter.incBtn) {
+				counter.incBtn.addEventListener('click', (e) => {
+					e.preventDefault()
+
+					// Clear any existing debounce timer
+					if (debounceTimers[key + '_inc']) {
+						clearTimeout(debounceTimers[key + '_inc'])
+					}
+
+					// Debounce the update
+					debounceTimers[key + '_inc'] = setTimeout(() => {
+						console.log(`Increment clicked for ${key}`)
+						updateValue(key, counter.value + 1)
+					}, 100)
+				})
+			}
+
+			if (counter.decBtn) {
+				counter.decBtn.addEventListener('click', (e) => {
+					e.preventDefault()
+
+					// Clear any existing debounce timer
+					if (debounceTimers[key + '_dec']) {
+						clearTimeout(debounceTimers[key + '_dec'])
+					}
+
+					// Debounce the update
+					debounceTimers[key + '_dec'] = setTimeout(() => {
+						console.log(`Decrement clicked for ${key}`)
+						updateValue(key, counter.value - 1)
+					}, 100)
+				})
+			}
+		})
+
+		// Set up realtime subscription
+		supabase
+			.channel('realtime:public:scug_death_counter_table')
+			.on(
+				'postgres_changes',
+				{event: 'UPDATE', schema: 'public', table: 'scug_death_counter_table'},
+				(payload) => {
+					console.log('Realtime update:', payload)
+					const newData = payload.new
+
+					// Update all counters with new data
+					Object.entries(counters).forEach(([key, counter]) => {
+						if (newData[counter.field] !== undefined) {
+							counter.value = newData[counter.field]
+							counter.countEl.textContent = counter.value
+						}
+					})
+				}
+			)
+			.subscribe()
+
+		// Initial fetch
+		fetchAllCounts()
+
+		// Set up periodic refresh every 5 seconds (reduced frequency)
+		setInterval(() => {
+			// Only fetch if not currently updating
+			if (!isUpdating) {
+				fetchAllCounts()
+			}
+		}, 5000)
+	</script>
+</body>
+
+</html>
