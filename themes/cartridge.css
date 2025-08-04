@@ -64,11 +64,29 @@
 	}
 
 	body {
-		background-image: url("/assets/Plastic_004_basecolor.jpg");
+		/*background-image: url("/assets/Plastic_004_basecolor.jpg");*/
 
 		background-size: 50%;
 	}
+
+	body::before {
+		content: "";
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background-image: url("/assets/Plastic_004_basecolor.jpg");
+		background-size: 30em;
+		background-repeat: repeat;
+		background-position: center;
+		filter: brightness(1.15);
+		/* or any other filters */
+		z-index: -1;
+		pointer-events: none;
+	}
 }
+
 
 
 /* ID */

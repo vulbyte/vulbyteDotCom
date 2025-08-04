@@ -325,6 +325,7 @@ function Navbar() {
 		let spacer;
 		try {
 			spacer = document.getElementById("spacer");
+			if (spacer == null) { throw new Error("spacer is null") }
 		}
 		catch (err) {
 			console.warn(err);
@@ -354,80 +355,172 @@ function Footer() {
 			console.log('footer already added, ignoring');
 		}
 
-		let f = document.createElement('footer');
-		f.style.backgroundColor = 'var(--color_secondary)';
-		//f.style.bottom = '0px';
-		f.style.display = 'grid';
-		f.style.gridTemplateColumns = 'repeat(auto-fit, minmax(256px, 1fr))';
-		f.style.height = 'auto';
-		//f.style.left = '0px';
-		f.style.paddingTop = '1.5em';
-		f.style.margin = 'auto';
-		//f.style.position = 'fixed';
-		f.style.width = '100%';
+		///{{{3 CreateFooterContainer
+		function CreateFooterContainer() {
+			let f = document.createElement('footer');
+			f.style.backgroundColor = 'var(--color_secondary)';
+			//f.style.bottom = '0px';
+			f.style.display = 'grid';
+			f.style.gridTemplateColumns = 'repeat(auto-fit, minmax(256px, 1fr))';
+			f.style.height = 'auto';
+			//f.style.left = '0px';
+			f.style.paddingTop = '1.5em';
+			f.style.margin = 'auto';
+			//f.style.position = 'fixed';
+			f.style.width = '100%';
+			//f.style.border = "var(--border-default)";
 
-		let f_h = document.createElement('h6');
-		f_h.innerText = 'Footer';
-		let list = [
-			'gift_art',
-		];
-		let ol = document.createElement('ol');
-		for (let i = 0; i < list.length; ++i) {
-			let li = document.createElement('li');
-			let a = document.createElement('a');
-
-			a.innerText = list[i];
-			a.href = (list[i] + '.html');
-
-			li.appendChild(a);
-			f_h.appendChild(li);
+			/*
+			let hr = document.createElement("hr");
+			hr.style.width = "100%";
+			hr.style.height = "0px";
+			f.appendChild(hr);
+			*/
+			return f;
 		}
+		///}}}3
+		let f = CreateFooterContainer();
 
-		f.appendChild(f_h);
+		///{{{3 CreateFooterTitle()
+		function CreateFooterTitle() {
+			let f_h = document.createElement('h6');
+			f_h.innerText = 'Footer';
+			return f_h;
+		}
+		//f.appendChild(CreateFooterTitle());
+		///}}}3
 
-		let about = document.createElement('div');
-		//about.innerText = 'about';
-		let a_h = document.createElement('h6');
-		//a_h.style.backgroundColor = 'transparent';
-		//a_h.style.color = 'var(--color_text_primary)';
-		a_h.innerText = 'about';
-		about.appendChild(a_h);
-		let a_text = document.createElement('p');
-		a_text.innerText = 'this is a website made by vulbyte to show off projects, network things, and offer some forms of transparency and what not. hope you enjoy :3'
-		about.appendChild(a_text);
-		f.appendChild(about);
+		function CreateImportantLinks() {
+			let f_c = document.createElement("div");
 
-		let n = document.createElement('div');
-		//n.innerText = 'navigation';
-		let n_h = document.createElement('h6');
-		n_h.innerText = 'navigation';
-		n.appendChild(n_h);
-		let n_l = document.createElement('ul');
-		let footer_links = {
-			'content': '/content/content.html',
-			'links': '/links/links.html',
-			'policies': '/policies.html',
-			'useful_links': '/useful_resources.html',
-		};
-		try {
-			console.log('adding nav items for footer');
-			for (let i = 0; i < Object.keys(footer_links).length; ++i) {
-				console.log('loop');
+			let title = document.createElement("h6");
+			title.innerText = "important links";
+			f_c.appendChild(title);
+
+			let list = [
+				'privacy_policy',
+				'terms_of_service',
+				'gift_art',
+			];
+			let ol = document.createElement('ol');
+			for (let i = 0; i < list.length; ++i) {
+				let li = document.createElement('li');
 				let a = document.createElement('a');
-				a.style.display = 'block';
-				a.innerText = Object.keys(footer_links)[i];
-				a.href = Object.values(footer_links)[i];
-				a.target = '_blank';
-				n_l.appendChild(a);
-			}
-			console.log('added nav items for footer');
-			n.appendChild(n_l);
-		}
-		catch (err) {
-			console.log('error adding nav items to footer: ', err);
-		}
-		f.appendChild(n);
 
+				a.innerText = list[i];
+				a.href = (list[i] + '.html');
+
+				li.appendChild(a);
+				f_c.appendChild(li);
+			}
+			return f_c;
+		};
+
+		f.appendChild(CreateImportantLinks());
+
+		///{{{3 CreateAbout()
+		function CreateAbout() {
+			let about = document.createElement('div');
+			//about.innerText = 'about';
+			let a_h = document.createElement('h6');
+			//a_h.style.backgroundColor = 'transparent';
+			//a_h.style.color = 'var(--color_text_primary)';
+			a_h.innerText = 'about';
+			about.appendChild(a_h);
+			let a_text = document.createElement('p');
+			a_text.innerText = 'this is a website made by vulbyte to show off projects, network things, and offer some forms of transparency and what not. hope you enjoy :3'
+			about.appendChild(a_text);
+			return about;
+		}
+		///}}}3
+		f.appendChild(CreateAbout());
+
+		///{{{3 CreateNavigation()
+		function CreateNavigation() {
+			let n = document.createElement('div');
+			//n.innerText = 'navigation';
+			let n_h = document.createElement('h6');
+			n_h.innerText = 'navigation';
+			n.appendChild(n_h);
+			let n_l = document.createElement('ul');
+			let footer_links = {
+				'content': '/content/content.html',
+				'links': '/links/links.html',
+				'policies': '/policies.html',
+				'useful_links': '/useful_resources.html',
+			};
+			try {
+				console.log('adding nav items for footer');
+				for (let i = 0; i < Object.keys(footer_links).length; ++i) {
+					console.log('loop');
+					let a = document.createElement('a');
+					a.style.display = 'block';
+					a.innerText = Object.keys(footer_links)[i];
+					a.href = Object.values(footer_links)[i];
+					a.target = '_blank';
+					n_l.appendChild(a);
+				}
+				console.log('added nav items for footer');
+				n.appendChild(n_l);
+			}
+			catch (err) {
+				console.log('error adding nav items to footer: ', err);
+			}
+			return n;
+		}
+		///}}}3
+		f.appendChild(CreateNavigation());
+
+		//{{{3
+		function CreateTerms() {
+			let f_c = document.createElement("div");
+
+			let title = document.createElement("h6");
+			title.innerText = "terms and privacy";
+			f_c.appendChild(title);
+
+			let list = [
+				'privacy_policy',
+				'terms_of_service',
+			];
+			let ol = document.createElement('ol');
+			for (let i = 0; i < list.length; ++i) {
+				let li = document.createElement('li');
+				let a = document.createElement('a');
+
+				a.innerText = list[i];
+				a.href = (list[i] + '.html');
+
+				li.appendChild(a);
+				f_c.appendChild(li);
+			}
+			return f_c;
+		}
+		f.appendChild(CreateTerms());
+		//}}}3
+
+		//{{{3 create support
+		function CreateSupport() {
+			let support = document.createElement("div");
+
+			let s_e = document.createElement("h6");
+			s_e.innerText = ("need support?:");
+			support.appendChild(s_e);
+
+			let a = document.createElement("a");
+			a.href = "support@vulbyte.com";
+			a.innerText = "support@vulbyte.com";
+			support.appendChild(a);;
+
+			return support;
+		}
+		//}}}3 create support
+		f.appendChild(CreateSupport());
+
+
+		let hr = document.createElement("hr");
+		hr.style.marginTop = "10em";
+		document.body.insertAdjacentHTML('beforeend', hr.outerHTML);
 		document.body.insertAdjacentHTML('beforeend', f.outerHTML);
 		console.log('🦶 footer added');
 	}
@@ -521,11 +614,11 @@ try {
 			let highLight = CE({ type: "div", style: new_style });
 			og.insertAdjacentElement('beforebegin', highLight)
 			/*
-
+	
 			let lowLight = CE({ style: og.style });
-
+	
 			let shadow = CE({ style: og.style });
-
+	
 			let bounceLight = CE({ style: og.style });
 			*/
 		}
@@ -691,40 +784,40 @@ try {
 			&& String(window.location).includes("terms_of_service") == false
 		) {
 			console.log(`agreement not found, nor on TOS page, creating popup`);
-
+	
 			const agree_container = document.createElement("div");
 			agree_container.style.width = "20em";
 			agree_container.style.margin = "auto";
 			{
 				//TODO: add image
-
+	
 				document.body.innerText = "";
 				const agree_title = document.createElement("h2");
 				agree_title.innerText = "hold on, we have some terms you need to agree to first!";
 				agree_container.appendChild(agree_title);
-
+	
 				const agree_text = document.createElement("p");
 				agree_text.innerText = "please review our Terms of Service, and Privacy Policy before continuing! using the website after this popup will be acceptance";
 				agree_container.appendChild(agree_text);
-
+	
 				const review_tos = document.createElement("a");
 				review_tos.href = "/terms_of_service.html";
 				review_tos.innerText = "click here to review: terms_of_service";
 				review_tos.target = "_blank";
 				review_tos.style.display = "block";
 				agree_container.appendChild(review_tos);
-
+	
 				const review_pp = document.createElement("a");
 				review_pp.href = "/privacy_policy.html";
 				review_pp.innerText = "click here to review: privacy_policy";
 				review_pp.target = "_blank";
 				review_pp.style.display = "block";
 				agree_container.appendChild(review_pp);
-
+	
 				const not_ai_label = document.createElement("label");
 				not_ai_label.innerText = `please verify you are not ai, if you are and continue to use the website you agree to the TOS and Privacy Policy. To prove you're not ai please click the boxe(s) that add upto: ${Math.floor(Math.random() * 15)}! \n (tip, start with the largest number that doesn't go over, then work your way down)`;
 				agree_container.appendChild(not_ai_label);
-
+	
 				const number_container = document.createElement("div");
 				number_container.style.display = "flex";
 				number_container.style.justifyContent = "space-evenly";
@@ -742,7 +835,7 @@ try {
 						numbers.splice(value, 1);
 						console.log(numbers);
 						number_container.appendChild(num);
-
+	
 						const checkbox = document.createElement("input");
 						checkbox.type = "checkbox";
 						checkbox_container.appendChild(checkbox);
@@ -750,8 +843,8 @@ try {
 				}
 				agree_container.appendChild(number_container);
 				agree_container.appendChild(checkbox_container);
-
-
+	
+	
 				const btn_container = document.createElement("div");
 				btn_container.style.display = "grid";
 				btn_container.style.justifyContent = "space_appart";
@@ -761,7 +854,7 @@ try {
 					agree_accept.style.position = "relative";
 					agree_accept.style.left = "0px";
 					btn_container.appendChild(agree_accept);
-
+	
 					const agree_deny = document.createElement("button");
 					agree_deny.innerText = "deny ❌";
 					agree_deny.style.right = "relative";
@@ -769,7 +862,7 @@ try {
 					btn_container.appendChild(agree_deny);
 				}
 				agree_container.appendChild(btn_container);
-
+	
 			}
 			document.body.appendChild(agree_container)
 		}
@@ -1153,7 +1246,38 @@ if (document.readyState === 'complete' || document.readyState === 'interactive')
 } else {
 	document.addEventListener('DOMContentLoaded', processMarquees);
 }
-
 //}}}2 header marqee
-//}}1
-//
+//}}}1 styling
+
+// session data {{{1
+try {
+	localStorage.getItem(low_security_token);
+}
+catch (err) {
+	console.warn(err);
+	localStorage.setItem("low_security_token",
+		await fetch("https://example.org/post", {
+			method: "POST",
+			body: JSON.stringify({ username: "example" }),
+		})
+			.then(//get new low sec token
+				(res) => { return JSON.parse(res) }
+			)
+	);
+}
+
+try {
+	localStorage.getItem(high_security_token);
+}
+catch (err) {
+	console.warn(err);
+
+
+
+	localStorage.setItem("high_security_token",
+		await fetch().then(//get new low sec token
+			(res) => { return JSON.parse(res) }
+		)
+	);
+}
+// session data }}}1
