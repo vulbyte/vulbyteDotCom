@@ -293,10 +293,15 @@ p {
 	margin: auto;
 }
 
+select {
+	color: var(--color-text-light);
+}
+
 sub {
 	font-size: 0.6em;
 }
 
+/* THIS IS FOR THE PIXEL DISPLAY, BUT I FEEL AS IF AN OLD GREEN CRT IS BETTER
 textarea {
 	background-image: radial-gradient(#300 0%, #300 60%, black 61%, black 100%);
 	background-size: 0.1em 0.1em;
@@ -311,4 +316,16 @@ textarea {
 	margin-bottom: 0.6em;
 	padding-left: 0.6em;
 	padding-right: 0.4em;
+}
+*/
+
+textarea {
+	background-image: linear-gradient(#000 0%,
+			#000 49.99%,
+			#151515 50%,
+			#151515 99.99%,
+			#000 100%);
+	background-size: 100% 2.7rem;
+	background-attachment: scroll;
+
 }

@@ -1247,37 +1247,91 @@ if (document.readyState === 'complete' || document.readyState === 'interactive')
 	document.addEventListener('DOMContentLoaded', processMarquees);
 }
 //}}}2 header marqee
+
+
+//{{{2 create global sender to handle communication
+import jwt from '/lib/jwt.js';
+/*
+  const { publicKey, privateKey } = await RSAJWE.generateKeys();
+
+  const payload = { sub: "123", name: "Alice", iat: Math.floor(Date.now()/1000) };
+  const token = await RSAJWE.encode(payload, publicKey);
+  console.log("JWT token:", token);
+
+  const decoded = await RSAJWE.decode(token, privateKey);
+  console.log("Decoded payload:", decoded);
+*/
+class RequestHandler {
+	constructor(
+	) {
+		this.pubKeyGetUrl = 'https://mxlnbnqnwyotgobsuaet.supabase.co/functions/v1/secure_connection_test';
+		this.pubKey;
+		if (localStorage.getItem("pubKey") == undefined) {
+			let body = fetch(this.pubKeyGetUrl);
+			body = body.parse();
+			localStorage.setItem("pubKey", JSON.stringify(body.key));
+		}
+
+		this.pubKey = localStorage.getItem("pubKey").parse();
+	}
+
+	async Send(
+		methodOrRequest,
+		payload,
+		url = this.pubKeyGetUrl
+	) {
+		if (methodOrRequest == undefined) {
+			throw new Error("cannot make request without a method type");
+		}
+
+		if (methodOrRequest.constructor == Object) {
+			return Receive(await fetch(url, methodOrRequest));
+		}
+
+		if (typeof (methodOrRequest)) {
+
+		}
+
+		if (payload != undefined) {
+			if (
+				typeof (payload) != 'object'
+				&& payload.constructor == Object
+			) {
+				payload = { "payload": payload };
+			}
+		}
+
+		let token = await jwt.encode(payload);
+
+		return Receive(await fetch(token));
+	}
+
+	async Receive(result) {
+		if (result == undefined || result == null) {
+			throw new Error("Result is undefined or null");
+		}
+
+		let encrypted = false;
+		try {
+			result = result.parse();
+		}
+		catch (err) {
+			console.log("parse failed, likely encrypted, attempting decrypt", err);
+			encrypted == true;
+		}
+
+		if (encrypted == true) {
+			try {
+				result = jwt.decode(this.privKey, result).parse();
+			}
+			catch (err) {
+				throw new Error("result cannot be decrypted!");
+			}
+		}
+
+		return result;
+	}
+}
+
+//}}}2
 //}}}1 styling
-
-// session data {{{1
-try {
-	localStorage.getItem(low_security_token);
-}
-catch (err) {
-	console.warn(err);
-	localStorage.setItem("low_security_token",
-		await fetch("https://example.org/post", {
-			method: "POST",
-			body: JSON.stringify({ username: "example" }),
-		})
-			.then(//get new low sec token
-				(res) => { return JSON.parse(res) }
-			)
-	);
-}
-
-try {
-	localStorage.getItem(high_security_token);
-}
-catch (err) {
-	console.warn(err);
-
-
-
-	localStorage.setItem("high_security_token",
-		await fetch().then(//get new low sec token
-			(res) => { return JSON.parse(res) }
-		)
-	);
-}
-// session data }}}1

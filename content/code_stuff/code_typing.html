@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="/client_management.js" type="module"></script>
+	<title>fancy typing effect</title>
+</head>
+
+<body>
+	<h1>fancy text effects</h1>
+	<form id="config">
+		<div title="chose the coding type that the application will attept to use">
+			<label>code type</label>
+			<select>
+				<!--<option>html</option>-->
+				<option>c-like</option>
+				<options>idk lol</options>
+			</select>
+		</div>
+		<div title="program will wait for next input for line by line generation instead of doing it all in one go">
+			<label>wait for input</label>
+			<input type="checkbox"></input>
+		</div>
+		<div title="highlight key words">
+			<label>highlighting</label>
+			<input type="checkbox"></input>
+		</div>
+		<div>
+			<label title="how fast each character will appear">typing speed (chars/second)</label>
+			<input type="number" placeholder="0.6"></input>
+		</div>
+		<div>
+			<label title="randomization to the typing rate. 1 is linear, further from 1 is more random">typing
+				varience</label>
+			<input type="number" placeholder="1.1"></input>
+		</div>
+		<div>
+			<label title="how the characters will appear">appearance</label>
+			<select>
+				<option>instant</option>
+				<option>fade_in</option>
+				<option>explode</option>
+			</select>
+		</div>
+		<div>
+			<label>code snippet</label><br>
+			<textarea style="margin:auto; width:97%; height:10em;"></textarea>
+		</div>
+	</form>
+	<details>
+		<summary>customize highlighting</summary>
+		<form>
+			<label>c-like highlighting</label>
+			<div>
+				<label title="aka, int, float, bool, uint32_t, etc">values</label>
+				<input type="color"></input>
+			</div>
+			<div>
+				<label title="make it so that each bracket has a slight hue shift based on opening/closing brackets.">rainbow
+					brackets</label>
+				<input type="checkbox"></input>
+			</div>
+			<div>
+				<label title="will be over written by rainbow brackets">brackets color</label>
+				<input type="color"></input>
+			</div>
+			<!--
+			<div>
+				<label title=""></label>
+				<input type="color"></input>
+			</div>
+			<div>
+				<label title=""></label>
+				<input type="color"></input>
+			</div>
+			<div>
+				<label title=""></label>
+				<input type="color"></input>
+			</div>
+			<div>
+				<label title=""></label>
+				<input type="color"></input>
+			</div>
+-->
+		</form>
+	</details>
+</body>
+
+</html>
