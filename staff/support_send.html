@@ -43,7 +43,7 @@
 		</div>
 		<div>
 			<label>message:</label>
-			<textarea id="body" type="text" placeholder="message body"></textarea>
+			<textarea id="message" type="text" placeholder="message body"></textarea>
 		</div>
 	</form>
 	<br>)
@@ -62,43 +62,40 @@
 	</div>
 </body>
 
-<script>
+<script type="module">
+	import Authenticate from "/lib/authenticate.mjs";
+	const auth = new Authenticate();
+	import Communication from "/lib/communication.mjs";
+	const comm = new Communication();
+
+	// Example: send secure email request
 	document.querySelector("button[type=submit]").addEventListener("click", async () => {
+		let inputs = document.getElementsByTagName("input");
+		let data = {};
+		for (let i = 0; i < inputs.length; ++i) {
+			data[inputs[i].id] = inputs[i].value
+		}
+		//custom for textarea
+		data["message"] = document.getElementById("message").value;
+
 		try {
-			let inputs = document.getElementsByTagName("input");
-
-			let data = {};
-			let id, value;
-
-			for (let i = 0; i < inputs.length; ++i) {
-				id = inputs[i].id;
-				if (id == 'from') {id = 'frm'}
-				value = inputs[i].value;
-
-				data[id] = value;
-			}
-
-			console.log(data);
-
-			const res = await fetch("https://mxlnbnqnwyotgobsuaet.supabase.co/functions/v1/secure_connection_test", {
-				method: "POST",
-				headers: {"Content-Type": "application/json"},
-				body: JSON.stringify(data),
+			const result = await comm.send({
+				body: {
+					un: data["un"],
+					pw: data["pw"],
+					frm: data["frm"],
+					to: data["to"],
+					subject: data["subject"],
+					message: data["message"]
+				}
 			});
-
-			const result = await res.json();
-			const status = document.getElementById('status');
-			if (result.ok) {
-				status.innerText = "email sent!";
-			} else {
-				status.innerText = String("Error: " + result.error);
-			}
+			console.log("Server result:", result);
+			document.getElementById("status").innerText = "Sent!";
+		} catch (err) {
+			console.error("Communication error:", err);
+			document.getElementById("status").innerText = "Error: " + err.message;
 		}
-		catch (err) {
-			const status = document.getElementById('status');
-			status.innerText = String("Error: " + err);
-		}
-	})
+	});
 </script>
 
 

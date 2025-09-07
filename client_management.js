@@ -1250,7 +1250,7 @@ if (document.readyState === 'complete' || document.readyState === 'interactive')
 
 
 //{{{2 create global sender to handle communication
-import jwt from '/lib/jwt.js';
+//import jwt from '/lib/jwt.js';
 /*
   const { publicKey, privateKey } = await RSAJWE.generateKeys();
 
@@ -1261,6 +1261,7 @@ import jwt from '/lib/jwt.js';
   const decoded = await RSAJWE.decode(token, privateKey);
   console.log("Decoded payload:", decoded);
 */
+/*
 class RequestHandler {
 	constructor(
 	) {
@@ -1332,6 +1333,7 @@ class RequestHandler {
 		return result;
 	}
 }
+*/
 
 //}}}2
 //}}}1 styling
