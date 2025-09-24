@@ -171,6 +171,11 @@ code * {
 	font: var(--font-code);
 }
 
+details {
+	border: var(--border-default);
+	padding: 0.4em;
+}
+
 fieldset {
 	border: var(--border-default);
 }
@@ -299,6 +304,11 @@ select {
 
 sub {
 	font-size: 0.6em;
+}
+
+table {
+	border: var(--border-default);
+	padding: 0.4em;
 }
 
 /* THIS IS FOR THE PIXEL DISPLAY, BUT I FEEL AS IF AN OLD GREEN CRT IS BETTER

@@ -4,6 +4,8 @@
 console.info("url:", document.location.href);
 //`import { Navbar } from './elements/navbar.js';
 // http://127.0.0.1:9999/tests/styles_proper
+//import AuthHandler from "/lib/auth_handler.mjs";
+//const Authish = new AuthHandler();
 
 
 //############################################################ 
@@ -706,8 +708,8 @@ let animatible = true;
 		console.log('got icons from github');
 	} catch (err) {
 		animatible = false;
-		console.error('failed to get icons, setting to default', err);
-		favicon_links = ['./assets/icon.svg']; // Reset to default
+		favicon_links = ['/assets/icon.svg']; // Reset to default
+		console.warn(`failed to get icons, setting icon to default ${favicon_links}`, err);
 	}
 })();
 //}}}2
@@ -715,7 +717,7 @@ let animatible = true;
 //animatable moved to above async check
 try {
 	console.log('editing favicon');
-	let favicon_link = document.querySelector(`link[rel~='icon']`);
+	let favicon_link = document.querySelector(`link[rel='icon']`);
 
 	if (!favicon_link) {
 		favicon_link = document.createElement('link');
@@ -725,6 +727,7 @@ try {
 
 	favicon_link.id = 'favicon'
 
+	//check url, to see what dev location we're in
 	if (String(window.location).includes('vulbyte.com')) {
 		animatible = true;
 		favicon_link.href = favicon_links[0];
@@ -768,6 +771,7 @@ if (animatible == true) {
 }
 else {
 	console.log("I'M NOT ANIMATING BECAUSE I DON'T HAVE INTERNET");
+	document.getElementById('favicon').href = favicon_links[0];
 }
 //{{{2 show disclaimer
 /*
@@ -1247,93 +1251,4 @@ if (document.readyState === 'complete' || document.readyState === 'interactive')
 	document.addEventListener('DOMContentLoaded', processMarquees);
 }
 //}}}2 header marqee
-
-
-//{{{2 create global sender to handle communication
-//import jwt from '/lib/jwt.js';
-/*
-  const { publicKey, privateKey } = await RSAJWE.generateKeys();
-
-  const payload = { sub: "123", name: "Alice", iat: Math.floor(Date.now()/1000) };
-  const token = await RSAJWE.encode(payload, publicKey);
-  console.log("JWT token:", token);
-
-  const decoded = await RSAJWE.decode(token, privateKey);
-  console.log("Decoded payload:", decoded);
-*/
-/*
-class RequestHandler {
-	constructor(
-	) {
-		this.pubKeyGetUrl = 'https://mxlnbnqnwyotgobsuaet.supabase.co/functions/v1/secure_connection_test';
-		this.pubKey;
-		if (localStorage.getItem("pubKey") == undefined) {
-			let body = fetch(this.pubKeyGetUrl);
-			body = body.parse();
-			localStorage.setItem("pubKey", JSON.stringify(body.key));
-		}
-
-		this.pubKey = localStorage.getItem("pubKey").parse();
-	}
-
-	async Send(
-		methodOrRequest,
-		payload,
-		url = this.pubKeyGetUrl
-	) {
-		if (methodOrRequest == undefined) {
-			throw new Error("cannot make request without a method type");
-		}
-
-		if (methodOrRequest.constructor == Object) {
-			return Receive(await fetch(url, methodOrRequest));
-		}
-
-		if (typeof (methodOrRequest)) {
-
-		}
-
-		if (payload != undefined) {
-			if (
-				typeof (payload) != 'object'
-				&& payload.constructor == Object
-			) {
-				payload = { "payload": payload };
-			}
-		}
-
-		let token = await jwt.encode(payload);
-
-		return Receive(await fetch(token));
-	}
-
-	async Receive(result) {
-		if (result == undefined || result == null) {
-			throw new Error("Result is undefined or null");
-		}
-
-		let encrypted = false;
-		try {
-			result = result.parse();
-		}
-		catch (err) {
-			console.log("parse failed, likely encrypted, attempting decrypt", err);
-			encrypted == true;
-		}
-
-		if (encrypted == true) {
-			try {
-				result = jwt.decode(this.privKey, result).parse();
-			}
-			catch (err) {
-				throw new Error("result cannot be decrypted!");
-			}
-		}
-
-		return result;
-	}
-}
-*/
-
-//}}}2
 //}}}1 styling

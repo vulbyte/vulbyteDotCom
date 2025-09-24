@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Popup Test</title>
+	<script type="module" src="/client_management.js"></script>
+</head>
+
+<body>
+	<h1>Popup Test Page</h1>
+
+	<button id="simple">Simple Popup</button>
+	<button id="blocking">Blocking Popup</button>
+	<button id="nonBlocking">Non-Blocking Popup</button>
+	<button id="withForm">Popup With Form</button>
+	<button id="withError">Popup With Error</button>
+	<button id="loginPrompt">Login Prompt</button>
+
+	<script type="module">
+		import Popup from "/lib/popup2.mjs";
+
+		// simple popup
+		document.getElementById("simple").addEventListener("click", () => {
+			Popup({
+				message: "This is a simple popup.",
+				confirmPrompt: "OK"
+			});
+		});
+
+		// blocking popup
+		document.getElementById("blocking").addEventListener("click", () => {
+			Popup({
+				blocking: true,
+				closeButton: true,
+				title: "Blocking",
+				message: "This popup blocks the page until you close it.",
+				denyPrompt: "Close"
+			});
+		});
+
+		// non-blocking popup
+		document.getElementById("nonBlocking").addEventListener("click", () => {
+			Popup({
+				blocking: false,
+				message: "Click outside this popup to dismiss it."
+			});
+		});
+
+		// popup with form
+		document.getElementById("withForm").addEventListener("click", () => {
+			const nameInput = document.createElement("input");
+			nameInput.name = "name";
+			nameInput.placeholder = "Enter your name";
+
+			const ageInput = document.createElement("input");
+			ageInput.name = "age";
+			ageInput.type = "number";
+			ageInput.placeholder = "Enter your age";
+
+			Popup({
+				title: "Form Example",
+				message: "Fill out the form below:",
+				form: [nameInput, ageInput],
+				confirmPrompt: "Submit",
+				onConfirm: (formData) => {
+					if (formData) {
+						alert(`Name: ${formData.get("name")}, Age: ${formData.get("age")}`);
+					}
+				},
+				denyPrompt: "Cancel"
+			});
+		});
+
+		// popup with error details
+		document.getElementById("withError").addEventListener("click", () => {
+			Popup({
+				title: "Error Example",
+				message: "Something went wrong!",
+				error: "Error: Stack trace or hidden info goes here.\nLine 42: undefined is not a function.",
+				confirmPrompt: "OK"
+			});
+		});
+
+		document.getElementById("loginPrompt").addEventListener("click", () => {
+			const nameInput = document.createElement("input");
+			nameInput.name = "username";
+			nameInput.id = "un";
+			nameInput.placeholder = "Enter your name";
+
+			const pwContainer = document.createElement("div");
+
+			const ageInput = document.createElement("input");
+			ageInput.name = "password";
+			ageInput.id = "pw";
+			ageInput.type = "password";
+			ageInput.placeholder = "Enter your password";
+			pwContainer.appendChild(ageInput);
+
+			const showPw = document.createElement("div");
+			showPw.innerText = "👁️";
+			showPw.addEventListener('click', (event) => {
+				ageInput.type = "text";
+				showPw.innerText = "👀";
+			})
+			showPw.addEventListener('mouseleave', (event) => {
+				ageInput.type = "password";
+				showPw.innerText = "👁️";
+			});
+			showPw.style.cssText = `
+				height: 1em;
+				width: 1em;
+				padding: 0px;
+				margin: 0px;
+				position: relative;
+				right: 0px;
+				display: inline-block;
+			`;
+			pwContainer.appendChild(showPw);
+
+			Popup({
+				title: "Form Example",
+				message: "Fill out the form below:",
+				form: [nameInput, pwContainer],
+				confirmPrompt: "Submit",
+				onConfirm: (formData) => {
+					if (formData) {
+						alert(`un: ${formData.get("un")}, pw: ${formData.get("pw")}`);
+					}
+				},
+				denyPrompt: "Cancel"
+			});
+		});
+	</script>
+</body>
+
+</html>

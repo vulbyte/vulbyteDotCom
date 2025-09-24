@@ -1,0 +1,991 @@
+<!-- 0000-tib.html -->
+<!DOCTYPE html>
+<html lang="en" style="margin-bottom:0;">
+
+<head>
+	<meta charset="UTF-8">
+	<!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+	<!--<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self';">-->
+	<title>cockatiel | by @vulbyte</title>
+	<script type="module" src="/client_management.js"></script>
+	<script type="module">
+		import PopUp from './tib_stuff/popup.js';
+		window.PopUp = new PopUp();
+		import MonitorMessages from './tib_stuff/monitorMessages.js';
+		window.monitorMessages = new MonitorMessages();
+		import {YoutubeStuff} from './tib_stuff/youtubeStuff.js';
+		window.YoutubeStuff = new YoutubeStuff();
+		import {assert} from './tib_stuff/assert.js';
+		window.assert = assert;
+		import {IntTimer} from './tib_stuff/intTimer.js';
+		window.IntTimer = new IntTimer();
+	</script>
+</head>
+
+<body style="">
+	<!-- {{{7 chats to monitor -->
+	<div style="
+			background-color: #000; /* Example background color */
+			border-top: solid white 0.1em;
+			bottom: 0;
+			color: var(--color_primary); /* Example text color */
+			display:flex;
+			justify-content: space-between;
+			left: 0;
+			padding-top: 0.5em;
+			position: fixed;
+			text-align: center;
+			height:min-content;
+			width: 100%;
+		"> <!-- this group is for the controls stuck to the bottom of the screen -->
+		<style>
+			#enabled_streams {
+				display: flex;
+				justify-content: space-evenly;
+				width: min-content;
+			}
+
+			#enabled_streams>div {
+				border-radius: 1em;
+				background-color: var(--color_primary);
+				display: flex;
+				justify-content: center;
+				margin-bottom: 0.8em;
+				padding: 0.2em;
+			}
+		</style>
+		<div style="width:10%; display:flex; flex-direction:column; justify-content:space-between;">
+			<label>chats to monitor</label>
+			<div id='enabled_streams'>
+				<style>
+					:root {
+						--icon_size: 1.4em;
+					}
+
+					#enabled_streams svg {
+						height: calc(var(--icon_size)*.9);
+						width: calc(var(--icon_size)*.9);
+					}
+
+					#enabled_streams>div {
+						height: var(--icon_size);
+						width: var(--icon_size);
+					}
+				</style>
+				<div id="facebook_enabled" style='background-color:#550000' checked="false"><label><svg
+							xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" fill="url(#facebook__a)" height="40" width="40">
+							<defs>
+								<linearGradient x1="50%" x2="50%" y1="97.078%" y2="0%" id="facebook__a">
+									<stop offset="0%" stop-color="#0062E0" />
+									<stop offset="100%" stop-color="#19AFFF" />
+								</linearGradient>
+							</defs>
+							<path
+								d="M15 35.8C6.5 34.3 0 26.9 0 18 0 8.1 8.1 0 18 0s18 8.1 18 18c0 8.9-6.5 16.3-15 17.8l-1-.8h-4l-1 .8z" />
+							<path fill="#FFF"
+								d="m25 23 .8-5H21v-3.5c0-1.4.5-2.5 2.7-2.5H26V7.4c-1.3-.2-2.7-.4-4-.4-4.1 0-7 2.5-7 7v4h-4.5v5H15v12.7c1 .2 2 .3 3 .3s2-.1 3-.3V23h4z" />
+						</svg></label></div>
+				<div id="twitch_enabled" style='background-color:#550000' checked="false"><label><svg
+							xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 2400 2800">
+							<path fill="#fff" d="m2200 1300-400 400h-400l-350 350v-350H600V200h1600z" />
+							<g fill="#9146ff">
+								<path
+									d="M500 0 0 500v1800h600v500l500-500h400l900-900V0H500zm1700 1300-400 400h-400l-350 350v-350H600V200h1600v1100z" />
+								<path d="M1700 550h200v600h-200zm-550 0h200v600h-200z" />
+							</g>
+						</svg></label> </div>
+				<div id="twitter_enabled" style='background-color:#550000' checked="false"><label><svg viewBox="0 0 256 209"
+							width="256" height="209" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid">
+							<path
+								d="M256 25.45c-9.42 4.177-19.542 7-30.166 8.27 10.845-6.5 19.172-16.793 23.093-29.057a105.183 105.183 0 0 1-33.351 12.745C205.995 7.201 192.346.822 177.239.822c-29.006 0-52.523 23.516-52.523 52.52 0 4.117.465 8.125 1.36 11.97-43.65-2.191-82.35-23.1-108.255-54.876-4.52 7.757-7.11 16.78-7.11 26.404 0 18.222 9.273 34.297 23.365 43.716a52.312 52.312 0 0 1-23.79-6.57c-.003.22-.003.44-.003.661 0 25.447 18.104 46.675 42.13 51.5a52.592 52.592 0 0 1-23.718.9c6.683 20.866 26.08 36.05 49.062 36.475-17.975 14.086-40.622 22.483-65.228 22.483-4.24 0-8.42-.249-12.529-.734 23.243 14.902 50.85 23.597 80.51 23.597 96.607 0 149.434-80.031 149.434-149.435 0-2.278-.05-4.543-.152-6.795A106.748 106.748 0 0 0 256 25.45"
+								fill="#55acee" />
+						</svg></label> </div>
+				<div id="youtube_enabled" style='background-color:#550000' checked="false"><label><svg viewBox="0 0 256 180"
+							width="256" height="180" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid">
+							<path
+								d="M250.346 28.075A32.18 32.18 0 0 0 227.69 5.418C207.824 0 127.87 0 127.87 0S47.912.164 28.046 5.582A32.18 32.18 0 0 0 5.39 28.24c-6.009 35.298-8.34 89.084.165 122.97a32.18 32.18 0 0 0 22.656 22.657c19.866 5.418 99.822 5.418 99.822 5.418s79.955 0 99.82-5.418a32.18 32.18 0 0 0 22.657-22.657c6.338-35.348 8.291-89.1-.164-123.134Z"
+								fill="red" />
+							<path fill="#FFF" d="m102.421 128.06 66.328-38.418-66.328-38.418z" />
+						</svg></label></div>
+			</div>
+		</div>
+		<script type='module'>
+			window.addEventListener('DOMContentLoaded', () => {
+				console.log('making the buttons fancy')
+				let elem = document.getElementById('enabled_streams')
+
+				for (let i = elem.children.length - 1; i >= 0; --i) {
+					let child = elem.children[i];
+					let default_color = child.style.backgroundColor;
+					//below was for enabled/disabled text, no longer needed
+					//child.id = child.children[0].innerText.slice(0, child.children[0].innerText.indexOf(':')) + '_button';
+					child.setAttribute('checked', false);
+					child.style.backgroundColor = '#550000' //`color-mix(in oklab, (${default_color}, rgb(0,0,0)))`
+
+					child.style.userSelect = 'none';
+					child.addEventListener('click', (e) => {
+						console.log('platform toggle clicked');
+						if (child.getAttribute('checked') == 'true') {
+							console.log('setting false');
+							child.setAttribute('checked', false);
+							child.style.backgroundColor = '#550000';
+						}
+						else {
+							console.log('setting true');
+							child.setAttribute('checked', true);
+							child.style.backgroundColor = '#005500';
+						}
+					});
+				}
+			});
+		</script>
+		<!-- }}}7 -->
+
+		<!-- {{{7 -->
+		<div style="display:flex; flex-direction:column;">
+			<button id="sai" style="background-color:lightgreen;">save all inputs</button>
+			<button id="lai" style="background-color:powderblue;">load all inputs</button>
+			<script type="module">
+				window.addEventListener('DOMContentLoaded', (e) => {
+					let sai = document.getElementById("sai");
+					let lai = document.getElementById("lai");
+
+					let inputs = document.getElementsByTagName("input");
+					let input;
+					sai.addEventListener("click", (e) => {
+						console.log("saving inputs");
+						for (let i = 0; i < inputs.length; ++i) {
+							input = inputs[i];
+							localStorage.setItem(String(input.id), input.value);
+						}
+					});
+
+					lai.addEventListener("click", (e) => {
+						console.log("loading inputs");
+						for (let i = 0; i < inputs.length; ++i) {
+							input = inputs[i];
+							input.value = localStorage.getItem(String(input.id));
+						}
+					});
+				});
+			</script>
+		</div>
+		<!-- }}}7 -->
+
+		<!-- {{{7 start/stop functions -->
+		<style>
+			#function_buttons {
+				width: 16em;
+				display: flex;
+				flex-direction: column;
+				padding-top: 0.7em;
+			}
+
+			#function_buttons>div {
+				margin: 0px;
+				padding: 0px;
+			}
+
+			#function_buttons>*>button {
+				margin: auto;
+				width: 12em;
+			}
+		</style>
+		<div id='function_buttons'>
+			<button id='start_monitoring_button' style='background-color: darkgreen;'>start monitoring</button>
+			<button id='stop_monitoring_button' style='background-color: darkred;'>stop monitoring</button>
+		</div>
+		<script type='module'>
+			// Replace the script section starting around line 230 in your HTML with this:
+
+			// {{{1 config things
+			//############################################################  
+			// imports
+			//############################################################  
+			let PopUp = window.PopUp;
+			let MonitorMessages = window.monitorMessages;
+			let YoutubeStuff = window.YoutubeStuff;
+			let assert = window.assert;
+			console.log('finished imports');
+
+			//############################################################  
+			// vars
+			//############################################################  
+			let mm = window.monitorMessages;
+			let yt = mm.yt_config; // BUG: this isn't running, "mm is undefined"
+
+			//############################################################  
+			// event listeners
+			//############################################################  
+			//{{{3 start monitoring btn
+			document.getElementById('start_monitoring_button').addEventListener('click', async () => {
+				console.log('Start monitoring button clicked');
+
+				const startBtn = document.getElementById('start_monitoring_button');
+				const stopBtn = document.getElementById('stop_monitoring_button');
+
+				// Prevent multiple clicks
+				if (startBtn.disabled) {
+					console.log('Already monitoring or button disabled');
+					return;
+				}
+
+				// Show loading state
+				startBtn.disabled = true;
+				startBtn.style.opacity = '0.5';
+				startBtn.textContent = 'starting...';
+
+				const youtubeButton = document.getElementById('youtube_button');
+				if (youtubeButton) {
+					mm.args['updateYoutube'] = () => {
+						return youtubeButton.getAttribute('checked') === 'true';
+					};
+				} else {
+					// Fallback if button doesn't exist - assume enabled
+					console.log('YouTube button not found, defaulting to enabled');
+					mm.args['updateYoutube'] = true;
+				}
+
+				try {
+					await mm.Start_Monitor();
+					console.log('Monitoring started successfully');
+				} catch (err) {
+					console.error('Failed to start monitoring:', err);
+
+					// Reset button state on error
+					startBtn.disabled = false;
+					startBtn.style.opacity = '1';
+					startBtn.textContent = 'start monitoring';
+
+					PopUp({
+						title: 'Failed to start monitoring',
+						message: err.message || 'Unknown error occurred',
+						details: err.toString()
+					});
+				}
+			});
+			//}}}3
+
+			//{{{3 stop monitoring btn
+			document.getElementById('stop_monitoring_button').addEventListener('click', () => {
+				console.log('Stop monitoring button clicked');
+
+				const stopBtn = document.getElementById('stop_monitoring_button');
+
+				// Prevent multiple clicks
+				if (stopBtn.disabled) {
+					console.log('Not monitoring or button disabled');
+					return;
+				}
+
+				// Show loading state
+				stopBtn.disabled = true;
+				stopBtn.style.opacity = '0.5';
+				stopBtn.textContent = 'stopping...';
+
+				try {
+					mm.End_Monitor();
+					console.log('Monitoring stopped successfully');
+				} catch (err) {
+					console.error('Error stopping monitor:', err);
+
+					// Reset button state on error
+					stopBtn.disabled = false;
+					stopBtn.style.opacity = '1';
+					stopBtn.textContent = 'stop monitoring';
+				}
+			});
+			//}}}3
+
+			//{{{3 Initialize button states on page load
+			window.addEventListener('DOMContentLoaded', () => {
+				const startBtn = document.getElementById('start_monitoring_button');
+				const stopBtn = document.getElementById('stop_monitoring_button');
+
+				// Set initial button states
+				if (startBtn) {
+					startBtn.disabled = false;
+					startBtn.style.opacity = '1';
+					startBtn.textContent = 'start monitoring';
+				}
+
+				if (stopBtn) {
+					stopBtn.disabled = true;
+					stopBtn.style.opacity = '0.5';
+					stopBtn.textContent = 'stop monitoring';
+				}
+
+				console.log('Button states initialized');
+			});
+				//}}}3
+		</script>
+		<!-- }}}7 -->
+
+		<!-- {{{7 updates -->
+		<style>
+			:root {
+				--guage_size: 2em;
+			}
+
+			.guage {
+				/* This is the outer circle, acting as the background track */
+				height: calc(var(--guage_size) * 1);
+				width: calc(var(--guage_size) * 1);
+				border-radius: 50%;
+				background: conic-gradient(#ff0 0%,
+						#f0f 33%,
+						#0ff 66%,
+						#ff0 100%);
+				position: relative;
+				/* Needed for positioning the inner circle */
+				display: grid;
+				place-items: center;
+				cursor: default;
+			}
+
+			.guage_mask {
+				background: conic-gradient(transparent 0%,
+						transparent 80%,
+						#000 80%,
+						#000 100%);
+				position: absolute;
+				border-radius: 50%;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%) rotate(-145deg);
+				height: calc(var(--guage_size) * 1.1);
+				width: calc(var(--guage_size) * 1.1);
+				z-index: 99;
+			}
+
+			.guage::after {
+				content: "";
+				display: block;
+				position: absolute;
+				height: calc(var(--guage_size) * 0.7);
+				width: calc(var(--guage_size) * 0.7);
+				border-radius: 50%;
+				background-color: black;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+			}
+
+			.guage-inner {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				font-size: calc(var(--guage_size)*0.3);
+				z-index: 100;
+			}
+
+			#update_info>div {
+				display: flex;
+				justify-content: space-between;
+				padding-left: 1em;
+				padding-right: 1em;
+			}
+
+			#update_info :nth-child(1) {}
+
+			#update_info>div:nth-child(2)>label,
+			#update_info>div:nth-child(2)>span {
+				color: color-mix(in oklab, #f0f, white);
+			}
+
+			#update_info>div:nth-child(3)>label,
+			#update_info>div:nth-child(3)>span {
+				color: color-mix(in oklab, #ff0, white);
+			}
+
+			#update_info>div:nth-child(4)>label,
+			#update_info>div:nth-child(4)>span {
+				color: color-mix(in oklab, #0ff, white);
+			}
+		</style>
+		<div id="update_info" style="
+				border:solid white 0.1em;
+				display:flex;  
+				flex-direction:column;
+				margin:0.2em;
+				padding:0.2em;
+				text-align:left; 
+				width:16em; 
+		">
+			<div><label>next update:</label>
+				<div class="guage">
+					<div class="guage_mask"></div>
+					<div class="guage-inner">
+						<span>164</span>
+					</div>
+				</div>
+			</div>
+			<div><label>tts queue:</label><span>999</span>
+			</div>
+			<div><label>tts messages read:</label><span>1000</span>
+			</div>
+			<div><label>total messages:</label><span>9999</span>
+			</div>
+		</div>
+		<!-- }}}7 -->
+	</div>
+
+	<hgroup style="display:flex; justify-content:space-around; height:3em !important;">
+		<!--<img style="max-height:100%; width:3em;" src="./non-code_assets/cockatiel_logo.png">-->
+		<h1>cockatiel</h1>
+		<h6>by vulbyte</h6>
+		<img style="max-height:100%; width:3em;"
+			src='https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/0b0fcb64b46a2665d622ce094517332ab6b6cb7f/assets/dev_icon.svg'>
+	</hgroup>
+
+	<div>
+		<h2>stream info</h2>
+		<div style='margin:auto; width: 80%;'>
+
+			<style>
+				#new_list {
+					width: 80%;
+				}
+
+				#new_list>li {
+					display: flex;
+					justify-content: space-between;
+					margin: auto;
+					width: 89%;
+				}
+
+				#new_list>li>div {
+					padding-bottom: 0px;
+					margin-bottom: 0px;
+				}
+
+				#new_list>li>div>* {
+					margin-right: 0.5em;
+				}
+
+				#new_list>li>label {
+					padding-top: 0.7em;
+				}
+
+				#youtube_settings>li>div {
+					margin-bottom: 0px;
+					padding-bottom: 0px;
+				}
+			</style>
+			<details>
+				<summary>Youtube Stuff</summary>
+				<ol id='youtube_settings'>
+					<li><label>api Key</label>
+						<div>
+							<input type="password" id="youtube_apiKey" placeholder='eg: 1a2b3c4d5e6f7g'>
+							<button id='show_youtube_apiKey_button'>👁️show</button>
+							<script type="module">
+								window.addEventListener('DOMContentLoaded', () => {
+									document.getElementById('show_youtube_apiKey_button').addEventListener('mousedown', (e) => {
+										document.getElementById('youtube_apiKey').type = 'text';
+										document.getElementById('show_youtube_apiKey_button').innerText = '🙈 show';
+									});
+									document.getElementById('show_youtube_apiKey_button').addEventListener('mouseleave', (e) => {
+										document.getElementById('youtube_apiKey').type = 'password';
+										document.getElementById('show_youtube_apiKey_button').innerText = '👁️show';
+										document.getElementById('toggle_youtube_apiKey_button').style.backgroundColor = 'var(--color_secondary)';
+									});
+								});
+							</script>
+							<button id='toggle_youtube_apiKey_button'>🔁 toggle <span id='yt_apiKey_timer_placement'></span></button>
+
+							<script type="module">
+								import {IntTimer} from './tib_stuff/intTimer.js';
+								window.addEventListener('DOMContentLoaded', () => {
+
+									window.addEventListener('DOMContentLoaded', () => {
+										let yt_apiKey = document.getElementById('youtube_apiKey');
+										let toggle = document.getElementById('toggle_youtube_apiKey_button');
+
+										//{{{3 show/hide functions - DEFINE THESE FIRST
+										function ShowYtApiKey() {
+											console.log('showing yt api');
+											yt_apiKey.type = 'text';
+											toggle.style.backgroundColor = '#ff0000';
+											toggle.style.color = '#fff';
+										}
+
+										function HideYtApiKey() {
+											console.log('hiding yt api');
+											yt_apiKey.type = 'password';
+											toggle.style.backgroundColor = 'var(--color_secondary)';
+											toggle.style.color = '#fff';
+											// Now HideApiKeyTimer will be defined when this is called
+											HideApiKeyTimer.Restart();
+										}
+										//}}}3
+
+										//{{{3 timer creation - CREATE TIMER AFTER FUNCTION DEFINITIONS
+										let HideApiKeyTimer = new IntTimer({
+											'name': 'yt_apiKey_timer_placement',
+											'timeoutDuration': 3,
+											'autostart': false,
+											'listeners': [HideYtApiKey], // ✅ Function is defined now
+										});
+
+										toggle.addEventListener('mousedown', (e) => {
+											if (document.getElementById('youtube_apiKey').type == 'password') {
+												ShowYtApiKey();
+												HideApiKeyTimer.Start();
+											}
+										});
+										//}}}3
+									});
+								});
+							</script>
+						</div>
+					</li>
+					<li><label>channel name</label>
+						<div>
+							<input type="text" id="youtube_channelName" placeholder='no "@"'>
+						</div>
+					</li>
+					<li><label>max Results per update </label>
+						<div>
+							<input id="youtube_maxResults" type="number" min='1' max='50' value='5'>
+						</div>
+					</li>
+					<li><label>update freq</label>
+						<br>
+						<style>
+							#youtube_update_freq {
+								margin-top: 1em;
+								padding: 0px;
+								width: 50%;
+							}
+						</style>
+						<input id='youtube_update_freq' type="range" min="2" max="300" value=20>
+						<!-- TODO: NEEDS UPDATE SCRIPT TO OUTPUT VALUE -->
+						<output>1 update every <span id='youtube_update_freq_display'></span> seconds </output>
+						<script type='module'>
+							window.addEventListener('DOMContentLoaded', () => {
+								const slider = document.getElementById("youtube_update_freq");
+								const display = document.getElementById("youtube_update_freq_display");
+								window.addEventListener('DOMContentLoaded', () => {
+									display.innerHTML = slider.value;
+								});
+								slider.addEventListener('mouseover', (e) => {
+									display.innerHTML = slider.value;
+								});
+								slider.addEventListener('mousemove', (e) => {
+									display.innerHTML = slider.value;
+								});
+							});
+						</script>
+					</li>
+				</ol>
+
+				<button id="youtube_wizard"> click here to begin the stream wizard! 🪄 </button>
+				<script type='module'>
+					window.addEventListener('DOMContentLoaded', () => {
+						let PopUp = window.PopUp;
+						let MonitorMessages = window.monitorMessages;
+
+						document.getElementById('youtube_wizard').addEventListener('click', async (e) => {
+							const monitor = window.monitorMessages;
+							const yt = monitor.yt_config; // ✅ now a YoutubeStuff instance
+
+							yt.args.channelName = document.getElementById("youtube_channelName").value;
+							yt.args.apiKey = document.getElementById("youtube_apiKey").value;
+
+							if (!yt.args.channelName) return PopUp.new({title: 'channel name needed!'});
+							if (!yt.args.apiKey) return PopUp.new({title: 'apiKey needed!'});
+
+							try { // get channel id, if not null apply to html field
+								await yt.GetYoutubeChannelId();
+								console.log("Got channel ID:", yt.args.channelId);
+								document.getElementById("youtube_channelId").value = yt.args.channelId;
+							} catch (err) {
+								PopUp.new({
+									title: "error getting channel id",
+									message: "is the api key and the channel name correct?",
+								});
+							}
+
+							try { // get channel id, if not null apply to html field
+								await yt.GetYoutubeChannelId();
+								console.log("Got channel ID:", yt.args.channelId);
+								document.getElementById("youtube_channelId").value = yt.args.channelId;
+							} catch (err) {
+								// Remove loading popup
+								document.getElementById('popup')?.remove();
+								PopUp.new({
+									title: "error getting channel id",
+									message: "is the api key and the channel name correct?",
+									details: err.message || err.toString()
+								});
+								throw new Error("could not fetch channel id"); // Exit early if channel ID fetch fails
+							}
+
+							try {
+								// get broadcasts; live and scheduled
+								console.log("Getting live broadcasts...");
+								const liveBroadcasts = await yt.GetLiveBroadcasts();
+
+								console.log("Getting upcoming broadcasts...");
+								const upcomingBroadcasts = await yt.GetUpcomingBroadcasts();
+
+								// Combine both arrays
+								const allBroadcasts = [...liveBroadcasts, ...upcomingBroadcasts];
+
+								console.log(`Found ${allBroadcasts.length} total broadcasts`);
+
+								// Remove loading popup
+								document.getElementById('popup')?.remove();
+
+								if (allBroadcasts.length === 0) {
+									PopUp.new({
+										title: 'No broadcasts found',
+										message: 'No live or scheduled broadcasts detected for this channel',
+										details: `Channel ID: ${yt.args.channelId}. Make sure you have a scheduled live stream.`
+									});
+								} else if (allBroadcasts.length === 1) {
+									// Auto-select if only one broadcast
+									const broadcast = allBroadcasts[0];
+									const broadcastId = broadcast.id.videoId;
+
+									document.getElementById("youtube_broadcastId").value = broadcastId;
+									document.getElementById("youtube_broadcast_id_index").value = 0;
+
+									// Store in the yt config
+									yt.args.broadcastId = broadcastId;
+
+									console.log("Auto-selected broadcast:", broadcastId);
+
+									PopUp.new({
+										title: 'Broadcast auto-selected!',
+										message: `Found and auto-selected: "${broadcast.snippet.title}"`,
+										details: `Broadcast ID: ${broadcastId}\nStatus: ${broadcast.snippet.liveBroadcastContent}`,
+										timeout: 5000
+									});
+								} else {
+									// Multiple broadcasts found - show selection info
+									const broadcastList = allBroadcasts.map((b, index) =>
+										`${index}: "${b.snippet.title}" (${b.snippet.liveBroadcastContent})`
+									).join('\n');
+
+									// Set the first one by default
+									const firstBroadcast = allBroadcasts[0];
+									document.getElementById("youtube_broadcastId").value = firstBroadcast.id.videoId;
+									document.getElementById("youtube_broadcast_id_index").value = 0;
+									yt.args.broadcastId = firstBroadcast.id.videoId;
+
+									PopUp.new({
+										title: `Multiple broadcasts found (${allBroadcasts.length})`,
+										message: 'Selected the first one by default. You can change the "broadcast index" below if needed.',
+										details: broadcastList,
+										timeout: 8000
+									});
+								}
+
+							} catch (err) {
+								console.error("Error getting broadcasts:", err);
+
+								// Remove loading popup
+								document.getElementById('popup').remove();
+
+								PopUp.new({
+									title: "Error getting broadcasts",
+									message: "Failed to retrieve live or scheduled broadcasts",
+									details: err.message || err.toString()
+								});
+							}
+						});
+					});
+				</script>
+				<br>
+				<sub>please note, this only works with scheduled live streams! does not work with streams that are already
+					live!</sub>
+				<br>
+				<br>
+				<details>
+					<summary> advanced youtube stream details.
+						<br>
+						<sub>
+							you can open this if you're curious, but in general the wizard
+							should handle this for you :3
+						</sub>
+					</summary>
+					<div>
+						<div>
+							<label>channelId</label>
+							<br>
+							<input id='youtube_channelId' type="text" minlength=6 maxlength=64>
+						</div>
+						<div>
+							<output style='
+margin: 3em;
+'>
+								no streams found yet!
+							</output>
+							<br><br>
+						</div>
+						<div>
+							<label>broadcast index</label>
+							<br>
+							<sub>(if you only have 1 stream scheduled, then leave this as 0)</sub>
+							<br>
+							<input id="youtube_broadcast_id_index" type="number" placeholder=0>
+						</div>
+						<label>current broadcastId</label>
+						<br>
+						<input id='youtube_broadcastId' type="text">
+					</div>
+				</details>
+			</details>
+
+			<br>
+
+		</div>
+
+	</div>
+	<hr>
+	<div>
+		<div>
+			<h3>tts info:</h3>
+			<ul style='padding-left: 3em;'>
+				<li>index: 1234</li>
+				<li>queue: 1111</li>
+				<li>read: 77</li>
+				<li>flaged: 666</li>
+			</ul>
+		</div>
+		<style>
+			table {
+				border: 0.2em solid white;
+			}
+
+			td {
+
+				margin: auto;
+				text-align: center;
+			}
+
+			/*index*/
+			td:nth-child(1) {
+				max-width: 3rem;
+				word-break: break-all;
+			}
+
+			/*username*/
+			td:nth-child(2) {
+				max-width: 14rem;
+				word-break: break-all;
+			}
+
+			/*date*/
+			td:nth-child(3) {
+				width: 7rem;
+				word-break: break-all;
+			}
+
+			/*message*/
+			td:nth-child(4) {
+				max-width: 16em;
+				text-align: left;
+			}
+
+			/*status*/
+			td:nth-child(5) {
+				max-width: 6em;
+			}
+
+			td:nth-child(6) {
+				max-width: 2em;
+			}
+
+			td:nth-child(7) {
+				max-width: 2em;
+			}
+
+			td:nth-child(8) {
+				max-width: 2em;
+			}
+
+			td:nth-child(9) {
+				max-width: 2em;
+			}
+
+			td:nth-child(10) {
+				max-width: 2em;
+			}
+
+			td:nth-child(2n+1) {
+				background-color: #222;
+			}
+
+			th {
+				padding: 0.3em;
+			}
+
+			th:nth-child(1) {
+				background-color: black;
+			}
+
+			th:nth-child(2) {
+				background-color: blue;
+			}
+
+			th:nth-child(3) {
+				background-color: darkcyan;
+			}
+
+			th:nth-child(4) {
+				background-color: black
+			}
+
+			th:nth-child(5) {
+				background-color: yellow;
+				color: white;
+			}
+
+			th:nth-child(6) {
+				background-color: darkgreen;
+			}
+
+			th:nth-child(7) {
+				background-color: darkred;
+			}
+
+			th:nth-child(8) {
+				background-color: darkgreen;
+				padding-left: 3em;
+			}
+
+			th:nth-child(9) {
+				background-color: darkred;
+			}
+
+			th:nth-child(10) {
+				background-color: orange;
+				color: black;
+			}
+
+			tr:nth-child(2n+1) {
+				background-color: #222;
+			}
+
+			tr:nth-child(2n+1)>td {
+				color: white;
+			}
+
+			tr:nth-child(2n+1)>td:nth-child(2n+1) {
+				background-color: #333;
+			}
+		</style>
+		<details>
+			<summary>test tts and tts settings</summary>
+			<div style="margin:1em 0;">
+				<label for="ttsMessage">Message:</label><br>
+				<textarea id="ttsMessage" rows="3" cols="50" placeholder="Enter a message..." style="color:white;"></textarea>
+			</div>
+
+			<div style="margin:1em 0;">
+				<label for="ttsRate">Speed:</label>
+				<input type="range" id="ttsRate" min="0.5" max="2" step="0.1" value="1">
+				<span id="rateVal">1</span>
+			</div>
+
+			<div style="margin:1em 0;">
+				<label for="ttsPitch">Pitch:</label>
+				<input type="range" id="ttsPitch" min="0" max="2" step="0.1" value="1">
+				<span id="pitchVal">1</span>
+			</div>
+
+			<h3>Available Voices</h3>
+			<table border="1" cellpadding="5" style="border-collapse:collapse; width:100%;">
+				<thead>
+					<tr>
+						<th>Index</th>
+						<th>Name</th>
+						<th>Language</th>
+						<th>Play</th>
+					</tr>
+				</thead>
+				<tbody id="voiceList"></tbody>
+			</table>
+		</details>
+
+		<script type="module">
+			const msgInput = document.getElementById("ttsMessage");
+			const rateInput = document.getElementById("ttsRate");
+			const pitchInput = document.getElementById("ttsPitch");
+			const rateVal = document.getElementById("rateVal");
+			const pitchVal = document.getElementById("pitchVal");
+			const voiceList = document.getElementById("voiceList");
+
+			// character length warning
+			msgInput.addEventListener("input", () => {
+				const len = msgInput.value.length;
+				msgInput.style.color = len > 200 ? "red" : len > 150 ? "gold" : "white";
+			});
+
+			rateInput.addEventListener("input", () => {
+				rateVal.textContent = rateInput.value;
+			});
+
+			pitchInput.addEventListener("input", () => {
+				pitchVal.textContent = pitchInput.value;
+			});
+
+			function populateVoices() {
+				const voices = window.speechSynthesis.getVoices();
+				voiceList.innerHTML = ""; // clear
+
+				voices.forEach((voice, i) => {
+					const tr = document.createElement("tr");
+					tr.innerHTML = `
+        <td>${i}</td>
+        <td>${voice.name}</td>
+        <td>${voice.lang}</td>
+        <td><button data-idx="${i}">▶️</button></td>
+      `;
+					voiceList.appendChild(tr);
+				});
+
+				// add play button events
+				voiceList.querySelectorAll("button").forEach(btn => {
+					btn.addEventListener("click", () => {
+						const idx = btn.getAttribute("data-idx");
+						playVoice(idx);
+					});
+				});
+			}
+
+			function playVoice(idx) {
+				const voices = window.speechSynthesis.getVoices();
+				const utter = new SpeechSynthesisUtterance(msgInput.value || "Testing voice");
+				utter.voice = voices[idx];
+				utter.rate = parseFloat(rateInput.value);
+				utter.pitch = parseFloat(pitchInput.value);
+				window.speechSynthesis.cancel();
+				window.speechSynthesis.speak(utter);
+			}
+
+			// voices may not be ready immediately
+			window.speechSynthesis.onvoiceschanged = populateVoices;
+			populateVoices(); // call once in case already loaded
+		</script>
+
+		<table>
+			<tr>
+				<th>index</th>
+				<th>user</th>
+				<th>date</th>
+				<th>message</th>
+				<th>que'd?</th> <!-- que'd, visible, skipped, hidden, blocked -->
+				<th>show</th>
+				<th>hide</th>
+				<th>add to tts queue</th>
+				<th>remove from tts</th>
+				<th>block user from tts</th>
+			</tr>
+		</table>
+	</div>
+</body>
