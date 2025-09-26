@@ -195,89 +195,229 @@
 			<button id='start_monitoring_button' style='background-color: darkgreen;'>start monitoring</button>
 			<button id='stop_monitoring_button' style='background-color: darkred;'>stop monitoring</button>
 		</div>
-		<script type='module'>
-			// ############################################################
-			// imports from window
-			// ############################################################
-			const PopUp = window.PopUp;
-			const mm = window.monitorMessages; // ✅ global MonitorMessages instance
-			const assert = window.assert;
-			console.log('monitor buttons script loaded');
-
-			// ############################################################
-			// helper to update button states
-			// ############################################################
-			function setButtonStates({monitoring}) {
-				const startBtn = document.getElementById('start_monitoring_button');
-				const stopBtn = document.getElementById('stop_monitoring_button');
-
-				if (monitoring) {
-					startBtn.disabled = true;
-					startBtn.style.opacity = '0.5';
-					startBtn.textContent = 'monitoring...';
-
-					stopBtn.disabled = false;
-					stopBtn.style.opacity = '1';
-					stopBtn.textContent = 'stop monitoring';
-				} else {
-					startBtn.disabled = false;
-					startBtn.style.opacity = '1';
-					startBtn.textContent = 'start monitoring';
-
-					stopBtn.disabled = true;
-					stopBtn.style.opacity = '0.5';
-					stopBtn.textContent = 'stop monitoring';
-				}
+		<!-- {{{7 start/stop + auto tts functions -->
+		<style>
+			#function_buttons {
+				width: 16em;
+				display: flex;
+				flex-direction: column;
+				padding-top: 0.7em;
 			}
 
-			// ############################################################
-			// start monitoring button
-			// ############################################################
-			document.getElementById('start_monitoring_button').addEventListener('click', async () => {
-				console.log('Start monitoring button clicked');
+			#function_buttons>div {
+				margin: 0px;
+				padding: 0px;
+			}
 
-				try {
-					// Check YouTube enabled state
-					//const youtubeToggle = document.getElementById('youtube_enabled');
-					//mm.args.updateYoutube = () => youtubeToggle.getAttribute('checked') === 'true';
-
-					await mm.StartMonitoring();
-					console.log('Monitoring started successfully');
-					setButtonStates({monitoring: true});
-				} catch (err) {
-					console.error('Failed to start monitoring:', err);
-					setButtonStates({monitoring: false});
-
-					PopUp.new?.({
-						title: 'Failed to start monitoring',
-						message: err.message || 'Unknown error occurred',
-						details: err.toString()
-					});
-				}
-			});
-
-			// ############################################################
-			// stop monitoring button
-			// ############################################################
-			document.getElementById('stop_monitoring_button').addEventListener('click', () => {
-				console.log('Stop monitoring button clicked');
-
-				try {
-					mm.StopMonitoring();
-					console.log('Monitoring stopped successfully');
-					setButtonStates({monitoring: false});
-				} catch (err) {
-					console.error('Error stopping monitor:', err);
-					setButtonStates({monitoring: false});
-				}
-			});
-
-			// ############################################################
-			// initialize buttons on page load
-			// ############################################################
+			#function_buttons>*>button {
+				margin: auto;
+				width: 12em;
+			}
+		</style>
+		<div id='function_buttons'>
+			<button id='start_tts_button' style='background-color: darkblue; color: white;'>start auto tts</button>
+			<button id='pause_tts_button' style='background-color: goldenrod;'>pause auto tts</button>
+			<br>
+			<label for="timeout_duration">timeout duration (seconds)</label>
+			<input id="timeout_duration" type="number" value="300" min="10" step="10" />
+		</div>
+		<script type='module'>
+			import {IntTimer} from "./tib_stuff/intTimer.js";
 			window.addEventListener('DOMContentLoaded', () => {
-				setButtonStates({monitoring: false});
-				console.log('Button states initialized');
+				//add update for on change to reinit the timer				
+				let ttsTimer = new IntTimer({
+					name: "ttsTimer",
+					timeoutDuration: document.getElementById("timeout_duration").value, // This is a DOM element!
+					timeoutListeners: [ReadNextTts],
+					debugMode: true,
+				});
+
+				document.getElementById("timeout_duration").addEventListener("change", () => {
+					//window.PopUp({"message": "turn off tts first!"});
+					ttsTimer.timeoutDuration = document.getElementById("timeout_duration").value;
+					ttsTimer.Restart();
+				})
+
+				function ReadNextTts() {
+					console.log("ReadNextTts function called!");
+
+					let table = document.getElementById("messagesTable");
+
+					if (!table) {
+						console.log("messagesTable not found");
+						return;
+					}
+
+					console.log(`Table has ${table.rows.length} rows`);
+
+					// Debug: Check what's in each row
+					for (let i = table.rows.length - 1; i > 0; --i) {
+						let row = table.rows[i];
+						console.log(`Row ${i} has ${row.cells.length} cells`);
+
+						// Check if cell 6 exists and what type of element it is
+						if (row.cells[6]) {
+							console.log(`Row ${i}, cell 6 exists:`, row.cells[6]);
+							console.log(`Row ${i}, cell 6 innerHTML:`, row.cells[6].innerHTML);
+
+							// Check if it's a checkbox
+							let checkbox = row.cells[6].querySelector('input[type="checkbox"]');
+							if (checkbox) {
+								console.log(`Row ${i}, checkbox found, checked: ${checkbox.checked}`);
+								if (checkbox.checked) {
+									checkbox.checked = false;
+									console.log(`Pressing button in row ${i}`);
+									row.cells[5].children[0].click();
+									break;
+								}
+							} else {
+								// Maybe the checkbox IS the cell content?
+								if (row.cells[6].type === 'checkbox') {
+									console.log(`Row ${i}, cell 6 IS a checkbox, checked: ${row.cells[6].checked}`);
+									if (row.cells[6].checked) {
+										row.cells[6].checked = false;
+										console.log(`Pressing button in row ${i}`);
+										row.cells[5].children[0].click();
+										break;
+									}
+								} else {
+									console.log(`Row ${i}, cell 6 is not a checkbox:`, row.cells[6].tagName);
+								}
+							}
+						} else {
+							console.log(`Row ${i}, cell 6 does not exist`);
+						}
+					}
+
+					console.log("ReadNextTts function finished");
+				}// unique input 
+
+				// ############################################################
+				// imports from window
+				// ############################################################
+				const PopUp = window.PopUp;
+				const mm = window.monitorMessages; // ✅ global MonitorMessages instance
+				const assert = window.assert;
+				console.log('monitor buttons script loaded');
+
+				// ############################################################
+				// helper to update button states
+				// ############################################################
+				function setButtonStates({monitoring}) {
+					const startBtn = document.getElementById('start_monitoring_button');
+					const stopBtn = document.getElementById('stop_monitoring_button');
+
+					if (monitoring) {
+						startBtn.disabled = true;
+						startBtn.style.opacity = '0.5';
+						startBtn.textContent = 'monitoring...';
+
+						stopBtn.disabled = false;
+						stopBtn.style.opacity = '1';
+						stopBtn.textContent = 'stop monitoring';
+					} else {
+						startBtn.disabled = false;
+						startBtn.style.opacity = '1';
+						startBtn.textContent = 'start monitoring';
+
+						stopBtn.disabled = true;
+						stopBtn.style.opacity = '0.5';
+						stopBtn.textContent = 'stop monitoring';
+					}
+				}
+
+				// ############################################################
+				// start monitoring button
+				// ############################################################
+				document.getElementById('start_monitoring_button').addEventListener('click', async () => {
+					console.log('Start monitoring button clicked');
+
+					try {
+						mm.args.timeoutDuration = Number(document.getElementById("timeout_duration").value) || 300;
+
+						await mm.StartMonitoring();
+						console.log('Monitoring started successfully');
+						setButtonStates({monitoring: true});
+					} catch (err) {
+						console.error('Failed to start monitoring:', err);
+						setButtonStates({monitoring: false});
+
+						PopUp.new?.({
+							title: 'Failed to start monitoring',
+							message: err.message || 'Unknown error occurred',
+							details: err.toString()
+						});
+					}
+				});
+
+				// ############################################################
+				// stop monitoring button
+				// ############################################################
+				document.getElementById('stop_monitoring_button').addEventListener('click', () => {
+					console.log('Stop monitoring button clicked');
+
+					try {
+						mm.StopMonitoring();
+						console.log('Monitoring stopped successfully');
+						setButtonStates({monitoring: false});
+					} catch (err) {
+						console.error('Error stopping monitor:', err);
+						setButtonStates({monitoring: false});
+					}
+				});
+
+				// ############################################################
+				// auto TTS buttons
+				// ############################################################
+				document.getElementById('start_tts_button').addEventListener('click', () => {
+					try {
+						mm.StartAutoTTS?.();
+						console.log("Auto TTS started");
+						ttsTimer.Start();
+					} catch (err) {
+						console.error("Error starting auto TTS:", err);
+					}
+				});
+
+				document.getElementById('pause_tts_button').addEventListener('click', () => {
+					try {
+						mm.PauseAutoTTS?.();
+						console.log("Auto TTS paused");
+						ttsTimer.Stop();
+					} catch (err) {
+						console.error("Error pausing auto TTS:", err);
+					}
+				});
+
+				// ############################################################
+				// update_info bindings
+				// ############################################################
+				function updateUIFromMonitor() {
+					if (!mm) return;
+
+					// next update gauge
+					document.querySelector("#update_info .guage-inner span").textContent = mm.nextUpdate ?? 0;
+
+					// tts queue
+					document.querySelector("#update_info>div:nth-child(2)>span").textContent = mm.ttsQueue?.length ?? 0;
+
+					// tts messages read
+					document.querySelector("#update_info>div:nth-child(3)>span").textContent = mm.ttsMessagesRead ?? 0;
+
+					// total messages
+					document.querySelector("#update_info>div:nth-child(4)>span").textContent = mm.totalMessages ?? 0;
+				}
+
+				// refresh UI every second
+				setInterval(updateUIFromMonitor, 1000);
+
+				// ############################################################
+				// initialize buttons on page load
+				// ############################################################
+				window.addEventListener('DOMContentLoaded', () => {
+					setButtonStates({monitoring: false});
+					console.log('Button states initialized');
+				});
 			});
 		</script>
 		<!-- }}}7 -->
@@ -708,124 +848,106 @@ margin: 3em;
 	</div>
 	<hr>
 	<div>
-		<div>
-			<h3>tts info:</h3>
-			<ul style='padding-left: 3em;'>
-				<li>index: 1234</li>
-				<li>queue: 1111</li>
-				<li>read: 77</li>
-				<li>flaged: 666</li>
-			</ul>
-		</div>
 		<style>
 			table {
 				border: 0.2em solid white;
-			}
-
-			td {
-
-				margin: auto;
-				text-align: center;
-			}
-
-			/*index*/
-			td:nth-child(1) {
-				max-width: 3rem;
-				word-break: break-all;
-			}
-
-			/*username*/
-			td:nth-child(2) {
-				max-width: 14rem;
-				word-break: break-all;
-			}
-
-			/*date*/
-			td:nth-child(3) {
-				width: 7rem;
-				word-break: break-all;
-			}
-
-			/*message*/
-			td:nth-child(4) {
-				max-width: 16em;
 				text-align: left;
 			}
 
-			/*status*/
-			td:nth-child(5) {
+			table>* {
+				overflow-x: scroll;
+			}
+
+			table>th {
+				max-width: 2em;
+				text-align: center;
+			}
+
+			th:nth-child(4),
+			td:nth-child(4) {
+				overflow: scroll;
+				max-height: max-content;
+				max-width: 2em;
+				/* Prevent text from wrapping within the max-width */
+			}
+
+			/*index
+			th:nth-child(1) {
+				background-color: red;
+				max-width: 7em;
+				word-break: break-all;
+			}
+
+			/*username
+			table:nth-child(2) {
+				background-color: blue;
+				max-width: 5em;
+				word-break: break-all;
+			}
+
+			/*date
+			table:nth-child(3) {
+				background-color: darkcyan;
+				max-width: 5em;
+				word-break: break-all;
+			}
+
+			/*ttsFlags
+			table:nth-child(4) {
+				background-color: black;
+				max-width: 6em;
+				text-align: left;
+			}
+
+			/*message
+			table:nth-child(5) {
+				background-color: orange;
+				color: black;
 				max-width: 6em;
 			}
 
-			td:nth-child(6) {
+			/*playMessage
+			table:nth-child(6) {
+				background-color: darkgreen;
+				max-width: 6em;
+			}
+
+			/*inTtsQueue
+			table:nth-child(7) {
+				background-color: darkred;
+				max-width: 6em;
+			}
+
+			/*inTtsQueue
+			table:nth-child(8) {
+				background-color: darkgreen;
+				max-width: 5em;
+			}
+
+			/*timeoutUser
+			table:nth-child(9) {
+				background-color: darkred;
 				max-width: 2em;
 			}
 
-			td:nth-child(7) {
+			/*block user from tts
+			table:nth-child(10) {
+				background-color: orange;
+				color: black;
 				max-width: 2em;
 			}
 
-			td:nth-child(8) {
+			ban user*/
+			table:nth-child(11) {
 				max-width: 2em;
 			}
 
-			td:nth-child(9) {
-				max-width: 2em;
-			}
-
-			td:nth-child(10) {
-				max-width: 2em;
-			}
-
-			td:nth-child(2n+1) {
+			th:nth-child(2n+1) {
 				background-color: #222;
 			}
 
 			th {
 				padding: 0.3em;
-			}
-
-			th:nth-child(1) {
-				background-color: black;
-			}
-
-			th:nth-child(2) {
-				background-color: blue;
-			}
-
-			th:nth-child(3) {
-				background-color: darkcyan;
-			}
-
-			th:nth-child(4) {
-				background-color: black
-			}
-
-			th:nth-child(5) {
-				background-color: orange;
-				color: black;
-			}
-
-			th:nth-child(6) {
-				background-color: darkgreen;
-			}
-
-			th:nth-child(7) {
-				background-color: darkred;
-			}
-
-			th:nth-child(8) {
-				background-color: darkgreen;
-				padding-left: 3em;
-			}
-
-			th:nth-child(9) {
-				background-color: darkred;
-			}
-
-			th:nth-child(10) {
-				background-color: orange;
-				color: black;
 			}
 
 			tr:nth-child(2n+1) {
@@ -996,10 +1118,12 @@ margin: 3em;
 			<th>index</th> <!-- index of message -->
 			<th>user</th> <!-- @ of user on youtube -->
 			<th>date</th> <!-- datetime of message -->
-			<th>ttsFlags</th> <!-- the 3 values that exist are: -r for rate, -v for voice, and -p for pitch -->
+			<th style="max-width:3em;">tts flags</th>
+			<!-- the 3 values that exist are: -r for rate, -v for voice, and -p for pitch -->
 			<th>message</th> <!-- the message -->
-			<th>isInTtsQue</th> <!-- is a checkbox, if message starts with: "!TTS", "!TIB", or "!BOT" automatically add -->
-			<th>timeUserOut</th> <!-- if clicked, will time user out for 10 minute-->
+			<th>play message</th> <!-- the message -->
+			<th>in tts que</th> <!-- is a checkbox, if message starts with: "!TTS", "!TIB", or "!BOT" automatically add -->
+			<th>time user out</th> <!-- if clicked, will time user out for 10 minute-->
 			<th>block user from tts</th>
 			<th>ban user </th>
 			<!-- when clicked, will ban the user from the channel, only after entering a special 6 digit pin (prompt the user for pin on click then do), -->

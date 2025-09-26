@@ -6,10 +6,13 @@ function LSGI(id) {
 	return localStorage.getItem(String(id));
 }
 function GEBI(id) {
-	return document.getElementById(id).value; // fetch value from input if DOM element
+	const el = document.getElementById(id);
+	return el ? el.value : undefined;
 }
+
 export default class MonitorMessages {
 	constructor(args = {}) {
+		this.args = args; // ✅ keep args for later access
 
 		// only YouTube supported for now
 		this.yt = new YoutubeStuff({
@@ -44,6 +47,7 @@ export default class MonitorMessages {
 
 	// --- helper: parse TTS command flags ---
 	parseTTSMessage(raw) {
+		let parsed;
 		const regex = /^!(TTS|TIB|BOT)\s+(.*)$/i;
 		const match = raw.match(regex);
 		if (!match) return null;
@@ -51,7 +55,15 @@ export default class MonitorMessages {
 		const argsStr = match[2];
 		const parts = argsStr.trim().split(/\s+/);
 
-		let flags = { r: null, v: null, p: null };
+		let flags = {};
+
+		if (parsed) {
+			flags = {
+				p: parsed.flags.p || "",
+				r: parsed.flags.r || "",
+				v: parsed.flags.v || "",
+			};
+		}
 		let msgParts = [];
 
 		for (let i = 0; i < parts.length; i++) {
@@ -75,8 +87,60 @@ export default class MonitorMessages {
 		};
 	}
 
+	async CallTts(input = {}) {
+		// Normalize flags and message
+		const flagsIn = input.flags || {};
+		const flags = {
+			p: flagsIn.p ?? (() => { try { return GEBI("ttsPitch"); } catch (e) { return undefined; } })() ?? LSGI("ttsPitch") ?? "1",
+			r: flagsIn.r ?? (() => { try { return GEBI("ttsRate"); } catch (e) { return undefined; } })() ?? LSGI("ttsRate") ?? "1",
+			v: flagsIn.v ?? (() => { try { return GEBI("ttsVoice"); } catch (e) { return undefined; } })() ?? LSGI("ttsVoice") ?? "",
+		};
+
+		const message = input.message ?? input.messages ?? "";
+		if (!message) {
+			console.error("could not call tts, message is empty");
+			return;
+		}
+
+		// helper: wait for voices if not loaded yet
+		const getVoices = () => new Promise((resolve) => {
+			let v = window.speechSynthesis.getVoices();
+			if (v && v.length) return resolve(v);
+			const onChange = () => {
+				window.speechSynthesis.removeEventListener('voiceschanged', onChange);
+				resolve(window.speechSynthesis.getVoices());
+			};
+			window.speechSynthesis.addEventListener('voiceschanged', onChange);
+			// fallback after a short delay
+			setTimeout(() => resolve(window.speechSynthesis.getVoices()), 250);
+		});
+
+		const voices = await getVoices();
+
+		const utter = new SpeechSynthesisUtterance(message);
+
+		// choose voice: support numeric index or name/lang match
+		let desiredVoice = null;
+		if (flags.v) {
+			const maybeIdx = Number(flags.v);
+			if (!Number.isNaN(maybeIdx) && voices[maybeIdx]) {
+				desiredVoice = voices[maybeIdx];
+			} else {
+				desiredVoice = voices.find(v => v.name === flags.v || v.lang === flags.v);
+			}
+		}
+
+		if (desiredVoice) utter.voice = desiredVoice;
+		// ensure numbers
+		utter.rate = Number(flags.r) || 1;
+		utter.pitch = Number(flags.p) || 1;
+
+		window.speechSynthesis.cancel();
+		window.speechSynthesis.speak(utter);
+	}
+
 	async GetMessages() {
-		let yt_messages = await this.yt.GetMessages(); // BUG: UNDEFINED SOMEHOW???
+		let yt_messages = await this.yt.GetMessages();
 		if (!yt_messages?.messages?.length) return;
 
 		const table = document.getElementById("messagesTable");
@@ -85,92 +149,104 @@ export default class MonitorMessages {
 			return;
 		}
 
+		// tiny helper to escape HTML so messages/authors do not break the row HTML
+		const esc = (s) => String(s ?? "")
+			.replaceAll("&", "&amp;")
+			.replaceAll("<", "&lt;")
+			.replaceAll(">", "&gt;")
+			.replaceAll('"', "&quot;")
+			.replaceAll("'", "&#39;");
+
 		yt_messages.messages.forEach((msg) => {
+			// ✅ Deduplication check: look for an existing row with same author+timestamp
+			const existing = table.querySelector(
+				`tr[data-author="${esc(msg.author)}"][data-published="${esc(msg.publishedAt)}"]`
+			);
+			if (existing) {
+				// Already in the table, skip adding
+				return;
+			}
+
 			this.messageIndex++;
+			const idx = this.messageIndex;
 
 			// Try parsing TTS message
 			const parsed = this.parseTTSMessage(msg.message);
 			const isTtsTrigger = !!parsed;
 
-			const row = document.createElement("tr");
-
-			// Index
-			const tdIndex = document.createElement("td");
-			tdIndex.textContent = this.messageIndex;
-
-			// User
-			const tdUser = document.createElement("td");
-			tdUser.textContent = msg.author;
-
-			// Date
-			const tdDate = document.createElement("td");
-			tdDate.textContent = new Date(msg.publishedAt).toLocaleString();
-
-			// ttsFlags
-			const tdFlags = document.createElement("td");
+			// build flags object
+			let flags = {};
 			if (parsed) {
-				let flagsOut = [];
-				if (parsed.flags.r) flagsOut.push(`-r ${parsed.flags.r}`);
-				if (parsed.flags.v) flagsOut.push(`-v ${parsed.flags.v}`);
-				if (parsed.flags.p) flagsOut.push(`-p ${parsed.flags.p}`);
-				tdFlags.textContent = flagsOut.join(" ");
-			} else {
-				tdFlags.textContent = "";
+				flags = {
+					p: parsed.flags?.p || "",
+					r: parsed.flags?.r || "",
+					v: parsed.flags?.v || "",
+				};
 			}
 
-			// Message (only cleaned text if parsed, otherwise raw)
-			const tdMessage = document.createElement("td");
-			tdMessage.textContent = parsed ? parsed.message : msg.message;
+			// safe values for inserting into innerHTML
+			const safeAuthor = esc(msg.author);
+			const safePublished = esc(msg.publishedAt);
+			const safeMessage = esc(parsed ? parsed.message : msg.message);
 
-			// isInTtsQue (checkbox, auto-checked if parsed ok)
-			const tdTtsQue = document.createElement("td");
-			const cbTts = document.createElement("input");
-			cbTts.type = "checkbox";
-			cbTts.checked = isTtsTrigger;
-			tdTtsQue.appendChild(cbTts);
+			// create row with placeholders for complex DOM nodes
+			const tr = document.createElement("tr");
+			tr.setAttribute("data-author", safeAuthor);
+			tr.setAttribute("data-published", safePublished);
+			tr.innerHTML = `
+            <td>${idx}</td>
+            <td>${safeAuthor}</td>
+            <td>${safePublished}</td>
+            <td>${JSON.stringify(flags)}</td>
+            <td>${safeMessage}</td>
+            <td><button id="btnPlay_${idx}">Play</button></td>
+            <td><input id="tts_${idx}" type="checkbox" ${isTtsTrigger ? "checked" : ""}></td>
+            <td id="tdTimeout_${idx}"></td>
+            <td id="tdBlock_${idx}"></td>
+            <td id="tdBan_${idx}"></td>
+        `;
 
-			// timeUserOut (button)
-			const tdTimeout = document.createElement("td");
+			// Create and append the real DOM nodes into the placeholder cells
+
+			// Timeout button
 			const btnTimeout = document.createElement("button");
 			btnTimeout.textContent = "Timeout";
-			btnTimeout.onclick = () => {
+			btnTimeout.addEventListener("click", () => {
 				alert(`Timeout user ${msg.author} for 10 minutes`);
-			};
-			tdTimeout.appendChild(btnTimeout);
+			});
+			tr.querySelector(`#tdTimeout_${idx}`).appendChild(btnTimeout);
 
-			// block user from tts (checkbox)
-			const tdBlockTts = document.createElement("td");
+			// Block TTS checkbox (fresh element)
 			const cbBlock = document.createElement("input");
 			cbBlock.type = "checkbox";
-			tdBlockTts.appendChild(cbBlock);
+			tr.querySelector(`#tdBlock_${idx}`).appendChild(cbBlock);
 
-			// ban user (button with PIN)
-			const tdBan = document.createElement("td");
+			// Ban button
 			const btnBan = document.createElement("button");
 			btnBan.textContent = "Ban";
-			btnBan.onclick = () => {
+			btnBan.addEventListener("click", () => {
 				const pin = prompt("Enter 6-digit PIN to ban user:");
-				if (pin === "123456") { // TODO: IMPL THIS
+				if (pin === "123456") {
 					alert(`Banned user ${msg.author}`);
 				} else {
 					alert("Invalid PIN. Ban cancelled.");
 				}
-			};
-			tdBan.appendChild(btnBan);
+			});
+			tr.querySelector(`#tdBan_${idx}`).appendChild(btnBan);
 
-			// Append cells to row
-			row.appendChild(tdIndex);
-			row.appendChild(tdUser);
-			row.appendChild(tdDate);
-			row.appendChild(tdFlags);
-			row.appendChild(tdMessage);
-			row.appendChild(tdTtsQue);
-			row.appendChild(tdTimeout);
-			row.appendChild(tdBlockTts);
-			row.appendChild(tdBan);
+			// Hook up the Play button from the innerHTML row
+			const playBtn = tr.querySelector(`#btnPlay_${idx}`);
+			if (playBtn) {
+				playBtn.addEventListener("click", () => {
+					const messageText = parsed ? parsed.message : msg.message;
+					const normalizedFlags = (typeof flags === "string") ? {} : flags;
+					console.log("Play TTS:", messageText);
+					this.CallTts({ flags: normalizedFlags, message: messageText });
+				});
+			}
 
-			// Add row to table
-			table.appendChild(row);
+			// Append the completed row to the table
+			table.appendChild(tr);
 		});
 
 		return yt_messages;

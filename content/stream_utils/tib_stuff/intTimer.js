@@ -5,7 +5,7 @@ export class IntTimer {
 		this.name = args.name || `timer${String(Math.random())}`; // name for the timer, used for logging
 		this.time = args.time || 0; // time the timer will start at
 		this.debugMode = args.debugMode || false; // if so will print info about the timer
-		this.printNormalizedTick || true; // if true, will convert the print to be a standard step. ie: instead of [3/9, 6/9, 9/9] it becomes: [1/3, 2/3, 3/3]
+		this.printNormalizedTick || false; // if true, will convert the print to be a standard step. ie: instead of [3/9, 6/9, 9/9] it becomes: [1/3, 2/3, 3/3]
 
 		//start flags
 		this.startData = args.startData || undefined; // data to be sent to startListeners
@@ -35,7 +35,7 @@ export class IntTimer {
 		//timeout stuff
 		this.timeoutData = args.timeoutData || undefined; // data to be passed 
 		this.timeoutListeners = args.timeoutListeners || undefined;
-		this.timeoutDuration = args.timeout || 10; // duration until Timeout() is called
+		this.timeoutDuration = args.timeout || args.timeoutDuration || 10; // duration until Timeout() is called
 		this.killOnTimeout = args.timeout || true; // if false, will repeat until stopped manually
 		this.maxDuration = args.maxDuration || 0; // 0 or less will mean no max timer
 
@@ -147,16 +147,28 @@ export class IntTimer {
 		}
 
 		if (this.debugMode) {
-			console.log(`intTimer: timeout listeners: ${this.timeoutListeners}`);
+			console.log(`intTimer: timeoutListeners exists: ${this.timeoutListeners !== undefined}`);
+			console.log(`intTimer: timeoutListeners length: ${this.timeoutListeners?.length}`);
 		}
 
 		if (this.timeoutListeners != undefined) {
 			for (let i = 0; i < this.timeoutListeners.length; ++i) {
 				if (this.debugMode) {
-					console.log(`intTimer: calling function ${this.timeoutListeners[i](this.timeoutData)}`);
+					console.log(`intTimer: calling timeout listener ${i}`);
 				}
 
-				this.timeoutListeners[i](this.timeoutData);
+				try {
+					await this.timeoutListeners[i](this.timeoutData);
+					if (this.debugMode) {
+						console.log(`intTimer: timeout listener ${i} completed`);
+					}
+				} catch (error) {
+					console.error(`intTimer: error in timeout listener ${i}:`, error);
+				}
+			}
+		} else {
+			if (this.debugMode) {
+				console.log(`intTimer: no timeout listeners to call`);
 			}
 		}
 	}
