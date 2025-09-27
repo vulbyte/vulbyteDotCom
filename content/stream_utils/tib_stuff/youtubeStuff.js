@@ -12,7 +12,7 @@ export class YoutubeStuff {
 			channelName: args.channelName || LSGI("youtube_channelName") || GEBI("youtube_channelName") || undefined,
 			channelId: args.channelId || LSGI("youtube_channelId") || GEBI("youtube_channelId") || undefined,
 			broadcastId: args.broadcastId || LSGI("youtube_broadcastId") || GEBI("youtube_broadcastId") || undefined,
-			maxResults: args.maxResults || 30,
+			//maxResults: args.maxResults || 30,
 			updateFreq: args.updateFreq || 30, // seconds
 			debug: args.debug || false,
 		};
@@ -108,7 +108,7 @@ export class YoutubeStuff {
 			part: "id,snippet,authorDetails",
 			liveChatId,
 			key: this.args.apiKey,
-			//maxResults: this.args.maxResults,
+			maxResults: 200 || this.args.maxResults, // FIX THIS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 		};
 		if (pageToken) params.pageToken = pageToken;
 
