@@ -108,7 +108,7 @@ export class YoutubeStuff {
 			part: "id,snippet,authorDetails",
 			liveChatId,
 			key: this.args.apiKey,
-			maxResults: this.args.maxResults,
+			//maxResults: this.args.maxResults,
 		};
 		if (pageToken) params.pageToken = pageToken;
 
