@@ -54,7 +54,7 @@ export class YoutubeStuff {
 			eventType: "live",
 			type: "video",
 			key: this.args.apiKey,
-			maxResults: this.args.maxResults,
+			//maxResults: this.args.maxResults,
 		}).toString();
 
 		const res = await fetch(url);
@@ -108,7 +108,7 @@ export class YoutubeStuff {
 			part: "id,snippet,authorDetails",
 			liveChatId,
 			key: this.args.apiKey,
-			maxResults: 200 || this.args.maxResults, // FIX THIS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+			//maxResults: 200 || this.args.maxResults, // FIX THIS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 		};
 		if (pageToken) params.pageToken = pageToken;
 
