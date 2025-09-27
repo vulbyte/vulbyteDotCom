@@ -211,9 +211,9 @@ export default class MonitorMessages {
 			// Timeout button
 			const btnTimeout = document.createElement("button");
 			btnTimeout.textContent = "Timeout";
-			btnTimeout.addEventListener("click", () => {
-				alert(`Timeout user ${msg.author} for 10 minutes`);
-			});
+			//btnTimeout.addEventListener("click", () => {
+			//alert(`Timeout user ${msg.author} for 10 minutes`);
+			//});
 			tr.querySelector(`#tdTimeout_${idx}`).appendChild(btnTimeout);
 
 			// Block TTS checkbox (fresh element)

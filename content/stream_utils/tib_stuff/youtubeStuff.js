@@ -115,7 +115,9 @@ export class YoutubeStuff {
 		messagesUrl.search = new URLSearchParams(params).toString();
 
 		const messagesRes = await fetch(messagesUrl);
+		console.log(messagesUrl);
 		const messagesData = await messagesRes.json();
+		console.log(messagesData);
 
 		const messages =
 			messagesData.items?.map((m) => ({
