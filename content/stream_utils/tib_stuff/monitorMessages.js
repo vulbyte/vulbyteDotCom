@@ -141,7 +141,7 @@ export default class MonitorMessages {
 
 	async GetMessages() {
 		let yt_messages = await this.yt.GetMessages();
-		if (!yt_messages?.messages?.length) return;
+		//if (!yt_messages?.messages?.length) return;
 
 		const table = document.getElementById("messagesTable");
 		if (!table) {
