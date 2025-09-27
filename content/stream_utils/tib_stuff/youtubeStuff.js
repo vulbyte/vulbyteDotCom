@@ -75,7 +75,7 @@ export class YoutubeStuff {
 		return data.items.map((item) => item.id.videoId);
 	}
 
-	async GetMessages(pageToken = undefined) {
+	async GetMessages(/*pageToken = undefined*/) {
 		if (!this.args.apiKey || !this.args.broadcastId)
 			throw new Error("API key or Broadcast ID missing");
 
@@ -110,7 +110,7 @@ export class YoutubeStuff {
 			key: this.args.apiKey,
 			//maxResults: 200 || this.args.maxResults, // FIX THIS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 		};
-		if (pageToken) params.pageToken = pageToken;
+		//if (pageToken) params.pageToken = pageToken;
 
 		messagesUrl.search = new URLSearchParams(params).toString();
 
