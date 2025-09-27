@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script type="module" src="/client_management.js"></script>
+	<title>TiB help | vulbyte</title>
+</head>
+
+<body>
+
+	<h1>TiB help</h1>
+	<div>
+		<p>hello! if you're here you're probably wondering how tib works! that's easy!</p>
+		<div><span style="color:red;">!TIB</span> + <span style="color:green;">-v 49 -r 1.2 -p 1.1</span> + <span
+				style="color:lightblue;">hello!</span></div>
+		<aside>please note: the pluses are not needed</aside>
+		<p> all you need to do is start your message with !TIB, add any commands you want to alter the voice (think of it
+			like personalization :3) then your message, it's that easy!</p>
+		<br>
+		<p>if you want to know how your mesasge will send before you send it, try play with the testing tool below!</p>
+	</div>
+	<details>
+		<summary>test tts and tts settings</summary>
+		<div style="margin:1em 0;">
+			<label for="ttsMessage">Message:</label><br>
+			<textarea id="ttsMessage" rows="3" cols="50" placeholder="Enter a message..." style="color:white;"></textarea>
+		</div>
+
+		<div style="margin:1em 0;">
+			<label for="ttsRate">Speed:</label>
+			<input type="range" id="ttsRate" min="0.5" max="2" step="0.1" value="1">
+			<span id="rateVal">1</span>
+		</div>
+
+		<div style="margin:1em 0;">
+			<label for="ttsPitch">Pitch:</label>
+			<input type="range" id="ttsPitch" min="0" max="2" step="0.1" value="1">
+			<span id="pitchVal">1</span>
+		</div>
+
+		<div style="margin:1em 0;">
+			<label for="ttsVoice">voice:</label>
+			<input type="number" id="ttsVoice" placeholder="49">
+		</div>
+
+		<div>
+			<label for="playDemoTTS">demo with current settings:</label>
+			<button id="playDemoTTS" type="button">click me (ear warning)</button>
+			<script type="module">
+				document.getElementById("playDemoTTS").addEventListener("click", () => {
+					console.log("demoing current tts default");
+
+					function TtsMessage() {return document.getElementById("ttsMessage").value};
+					function TtsVoice() {return document.getElementById("ttsVoice").value};
+					function TtsRate() {return parseFloat(document.getElementById("ttsRate").value)};
+					function TtsPitch() {return parseFloat(document.getElementById("ttsPitch").value)};
+
+					// Get the available voices
+					let voices = window.speechSynthesis.getVoices();
+
+					// Find the voice object that matches the name
+					let desiredVoice = voices[TtsVoice()];
+
+					// Check if the voice was found and proceed
+					if (desiredVoice) {
+						let utter = new SpeechSynthesisUtterance(TtsMessage());
+						utter.voice = desiredVoice;
+						utter.rate = TtsRate();
+						utter.pitch = TtsPitch();
+
+						window.speechSynthesis.cancel();
+						window.speechSynthesis.speak(utter);
+					} else {
+						console.error(`Voice '${TtsVoice()}' not found.`);
+						// Optional: Fallback to the default voice if the specified one isn't available
+						const utter = new SpeechSynthesisUtterance(TtsMessage());
+						utter.rate = TtsRate();
+						utter.pitch = TtsPitch();
+						window.speechSynthesis.cancel();
+						window.speechSynthesis.speak(utter);
+					}
+				});
+
+				// Ensure voices are loaded before the button is clicked.
+				// This event is crucial for the getVoices() method to return a non-empty array.
+				window.speechSynthesis.onvoiceschanged = () => {
+					// This event handler ensures the voice list is updated.
+					// The code inside the click listener can now reliably find a voice.
+					console.log("Speech synthesis voices have changed (and are likely loaded).");
+				};		</script>
+		</div>
+
+		<h3>Available Voices</h3>
+		<details>
+			<summary>if you wanna skip some of the redundant voices check out in here :3</summary>
+			<table border="1" cellpadding="5" style="border-collapse:collapse; width:100%;">
+				<thead>
+					<tr>
+						<th>Index</th>
+						<th>Name</th>
+						<th>Language</th>
+						<th>Play</th>
+					</tr>
+				</thead>
+				<tbody id="voiceList"></tbody>
+		</details>
+		</table>
+	</details>
+
+	<script type="module">
+		const msgInput = document.getElementById("ttsMessage");
+		const rateInput = document.getElementById("ttsRate");
+		const pitchInput = document.getElementById("ttsPitch");
+		const rateVal = document.getElementById("rateVal");
+		const pitchVal = document.getElementById("pitchVal");
+		const voiceList = document.getElementById("voiceList");
+
+		// character length warning
+		msgInput.addEventListener("input", () => {
+			const len = msgInput.value.length;
+			msgInput.style.color = len > 200 ? "red" : len > 150 ? "gold" : "white";
+		});
+
+		rateInput.addEventListener("input", () => {
+			rateVal.textContent = rateInput.value;
+		});
+
+		pitchInput.addEventListener("input", () => {
+			pitchVal.textContent = pitchInput.value;
+		});
+
+		function populateVoices() {
+			const voices = window.speechSynthesis.getVoices();
+			voiceList.innerHTML = ""; // clear
+
+			voices.forEach((voice, i) => {
+				const tr = document.createElement("tr");
+				tr.innerHTML = `
+        <td>${i}</td>
+        <td>${voice.name}</td>
+        <td>${voice.lang}</td>
+        <td><button data-idx="${i}">▶️</button></td>
+      `;
+				voiceList.appendChild(tr);
+			});
+
+			// add play button events
+			voiceList.querySelectorAll("button").forEach(btn => {
+				btn.addEventListener("click", () => {
+					const idx = btn.getAttribute("data-idx");
+					playVoice(idx);
+				});
+			});
+		}
+
+		function playVoice(idx) {
+			const voices = window.speechSynthesis.getVoices();
+			const utter = new SpeechSynthesisUtterance(msgInput.value || "Testing voice");
+			utter.voice = voices[idx];
+			utter.rate = parseFloat(rateInput.value);
+			utter.pitch = parseFloat(pitchInput.value);
+			window.speechSynthesis.cancel();
+			window.speechSynthesis.speak(utter);
+		}
+
+		// voices may not be ready immediately
+		window.speechSynthesis.onvoiceschanged = populateVoices;
+		populateVoices(); // call once in case already loaded
+	</script>
+</body>
+
+</html>
