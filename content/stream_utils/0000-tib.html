@@ -13,7 +13,7 @@
 		window.PopUp = new PopUp();
 		import MonitorMessages from './tib_stuff/monitorMessages.js';
 		window.monitorMessages = new MonitorMessages();
-		import {YoutubeStuff} from './tib_stuff/youtubeStuff.js';
+		import YoutubeStuff from './tib_stuff/youtubeStuff.js';
 		window.YoutubeStuff = new YoutubeStuff();
 		import {assert} from './tib_stuff/assert.js';
 		window.assert = assert;
@@ -225,7 +225,7 @@
 		<script type='module'>
 			import {IntTimer} from "./tib_stuff/intTimer.js";
 			window.addEventListener('DOMContentLoaded', () => {
-				//add update for on change to reinit the timer				
+				//add update for on change to re-init the timer				
 				let ttsTimer = new IntTimer({
 					name: "ttsTimer",
 					timeoutDuration: document.getElementById("timeout_duration").value, // This is a DOM element!
@@ -764,7 +764,7 @@
 										title: 'Broadcast auto-selected!',
 										message: `Found and auto-selected: "${broadcast.snippet.title}"`,
 										details: `Broadcast ID: ${broadcastId}\nStatus: ${broadcast.snippet.liveBroadcastContent}`,
-										timeout: 5000
+										/*timeout: 5000*/
 									});
 								} else {
 									// Multiple broadcasts found - show selection info
@@ -782,7 +782,7 @@
 										title: `Multiple broadcasts found (${allBroadcasts.length})`,
 										message: 'Selected the first one by default. You can change the "broadcast index" below if needed.',
 										details: broadcastList,
-										timeout: 8000
+										/*timeout: 8000*/
 									});
 								}
 

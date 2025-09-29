@@ -1,6 +1,6 @@
 // ================== monitorMessages.js ==================
 import { IntTimer } from "./intTimer.js";
-import { YoutubeStuff } from "./youtubeStuff.js";
+import YoutubeStuff from "./youtubeStuff.js";
 
 function LSGI(id) {
 	return localStorage.getItem(String(id));
@@ -14,11 +14,14 @@ export default class MonitorMessages {
 	constructor(args = {}) {
 		this.args = args; // ✅ keep args for later access
 
+		this.firstStart = true; // never toggle back to true without good explicit reason
+
 		// only YouTube supported for now
 		this.yt = new YoutubeStuff({
-			updateYoutube: document.getElementById("youtube_enabled").getAttribute('checked'),
+			updateYoutube: document.getElementById("youtube_enabled").checked || false,
 			apiKey: LSGI("youtube_apiKey") || GEBI("youtube_apiKey") || undefined,
 			channelName: LSGI("youtube_channelName") || GEBI("youtube_channelName") || undefined,
+			broadcastId: LSGI("youtube_broadcastId") || GEBI("youtube_broadcastId") || undefined,
 		});
 
 		this.timer = new IntTimer({
@@ -29,6 +32,8 @@ export default class MonitorMessages {
 			emitOnStart: false,
 			tickAndTimeout: args.tickAndTimeout ?? true,
 
+			startListeners: [],
+
 			timeoutListeners: [this.GetMessages.bind(this)],
 			timeoutDuration: args.updateFreq ?? 30,
 			killOnTimeout: args.timeout ?? true,
@@ -37,8 +42,28 @@ export default class MonitorMessages {
 		this.messageIndex = 0;
 	}
 
-	StartMonitoring() {
-		this.timer.Start();
+	// In your monitoring class
+	async StartMonitoring() {
+		// Initial load - get all history
+		if (this.firstStart == true) {
+			if (this.yt.broadcastId == undefined) { this.yt.broadcastId = GEBI("youtube_broadcastId"); }
+			this.firstStart = false;
+			console.log(`Loading complete chat history for broadcast: ${this.yt.broadcastId}`);
+			await this.yt.GetAllMessages();
+		}
+		else {
+			console.log(`attempting to get live chat: ${this.yt.broadcastId}`);
+			await this.yt.GetMessages();
+		}
+
+		// Set up periodic updates for new messages
+		this.monitorInterval = setInterval(async () => {
+			try {
+				await this.yt.GetNewMessagesSinceLastUpdate();
+			} catch (error) {
+				console.error("Error during monitoring update:", error);
+			}
+		}, (this.args.updateFreq * 1000) ?? 3000);
 	}
 
 	StopMonitoring() {

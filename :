@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="/client_management.js" type="module"></script>
+	<title>game rankings</title>
+</head>
+
+<body>
+	<div>
+		<hgroup>
+			<h1>game rankings</h1>
+			<h6>by vulbybte</h6>
+		</hgroup>
+	</div>
+	<div>
+		<h2>pre-liminary</h2>
+	</div>
+	<div>
+		<p>
+			hello! i'm vulbyte and this is my ranking of games! <br>
+			i just wanted to add a little micro blerb about how this works before you read, because <em>my ranking is
+				not-conventional.</em>
+		</p>
+
+		<p>
+			so here's how it works, is this graph is 2d, the higher on the list it is the better of a game i think it is
+			overall.
+			<br>
+			then the ranking i give a game out of 10 is how well i think the game aligns with the perceived vision and overall
+			fun of the game.
+			<br>
+			so as an example, a 6/10 game which is boring but is genuinely revolutionary might be very very high on the list,
+			while a 9/10 game which is really fun might [very unlikely] be below it.
+			<br>
+			please also not the graphics meet a similar bar, so as an example a low poly game that flawlessly executes the
+			poly poly style they're going for will have a better graphics rating when a realistic game where there's a very
+			visible texture seam on the guns you hold
+			<br>
+			this is all obviously arbitrary so don't read into it too much :3
+		</p>
+	</div>
+	<div>
+		<style>
+			#review_table {
+				--rt_height: 7em;
+				background-color: black;
+				border-radius: 1em;
+				max-width: 60em;
+				width: 100%;
+				margin: auto;
+			}
+
+			tr:nth-child(1) {
+				height: 2em;
+			}
+
+			tr {
+				height: var(--rt_height);
+			}
+
+			td {
+				height: var(--rt_height);
+				margin: 0px;
+				padding: 0px;
+			}
+
+			td:nth-child(1) {
+				background-color: #400;
+				margin: auto;
+				width: calc(var(--rt_height)*460/215);
+			}
+
+
+			td:nth-child(1)>div>img {
+				margin: auto;
+				height: 100%;
+				width: 100%;
+				/*
+				width: 460px;
+				height: 215px;
+				*/
+			}
+
+			td:nth-child(1)>div>span {
+				display: inline-block;
+				margin: 0px;
+				height: 0px;
+				height: 0px;
+				width: 0px;
+				overflow: hidden;
+			}
+
+
+			td:nth-child(2) {
+				/*background-color: #040;*/
+				height: var(--rt_height);
+				display: flexbox;
+				font-size: 0.8em;
+				justify-content: space-between;
+				width: 5em;
+			}
+
+			td:nth-child(2)>div {
+				color: #aad;
+			}
+
+			td:nth-child(2)>div>span {
+				color: white;
+				font-size: 1em;
+			}
+
+			td:nth-child(3) {
+				overflow: scroll;
+			}
+
+			td:nth-child(3)>div {
+				font-size: 0.8em;
+				height: var(--rt_height);
+				overflow: scroll;
+				width: 100%;
+			}
+
+			td:nth-child(3)>p {}
+		</style>
+		<table id="review_table">
+			<tbody>
+				<tr>
+					<th>game</th>
+					<th>ratings</th>
+					<th>tldr</th>
+				</tr>
+				<tr>
+					<td>
+						<div><img
+								src="https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1229490/header.jpg?t=1740623813"><span>ultrakill</span>
+						</div>
+					</td>
+					<td>
+						<div>gameplay <span>8/10</span></div>
+						<div>graphics <span>9/10</span></div>
+						<div>audio <span>7/10</span></div>
+						<div>story <span>6/10</span></div>
+					</td>
+					<td>
+						<div>
+							<p>
+								`ultrakill is an amazing arena-shooter, the gameplay is by far the best being most similar to doom 2016
+								but with a much better feel and weapons
+								can actually combo each other instead of simply compliment.<br>
+								it uses graphics best described as "late ps1" but with some modern improves. although seen as a downside
+								it helps the game run at consistent stable framerates. <br>
+								the music is largely solid, each stage feeling like it fits each level without ever crossing the line
+								into
+								distracting or bad. the only thing i would argue is that i feel as if the music can feel a bit flat, and
+								more more variety with each song could help a lot`
+							</p>
+						</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<script type="module">
+			const reviews = [
+				{
+					"name": "ultrakill",
+					"img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1229490/header.jpg?t=1740623813",
+					"gameplay": 5,
+					"graphics": 9,
+					"audio": 7,
+					"story": 6,
+					"review": `ultrakill is an amazing arena-shooter, the gameplay is by far the best being most similar to doom 2016 but with a much better feel and weapons
+								can actually combo each other instead of simply compliment.<br>
+								it uses graphics best described as "late ps1" but with some modern improves. although seen as a downside
+								it helps the game run at consistent stable framerates. <br>
+								the music is largely solid, each stage feeling like it fits each level without ever crossing the line
+								into
+								distracting or bad. the only thing i would argue is that i feel as if the music can feel a bit flat, and
+								more more variety with each song could help a lot`
+				}
+			];
+
+			function CE(args = {}) {
+				//init args
+				const def = {
+					elem: args.elem || "div",
+					innerText: args.innerText || undefined,
+					innerHTML: args.innerHTML || undefined
+				};
+
+				let elem = document.createElement(def.elem);
+				if (def.innerText != undefined) {
+					elem.innerText = def.innerText;
+				}
+				if (def.innerHTML != undefined) {
+					elem.innerHTML = def.innerHTML;
+				}
+
+				console.log("returning element: " + elem);
+				return elem;
+			}
+
+			let table = document.getElementById("review_table").children[0];
+			for (let i = 0; i < reviews.length; ++i) {
+				let row = CE({elem: "tr"});
+
+				//column 1
+				let td1 = CE({elem: "td"});
+				let img = CE({elem: "img"});
+				img.src = reviews[i].img;
+				td1.appendChild(img);
+				row.appendChild(td1);
+
+				//column 2
+				let td2 = CE({elem: "td"});
+				let gameplay = CE({elem: "div"});
+				let r8 = reviews[i].gameplay;
+				let rating = CE({elem: "span", innerText: r8});
+				let r8_color = (
+					"#"
+					+ String((r8 / 10 * 255).toString(16))
+					+ "ff"
+					+ String(((((r8 - 10) * -1) / 10) * 255).toString(16))
+				);
+				console.log(r8_color);
+				rating.style.color = r8_color;
+				gameplay.appendChild(rating);
+				td2.appendChild(gameplay);
+				row.appendChild(td2);
+				/*
+				<td>
+					<div>gameplay <span>8/10</span></div>
+					<div>graphics <span>9/10</span></div>
+					<div>audio <span>7/10</span></div>
+					<div>story <span>6/10</span></div>
+				</td>
+				*/
+
+
+				//column 3
+				table.appendChild(row);
+			}
+
+		</script>
+	</div>
+
+</body>
+
+</html>

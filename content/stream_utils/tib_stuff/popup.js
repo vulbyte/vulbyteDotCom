@@ -1,6 +1,6 @@
 // ================== popup.js ==================
 export default class POPUP {
-	new({ title = '', message = '', prompt = '', onAccept = null, timeout = 3000, details = '' } = {}) {
+	new({ title = '', message = '', prompt = '', onAccept = null, timeout = 0, details = '' } = {}) {
 		const popup = document.createElement('div');
 		popup.id = 'popup';
 		popup.style.position = 'fixed';
