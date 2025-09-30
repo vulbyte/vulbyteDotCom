@@ -63,7 +63,7 @@ export default class MonitorMessages {
 		this.monitorInterval = setInterval(async () => {
 			try {
 				console.log(`Fetching messages at ${new Date().toISOString()}`);
-				await this.GetMessages();
+				await this.yt.GetMessages(); // WARN: THIS ERRORS FOR SOME REASON AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 			} catch (error) {
 				console.error("Error during monitoring update:", error);
 			}

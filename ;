@@ -161,7 +161,7 @@
 			};
 			const reviews = [
 				{
-					name: "ultrakill (early access)",
+					name: "ultrakill",
 					img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1229490/header.jpg?t=1740623813",
 					links: {
 						gog: "https://www.gog.com/en/game/ultrakill",
@@ -170,11 +170,11 @@
 						website: "https://newbloodstore.com/collections/ultrakill",
 					},
 					rankings: {
-						gameplay: 10,
+						gameplay: 9,
 						graphics: 9,
 						audio: 8,
 						story: 6,
-						uniqueness: 10,
+						uniqueness: 8,
 					},
 					review: `ultrakill is an amazing arena-shooter, the gameplay is by far the best being most similar to doom 2016 but with a much better feel and weapons
 								can actually combo each other instead of simply compliment.<br>
@@ -201,443 +201,83 @@
 					name: "cats are liquid: a better place",
 					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1188080/header.jpg?t=1740086473',
 					rankings: {
-						gameplay: 6.5,
-						graphics: 7,
-						audio: 7,
-						story: 7,
-						uniqueness: 7,
-					},
-					review: ''
-				},
-				{
-					name: "hollow knight (1)",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/367520/header.jpg?t=1695270428',
-					rankings: {
-						gameplay: 9,
-						graphics: 9,
-						audio: 7,
-						story: 6.5,
-						uniqueness: 9,
-					},
-					review: ''
-				},
-				{
-					name: "pizza tower",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2231450/header.jpg?t=1732516978',
-					rankings: {
-						gameplay: 9,
-						graphics: 8.5,
-						audio: 8,
-						story: 6.5,
-						uniqueness: 9,
-					},
-					review: ''
-				},
-				{
-					name: "plants vs zombies (goty edition)",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3590/header.jpg?t=1738970324',
-					rankings: {
-						gameplay: 9,
-						graphics: 6.5,
-						audio: 9,
-						story: 6,
-						uniqueness: 9,
-					},
-					review: ''
-				},
-				{
-					name: "the brookhaven experiment",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/440630/header.jpg?t=1715711024',
-					rankings: {
-						gameplay: 7,
-						graphics: 6.5,
-						audio: 6.5,
-						story: 6.5,
-						uniqueness: 7,
-					},
-					review: ''
-				},
-				{
-					name: "sonic the hedgehog: 06",
-					img: 'https://upload.wikimedia.org/wikipedia/en/d/d1/Sonic_the_Hedgehog_Next-Gen_Box_Art.JPG',
-					rankings: {
-						gameplay: 3,
-						graphics: 3,
-						audio: 6.5,
-						story: 4,
-						uniqueness: 4,
-					},
-					review: ''
-				},
-				{
-					name: "deltarune (chapers 1-4)",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1671210/7ccda5b1631d2e60cc756a3271e845dbb9168821/header.jpg?t=1749252480',
-					rankings: {
-						gameplay: 10,
-						graphics: 8,
-						audio: 8,
-						story: 7,
-						uniqueness: 9,
-					},
-					review: ''
-				},
-				{
-					name: "FNAF: secret of the mimic",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2215390/527bbebaa5764de58528487b3f2142c44a58b267/header.jpg?t=1758038461',
-					rankings: {
-						gameplay: 6,
-						graphics: 9,
-						audio: 9,
-						story: 8,
-						uniqueness: 7,
-					},
-					review: ''
-				},
-				{
-					name: "r6 siege (y10s4)",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/359550/12ea3dc64ca6aae755efe83e96b6c658876bd6d2/header_alt_assets_14.jpg?t=1757692841',
-					rankings: {
-						gameplay: 7,
-						graphics: 6,
-						audio: 7,
-						story: 3,
-						uniqueness: 9,
-					},
-					review: ''
-				},
-				{
-					name: "super mario 64 ds",
-					img: 'https://i.ytimg.com/vi/lmSdaKBdcFQ/maxresdefault.jpg',
-					rankings: {
-						gameplay: 7,
-						graphics: 7,
-						audio: 7,
-						story: 6,
-						uniqueness: 8,
-					},
-					review: ''
-				},
-				{
-					name: "scooby-doo: night of 100 frights",
-					img: 'https://upload.wikimedia.org/wikipedia/en/9/9b/Scooby-Doo%21_Night_of_100_Frights_Coverart.png',
-					rankings: {
-						gameplay: 7,
-						graphics: 7,
-						audio: 8,
-						story: 6,
-						uniqueness: 8,
-					},
-					review: ''
-				},
-				{
-					name: "ENA: Dream BBQ (demo)",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2134320/header.jpg?t=1755357900',
-					rankings: {
-						gameplay: 6.5,
-						graphics: 10,
-						audio: 8,
-						story: 7,
+						gameplay: 5,
+						graphics: 5,
+						audio: 5,
+						story: 5,
 						uniqueness: 5,
 					},
 					review: ''
 				},
 				{
-					name: "minecraft",
-					img: 'https://xboxwire.thesourcemediaassets.com/sites/2/2024/05/Hero-8c18da7c19a1a8811ddb.jpg',
+					name: "",
+					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps//header.jpg?t=1740086473',
 					rankings: {
-						gameplay: 7,
-						graphics: 6,
-						audio: 9,
-						story: 3,
-						uniqueness: 9,
+						gameplay: 1,
+						graphics: 1,
+						audio: 1,
+						story: 1,
+						uniqueness: 1,
 					},
 					review: ''
 				},
 				{
-					name: "anti-chamber",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/219890/header.jpg?t=1525832559',
+					name: "",
+					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps//header.jpg?t=1740086473',
 					rankings: {
-						gameplay: 6.7,
-						graphics: 8,
-						audio: 6,
-						story: 6.5,
-						uniqueness: 9,
-					},
-					review: ''
-				},
-				{
-					name: "sonic: unleased",
-					img: 'https://upload.wikimedia.org/wikipedia/en/thumb/a/a0/Sonic_unleashed_boxart.jpg/250px-Sonic_unleashed_boxart.jpg',
-					rankings: {
-						gameplay: ((8 + 3) / 2),
-						graphics: 7,
-						audio: 6,
-						story: 7,
-						uniqueness: 6,
-					},
-					review: ''
-				},
-				{
-					name: "wild assault",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2827230/29dd4dd566d8b7a9f0bb4cf6675e099cb8bec97d/header.jpg?t=1758785085',
-					rankings: {
-						gameplay: 7,
-						graphics: 8,
-						audio: 7,
-						story: 3,
-						uniqueness: 8,
-					},
-					review: ''
-				},
-				{
-					name: "ape escape 2",
-					img: 'https://upload.wikimedia.org/wikipedia/en/c/c1/Ape_Escape_2_Coverart.png',
-					rankings: {
-						gameplay: 7,
-						graphics: 7,
-						audio: 7.5,
-						story: 8,
-						uniqueness: 8.5,
-					},
-					review: ''
-				},
-				{
-					name: "R.E.P.O",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3241660/1ea445e044a2d5b09cfa8291350b63ebed6e5741/header.jpg?t=1750949552',
-					rankings: {
-						gameplay: 7,
-						graphics: 9,
-						audio: 7.5,
+						gameplay: 5,
+						graphics: 5,
+						audio: 5,
 						story: 5,
-						uniqueness: 7,
-					},
-					review: ''
-				},
-				{
-					name: "Ape Escape: on the loose (psp remake)",
-					img: 'https://m.media-amazon.com/images/I/71VlQednaDL.jpg',
-					rankings: {
-						gameplay: 7,
-						graphics: 8,
-						audio: 8,
-						story: 8,
-						uniqueness: 9,
-					},
-					review: ''
-				},
-				{
-					name: "overwatch 2",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2357570/999173ea7fa3a4541fbf036256b5c58ee0a97df0/header_alt_assets_16.jpg?t=1757964658',
-					rankings: {
-						gameplay: 6,
-						graphics: 8,
-						audio: 7,
-						story: 6,
-						uniqueness: 7,
-					},
-					review: ''
-				},
-				{
-					name: "Call Of Duty: WWII",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/476600/header.jpg?t=1751302904',
-					rankings: {
-						gameplay: 7.5,
-						graphics: 9,
-						audio: 7,
-						story: 3,
-						uniqueness: 3,
-					},
-					review: ''
-				},
-				{
-					name: "paladins (2025)",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/444090/header.jpg?t=1713560419',
-					rankings: {
-						gameplay: 6.5,
-						graphics: 7,
-						audio: 6.5,
-						story: 5,
-						uniqueness: 6,
-					},
-					review: ''
-				},
-				{
-					name: "Five nights at freddies: ruin (dlc)",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1924720/header.jpg?t=1690268396',
-					rankings: {
-						gameplay: 6,
-						graphics: 9,
-						audio: 8,
-						story: 8,
-						uniqueness: 8,
-					},
-					review: ''
-				},
-				{
-					name: "Five nights at freddies: security breach",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/747660/header.jpg?t=1686587905',
-					rankings: {
-						gameplay: 7,
-						graphics: 6,
-						audio: 7.5,
-						story: 6,
-						uniqueness: 7.5,
-					},
-					review: ''
-				},
-				{
-					name: "dark souls 3",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/374320/header.jpg?t=1748630784',
-					rankings: {
-						gameplay: 7,
-						graphics: 8,
-						audio: 9,
-						story: 6.5,
-						uniqueness: 9,
-					},
-					review: ''
-				},
-				{
-					name: "SAS:4 zombie assault",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/678800/header.jpg?t=1680706586',
-					rankings: {
-						gameplay: 8,
-						graphics: 7,
-						audio: 6,
-						story: 6.5,
-						uniqueness: 6.5,
-					},
-					review: ''
-				},
-				{
-					name: "titanfall 2",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1237970/header.jpg?t=1726160226',
-					rankings: {
-						gameplay: 8,
-						graphics: 9,
-						audio: 7,
-						story: 8,
-						uniqueness: 10,
-					},
-					review: ''
-				},
-				{
-					name: "sonic: generations",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/71340/header.jpg?t=1704380608',
-					rankings: {
-						gameplay: 7,
-						graphics: 8,
-						audio: 7,
-						story: 6,
 						uniqueness: 5,
 					},
 					review: ''
 				},
 				{
-					name: "sonic: cd (american version)",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/200940/header.jpg?t=1653084020',
+					name: "",
+					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps//header.jpg?t=1740086473',
 					rankings: {
-						gameplay: 8,
-						graphics: 9,
-						audio: 7,
-						story: 7,
-						uniqueness: 8,
-					},
-					review: ''
-				},
-				{
-					name: "sonic: forces (switch version)",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/637100/header.jpg?t=1721835292',
-					rankings: {
-						gameplay: 6.5,
-						graphics: 7,
-						audio: 6.5,
-						story: 6,
-						uniqueness: 6,
-					},
-					review: ''
-				},
-				{
-					name: "thumper",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/356400/header.jpg?t=1677622045',
-					rankings: {
-						gameplay: 7,
-						graphics: 7,
-						audio: 8,
+						gameplay: 5,
+						graphics: 5,
+						audio: 5,
 						story: 5,
-						uniqueness: 9,
+						uniqueness: 5,
 					},
 					review: ''
 				},
 				{
-					name: "lethal company",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1966720/header.jpg?t=1750273815',
+					name: "",
+					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps//header.jpg?t=1740086473',
 					rankings: {
-						gameplay: 7,
-						graphics: 7,
-						audio: 8,
-						story: 7,
-						uniquenes: 8,
-					},
-					review: ''
-				},
-				{
-					name: "battle bit: remastered",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/671860/header.jpg?t=1730393449',
-					rankings: {
-						gameplay: 7,
-						graphics: 7,
-						audio: 6,
+						gameplay: 5,
+						graphics: 5,
+						audio: 5,
 						story: 5,
-						uniqueness: 8,
+						uniqueness: 5,
 					},
 					review: ''
 				},
 				{
-					name: "pilgrim",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2965660/header.jpg?t=1724085112',
+					name: "",
+					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps//header.jpg?t=1740086473',
 					rankings: {
-						gameplay: 7,
-						graphics: 7,
-						audio: 6,
-						story: 6,
-						uniqueness: 8,
-					},
-					review: ''
-				},
-				{
-					name: "granny",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/962400/header.jpg?t=1687541775',
-					rankings: {
-						gameplay: 8,
-						graphics: 7,
-						audio: 6,
-						story: 7,
-						uniqueness: 7.5,
-					},
-					review: ''
-				},
-				{
-					name: "it steals",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1349060/header.jpg?t=1667091081',
-					rankings: {
-						gameplay: 9,
-						graphics: 9,
-						audio: 8,
+						gameplay: 5,
+						graphics: 5,
+						audio: 5,
 						story: 5,
-						uniqueness: 8,
+						uniqueness: 5,
 					},
 					review: ''
 				},
 				{
-					name: "five nights at freddy's",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/319510/header.jpg?t=1666889251',
+					name: "",
+					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps//header.jpg?t=1740086473',
 					rankings: {
-						gameplay: 6.5,
-						graphics: 7.5,
-						audio: 6,
-						story: 6,
-						uniqueness: 10,
+						gameplay: 5,
+						graphics: 5,
+						audio: 5,
+						story: 5,
+						uniqueness: 5,
 					},
 					review: ''
 				},
