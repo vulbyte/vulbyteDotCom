@@ -44,8 +44,23 @@
 	</div>
 	<div>
 		<style>
+			td:nth-child(1)>#store_links>a>img {
+				height: var(--icon_wh);
+				width: var(--icon_wh);
+			}
+
+			td:nth-child(1)>#store_links>a>img.iconitch {
+				filter: invert(1);
+			}
+
+			td:nth-child(1)>#store_links>a>img.iconyoutube {
+				height: calc(var(--icon_wh) * 0.70);
+				width: var(--icon_wh);
+			}
+
 			#review_table {
 				--rt_height: 9em;
+				--icon_wh: 1.2em;
 				background-color: black;
 				border-radius: 1em;
 				max-width: 60em;
@@ -64,7 +79,7 @@
 			td {
 				height: var(--rt_height);
 				margin: 0px;
-				padding: 0px;
+				padding: 0px * 0.80;
 			}
 
 			td:nth-child(1) {
@@ -74,8 +89,8 @@
 			}
 
 			td:nth-child(1)>#store_links>a>img {
-				height: 1.2em;
-				width: 1.2em;
+				height: var(--icon_wh);
+				width: var(--icon_wh);
 			}
 
 			td:nth-child(1)>#store_links>a>img#itch {
@@ -136,699 +151,994 @@
 				height: 100%;
 			}
 		</style>
-		<table id="review_table">
-			<tbody>
-				<tr>
-					<th>game</th>
-					<th>ratings</th>
-					<th>tldr</th>
-				</tr>
-			</tbody>
-		</table>
-		<script type="module">
-			const icons = {
-				appstore: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/App_Store_%28iOS%29.svg/2048px-App_Store_%28iOS%29.svg.png",
-				epic: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Epic_Games_logo.svg/1032px-Epic_Games_logo.svg.png?20180409155704",
-				gamejolt: "https://m.gjcdn.net/fireside-post-image/600/24010743-ll-sfbhunum-v4.webp",
-				gog: "https://www.gog.com/pressroom/wp-content/uploads/2025/06/GOG_LOGO_WHITE.png",
-				itch: "https://static.itch.io/images/itchio-textless-black.svg",
-				nintendo: "https://static.wikia.nocookie.net/logopedia/images/b/be/Switch_eShop.svg/revision/latest/scale-to-width-down/250?cb=20220615075106",
-				playstation: "https://brandlogos.net/wp-content/uploads/2022/09/playstation_store-logo_brandlogos.net_q6kzh-512x512.png",
-				playstore: "https://storage.googleapis.com/gweb-uniblog-publish-prod/images/Logo_Play_512px_clr_nGVTgYY.max-1440x810.png",
-				steam: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/1024px-Steam_icon_logo.svg.png",
-				website: "/assets/website_icon.svg",
-				xbox: "https://www.freepnglogos.com/uploads/xbox-png/xbox-png-download-best-xbox-png-clipartmagm-15.png",
-			};
-			const reviews = [
-				{
-					name: "ultrakill (early access)",
-					img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1229490/header.jpg?t=1740623813",
-					links: {
-						gog: "https://www.gog.com/en/game/ultrakill",
-						itch: "https://hakita.itch.io/ultrakill-prelude",
-						steam: "https://store.steampowered.com/app/1229490/ULTRAKILL/",
-						website: "https://newbloodstore.com/collections/ultrakill",
-					},
-					rankings: {
-						gameplay: 10,
-						graphics: 9,
-						audio: 8,
-						story: 6,
-						uniqueness: 10,
-					},
-					review: `ultrakill is an amazing arena-shooter, the gameplay is by far the best being most similar to doom 2016 but with a much better feel and weapons
-								can actually combo each other instead of simply compliment.<br>
-								it uses graphics best described as "late ps1" but with some modern improves. although seen as a downside
-								it helps the game run at consistent stable framerates. <br>
-								the music is largely solid, each stage feeling like it fits each level without ever crossing the line
-								into
-								distracting or bad. the only thing i would argue is that i feel as if the music can feel a bit flat, and
-								more more variety with each song could help a lot`
-				},
-				{
-					"name": "subnautica",
-					"img": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/264710/header.jpg?t=1751944840",
-					rankings: {
-						"gameplay": 7,
-						"graphics": 9,
-						"audio": 9,
-						"story": 6,
-						uniqueness: 10,
-					},
-					"review": `subnautica is a fantastic game that is truely unique, each area feels expansive and unique with plenty of sprawling environments to explore. the creative way they used a volcanic pillar to justify the 2km³ map feel much more real and justified. as well as the great biodiversity and great sense of exploration, only complaints are that grinding for materials can be a bit tedious, some audio bugs, some ai just going through walls, and some other stuff i'm sure i'm forgetting. overall the game is very fun and i personally consider it a must play`
-				},
-				{
-					name: "cats are liquid: a better place",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1188080/header.jpg?t=1740086473',
-					rankings: {
-						gameplay: 6.5,
-						graphics: 7,
-						audio: 7,
-						story: 7,
-						uniqueness: 7,
-					},
-					review: ''
-				},
-				{
-					name: "hollow knight (1)",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/367520/header.jpg?t=1695270428',
-					rankings: {
-						gameplay: 9,
-						graphics: 9,
-						audio: 7,
-						story: 6.5,
-						uniqueness: 9,
-					},
-					review: ''
-				},
-				{
-					name: "pizza tower",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2231450/header.jpg?t=1732516978',
-					rankings: {
-						gameplay: 9,
-						graphics: 8.5,
-						audio: 8,
-						story: 6.5,
-						uniqueness: 9,
-					},
-					review: ''
-				},
-				{
-					name: "plants vs zombies (goty edition)",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3590/header.jpg?t=1738970324',
-					rankings: {
-						gameplay: 9,
-						graphics: 6.5,
-						audio: 9,
-						story: 6,
-						uniqueness: 9,
-					},
-					review: ''
-				},
-				{
-					name: "the brookhaven experiment",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/440630/header.jpg?t=1715711024',
-					rankings: {
-						gameplay: 7,
-						graphics: 6.5,
-						audio: 6.5,
-						story: 6.5,
-						uniqueness: 7,
-					},
-					review: ''
-				},
-				{
-					name: "sonic the hedgehog: 06",
-					img: 'https://upload.wikimedia.org/wikipedia/en/d/d1/Sonic_the_Hedgehog_Next-Gen_Box_Art.JPG',
-					rankings: {
-						gameplay: 3,
-						graphics: 3,
-						audio: 6.5,
-						story: 4,
-						uniqueness: 4,
-					},
-					review: ''
-				},
-				{
-					name: "deltarune (chapers 1-4)",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1671210/7ccda5b1631d2e60cc756a3271e845dbb9168821/header.jpg?t=1749252480',
-					rankings: {
-						gameplay: 10,
-						graphics: 8,
-						audio: 8,
-						story: 7,
-						uniqueness: 9,
-					},
-					review: ''
-				},
-				{
-					name: "FNAF: secret of the mimic",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2215390/527bbebaa5764de58528487b3f2142c44a58b267/header.jpg?t=1758038461',
-					rankings: {
-						gameplay: 6,
-						graphics: 9,
-						audio: 9,
-						story: 8,
-						uniqueness: 7,
-					},
-					review: ''
-				},
-				{
-					name: "r6 siege (y10s4)",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/359550/12ea3dc64ca6aae755efe83e96b6c658876bd6d2/header_alt_assets_14.jpg?t=1757692841',
-					rankings: {
-						gameplay: 7,
-						graphics: 6,
-						audio: 7,
-						story: 3,
-						uniqueness: 9,
-					},
-					review: ''
-				},
-				{
-					name: "super mario 64 ds",
-					img: 'https://i.ytimg.com/vi/lmSdaKBdcFQ/maxresdefault.jpg',
-					rankings: {
-						gameplay: 7,
-						graphics: 7,
-						audio: 7,
-						story: 6,
-						uniqueness: 8,
-					},
-					review: ''
-				},
-				{
-					name: "scooby-doo: night of 100 frights",
-					img: 'https://upload.wikimedia.org/wikipedia/en/9/9b/Scooby-Doo%21_Night_of_100_Frights_Coverart.png',
-					rankings: {
-						gameplay: 7,
-						graphics: 7,
-						audio: 8,
-						story: 6,
-						uniqueness: 8,
-					},
-					review: ''
-				},
-				{
-					name: "ENA: Dream BBQ (demo)",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2134320/header.jpg?t=1755357900',
-					rankings: {
-						gameplay: 6.5,
-						graphics: 10,
-						audio: 8,
-						story: 7,
-						uniqueness: 5,
-					},
-					review: ''
-				},
-				{
-					name: "minecraft",
-					img: 'https://xboxwire.thesourcemediaassets.com/sites/2/2024/05/Hero-8c18da7c19a1a8811ddb.jpg',
-					rankings: {
-						gameplay: 7,
-						graphics: 6,
-						audio: 9,
-						story: 3,
-						uniqueness: 9,
-					},
-					review: ''
-				},
-				{
-					name: "anti-chamber",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/219890/header.jpg?t=1525832559',
-					rankings: {
-						gameplay: 6.7,
-						graphics: 8,
-						audio: 6,
-						story: 6.5,
-						uniqueness: 9,
-					},
-					review: ''
-				},
-				{
-					name: "sonic: unleased",
-					img: 'https://upload.wikimedia.org/wikipedia/en/thumb/a/a0/Sonic_unleashed_boxart.jpg/250px-Sonic_unleashed_boxart.jpg',
-					rankings: {
-						gameplay: ((8 + 3) / 2),
-						graphics: 7,
-						audio: 6,
-						story: 7,
-						uniqueness: 6,
-					},
-					review: ''
-				},
-				{
-					name: "wild assault",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2827230/29dd4dd566d8b7a9f0bb4cf6675e099cb8bec97d/header.jpg?t=1758785085',
-					rankings: {
-						gameplay: 7,
-						graphics: 8,
-						audio: 7,
-						story: 3,
-						uniqueness: 8,
-					},
-					review: ''
-				},
-				{
-					name: "ape escape 2",
-					img: 'https://upload.wikimedia.org/wikipedia/en/c/c1/Ape_Escape_2_Coverart.png',
-					rankings: {
-						gameplay: 7,
-						graphics: 7,
-						audio: 7.5,
-						story: 8,
-						uniqueness: 8.5,
-					},
-					review: ''
-				},
-				{
-					name: "R.E.P.O",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3241660/1ea445e044a2d5b09cfa8291350b63ebed6e5741/header.jpg?t=1750949552',
-					rankings: {
-						gameplay: 7,
-						graphics: 9,
-						audio: 7.5,
-						story: 5,
-						uniqueness: 7,
-					},
-					review: ''
-				},
-				{
-					name: "Ape Escape: on the loose (psp remake)",
-					img: 'https://m.media-amazon.com/images/I/71VlQednaDL.jpg',
-					rankings: {
-						gameplay: 7,
-						graphics: 8,
-						audio: 8,
-						story: 8,
-						uniqueness: 9,
-					},
-					review: ''
-				},
-				{
-					name: "overwatch 2",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2357570/999173ea7fa3a4541fbf036256b5c58ee0a97df0/header_alt_assets_16.jpg?t=1757964658',
-					rankings: {
-						gameplay: 6,
-						graphics: 8,
-						audio: 7,
-						story: 6,
-						uniqueness: 7,
-					},
-					review: ''
-				},
-				{
-					name: "Call Of Duty: WWII",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/476600/header.jpg?t=1751302904',
-					rankings: {
-						gameplay: 7.5,
-						graphics: 9,
-						audio: 7,
-						story: 3,
-						uniqueness: 3,
-					},
-					review: ''
-				},
-				{
-					name: "paladins (2025)",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/444090/header.jpg?t=1713560419',
-					rankings: {
-						gameplay: 6.5,
-						graphics: 7,
-						audio: 6.5,
-						story: 5,
-						uniqueness: 6,
-					},
-					review: ''
-				},
-				{
-					name: "Five nights at freddies: ruin (dlc)",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1924720/header.jpg?t=1690268396',
-					rankings: {
-						gameplay: 6,
-						graphics: 9,
-						audio: 8,
-						story: 8,
-						uniqueness: 8,
-					},
-					review: ''
-				},
-				{
-					name: "Five nights at freddies: security breach",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/747660/header.jpg?t=1686587905',
-					rankings: {
-						gameplay: 7,
-						graphics: 6,
-						audio: 7.5,
-						story: 6,
-						uniqueness: 7.5,
-					},
-					review: ''
-				},
-				{
-					name: "dark souls 3",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/374320/header.jpg?t=1748630784',
-					rankings: {
-						gameplay: 7,
-						graphics: 8,
-						audio: 9,
-						story: 6.5,
-						uniqueness: 9,
-					},
-					review: ''
-				},
-				{
-					name: "SAS:4 zombie assault",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/678800/header.jpg?t=1680706586',
-					rankings: {
-						gameplay: 8,
-						graphics: 7,
-						audio: 6,
-						story: 6.5,
-						uniqueness: 6.5,
-					},
-					review: ''
-				},
-				{
-					name: "titanfall 2",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1237970/header.jpg?t=1726160226',
-					rankings: {
-						gameplay: 8,
-						graphics: 9,
-						audio: 7,
-						story: 8,
-						uniqueness: 10,
-					},
-					review: ''
-				},
-				{
-					name: "sonic: generations",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/71340/header.jpg?t=1704380608',
-					rankings: {
-						gameplay: 7,
-						graphics: 8,
-						audio: 7,
-						story: 6,
-						uniqueness: 5,
-					},
-					review: ''
-				},
-				{
-					name: "sonic: cd (american version)",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/200940/header.jpg?t=1653084020',
-					rankings: {
-						gameplay: 8,
-						graphics: 9,
-						audio: 7,
-						story: 7,
-						uniqueness: 8,
-					},
-					review: ''
-				},
-				{
-					name: "sonic: forces (switch version)",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/637100/header.jpg?t=1721835292',
-					rankings: {
-						gameplay: 6.5,
-						graphics: 7,
-						audio: 6.5,
-						story: 6,
-						uniqueness: 6,
-					},
-					review: ''
-				},
-				{
-					name: "thumper",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/356400/header.jpg?t=1677622045',
-					rankings: {
-						gameplay: 7,
-						graphics: 7,
-						audio: 8,
-						story: 5,
-						uniqueness: 9,
-					},
-					review: ''
-				},
-				{
-					name: "lethal company",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1966720/header.jpg?t=1750273815',
-					rankings: {
-						gameplay: 7,
-						graphics: 7,
-						audio: 8,
-						story: 7,
-						uniquenes: 8,
-					},
-					review: ''
-				},
-				{
-					name: "battle bit: remastered",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/671860/header.jpg?t=1730393449',
-					rankings: {
-						gameplay: 7,
-						graphics: 7,
-						audio: 6,
-						story: 5,
-						uniqueness: 8,
-					},
-					review: ''
-				},
-				{
-					name: "pilgrim",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2965660/header.jpg?t=1724085112',
-					rankings: {
-						gameplay: 7,
-						graphics: 7,
-						audio: 6,
-						story: 6,
-						uniqueness: 8,
-					},
-					review: ''
-				},
-				{
-					name: "granny",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/962400/header.jpg?t=1687541775',
-					rankings: {
-						gameplay: 8,
-						graphics: 7,
-						audio: 6,
-						story: 7,
-						uniqueness: 7.5,
-					},
-					review: ''
-				},
-				{
-					name: "it steals",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1349060/header.jpg?t=1667091081',
-					rankings: {
-						gameplay: 9,
-						graphics: 9,
-						audio: 8,
-						story: 5,
-						uniqueness: 8,
-					},
-					review: ''
-				},
-				{
-					name: "five nights at freddy's",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/319510/header.jpg?t=1666889251',
-					rankings: {
-						gameplay: 6.5,
-						graphics: 7.5,
-						audio: 6,
-						story: 6,
-						uniqueness: 10,
-					},
-					review: ''
-				},
-				/*
-				{
-					name: "",
-					img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps//header.jpg?t=1740086473',
-					rankings: {
-						gameplay: 5,
-						graphics: 5,
-						audio: 5,
-						story: 5,
-						uniqueness: 5,
-					},
-					review: ''
-				},
-				*/
-			];
+		<div style="padding:1em;">
+			<label for="sortingOption">sorting method:</label>
+			<select id="sortingOption">
+				<!--
+				<option value="dateAdded">date added</option>
+				<option value="dateH">date: new to old</option>
+				<option value="dateL">date: old to new</option>
 
-			function CE(args = {}) {
-				//init args
-				const def = {
-					elem: args.elem || "div",
-					innerText: args.innerText || undefined,
-					innerHTML: args.innerHTML || undefined, // will overwrite innerText
-					href: args.href || undefined,
-					alt: args.alt || undefined,
-					src: args.src || undefined,
-					id: args.id || undefined,
-				};
+				<option value="overallH">overall: high to low</option>
+				<option value="overallL">overall: low to high</option>
 
-				let elem = document.createElement(def.elem);
-				if (def.innerText != undefined) {
-					elem.innerText = def.innerText;
-				}
-				if (def.innerHTML != undefined) {
-					elem.innerHTML = def.innerHTML;
-				}
-				elem.href = def.href;
-				elem.target = "_blank";
-				elem.alt = def.alt;
-				elem.src = def.src;
-				if (def.id != undefined) {elem.id = def.id};
+				<option value="gameplayH">gameplay: high to low</option>
+				<option value="gameplayL">gameplay: low to high</option>
 
-				//console.log("returning element: " + elem);
-				return elem;
-			}
+				<option value="audioH">audio: high to low</option>
+				<option value="audioL">audio: low to high</option>
 
-			let table = document.getElementById("review_table").children[0];
-			for (let i = 0; i < reviews.length; ++i) {
-				let row = CE({elem: "tr"});
+				<option value="storyH">story: high to low</option>
+				<option value="storyL">story: low to high</option>
 
-				//column 1
-				let td1 = CE({elem: "td"});
-				let img = CE({elem: "img"});
-				img.src = reviews[i].img;
-				img.width = "460";
-				img.height = "215";
-				td1.appendChild(img);
-				if (reviews[i].links != undefined) {
-					console.log(`links for ${reviews[i].name} are: `, reviews[i].links);
-					let links = CE({elem: "div", id: "store_links"});
-					links.id = "store_links";
-					links.style.display = "flex";
-					links.style.justifyContent = "space-evenly";
-					let a, storeIcon, storeName, icon;
-					console.log("stores linked:", Array(reviews[i].links).length);
-					for (let j = 0; j < Object.keys(reviews[i].links).length; ++j) {
-						storeName = Object.keys(reviews[i].links)[j];
-						console.log("storename: ", `"${storeName}"`);
-						a = CE({elem: "a", href: reviews[i].links[storeName]});
-						icon = icons[storeName];
-						console.log("storeIcon:", icon);
-						storeIcon = CE({
-							elem: "img", src: `${icon}`, alt: storeName, id: storeName
+				<option value="graphicsH">graphics: high to low</option>
+				<option value="graphicsL">graphics: low to high</option>
+
+				<option value="uniquenessH">uniqueness: high to low</option>
+				<option value="uniquenessL">uniqueness: low to high</option>
+-->
+			</select>
+
+			<script>
+				document.addEventListener('DOMContentLoaded', () => {
+					// Get the table and all rows (excluding header)
+
+					const table = document.getElementById('review_table');
+					const tbody = table.querySelector('tbody');
+					const headerRow = tbody.querySelector('tr:first-child');
+					const rows = Array.from(tbody.querySelectorAll('tr')).filter(row => row !== headerRow);
+
+					// Extract all unique IDs from the second td elements
+					const rankingIds = new Set();
+					rows.forEach(row => {
+						const secondTd = row.querySelectorAll('td')[1];
+						if (secondTd) {
+							const divsWithIds = secondTd.querySelectorAll('div[id]');
+							divsWithIds.forEach(div => rankingIds.add(div.id));
+						}
+					});
+
+					// Create the select element
+					/*const select = document.createElement('select');
+					select.name = 'sortingOptions';
+					select.id = 'sortingOptions';
+					select.style.margin = '10px 0';
+					select.style.padding = '5px';
+					select.style.fontSize = '14px';
+					*/
+					const select = document.getElementById("sortingOption");
+
+					// Add default option
+					const defaultOption = document.createElement('option');
+					defaultOption.value = '';
+					defaultOption.textContent = 'Select sorting option';
+					select.appendChild(defaultOption);
+
+					// Add options for each ranking ID (ascending and descending)
+					rankingIds.forEach(id => {
+						// Descending option (High to Low) - typically what users want first
+						const descOption = document.createElement('option');
+						descOption.value = `${id}-desc`;
+						descOption.textContent = `${id} (High to Low)`;
+						select.appendChild(descOption);
+
+						// Ascending option (Low to High)
+						const ascOption = document.createElement('option');
+						ascOption.value = `${id}-asc`;
+						ascOption.textContent = `${id} (Low to High)`;
+						select.appendChild(ascOption);
+					});
+
+					// Function to extract numeric value from a div
+					function getNumericValue(row, id) {
+						const secondTd = row.querySelectorAll('td')[1];
+						if (!secondTd) return 0;
+
+						const targetDiv = secondTd.querySelector(`#${id}`);
+						if (!targetDiv) return 0;
+
+						// Extract number - handles formats like "8.6 /10" or "gameplay7/10" or "gameplay<span>7/10</span>"
+						const text = targetDiv.textContent.trim();
+						const match = text.match(/(\d+(?:\.\d+)?)\s*\/\s*10/);
+						return match ? parseFloat(match[1]) : 0;
+					}
+
+					// Sort function
+					function sortTable(id, direction) {
+						const sortedRows = [...rows].sort((a, b) => {
+							const aValue = getNumericValue(a, id);
+							const bValue = getNumericValue(b, id);
+
+							if (direction === 'asc') {
+								return aValue - bValue;
+							} else {
+								return bValue - aValue;
+							}
 						});
-						a.appendChild(storeIcon);
-						links.appendChild(a);
+
+						// Clear tbody and re-append header + sorted rows
+						tbody.innerHTML = '';
+						tbody.appendChild(headerRow);
+						sortedRows.forEach(row => tbody.appendChild(row));
+					}
+
+					// Add change event listener
+					select.addEventListener('change', (e) => {
+						const value = e.target.value;
+						if (!value) {
+							// Reset to original order
+							tbody.innerHTML = '';
+							tbody.appendChild(headerRow);
+							rows.forEach(row => tbody.appendChild(row));
+							return;
+						}
+
+						const [id, direction] = value.split('-');
+						sortTable(id, direction);
+					});
+
+					// Insert the select element before the table
+					table.parentNode.insertBefore(select, table);
+				});
+			</script>
+
+			<div>
+				<table id="review_table">
+					<tbody>
+						<tr>
+							<th>game</th>
+							<th>ratings</th>
+							<th>tldr</th>
+						</tr>
+					</tbody>
+				</table>
+				<script type="module">
+					const icons = {
+						appstore: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/App_Store_%28iOS%29.svg/2048px-App_Store_%28iOS%29.svg.png",
+						epic: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Epic_Games_logo.svg/1032px-Epic_Games_logo.svg.png?20180409155704",
+						gamejolt: "https://m.gjcdn.net/fireside-post-image/600/24010743-ll-sfbhunum-v4.webp",
+						gog: "https://www.gog.com/pressroom/wp-content/uploads/2025/06/GOG_LOGO_WHITE.png",
+						itch: "https://static.itch.io/images/itchio-textless-black.svg",
+						nintendo: `https://avatars.mds.yandex.net/get-mpic/15406152/2a0000019813155773b80c2b06a01e852603/orig`,
+						playstation: "https://brandlogos.net/wp-content/uploads/2022/09/playstation_store-logo_brandlogos.net_q6kzh-512x512.png",
+						playstore: "https://storage.googleapis.com/gweb-uniblog-publish-prod/images/Logo_Play_512px_clr_nGVTgYY.max-1440x810.png",
+						steam: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/1024px-Steam_icon_logo.svg.png",
+						website: "/assets/website_icon.svg",
+						xbox: "https://www.freepnglogos.com/uploads/xbox-png/xbox-png-download-best-xbox-png-clipartmagm-15.png",
+						youtube: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/1024px-YouTube_full-color_icon_%282017%29.svg.png?20240107144800"
 					};
-					td1.appendChild(links);
-				}
-				row.appendChild(td1);
 
-				let rating, r8, r8_color;
-				//column 2
-				let td2 = CE({elem: "td"});
-				//overall
-				let overall_r8 = 0;
-				let count = 0;
-				let rankings = Object.values(reviews[i].rankings);
-				console.log("RANKINGS: ", rankings);
-				for (let j = 0; j < rankings.length; ++j) {
-					overall_r8 += rankings[j];
-					count += 1;
-				}
-				//overall_r8 = overall_r8 / count;
-				console.log("overall/max:" + overall_r8 / count);
-				let overall = CE({elem: "div", innerText: `${(overall_r8 / count)}/10`});
-				overall_r8 = overall_r8 / count; //invert for colors
-				r8_color =
-					"#"
-					+ Math.floor((((overall_r8 - 11) * -1) / 10) * 255).toString(16)
-					+ Math.floor(overall_r8 / 11 * 255).toString(16)
-					+ "00"
-					;
-				console.log("OVERALL color: " + r8_color);
-				overall.style.color = r8_color;
-				overall.style.margin = "auto";
-				overall.style.textAlign = "center";
-				td2.appendChild(overall);
-				row.appendChild(td2);
+					const reviews = [
+						{
+							name: "ultrakill (early access)",
+							img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1229490/header.jpg?t=1740623813",
+							links: {
+								gog: "https://www.gog.com/en/game/ultrakill",
+								itch: "https://hakita.itch.io/ultrakill-prelude",
+								steam: "https://store.steampowered.com/app/1229490/ULTRAKILL/",
+								website: "https://newbloodstore.com/collections/ultrakill",
+							},
+							rankings: {
+								gameplay: 10,
+								graphics: 9,
+								audio: 8,
+								story: 6,
+								uniqueness: 10,
+							},
+							review: `ultrakill is an amazing arena-shooter, the gameplay is by far the best being most similar to doom 2016 but with a much better feel and weapons
+                can actually combo each other instead of simply compliment.<br>
+                it uses graphics best described as "late ps1" but with some modern improves. although seen as a downside
+                it helps the game run at consistent stable framerates. <br>
+                the music is largely solid, each stage feeling like it fits each level without ever crossing the line
+                into
+                distracting or bad. the only thing i would argue is that i feel as if the music can feel a bit flat, and
+                more more variety with each song could help a lot`
+						},
+						{
+							"name": "subnautica",
+							"img": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/264710/header.jpg?t=1751944840",
+							links: {
+								steam: "https://store.steampowered.com/app/264710/Subnautica/",
+								epic: "https://store.epicgames.com/en-US/p/subnautica",
+								website: "https://unknownworlds.com/subnautica/",
+							},
+							rankings: {
+								"gameplay": 7,
+								"graphics": 9,
+								"audio": 9,
+								"story": 6,
+								uniqueness: 10,
+							},
+							"review": `
+<a herf="https://www.youtube.com/live/kwzGEKu4Q1s?si=N0aQ4CJ2t8-Cs2m_&t=12032">https://www.youtube.com/live/kwzGEKu4Q1s?si=N0aQ4CJ2t8-Cs2m_&t=12032</a><br>
+subnautica is a fantastic game that is truely unique, each area feels expansive and unique with plenty of sprawling environments to explore. the creative way they used a volcanic pillar to justify the 2km³ map feel much more real and justified. as well as the great biodiversity and great sense of exploration, only complaints are that grinding for materials can be a bit tedious, some audio bugs, some ai just going through walls, and some other stuff i'm sure i'm forgetting. overall the game is very fun and i personally consider it a must play`,
+						},
+						{
+							name: "cats are liquid: a better place",
+							img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1188080/header.jpg?t=1740086473',
+							links: {
+								steam: "https://store.steampowered.com/app/1188080/Cats_are_Liquid_A_Better_Place/",
+								website: "https://lastquarterstudios.com/",
+							},
+							rankings: {
+								gameplay: 6.5,
+								graphics: 7,
+								audio: 7,
+								story: 7,
+								uniqueness: 7,
+							},
+							review: `tldr: fun game, a bit tedious. full review here:
+					<a href="https://www.youtube.com/live/l6DiORiVgOg?si=nMD3Imr-b6BiXkNU&t=8661">https://www.youtube.com/live/l6DiORiVgOg?si=nMD3Imr-b6BiXkNU&t=8661</a>					`
+						},
+						{
+							name: "hollow knight (1)",
+							img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/367520/header.jpg?t=1695270428',
+							links: {
+								steam: "https://store.steampowered.com/app/367520/Hollow_Knight/",
+								nintendo: "https://www.nintendo.com/us/store/products/hollow-knight-switch/",
+								website: "http://hollowknight.com/",
+							},
+							rankings: {
+								gameplay: 9,
+								graphics: 9,
+								audio: 7,
+								story: 6.5,
+								uniqueness: 9,
+							},
+							review: `tldr: fun and interesting, apprecaited all the variety, some areas felt a bit heavily weighted and lacked some identifying landmarks.
 
-				//gameplay
-				let gameplay = CE({elem: "div", innerText: "gameplay"});
-				r8 = reviews[i].rankings.gameplay;
-				rating = CE({elem: "span", innerText: `${r8}/10`});
-				r8_color =
-					"#"
-					+ Math.floor((((r8 - 11) * -1) / 10) * 255).toString(16)
-					+ Math.floor(r8 / 11 * 255).toString(16)
-					+ "ff"
-					;
-				//console.log("rating color: " + r8_color);
-				rating.style.color = r8_color;
-				gameplay.appendChild(rating);
-				td2.appendChild(gameplay);
-				row.appendChild(td2);
+<a href="https://www.youtube.com/live/GOjFySAZYzI?si=Njil0ZI7k4u8r9xi&t=14159">https://www.youtube.com/live/GOjFySAZYzI?si=Njil0ZI7k4u8r9xi&t=14159</a>
+					`
+						},
+						{
+							name: "pizza tower",
+							img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2231450/header.jpg?t=1732516978',
+							links: {
+								steam: "https://store.steampowered.com/app/2231450/Pizza_Tower/",
+							},
+							rankings: {
+								gameplay: 9,
+								graphics: 8.5,
+								audio: 8,
+								story: 6.5,
+								uniqueness: 9,
+							},
+							review: `tldr: pepino can be a bit hard to read, needs a bit more color separation for readibilty, worth playing for the final fight alone
+<a href="https://www.youtube.com/live/naRVKqJBgcQ?si=5IWQiEBrWrfZ4S4E&t=3664">https://www.youtube.com/live/naRVKqJBgcQ?si=5IWQiEBrWrfZ4S4E&t=3664</a>
+`
+						},
+						{
+							name: "plants vs zombies (goty edition)",
+							img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3590/header.jpg?t=1738970324',
+							links: {
+								steam: "https://store.steampowered.com/app/3590/Plants_vs_Zombies_GOTY_Edition/",
+								website: "https://www.ea.com/games/plants-vs-zombies",
+							},
+							rankings: {
+								gameplay: 9,
+								graphics: 6.5,
+								audio: 9,
+								story: 6,
+								uniqueness: 9,
+							},
+							review: 'fun game for people of any skill level, you deserve to play it :3, graphics not being scalable to work on more modern devices hurts but overall the game is still very playable and is your time'
+						},
+						{
+							name: "the brookhaven experiment",
+							img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/440630/header.jpg?t=1715711024',
+							links: {
+								steam: "https://store.steampowered.com/app/440630/The_Brookhaven_Experiment/",
+								website: "https://www.phosphorgames.com/"
+							},
+							rankings: {
+								gameplay: 7,
+								graphics: 6.5,
+								audio: 6.5,
+								story: 6.5,
+								uniqueness: 7,
+							},
+							review: `<a href="https://www.youtube.com/live/kUsgrNWZ-EU?si=iotCq2RXSZK9D_sC&t=17805">https://www.youtube.com/live/kUsgrNWZ-EU?si=iotCq2RXSZK9D_sC&t=17805</a>
+the game is fun as a "first vr game", but is better off in short bursts. the game has some questionable color grading making it so when you take a hit it turns the flashlight from a "sorta needed" into a "dear god i can't see anything".
+some easy patches would easily raise this game by a while point.
+please don't play on harder difficulties.
+`
+						},
+						{
+							name: "sonic the hedgehog: 06",
+							img: 'https://upload.wikimedia.org/wikipedia/en/d/d1/Sonic_the_Hedgehog_Next-Gen_Box_Art.JPG',
+							links: {
+								// No current store links, as it's a retro title, linking to the official Sonic website.
+								website: "https://archive.org/details/sonic-06-website",
+							},
+							rankings: {
+								gameplay: 3,
+								graphics: 3,
+								audio: 6.5,
+								story: 4,
+								uniqueness: 4,
+							},
+							review: `<a href="https://www.youtube.com/live/AKqUatstanw?si=frx4VhJBv-beIIlu&t=14847">https://www.youtube.com/live/AKqUatstanw?si=frx4VhJBv-beIIlu&t=14847</a>
+the game is not redeemable, it deserves to not exitst. there is no reason to bother remaking the game, as it's fundimentally broken.
+`
+						},
+						{
+							name: "deltarune (chapers 1-4)",
+							img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1671210/7ccda5b1631d2e60cc756a3271e845dbb9168821/header.jpg?t=1749252480',
+							links: {
+								steam: "https://store.steampowered.com/app/1671210/DELTARUNE_Chapter_1__2/",
+								itch: "https://tobyfox.itch.io/deltarune",
+								nintendo: 'https://www.nintendo.com/us/store/products/deltarune-switch/',
+								playstation: "https://store.playstation.com/en-us/concept/233495",
+								website: "https://www.deltarune.com/",
+							},
+							rankings: {
+								gameplay: 10,
+								graphics: 8,
+								audio: 8,
+								story: 7,
+								uniqueness: 9,
+							},
+							review: `this is a tldr review for chapers 1-4:
+						the game is great, with characters you feel like you want to car about and does a great job of making sure, music, and story	all mixing together to be truely greater than the sum of the parts
+					`
+						},
+						{
+							name: "FNAF: secret of the mimic",
+							img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2215390/527bbebaa5764de58528487b3f2142c44a58b267/header.jpg?t=1758038461',
+							links: {
+								playstation: 'https://www.playstation.com/en-ca/games/five-nights-at-freddys-secret-of-the-mimic/',
+								steam: "https://store.steampowered.com/app/2215390/Five_Nights_at_Freddys_Secret_of_the_Mimic/",
+							},
+							rankings: {
+								gameplay: 6,
+								graphics: 9,
+								audio: 9,
+								story: 8,
+								uniqueness: 7,
+							},
+							review: `<a href="https://www.youtube.com/live/ZkgowNd8GNw?si=yOFa59qtqpjASfZD&t=18941">https://www.youtube.com/live/ZkgowNd8GNw?si=yOFa59qtqpjASfZD&t=18941</a>
+great game, just dont bother with the ending that requires the terminal, it's not worth how much time it takes, could have skipped the dolly section and been very content`
+						},
+						{
+							name: "r6 siege (y10s4)",
+							img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/359550/12ea3dc64ca6aae755efe83e96b6c658876bd6d2/header_alt_assets_14.jpg?t=1757692841',
+							links: {
+								steam: "https://store.steampowered.com/app/359550/Tom_Clancys_Rainbow_Six_Siege/",
+								website: "https://www.ubisoft.com/en-us/game/rainbow-six/siege",
+							},
+							rankings: {
+								gameplay: 7,
+								graphics: 6,
+								audio: 7,
+								story: 3,
+								uniqueness: 9,
+							},
+							review: `great game that has likely the highest skill/knowedge floor compared to any other multiplayer game. story is ass, community is overly toxic and agressive, and the graphics although fine have been "e-sports-ified" which makes a lot of fun mechanics and things not possible making the game way more of a sweat fest.
+					`
+						},
+						{
+							name: "super mario 64 ds",
+							img: 'https://i.ytimg.com/vi/lmSdaKBdcFQ/maxresdefault.jpg',
+							links: {
+								// Retro title, linking to the official Nintendo website
+								website: "https://www.nintendo.com/",
+							},
+							rankings: {
+								gameplay: 7,
+								graphics: 7,
+								audio: 7,
+								story: 6,
+								uniqueness: 8,
+							},
+							review: 'gun game, better then the original imo, movement very hurt due to the 8-directional lock isntead of having an alalogue input'
+						},
+						{
+							name: "scooby-doo: night of 100 frights",
+							img: 'https://upload.wikimedia.org/wikipedia/en/9/9b/Scooby-Doo%21_Night_of_100_Frights_Coverart.png',
+							links: {
+								// Retro title, no current store link
+								website: "https://www.activision.com/",
+							},
+							rankings: {
+								gameplay: 7,
+								graphics: 7,
+								audio: 8,
+								story: 6,
+								uniqueness: 8,
+							},
+							review: 'gun game! a touch repetitive, platforming can be difficult due to lack of shadow below scooby-doo making landing a bit hard. due to the pathfinder you might get stuck'
+						},
+						{
+							name: "ENA: Dream BBQ (demo)",
+							img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2134320/header.jpg?t=1755357900',
+							links: {
+								steam: "https://store.steampowered.com/app/2134320/ENA_Dream_BBQ/",
+								website: "https://joelgc.com/",
+							},
+							rankings: {
+								gameplay: 6.5,
+								graphics: 10,
+								audio: 8,
+								story: 7,
+								uniqueness: 5,
+							},
+							review: `<a href="https://www.youtube.com/live/8bn9yrE6Y8k?si=0DdEpIKbCJ-aEhoU&t=5846">https://www.youtube.com/live/8bn9yrE6Y8k?si=0DdEpIKbCJ-aEhoU&t=5846</a> very fun game, giving you a wash of that feaver dream vibe. mechanically is pretty shallow, but easily makes up for that with the characters and unique creative touches all over the place`
+						},
+						{
+							name: "minecraft",
+							img: 'https://xboxwire.thesourcemediaassets.com/sites/2/2024/05/Hero-8c18da7c19a1a8811ddb.jpg',
+							links: {
+								playstation: "https://store.playstation.com/en-us/search/minecraft",
+								nintendo: "https://www.nintendo.com/us/store/products/minecraft-switch/",
+								xbox: "https://www.xbox.com/en-US/games/store/minecraft/9MVXMVT8ZKWC/0010",
+								website: "https://www.minecraft.net/",
+							},
+							rankings: {
+								gameplay: 7,
+								graphics: 6,
+								audio: 9,
+								story: 3,
+								uniqueness: 9,
+							},
+							review: 'movement is a bit flat, game can be pretty tedious, creativity in the game can be a bit restrictive'
+						},
+						{
+							name: "anti-chamber",
+							img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/219890/header.jpg?t=1525832559',
+							links: {
+								steam: "https://store.steampowered.com/app/219890/Antichamber/",
+							},
+							rankings: {
+								gameplay: 6.7,
+								graphics: 8,
+								audio: 6,
+								story: 6.5,
+								uniqueness: 9,
+							},
+							review: `<a href="https://www.youtube.com/live/S3MOQb-g4tM?si=auRaxulgp0K23Oro&t=9231">https://www.youtube.com/live/S3MOQb-g4tM?si=auRaxulgp0K23Oro&t=9231</a> a fun unique game, personally felt like the puzzles fell a touch flat and gameplay wise a puzzel or two bugged which made them very annoying to deal with. combined with crashing ocationaly it was a bit of a sharp edge, overall fun tho!`
+						},
+						{
+							name: "sonic: unleased",
+							img: 'https://upload.wikimedia.org/wikipedia/en/thumb/a/a0/Sonic_unleashed_boxart.jpg/250px-Sonic_unleashed_boxart.jpg',
+							links: {
+								// Retro title, linking to the official Sonic website.
+								website: "https://github.com/hedge-dev/UnleashedRecomp",
+							},
+							rankings: {
+								gameplay: ((8 + 3) / 2),
+								graphics: 7,
+								audio: 6,
+								story: 7,
+								uniqueness: 6,
+							},
+							review: `day levels: 8/10, nighttime: 3/10, enough said`
+						},
+						{
+							name: "wild assault",
+							img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2827230/29dd4dd566d8b7a9f0bb4cf6675e099cb8bec97d/header.jpg?t=1758785085',
+							links: {
+								steam: "https://store.steampowered.com/app/2827230/Wild_Assault/",
+							},
+							rankings: {
+								gameplay: 7,
+								graphics: 8,
+								audio: 7,
+								story: 3,
+								uniqueness: 8,
+							},
+							review: `fun game, leaning too much into ARs are the work hourse and everything else is secondary, attachments can be overwhelming and don't feel like they do much, some movement mechanics for certain characters are easy to exploid making fighting against them feel very unfair and annoying.
 
-				//story
-				let story = CE({elem: "div", innerText: "story"});
-				r8 = reviews[i].rankings.story;
-				rating = CE({elem: "span", innerText: `${r8}/10`});
-				r8_color =
-					"#"
-					+ Math.floor((((r8 - 11) * -1) / 10) * 255).toString(16)
-					+ Math.floor(r8 / 11 * 255).toString(16)
-					+ "ff"
-					;
-				console.log("rating color: " + r8_color);
-				rating.style.color = r8_color;
-				story.appendChild(rating);
-				td2.appendChild(story);
-				row.appendChild(td2);
+				playing against bots is funner, but the bots can be far too repetitive.`
+						},
+						{
+							name: "ape escape 2",
+							img: 'https://upload.wikimedia.org/wikipedia/en/c/c1/Ape_Escape_2_Coverart.png',
+							links: {
+								// Retro title, often available via PlayStation Store on modern consoles.
+								playstation: "https://store.playstation.com/en-us/product/UP9000-CUSA02194_00-SCES508850000001",
+							},
+							rankings: {
+								gameplay: 7,
+								graphics: 7,
+								audio: 7.5,
+								story: 8,
+								uniqueness: 8.5,
+							},
+							review: `fun game with a good amount of variety, mechanics can be a bit tedious and the 2nd lap is really tedious with all the gadget switching you need to do. could have easily cut the number in half. 
+					music feels like it uses a sound font, feeling not as good compared to 1 or 3, still fun thuogh :3`
+						},
+						{
+							name: "R.E.P.O",
+							img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3241660/1ea445e044a2d5b09cfa8291350b63ebed6e5741/header.jpg?t=1750949552',
+							links: {
+								steam: "https://store.steampowered.com/app/3241660/REPO/",
+							},
+							rankings: {
+								gameplay: 7,
+								graphics: 9,
+								audio: 7.5,
+								story: 5,
+								uniqueness: 7,
+							},
+							review: `fun game! but repetitive and not very worth playing solo imo. a bit tedious but very fun with friends! amazign party game, don't bother playing alone`
+						},
+						{
+							name: "Ape Escape: on the loose (psp remake)",
+							img: 'https://m.media-amazon.com/images/I/71VlQednaDL.jpg',
+							links: {
+								// PSP remake, linking to the PS Plus Classics version where available.
+								playstation: "https://store.playstation.com/en-us/product/UP9000-PPSA11127_00-UCUS986090000000",
+							},
+							rankings: {
+								gameplay: 7,
+								graphics: 8,
+								audio: 8,
+								story: 8,
+								uniqueness: 9,
+							},
+							review: `very novel game with tonnes of unique levels and the soundtrack slaps, lap 2 can be a bit tedious but doesn't hurt the game too much. all the extra mini-games are a very welcome edition tho the 30coin one is a dud and should have been either unique levels or had some other twist to them.`
+						},
+						{
+							name: "overwatch 2",
+							img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2357570/999173ea7fa3a4541fbf036256b5c58ee0a97df0/header_alt_assets_16.jpg?t=1757964658',
+							links: {
+								steam: "https://store.steampowered.com/app/2357570/Overwatch_2/",
+								website: "https://playoverwatch.com/en-us/",
+							},
+							rankings: {
+								gameplay: 6,
+								graphics: 8,
+								audio: 7,
+								story: 6,
+								uniqueness: 7,
+							},
+							review: `very e-sports game, as a new player you can be thrown into lobies against people who have played this game for ages and just get horribly stomped to the point you can't even leave spawn. great aniamtion, a bit floaty feeling, i get the popularity but in modern day it lacks anything to make it stand out other than the characters`
+						},
+						{
+							name: "Call Of Duty: WWII",
+							img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/476600/header.jpg?t=1751302904',
+							links: {
+								steam: "https://store.steampowered.com/app/476600/Call_of_Duty_WWII/",
+								xbox: "https://www.xbox.com/en-US/games/store/call-of-duty-wwii/BV0NSD4NN4V4/0001",
+								website: "https://www.callofduty.com/wwii",
+							},
+							rankings: {
+								gameplay: 7.5,
+								graphics: 9,
+								audio: 7,
+								story: 3,
+								uniqueness: 3,
+							},
+							review: `the only 2 levels worth playing are the spy level and the spy mission with the train, other then that gunplay is generally tedious and doesn't offer much to really elevate the game. story is bland and some how made me not want to engauge. don't waste your time and play COD:WAW instead. it's better in every way`
+						},
+						{
+							name: "paladins (2025)",
+							img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/444090/header.jpg?t=1713560419',
+							links: {
+								steam: "https://store.steampowered.com/app/444090/Paladins__Champions_of_the_Realm/",
+								epic: "https://store.epicgames.com/en-US/p/paladins",
+								website: "https://www.hirezstudios.com/",
+							},
+							rankings: {
+								gameplay: 6.5,
+								graphics: 7,
+								audio: 6.5,
+								story: 5,
+								uniqueness: 6,
+							},
+							review: `fine game, movement feels floaty, and lacks identity, play can be fun minus some balancing issues. main issue imo is that the game really lacks identity and feel like the devs threw shit at the wall to see what can stick.`
+						},
+						{
+							name: "Five nights at freddies: ruin (dlc)",
+							img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1924720/header.jpg?t=1690268396',
+							links: {
+								// DLC for Security Breach
+								steam: "https://store.steampowered.com/app/1924720/Five_Nights_at_Freddys_Security_Breach_Ruin/",
+							},
+							rankings: {
+								gameplay: 6,
+								graphics: 9,
+								audio: 8,
+								story: 8,
+								uniqueness: 8,
+							},
+							review: 'mechanics are boring and tedious, however the art, characters, environment make this a really fun experience. if you enjoy linear horror experiences this does it pretty well'
+						},
+						{
+							name: "Five nights at freddies: security breach",
+							img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/747660/header.jpg?t=1686587905',
+							links: {
+								steam: "https://store.steampowered.com/app/747660/Five_Nights_at_Freddys_Security_Breach/",
+								playstation: "https://store.playstation.com/en-us/product/UP4263-PPSA02102_00-FNAFSECBREACH001",
+							},
+							rankings: {
+								gameplay: 7,
+								graphics: 6,
+								audio: 7.5,
+								story: 6,
+								uniqueness: 7.5,
+							},
+							review: 'game is buggy and story is flawed, however the concept is novel and still fun enough i consider it worth a play [roxy my queen <3]'
+						},
+						{
+							name: "dark souls 3",
+							img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/374320/header.jpg?t=1748630784',
+							links: {
+								steam: "https://store.steampowered.com/app/374320/DARK_SOULS_III/",
+								xbox: "https://www.xbox.com/en-US/games/store/dark-souls-iii-deluxe-edition/C23CWXL81H3L/0001",
+								playstation: "https://store.playstation.com/en-us/product/UP0700-CUSA03388_00-DARKSOULS3000000",
+								website: "https://www.bandainamcoent.com/games/dark-souls-iii",
+							},
+							rankings: {
+								gameplay: 7,
+								graphics: 8,
+								audio: 9,
+								story: 6.5,
+								uniqueness: 9,
+							},
+							review: 'player machanics are repitive but all the bosses and unique characters make the game greatly worth playing. net reg is horrible, turn off your systems internet before playing.'
+						},
+						{
+							name: "SAS:4 zombie assault",
+							img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/678800/header.jpg?t=1680706586',
+							links: {
+								steam: "https://store.steampowered.com/app/678800/SAS_Zombie_Assault_4/",
+								playstore: "https://play.google.com/store/apps/details?id=com.ninjakiwi.sasza4&hl=en_US",
+								website: "https://ninjakiwi.com/",
+							},
+							rankings: {
+								gameplay: 8,
+								graphics: 7,
+								audio: 6,
+								story: 6.5,
+								uniqueness: 6.5,
+							},
+							review: `fun game! short and sweet, wouldn't consider it a longterm-play game, but a fun flashgame flashback :3`
+						},
+						{
+							name: "titanfall 2",
+							img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1237970/header.jpg?t=1726160226',
+							links: {
+								steam: "https://store.steampowered.com/app/1237970/Titanfall_2/",
+								playstation: "https://store.playstation.com/en-us/product/UP0006-CUSA04027_00-TITANFALL2RSPWN1",
+								xbox: "https://www.xbox.com/en-US/games/store/titanfall-2/C0X2HNVH08FB/0001",
+								website: "https://www.ea.com/games/titanfall/titanfall-2",
+							},
+							rankings: {
+								gameplay: 8,
+								graphics: 9,
+								audio: 7,
+								story: 8,
+								uniqueness: 10,
+							},
+							review: `a great game, mechanics can be a bit repetitive and story feels a bit over hyped, multiplayer was fun when not getting stomped. worth a play, but but the whole experience leaves me feeling like it's missing something`
+						},
+						{
+							name: "sonic: generations",
+							img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/71340/header.jpg?t=1704380608',
+							links: {
+								steam: "https://store.steampowered.com/app/71340/Sonic_Generations_Collection/",
+							},
+							rankings: {
+								gameplay: 7,
+								graphics: 8,
+								audio: 7,
+								story: 6,
+								uniqueness: 5,
+							},
+							review: 'fun game, but it neruters a good chunk of the songs and levels they took from. story also falls flat. other levels which have been forced to play in a different style feel forced and makes the levels feel more tedious then they need to be. it`s a fine game but could have been much better. use to to find what levels you like then play the game those levels come from'
+						},
+						{
+							name: "sonic: cd (american version)",
+							img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/200940/header.jpg?t=1653084020',
+							links: {
+								steam: "https://store.steampowered.com/app/200940/Sonic_CD/",
+							},
+							rankings: {
+								gameplay: 8,
+								graphics: 9,
+								audio: 7,
+								story: 7,
+								uniqueness: 8,
+							},
+							review: `fun with unique levels that dont stick around for too much, bosses are very unique but the final feel a bit wrong. the USA music also feels like a downgrade compared to the european upgrade.`
+						},
+						{
+							name: "sonic: forces (switch version)",
+							img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/637100/header.jpg?t=1721835292',
+							links: {
+								steam: "https://store.steampowered.com/app/637100/Sonic_Forces/",
+								nintendo: "https://www.nintendo.com/us/store/products/sonic-forces-switch/",
+								playstation: "https://store.playstation.com/en-us/product/UP1613-PPSA07358_00-THUMPERPS5000000",
+								xbox: "https://www.xbox.com/en-CA/games/store/sonic-forces-digital-standard-edition/c4k9sqc799zg"
+							},
+							rankings: {
+								gameplay: 6.5,
+								graphics: 7,
+								audio: 6.5,
+								story: 6,
+								uniqueness: 6,
+							},
+							review: 'game feels like an autoscroller and lacks much input from the player. on the switch it dipped below playable framerates making the game studdery. assuming frame issues are gone the game is fine but nothing remarkable and overall inoffensive. a bit bland, but if it is your first sonic game its not the worst place to start'
+						},
+						{
+							name: "thumper",
+							img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/356400/header.jpg?t=1677622045',
+							links: {
+								steam: "https://store.steampowered.com/app/356400/Thumper/",
+								playstore: "https://play.google.com/store/apps/details?id=com.Drool.ThumperPocketEdition",
+								playstation: "https://store.playstation.com/en-us/product/UP1613-CUSA03577_00-THUMPERPS4FULL00",
+								nintendo: "https://www.nintendo.com/us/store/products/thumper-switch/",
+								website: "http://thumpergame.com/",
+							},
+							rankings: {
+								gameplay: 7,
+								graphics: 7,
+								audio: 8,
+								story: 5,
+								uniqueness: 9,
+							},
+							review: 'fun rythem game, the main issue is the music and visuals can be a touch repetitive so more diversity in the sound scape would be nice'
+						},
+						{
+							name: "lethal company",
+							img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1966720/header.jpg?t=1750273815',
+							links: {
+								steam: "https://store.steampowered.com/app/1966720/Lethal_Company/",
+								youtube: "https://www.youtube.com/channel/UCpM_c956nrR6sBkRK122Biw",
+							},
+							rankings: {
+								gameplay: 7,
+								graphics: 7,
+								audio: 8,
+								story: 7,
+								uniqueness: 8,
+							},
+							review: 'fun game, style is neat but there are some clear animation issues i personally find distracting but considering that is my major issue it shuold tell you how fun the game is. solo can be bs but it is a great party game. wish mod could be a bit dependant on the server but that is a hyper minimal complaint'
+						},
+						{
+							name: "battle bit: remastered",
+							img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/671860/header.jpg?t=1730393449',
+							links: {
+								steam: "https://store.steampowered.com/app/671860/BattleBit_Remastered/",
+								youtube: "https://www.youtube.com/mrokidoki0",
+							},
+							rankings: {
+								gameplay: 7,
+								graphics: 7,
+								audio: 6,
+								story: 5,
+								uniqueness: 8,
+							},
+							review: 'fun game, issues is that guns you unlock later are clearly better and classes feel unbalanced. nightlevels are also fun but people never vote for them so do not expect to play them'
+						},
+						{
+							name: "pilgrim",
+							img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2965660/header.jpg?t=1724085112',
+							links: {
+								steam: "https://store.steampowered.com/app/2965660/Pilgrim/",
+								website: "https://www.desperatemeasuresgames.com/",
+							},
+							rankings: {
+								gameplay: 7,
+								graphics: 7,
+								audio: 6,
+								story: 6,
+								uniqueness: 8,
+							},
+							review: 'NOTE: REVIEW FROM JULY 2024 <br> fun "extration co-op" game that is similar to lethal company, when i played it was fun for a solid 4 hours, however it felt pertty repetitive after that. '
+						},
+						{
+							name: "granny",
+							img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/962400/header.jpg?t=1687541775',
+							links: {
+								playstore: "https://play.google.com/store/search?q=granny&c=apps",
+								steam: "https://store.steampowered.com/app/962400/Granny/",
+							},
+							rankings: {
+								gameplay: 8,
+								graphics: 7,
+								audio: 6,
+								story: 7,
+								uniqueness: 7.5,
+							},
+							review: 'solid game that plays like a fun puzzle game, some communication can be unclear and a thing with 2 chests feels like bs unless i missed something. overall pretty fun and novel so i would say it is worth a play'
+						},
+						{
+							name: "it steals",
+							img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1349060/header.jpg?t=1667091081',
+							links: {
+								itch: "https://zeekerss.itch.io/it-steals",
+								steam: "https://store.steampowered.com/app/1349060/It_Steals/",
+							},
+							rankings: {
+								gameplay: 9,
+								graphics: 9,
+								audio: 8,
+								story: 5,
+								uniqueness: 8,
+							},
+							review: 'a great game with a great new game plus that properly challanges the player, great play!'
+						},
+						{
+							name: "five nights at freddy's",
+							img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/319510/header.jpg?t=1666889251',
+							links: {
+								steam: "https://store.steampowered.com/app/319510/Five_Nights_at_Freddys/",
+								playstore: "https://play.google.com/store/search?q=five+nights+at+freddies&c=apps",
+							},
+							rankings: {
+								gameplay: 6.5,
+								graphics: 7.5,
+								audio: 6,
+								story: 6,
+								uniqueness: 10,
+							},
+							review: 'a unique setting and playstyle, tho it can be a touch repetitive. characters are well designed and icon, with tonnes of fun rng based easter eggs'
+						},
+						/*
+						{
+								name: "",
+								img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps//header.jpg?t=1740086473',
+								rankings: {
+										gameplay: 5,
+										graphics: 5,
+										audio: 5,
+										story: 5,
+										uniqueness: 5,
+								},
+								review: ''
+						},
+						*/
+					];
+					function CE(args = {}) {
+						//init args
+						const def = {
+							elem: args.elem || "div",
+							innerText: args.innerText || undefined,
+							innerHTML: args.innerHTML || undefined, // will overwrite innerText
+							href: args.href || undefined,
+							alt: args.alt || undefined,
+							src: args.src || undefined,
+							id: args.id || undefined,
+							class: args.class || undefined,
+						};
 
-				//graphics	
-				let graphics = CE({elem: "div", innerText: "graphics"});
-				r8 = reviews[i].rankings.graphics;
-				rating = CE({elem: "span", innerText: `${r8}/10`});
-				r8_color =
-					"#"
-					+ Math.floor((((r8 - 11) * -1) / 10) * 255).toString(16)
-					+ Math.floor(r8 / 11 * 255).toString(16)
-					+ "ff"
-					;
-				//console.log("rating color: " + r8_color);
-				rating.style.color = r8_color;
-				graphics.appendChild(rating);
-				td2.appendChild(graphics);
-				row.appendChild(td2);
+						let elem = document.createElement(def.elem);
+						if (def.innerText != undefined) {
+							elem.innerText = def.innerText;
+						}
+						if (def.innerHTML != undefined) {
+							elem.innerHTML = def.innerHTML;
+						}
+						elem.href = def.href;
+						elem.target = "_blank";
+						elem.alt = def.alt;
+						elem.src = def.src;
+						if (def.id != undefined) {elem.id = def.id};
+						if (def.class != undefined) {console.warn("adding class: ", def.class); elem.classList.add(def.class)};
 
-				//audio
-				let audio = CE({elem: "div", innerText: "audio"});
-				r8 = reviews[i].rankings.audio;
-				rating = CE({elem: "span", innerText: `${r8}/10`});
-				r8_color =
-					"#"
-					+ Math.floor((((r8 - 11) * -1) / 10) * 255).toString(16)
-					+ Math.floor(r8 / 11 * 255).toString(16)
-					+ "ff"
-					;
-				console.log("rating color: " + r8_color);
-				rating.style.color = r8_color;
+						//console.log("returning element: " + elem);
+						return elem;
+					}
 
-				audio.appendChild(rating);
-				td2.appendChild(audio);
-				row.appendChild(td2);
+					let table = document.getElementById("review_table").children[0];
+					for (let i = 0; i < reviews.length; ++i) {
+						let row = CE({elem: "tr"});
+
+						//column 1
+						let td1 = CE({elem: "td"});
+						let img = CE({elem: "img"});
+						img.src = reviews[i].img;
+						img.width = "460";
+						img.height = "215";
+						td1.appendChild(img);
+						if (reviews[i].links != undefined) {
+							//console.log(`links for ${reviews[i].name} are: `, reviews[i].links);
+							let links = CE({elem: "div", id: "store_links"});
+							links.id = "store_links";
+							links.style.display = "flex";
+							links.style.justifyContent = "space-evenly";
+							let a, storeIcon, storeName, icon;
+							//console.log("stores linked:", Array(reviews[i].links).length);
+							for (let j = 0; j < Object.keys(reviews[i].links).length; ++j) {
+								storeName = Object.keys(reviews[i].links)[j];
+								//console.log("storename: ", `"${storeName}"`);
+								a = CE({elem: "a", href: reviews[i].links[storeName]});
+								icon = icons[storeName];
+								//console.log("storeIcon:", icon);
+								storeIcon = CE({
+									elem: "img",
+									src: `${icon} `,
+									alt: storeName,
+									class: (`icon${storeName}`),
+								});
+								a.appendChild(storeIcon);
+								links.appendChild(a);
+							};
+							td1.appendChild(links);
+						}
+						row.appendChild(td1);
+
+						let rating, r8, r8_color;
+						//column 2
+						let td2 = CE({elem: "td"});
+						//overall
+						let overall_r8 = 0;
+						let count = 0;
+						let rankings = Object.values(reviews[i].rankings);
+						//console.log("RANKINGS: ", rankings);
+						for (let j = 0; j < rankings.length; ++j) {
+							overall_r8 += rankings[j];
+							count += 1;
+						}
+						//overall_r8 = overall_r8 / count;
+						//console.log("overall/max:" + overall_r8 / count);
+						let overall = CE({elem: "div", innerText: `${(overall_r8 / count)} /10`, id: "overall"});
+						overall_r8 = overall_r8 / count; //invert for colors
+						r8_color =
+							"#"
+							+ Math.floor((((overall_r8 - 11) * -1) / 10) * 255).toString(16)
+							+ Math.floor(overall_r8 / 11 * 255).toString(16)
+							+ "00"
+							;
+						//console.log("OVERALL color: " + r8_color);
+						overall.style.color = r8_color;
+						overall.style.margin = "auto";
+						overall.style.textAlign = "center";
+						td2.appendChild(overall);
+						//row.appendChild(td2);
+
+						console.log(td2.children)// Get both the keys (names) and values (ratings) once
+						let rankingKeys = Object.keys(reviews[i].rankings);
+						let rankingValues = Object.values(reviews[i].rankings);
+						let numRankings = rankingKeys.length;
+
+						// Loop from 0 up to the number of rankings
+						for (let j = 0; j < numRankings; ++j) {
+							try {
+								console.log("adding ranking at index " + j);
+
+								// Use j to access the correct key and value
+								let container = CE({
+									elem: "div",
+									innerText: rankingKeys[j], // Use the name (key)
+									id: Object.keys(reviews[i].rankings)[j],
+								});
+
+								let r8ing = rankingValues[j]; // Use the rating (value)
+								let ratingContainer = CE({elem: "span", innerText: `${r8ing}/10`});
+
+								// ... (rest of your rating and color logic)
+
+								ratingContainer.style.color = r8_color; // NOTE: you might want to use the local 'color' variable here
+								//console.warn(ratingContainer);
+								container.appendChild(ratingContainer);
+								//console.log(container)
+								td2.appendChild(container);
+							}
+							catch (err) {
+								// You should generally NOT catch and ignore errors in a loop unless
+								// you know exactly what error to expect and why.
+								throw new Error(err);
+							}
+						};
+						row.appendChild(td2);
 
 
-				//column 3
-				let td3 = CE({elem: "td"});
-				let paraHolder = CE({elem: "div"});
-				let p = CE({elem: "p", innerHTML: reviews[i].review});
-				paraHolder.appendChild(p);
-				td3.appendChild(paraHolder);
-				row.appendChild(td3);
+						//column 3
+						let td3 = CE({elem: "td"});
+						let paraHolder = CE({elem: "div"});
+						let p = CE({elem: "p", innerHTML: reviews[i].review});
+						paraHolder.appendChild(p);
+						td3.appendChild(paraHolder);
+						row.appendChild(td3);
 
-				//append the rest
-				table.appendChild(row);
-			}
-		</script>
-	</div>
+						//append the rest
+						table.appendChild(row);
+					}
+				</script>
+			</div>
 
 </body>
 
