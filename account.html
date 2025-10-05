@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -9,32 +8,79 @@
 </head>
 
 <body>
-	<!--
-    <button id="writeDataButton">Write Data</button>
-    <script>
-        document.getElementById('writeDataButton').addEventListener('click', async () => {
-            const response = await fetch('https://your-supabase-url/functions/v1/read-write-data', {
-                method: 'POST',
-                headers: {
-                    'Authorization': 'Bearer YOUR_JWT_TOKEN', // Replace with actual JWT
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ column_name: 'value' }) // Replace with actual data
-            });
+	<div>
+		<h1>sign in</h1>
+		<aside>please note: there is no account creation at the moment, as vulbyte is currently making sure the connection
+			is secure before allowing the site to be public :3</aside>
+	</div>
+	<div>
+		<div><label for="username">username</label><input id="username" type="text"></div>
+		<div><label for="password">password</label><input id="password" type="password"></div>
+		<div><button id="submit">submit</button></div>
+		<script type='module'>
+			// ====================== client_management.js ======================
+			import Networking from "/lib/networking.mjs"; // adjust path if needed
 
-            const result = await response.json();
-            console.log(result);
-        });
-    </script>
-		-->
-	<h1>account</h1>
-	sorry! this is currently under maintenance!
-	it'll be available once there's a reason to sign up!
-	<br>
-	<br>
-	if you wanna be notified when it's ready, join the discord server, bug vulbyte on stream, or end an email to <a
-		href="mailto:support@vulbyte.com" target="_blank">support@vulbyte.com</a>
-	and we can send you an email once it's ready :3
+			function LSGI(id) {
+				try {
+					return localStorage.getItem(id)
+				}
+				catch (err) {
+					throw new Error(err);
+				}
+			}
+			// helper shortcuts
+			function GEBI(id) {
+				return document.getElementById(id);
+			}
+
+			// create an instance (stateless until you call methods)
+			const net = new Networking();
+
+			window.addEventListener("DOMContentLoaded", () => {
+				const usernameInput = GEBI("username");
+				const passwordInput = GEBI("password");
+				const submitInput = GEBI("submit");
+
+				// optionally add a submit button dynamically or handle Enter key
+				passwordInput.addEventListener("keydown", async (e) => {
+					if (e.key === "Enter") {
+						await attemptSignIn();
+					}
+				});
+				submitInput.addEventListener("click", async (e) => {
+					await attemptSignIn();
+				});
+
+				async function attemptSignIn() {
+					const username = usernameInput.value.trim();
+					const password = passwordInput.value.trim();
+
+					if (!username || !password) {
+						alert("Please fill in both username and password");
+						return;
+					}
+
+					try {
+						console.log("Attempting to sign in...");
+						const result = await net.SignIn(username, password);
+
+						console.log("Server response:", result);
+
+						if (result?.jwt || result?.serverJWT) {
+							alert("Signed in successfully!");
+						} else {
+							alert("Sign-in failed or requires 2FA.");
+						}
+					} catch (err) {
+						console.error("Sign-in error:", err);
+						alert("Error signing in: " + err.message);
+					}
+				}
+			});
+
+		</script>
+	</div>
 </body>
 
 </html>

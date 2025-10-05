@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script type="module" src="/client_management.js"></script>
+	<title>steram stuff | vulbyte</title>
+</head>
+
+<body>
+	<div>
+		<hgroup>
+			<h1>stuff</h1>
+			<h6>a general page for helping you all understand the stream </h6>
+		</hgroup>
+	</div>
+	<div>
+		<details>
+			<summary>for users</summary>
+			<ul>
+				<li>keep vibes good: we're all here for fun! lots of people have stressful lives and whatnot, so let's
+					not contribute to that :3</li>
+				<li>no spoiliers: i understand you really wanna talk about it but unless i've said otherwise please no!</li>
+				<li>no instructing (aka backseating): this is my [vulbyte's] personal playthrough, i'm fine making mistakes so
+					let's just see where the journey takes us :3</li>
+				<li>the only person you're allowed to harass is vulbyte! don't harass other users in chat</li>
+			</ul>
+		</details>
+		<details>
+			<summary>for mods</summary>
+			<p>this is meant to be a sorta general guide for mods to follow, if something isn't clear use your best judgement,
+				if i [vulbyte] have an issue with it i'll just dm you about it later :3
+			</p>
+			<div>
+				<aside>if you do make a judgement i just want you to be able to answer these questions:
+				</aside>
+
+				<ul>
+					<li>who did you ban?</li>
+					<li>what were they doing?</li>
+					<li>when did they do it?</li>
+					<li>why did you think this was appropriate action?</li>
+					<li>how many times did they do it?</li>
+				</ul>
+			</div>
+
+			<p>outside that, here are some guidelines for you, and how you should generally respond:</p>
+			<style>
+				td {
+					padding-bottom: 0.7em;
+				}
+			</style>
+			<table id="mod_guide">
+				<tbody>
+					<tr>
+						<td>action</td>
+						<td>example</td>
+						<td>first response:</td>
+						<td>second response:</td>
+						<td>third(+) response:</td>
+						<td>note</td>
+					</tr>
+				</tbody>
+				<script type="module">
+					console.warn("filling table");
+					let table = document.getElementById("mod_guide");
+					let tbody = table.children[0];
+					let data = [
+						{
+							action: "inscructing [aka backseating]",
+							example: `"hey vulb you need to use x", or "vulb goto y"`,
+							first: "verbal warn",
+							second: "timeout 5min + delete message (incriment with each offense)",
+							note: "remember these people probably just me to have the msot fun, let them know that this is my playthrough where i wanna have my own personal experiance and that vulbyte is fine not 100% the game or getting the 'good' ending or what have you"
+						},
+						{
+							action: "spoilers [real or fake] (friendly)",
+							example: "hey vulb! this boss has a phase 2 be careful!",
+							first: "warn + delete message",
+							second: "timeout 5min + delete message (incriment with each offense)",
+							note: "know that most people are likely just really excited and want to nerd out about the game, for this don't punish them too harshly, just let them know that it is not appreciated"
+						},
+						{
+							action: "spoilers [real or fake] (malitious)",
+							example: "character x dies on stage 7",
+							first: "warn + timeout 15minutes",
+							second: "ban",
+							note: "if it's unclear what time of spoiler this is, defautl to friendly. use your best judgement"
+						},
+						{
+							action: "chat spam",
+							example: "hi hi hi hi hi hi hi hi",
+							first: "verbal warn",
+							second: "timeout 5min + verbal reminder (escalating each time)",
+							note: "a chatty cathey isn't a ban, it's simply people who spam stuff of 0 value or contribution."
+						},
+						{
+							action: "self promo",
+							example: "hey guys! what do you think of my music? https://soundcloud.com/imabot",
+							first: "ban",
+							note: "some people might have permission to post promo, either by asking or otherwise, so if it's a channel who you reconize don't instaban but if it is a random channel then get them outta here"
+						},
+						{
+							action: "cussing (fuck, shit, damn, cunt, etc)",
+							example: "that is fucking stupid",
+							first: "nothing",
+							note: "the stream is rated 16+, meaning swearing adn graphic content to be expected. NOT THIS DOES NOT INCLUDE TARGETED SLURS/INSULTS"
+						},
+						{
+							action: "slurs, insults, etc (fag, dike, n-word, etc)",
+							example: "omg those people are such fucking n*****s",
+							first: "report + ban",
+							note: "offensive language that targets a group of people is not acceptible"
+						},
+						{
+							action: "arguing",
+							example: "oh my god x, you're so fucking stupid",
+							first: "warn",
+							second: "timeout 15min",
+							third: "ban",
+							note: "only take these actions on people being aggressive. ie: if bothg x and y are being agro warn them both, if only x is being agro warn x. who started it does not matter, only the conduct of the individual."
+						},
+						{
+							action: "threats [any kind that isn't clearly a joke]",
+							example: "i'm going napalm to your house",
+							first: "report + ban",
+							note: ""
+						},
+						{
+							action: "TTS spam",
+							example: "AAAAAAAAAAAAAAAAAAAAAAAA",
+							first: "verbal warn",
+							second: "timeout 30min + verbal reminder",
+							third: "ban",
+							note: "where as chat messages are generally fine as tehy're easily ignored, tts actively hurts the stream. so if someone cannot respect that they loose privelages.",
+						},
+						{
+							action: "TTS hatespeach",
+							example: "all x are y",
+							first: "ban",
+							note: "",
+						},
+						{
+							action: "TTS promo",
+							example: "checkout my stream guys!",
+							first: "ban",
+							note: "",
+						},
+					];
+
+					let row, action, example, first, second, third, note;
+					const colors = {
+						ban: "#aa0000",
+						timeout: "#aa7700",
+						warn: "#777700",
+						nothing: "#007700",
+					}
+					for (let i = 0; i < data.length; ++i) {
+						row = document.createElement('tr');
+
+						action = document.createElement('td');
+						action.innerText = data[i].action;
+						row.appendChild(action);
+
+						example = document.createElement('td');
+						example.innerText = data[i].example;
+						row.appendChild(example);
+
+						first = document.createElement('td');
+						first.innerText = data[i].first || ' ';
+						if (first.innerText.includes("ban")) {
+							first.style.backgroundColor = colors.ban;
+						}
+						else if (first.innerText.includes("timeout")) {
+							first.style.backgroundColor = colors.timeout;
+						}
+						else if (first.innerText.includes("warn")) {
+							first.style.backgroundColor = colors.warn;
+						}
+						else if (first.innerText.includes("nothing")) {
+							first.style.backgroundColor = colors.nothing;
+						}
+						row.appendChild(first);
+
+						second = document.createElement('td');
+						second.innerText = data[i].second || " ";
+						if (second.innerText.includes("ban")) {
+							second.style.backgroundColor = colors.ban;
+						}
+						else if (second.innerText.includes("timeout")) {
+							second.style.backgroundColor = colors.timeout;
+						}
+						else if (second.innerText.includes("warn")) {
+							second.style.backgroundColor = colors.warn;
+						}
+						row.appendChild(second);
+
+						third = document.createElement('td');
+						third.innerText = data[i].third || " ";
+						if (third.innerText.includes("ban")) {
+							third.style.backgroundColor = colors.ban;
+						}
+						else if (third.innerText.includes("timeout")) {
+							third.style.backgroundColor = colors.timeout;
+						}
+						else if (third.innerText.includes("warn")) {
+							third.style.backgroundColor = colors.warn;
+						}
+						row.appendChild(third);
+
+						note = document.createElement('td');
+						note.innerText = data[i].note || " ";
+						row.appendChild(note);
+
+						tbody.appendChild(row)
+					}
+				</script>
+			</table>
+			<ul>
+			</ul>
+		</details>
+		<details>
+			<summary>i wanna be a mod! (mod requests)</summary>
+			<p>for you to be a mod you must meet the following requirements:</p>
+			<ol>
+				<li>
+					<h3>be recognizable as a member of the streams.</h3>
+					<p>what i mean by this is that you should recognizable as a person who is active around vulbytes streams. this
+						doesn't mean you need to attend every stream but it means you should be around enough you're easily
+						recognized.</p>
+				</li>
+				<li>
+					<h3>history of good behavior</h3>
+					<p>as a mod who's expected to uphold the rules, you should show yourself that you're able to recognize and
+						uphold the standards of being a mod. other examples of what might prevent you from being a mod are things
+						like: tts spam, not respecting others, general negative attitude, etc. <em>if you can't follow the rules
+							yourself, how do i expect you to
+							enforce them?</em></p>
+				</li>
+				<li>
+					<h3></h3>
+					<p></p>
+				</li>
+			</ol>
+		</details>
+	</div>
+</body>
+
+</html>
