@@ -14,7 +14,6 @@ export default class MonitorMessages {
 		this.args = args;
 		this.firstStart = true;
 
-		// FIX: Pass apiKey to YoutubeStuff
 		const apiKey = GEBI("youtube_apiKey")?.value;
 		const broadcastId = GEBI("youtube_broadcastId")?.value;
 
@@ -23,15 +22,15 @@ export default class MonitorMessages {
 			broadcastId: broadcastId
 		});
 
-		// Store the interval ID for cleanup
 		this.monitorInterval = null;
 		this.messageIndex = 0;
+
+		// IMPORTANT: Store the nextPageToken to get new messages
+		this.nextPageToken = null;
 	}
 
 	async StartMonitoring() {
-		// Initial setup
 		if (this.firstStart === true) {
-			// Re-read values in case they changed
 			if (!this.yt.args.apiKey) {
 				this.yt.args.apiKey = GEBI("youtube_apiKey")?.value;
 			}
@@ -42,28 +41,26 @@ export default class MonitorMessages {
 			this.firstStart = false;
 			console.log(`Loading complete chat history for broadcast: ${this.yt.args.broadcastId}`);
 
-			// Get initial messages
 			try {
 				await this.GetMessages();
 			} catch (error) {
 				console.error("Error getting initial messages:", error);
+				throw error; // Propagate error so UI can show it
 			}
 		}
 
-		// FIX: Use ONLY setInterval, not both IntTimer and setInterval
-		// Clear any existing interval first
 		if (this.monitorInterval) {
 			clearInterval(this.monitorInterval);
 		}
 
-		// Set up periodic updates
 		const updateFreqMs = (this.args.updateFreq || 30) * 1000;
 		console.log(`Starting monitoring with update frequency: ${updateFreqMs}ms`);
 
 		this.monitorInterval = setInterval(async () => {
 			try {
 				console.log(`Fetching messages at ${new Date().toISOString()}`);
-				await this.yt.GetMessages(); // WARN: THIS ERRORS FOR SOME REASON AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+				// Pass the nextPageToken to get new messages
+				await this.GetMessages(this.nextPageToken);
 			} catch (error) {
 				console.error("Error during monitoring update:", error);
 			}
@@ -78,7 +75,6 @@ export default class MonitorMessages {
 		}
 	}
 
-	// --- helper: parse TTS command flags ---
 	parseTTSMessage(raw) {
 		const regex = /^!(TTS|TIB|BOT)\s+(.*)$/i;
 		const match = raw.match(regex);
@@ -158,22 +154,36 @@ export default class MonitorMessages {
 		window.speechSynthesis.speak(utter);
 	}
 
-	async GetMessages() {
+	async GetMessages(pageToken = undefined) {
 		let resp;
 		try {
-			resp = await this.yt.GetMessages();
+			// Pass the pageToken to get the next batch of messages
+			resp = await this.yt.GetMessages(pageToken);
 		}
 		catch (err) {
-			console.warn("error getting messages, might be becasue of page index, lowering by one then trying again next update :3");
-			this.yt.args.pageCount -= 1;
-			if (this.yt.args.pageCount < 0) { this.yt.args.pageCount = 0; }
+			console.error("Error getting messages:", err);
+			throw err;
 		}
+
+		// IMPORTANT: Store the nextPageToken for the next request
+		if (resp.nextPageToken) {
+			this.nextPageToken = resp.nextPageToken;
+			console.log(`Got nextPageToken: ${this.nextPageToken}`);
+		}
+
+		// Also respect the pollingIntervalMillis if provided
+		if (resp.pollingIntervalMillis) {
+			console.log(`YouTube recommends polling every ${resp.pollingIntervalMillis}ms`);
+		}
+
 		const yt_messages = resp?.items || [];
 
 		if (!yt_messages.length) {
 			console.log("No messages returned");
 			return;
 		}
+
+		console.log(`Processing ${yt_messages.length} messages`);
 
 		const table = document.getElementById("messagesTable");
 		if (!table) throw new Error("no message table found");
@@ -185,7 +195,7 @@ export default class MonitorMessages {
 			.replaceAll('"', "&quot;")
 			.replaceAll("'", "&#39;");
 
-		let newMessages = false;
+		let newMessagesCount = 0;
 		for (let i = 0; i < yt_messages.length; ++i) {
 			const item = yt_messages[i];
 			const msg = {
@@ -198,9 +208,14 @@ export default class MonitorMessages {
 			const existing = table.querySelector(
 				`tr[data-author="${esc(msg.author)}"][data-published="${esc(msg.publishedAt)}"]`
 			);
-			if (existing) { continue };
-			newMessages = true // NOTE: if this is not reached, incr page count
+			if (existing) {
+				console.log(`Skipping duplicate message from ${msg.author}: "${msg.message}"`);
+				continue;
+			}
 
+			console.log(`Adding NEW message from ${msg.author}: "${msg.message}"`);
+
+			newMessagesCount++;
 			this.messageIndex++;
 			const idx = this.messageIndex;
 
@@ -271,13 +286,128 @@ export default class MonitorMessages {
 			table.appendChild(tr);
 		}
 
-		if (newMessages == false) {
-			this.yt.args.pageCount += 1;
-			console.log("no new messages found, waiting one second then trying again");
-			await setTimeout(1000);
-			GetMessages();
-		}
-
+		console.log(`Added ${newMessagesCount} new messages to table`);
 		return yt_messages;
 	}
+
+	async ValidateTTSMessage(message) {
+		// TODO: Implement validation
+	}
+
+	async EvaluateMessageScore(message, debug = false) {
+		if (debug === true) {
+			console.log("checking message score");
+		}
+
+		let checks = [0, 0, 0, 0, 0, 0, 0];
+		let score = 0;
+
+		// 1. Check punctuation and capitalization
+		for (let i = 0; i < message.length; ++i) {
+			let char = message[i];
+			if (char == "." || char == "?" || char == "!") {
+				if (message[i + 1] == " " || message[i + 2] == " " || message[i + 3] == " ") {
+					score += 30;
+					checks[0] = 1;
+				}
+			}
+		}
+
+		// 2. Check trigrams
+		let trigramScore = 0;
+		let trigramIndexs = [];
+		for (let i = 0; i < message.length; ++i) {
+			if (message[i] == " ") {
+				trigramIndexs.push(i + 1);
+			}
+		}
+		for (let i = 0; i < trigramIndexs.length; ++i) {
+			for (let j = 0; j < trigrams.length; ++j) {
+				if (message.slice(trigramIndexs[i], trigramIndexs[i] + 3) == trigrams[j]) {
+					trigramScore += 1;
+					checks[1] = 1;
+				}
+			}
+		}
+
+		// 3. Check if first letter is capital
+		let isFirstLetterCapital = false;
+		for (let i = 0; i < capitals.length; ++i) {
+			if (message[0] == capitals[i]) {
+				isFirstLetterCapital = true;
+				break;
+			}
+		}
+		if (isFirstLetterCapital) {
+			score += 20;
+			checks[2] = 1;
+		} else {
+			score -= 10;
+		}
+
+		// 4. Check for repeated letters
+		for (let i = 0; i < message.length; ++i) {
+			let char = message[i];
+			if (message[i + 1] == char && message[i + 2] == char) {
+				score -= 50;
+				checks[3] = 0;
+			} else {
+				checks[3] = 1;
+			}
+		}
+
+		// 5. Check space ratio
+		let spaceCount = 0;
+		for (let i = 0; i < message.length; ++i) {
+			if (message[i] == " ") {
+				spaceCount += 1;
+				checks[4] = 1;
+			}
+		}
+		if ((spaceCount * 100) / (message.length - spaceCount) < 20) {
+			score -= 20;
+		} else {
+			score += 20;
+		}
+
+		// 6. Check long messages for punctuation
+		if (message.length > 75) {
+			if (message.includes(",") || message.includes(".") || message.includes("?") || message.includes("!")) {
+				checks[5] = 1;
+			} else {
+				score -= 150;
+			}
+		} else {
+			checks[5] = 1;
+		}
+
+		// 7. Check 32-character chunks for spaces
+		for (let i = 0; i < message.length; i += 32) {
+			let chunk = message.slice(i, i + 32);
+			if (!chunk.includes(" ")) {
+				score -= 20;
+				checks[6] = 0;
+			} else {
+				checks[6] = 1;
+			}
+		}
+
+		if (debug === true) {
+			console.log(`score of message is: ${score}`);
+		}
+		return score;
+	}
 }
+
+const capitals = [
+	'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+];
+const minuscules = [
+	'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+];
+const numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+const validSpecials = [
+	',', '.', '?', '/', '!', '#', '$', '%', '^', '&', '"', "'", ";", ":", "-", "_", "~", '+', '=', '⁰', '¹', '²', '³', '⁴', '⁵', '⁶', '⁷', '⁸', '⁹',
+];
+
+const trigrams = ['aaa', 'bbb'];

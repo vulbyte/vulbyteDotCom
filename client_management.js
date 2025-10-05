@@ -1,3 +1,15 @@
+function LSGI(id = undefined) {
+	if (id = undefined) {
+		throw new Error("LSGI, id is undefined");
+	}
+	return localStorage.getItem(id)
+}
+function GEBI(id = undefined) {
+	if (id = undefined) {
+		throw new Error("GEBI, id is undefined");
+	}
+	return localStorage.getItem(id)
+}
 //##########################################################
 //	imports
 //############################################################ imports {{{1
