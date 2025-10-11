@@ -108,7 +108,12 @@ export default class YoutubeStuff {
 			this.args.liveChatId = liveChatId;
 			return liveChatId;
 		} catch (err) {
-			throw new Error("Failed to get liveChatId: " + err.message);
+			try {
+				GEBI("youtube_broadcastId").value
+			}
+			catch (err) {
+				throw new Error("Failed to get liveChatId: " + err.message);
+			}
 		}
 	}
 
