@@ -299,7 +299,7 @@
 					console.log(`Table has ${table.rows.length} rows`);
 
 					// Debug: Check what's in each row
-					for (let i = table.rows.length - 1; i > 0; --i) {
+					for (let i = 0; i < table.rows.length; ++i) {
 						let row = table.rows[i];
 						console.log(`Row ${i} has ${row.cells.length} cells`);
 
