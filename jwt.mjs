@@ -1,4 +1,4 @@
-export default class Networking {
+export default class JWT {
 	// PRIVATE (assist functions)
 	// NOTE: will throw errors
 	#LEGI(id) {
