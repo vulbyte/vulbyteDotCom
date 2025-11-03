@@ -10,166 +10,180 @@
 </head>
 
 <body>
-	<h2 style="color:#c50;">website underconstruction!</h2>
+	<h2 style="color:#c50;">website
+		<span style="
+				font-family:url(
+			https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Permanent+Marker&display=swap);
+				background-color:#ffd;
+				color:red;
+				padding-left:0.6em;
+				padding-right:0.6em;
+				transform:rotateZ('15deg');
+				">perpetually</span>
+		underconstruction!
+	</h2>
 	<p>
 		sorry for being a bit bland rn! long story short is i'm currently working on a tonne of little things for the
 		website rn, and because this doesn't get a tonne of traffic i'm live updating it, so sorry! but it makes life easy
 		for me lol.
 	</p>
 	<!--
-	<div class="clicker-container">
-		<div class="clicker">
-			<button class="clicker-btn" data-action="decrement">−</button>
-			<div class="counter" id="counter"></div>
-			<button class="clicker-btn" data-action="increment">+</button>
-		</div>
+	<div class=" clicker-container">
+			<div class="clicker">
+				<button class="clicker-btn" data-action="decrement">−</button>
+				<div class="counter" id="counter"></div>
+				<button class="clicker-btn" data-action="increment">+</button>
+			</div>
 
-		<style>
-			.clicker-container {
-				display: inline-flex;
-				align-items: center;
-				justify-content: center;
-				font-family: monospace;
-				margin: 1rem;
-			}
-
-			.clicker {
-				display: flex;
-				align-items: center;
-				gap: 1rem;
-				background: #111;
-				padding: 1rem 2rem;
-				border-radius: 1rem;
-				box-shadow: inset 0 0 10px #000, 0 0 10px #000;
-			}
-
-			.clicker-btn {
-				background: #333;
-				color: #fff;
-				font-size: 2rem;
-				border: none;
-				border-radius: 0.5rem;
-				width: 2.5rem;
-				height: 2.5rem;
-				cursor: pointer;
-				transition: background 0.2s, transform 0.1s;
-			}
-
-			.clicker-btn:hover {
-				background: #555;
-			}
-
-			.clicker-btn:active {
-				transform: scale(0.95);
-			}
-
-			.clicker-container .counter {
-				display: flex;
-				background: #000;
-				border: 2px solid #666;
-				border-radius: 0.5rem;
-				padding: 0.5rem;
-			}
-
-			.digit {
-				padding-left: 0px;
-				margin-left: 0px;
-			}
-
-			.clicker-container .digit {
-				position: relative;
-				width: 1.2em;
-				height: 1.5em;
-				overflow: hidden;
-				perspective: 200px;
-				color: #0f0;
-				font-size: 2rem;
-				text-align: center;
-				font-weight: bold;
-			}
-
-			.clicker-container .digit span {
-				position: absolute;
-				width: 100%;
-				transition: transform 0.3s ease-in-out;
-				transform-origin: center top;
-			}
-
-			.clicker-container .digit.flip span {
-				transform: rotateX(-90deg);
-			}
-		</style>
-
-		<script>
-			(() => {
-				const digits = 5;
-				let count = 0;
-				const counter = document.querySelector(".clicker-container #counter");
-
-				function renderCounter() {
-					const numStr = count.toString().padStart(digits, "0");
-					counter.innerHTML = "";
-					for (let n of numStr) {
-						const digit = document.createElement("div");
-						digit.className = "digit";
-						const span = document.createElement("span");
-						span.textContent = n;
-						digit.appendChild(span);
-						counter.appendChild(digit);
-					}
+			<style>
+				.clicker-container {
+					display: inline-flex;
+					align-items: center;
+					justify-content: center;
+					font-family: monospace;
+					margin: 1rem;
 				}
 
-				function updateCounter(newCount) {
-					const oldStr = count.toString().padStart(digits, "0");
-					const newStr = newCount.toString().padStart(digits, "0");
-					const digitEls = counter.querySelectorAll(".digit");
+				.clicker {
+					display: flex;
+					align-items: center;
+					gap: 1rem;
+					background: #111;
+					padding: 1rem 2rem;
+					border-radius: 1rem;
+					box-shadow: inset 0 0 10px #000, 0 0 10px #000;
+				}
 
-					for (let i = 0; i < digits; i++) {
-						if (oldStr[i] !== newStr[i]) {
-							const d = digitEls[i];
-							const span = d.querySelector("span");
+				.clicker-btn {
+					background: #333;
+					color: #fff;
+					font-size: 2rem;
+					border: none;
+					border-radius: 0.5rem;
+					width: 2.5rem;
+					height: 2.5rem;
+					cursor: pointer;
+					transition: background 0.2s, transform 0.1s;
+				}
 
-							d.classList.add("flip");
-							setTimeout(() => {
-								span.textContent = newStr[i];
-								d.classList.remove("flip");
-							}, 150);
+				.clicker-btn:hover {
+					background: #555;
+				}
+
+				.clicker-btn:active {
+					transform: scale(0.95);
+				}
+
+				.clicker-container .counter {
+					display: flex;
+					background: #000;
+					border: 2px solid #666;
+					border-radius: 0.5rem;
+					padding: 0.5rem;
+				}
+
+				.digit {
+					padding-left: 0px;
+					margin-left: 0px;
+				}
+
+				.clicker-container .digit {
+					position: relative;
+					width: 1.2em;
+					height: 1.5em;
+					overflow: hidden;
+					perspective: 200px;
+					color: #0f0;
+					font-size: 2rem;
+					text-align: center;
+					font-weight: bold;
+				}
+
+				.clicker-container .digit span {
+					position: absolute;
+					width: 100%;
+					transition: transform 0.3s ease-in-out;
+					transform-origin: center top;
+				}
+
+				.clicker-container .digit.flip span {
+					transform: rotateX(-90deg);
+				}
+			</style>
+
+			<script>
+				(() => {
+					const digits = 5;
+					let count = 0;
+					const counter = document.querySelector(".clicker-container #counter");
+
+					function renderCounter() {
+						const numStr = count.toString().padStart(digits, "0");
+						counter.innerHTML = "";
+						for (let n of numStr) {
+							const digit = document.createElement("div");
+							digit.className = "digit";
+							const span = document.createElement("span");
+							span.textContent = n;
+							digit.appendChild(span);
+							counter.appendChild(digit);
 						}
 					}
-					count = newCount;
-				}
 
-				document
-					.querySelector(".clicker-container [data-action='increment']")
-					.addEventListener("click", () => updateCounter(count + 1));
+					function updateCounter(newCount) {
+						const oldStr = count.toString().padStart(digits, "0");
+						const newStr = newCount.toString().padStart(digits, "0");
+						const digitEls = counter.querySelectorAll(".digit");
 
-				document
-					.querySelector(".clicker-container [data-action='decrement']")
-					.addEventListener("click", () => updateCounter(Math.max(0, count - 1)));
+						for (let i = 0; i < digits; i++) {
+							if (oldStr[i] !== newStr[i]) {
+								const d = digitEls[i];
+								const span = d.querySelector("span");
 
-				renderCounter();
-			})();
-		</script>
-	</div>
-		-->
+								d.classList.add("flip");
+								setTimeout(() => {
+									span.textContent = newStr[i];
+									d.classList.remove("flip");
+								}, 150);
+							}
+						}
+						count = newCount;
+					}
+
+					document
+						.querySelector(".clicker-container [data-action='increment']")
+						.addEventListener("click", () => updateCounter(count + 1));
+
+					document
+						.querySelector(".clicker-container [data-action='decrement']")
+						.addEventListener("click", () => updateCounter(Math.max(0, count - 1)));
+
+					renderCounter();
+				})();
+			</script>
+			</div>
+			-->
 
 	<br>
 	<br>
 	<h1>vulbyte.com</h1>
-	<h3>who?</h3>
-	<p>vulbyte lol</p>
-	<h3>what?</h3>
-	<p>i make things </p>
-	<h3>when?</h3>
-	<p>est. 2000</p>
-	<h3>where?</h3>
-	<p><em>C</em>anada</p>
-	<p><em>U</em>nited States of America</p>
-	<p><em>M</em>exico</p>
-	<h3>why?</h3>
-	<p>because it's fun :3</p>
-	<h3>how?</h3>
-	<p>compooders</p>
+	<details>
+		<summary>wwwwwh</summary>
+		<h3>who?</h3>
+		<p>vulbyte lol</p>
+		<h3>what?</h3>
+		<p>i make things </p>
+		<h3>when?</h3>
+		<p>est. 2000</p>
+		<h3>where?</h3>
+		<p><em>C</em>anada</p>
+		<p><em>U</em>nited States of America</p>
+		<p><em>M</em>exico</p>
+		<h3>why?</h3>
+		<p>because it's fun :3</p>
+		<h3>how?</h3>
+		<p>compooders</p>
+	</details>
 
 	<div>
 		<p>welcome to the website, feel free to poke around</p>

@@ -292,6 +292,7 @@ function Navbar() {
 
 					let content_dirs = [
 						"code_stuff",
+						"game_rankings",
 						"video_scripts",
 					];
 
@@ -301,11 +302,16 @@ function Navbar() {
 
 						let dd_link = document.createElement("a");
 						dd_link.innerText = `${i}`;
-						dd_link.href = `/content/${i}/${i}.html`;
+						if (i = "game_rankings") {
+							dd_link.href = `/${i}.html`;
+						}
+						else {
+							dd_link.href = `/content/${i}/${i}.html`;
+						}
 
 						dd_item.appendChild(dd_link);
 						content_dropdown.appendChild(dd_item);
-					})
+					});
 					newElem.appendChild(content_dropdown);
 					break;
 				case ("account"):
