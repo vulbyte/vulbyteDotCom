@@ -1,42 +1,54 @@
-function LSGI(id) {
-	return localStorage.getItem(String(id));
-}
-
-function GEBI(id) {
-	return document.getElementById(id);
-}
-
-let urls = {
-	getBroadcast: "https://www.googleapis.com/youtube/v3/videos",
-	getChannelId: "https://www.googleapis.com/youtube/v3/search",
-	getMessages: "https://www.googleapis.com/youtube/v3/liveChat/messages",
-};
 
 export default class YoutubeStuff {
-	constructor(args = {}) {
-		this.args = {
-			apiKey: args.apiKey || GEBI("youtube_apiKey")?.value || undefined,
-			channelName: args.channelName || GEBI("youtube_channelName")?.value || undefined,
-			channelId: args.channelId || GEBI("youtube_channelId")?.value || undefined,
-			broadcastId: args.broadcastId || GEBI("youtube_broadcastId")?.value || undefined,
-			liveChatId: args.liveChatId || GEBI("youtube_liveChatId")?.value || undefined,
-			updateFreq: args.updateFreq || 30, // seconds
-			pageCount: 0,
-			debug: args.debug || false,
-		};
+	#config = {
+		apiKey: this.#CheckStorageThenSearchPage("youtube-apiKey") || undefined,
+		channelName: this.#CheckStorageThenSearchPage("youtube-channelName") || undefined,
+		channelId: this.#CheckStorageThenSearchPage("youtube-channelId") || undefined,
+		broadcastId: this.#CheckStorageThenSearchPage("youtube-broadcastId") || undefined,
+		liveChatId: this.#CheckStorageThenSearchPage("youtube-liveChatId") || undefined,
+		pageCount: 0,
+		debug: false,
 	}
+
+	#CheckStorageThenSearchPage(str) {
+		let val;
+		val = this.#LSGI(str);
+		if (val != undefined) {
+			return val
+		}
+		val = this.#GEBI(str);
+		if (val != undefined) {
+			return val
+		}
+		return undefined;
+	}
+
+	#LSGI(id) {
+		return localStorage.getItem(String(id));
+	}
+
+	#GEBI(id) {
+		return document.getElementById(id);
+	}
+
+	#urls = {
+		getBroadcast: "https://www.googleapis.com/youtube/v3/videos",
+		getChannelId: "https://www.googleapis.com/youtube/v3/search",
+		getMessages: "https://www.googleapis.com/youtube/v3/liveChat/messages",
+	};
+
+	constructor() { }
 
 	// Fetch the channel ID using the channel name
 	async GetChannelId() {
-		// FIX: Check this.args.apiKey instead of this.apiKey
-		if (this.args.apiKey == undefined) {
+		if (this.#config.apiKey == undefined) {
 			throw new Error("cannot getChannelId, apiKey is undefined");
 		}
 		try {
 			const channelIdUrl = new URL(urls.getChannelId);
 			channelIdUrl.search = new URLSearchParams({
-				key: this.args.apiKey,
-				q: this.args.channelName,
+				key: this.#config.apiKey,
+				q: this.#config.channelName,
 				type: "channel",
 				part: "id",
 				maxResults: 1,
@@ -48,7 +60,7 @@ export default class YoutubeStuff {
 			const channelId = data.items?.[0]?.id?.channelId;
 			if (!channelId) throw new Error("No channelId found in response");
 
-			this.args.channelId = channelId;
+			this.#config.channelId = channelId;
 			return channelId;
 		} catch (err) {
 			throw new Error("Failed to get channel id: " + err.message);
@@ -57,8 +69,7 @@ export default class YoutubeStuff {
 
 	// Fetch the broadcastId of the current/live broadcast
 	async GetBroadcastId() {
-		// FIX: Check this.args.apiKey instead of this.apiKey
-		if (this.args.apiKey == undefined) {
+		if (this.#config.apiKey == undefined) {
 			throw new Error("cannot getBroadcastId, apiKey is undefined");
 		}
 		try {
@@ -67,7 +78,7 @@ export default class YoutubeStuff {
 				part: "id,liveStreamingDetails",
 				chart: "mostPopular",
 				maxResults: 1,
-				key: this.args.apiKey,
+				key: this.#config.apiKey,
 			}).toString();
 
 			const res = await fetch(broadcastUrl);
@@ -76,7 +87,7 @@ export default class YoutubeStuff {
 			const broadcastId = data.items?.[0]?.id;
 			if (!broadcastId) throw new Error("No broadcastId found");
 
-			this.args.broadcastId = broadcastId;
+			this.#config.broadcastId = broadcastId;
 			return broadcastId;
 		} catch (err) {
 			throw new Error("Failed to get broadcast id: " + err.message);
@@ -85,18 +96,18 @@ export default class YoutubeStuff {
 
 	// NEW: Get the liveChatId from a broadcast
 	async GetLiveChatId() {
-		if (this.args.apiKey == undefined) {
+		if (this.#config.apiKey == undefined) {
 			throw new Error("cannot getLiveChatId, apiKey is undefined");
 		}
-		if (!this.args.broadcastId) {
+		if (!this.#config.broadcastId) {
 			throw new Error("cannot getLiveChatId, broadcastId is undefined");
 		}
 		try {
 			const broadcastUrl = new URL(urls.getBroadcast);
 			broadcastUrl.search = new URLSearchParams({
 				part: "liveStreamingDetails",
-				id: this.args.broadcastId,
-				key: this.args.apiKey,
+				id: this.#config.broadcastId,
+				key: this.#config.apiKey,
 			}).toString();
 
 			const res = await fetch(broadcastUrl);
@@ -105,11 +116,11 @@ export default class YoutubeStuff {
 			const liveChatId = data.items?.[0]?.liveStreamingDetails?.activeLiveChatId;
 			if (!liveChatId) throw new Error("No liveChatId found");
 
-			this.args.liveChatId = liveChatId;
+			this.#config.liveChatId = liveChatId;
 			return liveChatId;
 		} catch (err) {
 			try {
-				GEBI("youtube_broadcastId").value
+				this.#GEBI("youtube_broadcastId").value
 			}
 			catch (err) {
 				throw new Error("Failed to get liveChatId: " + err.message);
@@ -119,22 +130,21 @@ export default class YoutubeStuff {
 
 	// Fetch messages from the live chat
 	async GetMessages(pageToken = undefined) {
-		// FIX: Check this.args.apiKey instead of this.apiKey
-		if (this.args.apiKey == undefined) {
+		//returns json such as: './yt_v3_test.json'
+		if (this.#config.apiKey == undefined) {
 			throw new Error("cannot getMessages, apiKey is undefined");
 		}
 		try {
-			// FIX: await the GetLiveChatId call
-			if (!this.args.liveChatId) {
+			if (!this.#config.liveChatId) {
 				await this.GetLiveChatId();
 			}
 
 			const messagesUrl = new URL(urls.getMessages);
 			messagesUrl.search = new URLSearchParams({
-				key: this.args.apiKey,
+				key: this.#config.apiKey,
 				part: "id,snippet,authorDetails",
-				liveChatId: this.args.liveChatId,
-				maxResults: this.args.maxResults || 200,
+				liveChatId: this.#config.liveChatId,
+				maxResults: this.#config.maxResults || 200,
 			}).toString();
 
 			if (pageToken) {
@@ -150,3 +160,51 @@ export default class YoutubeStuff {
 		}
 	}
 }
+
+
+
+
+/* add api key then paste this into the the console to get messages
+async function qGetLiveChatId(videoId) {
+	const videoDetailsUrl = new URL("https://www.googleapis.com/youtube/v3/videos");
+	videoDetailsUrl.search = new URLSearchParams({
+		key: '',
+		id: videoId,
+		part: 'liveStreamingDetails' // Request the details that contain the chat ID
+	}).toString();
+
+	const res = await fetch(videoDetailsUrl);
+	const data = await res.json();
+
+	// Extract the long chat ID
+	if (data.items && data.items.length > 0 && data.items[0].liveStreamingDetails) {
+		return data.items[0].liveStreamingDetails.activeLiveChatId;
+	}
+	throw new Error("Could not find activeLiveChatId for this video ID.");
+}
+const qliveChatId = await qGetLiveChatId('uBU-OkKy7EU');
+async function qGetMessages(liveChatId = qliveChatId) {
+	const messagesUrl = new URL("https://www.googleapis.com/youtube/v3/liveChat/messages");
+	messagesUrl.search = new URLSearchParams({
+		key: '',
+		liveChatId: liveChatId, // This is the long, correct ID
+		maxResults: 200,
+		part: 'snippet,authorDetails', // ⬅️ THIS IS CRUCIAL
+	}).toString();
+
+	const res = await fetch(messagesUrl);
+	const data = await res.json();
+
+	// Check for success or error
+	if (res.ok) {
+		return JSON.stringify(data, null, 2);
+	} else {
+		// Return the error message if the request still fails for another reason
+		return JSON.stringify({ error: data }, null, 2);
+	}
+}
+
+
+// Combine the two steps:
+console.log(await qGetMessages());
+*/

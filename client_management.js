@@ -631,8 +631,8 @@ try {
 				return (new_style);
 			}
 			new_style = await ComputeNewStyle();
-			let highLight = CE({ type: "div", style: new_style });
-			og.insertAdjacentElement('beforebegin', highLight)
+			//let highLight = CE({ type: "div", style: new_style });
+			//og.insertAdjacentElement('beforebegin', highLight)
 			/*
 	
 			let lowLight = CE({ style: og.style });

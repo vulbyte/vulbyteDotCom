@@ -58,16 +58,18 @@
 		</div>
 		<textarea id="messageScoreCheck"></textarea>
 		<script type="module">
-			let mm = window.monitorMessages;
 
 			let testArea = document.getElementById("messageScoreCheck");
 			let messageScore = document.getElementById("messageScoreTest");
 
 			let data;
 			testArea.addEventListener("change", (e) => {
-				mm.EvaluateMessageScore(testArea.value)
-					.then(res => data = res)
-					.then(messageScore.innerText = data);
+				window.monitorMessages.EvaluateMessageScore(testArea.value)
+					.then((res) => {
+						data = res;
+						console.log(data);
+						messageScore.innerText = data;
+					});
 			});
 		</script>
 	</details>
@@ -344,7 +346,6 @@
 				// imports from window
 				// ############################################################
 				const PopUp = window.PopUp;
-				const mm = window.monitorMessages; // ✅ global MonitorMessages instance
 				const assert = window.assert;
 				console.log('monitor buttons script loaded');
 
@@ -381,9 +382,9 @@
 					console.log('Start monitoring button clicked');
 
 					try {
-						mm.args.timeoutDuration = Number(document.getElementById("timeout_duration").value) || 300;
+						window.monitorMessages.args.timeoutDuration = Number(document.getElementById("timeout_duration").value) || 300;
 
-						await mm.StartMonitoring();
+						await window.monitorMessages.StartMonitoring();
 						console.log('Monitoring started successfully');
 						setButtonStates({monitoring: true});
 					} catch (err) {
@@ -405,7 +406,7 @@
 					console.log('Stop monitoring button clicked');
 
 					try {
-						mm.StopMonitoring();
+						window.monitorMessages.StopMonitoring();
 						console.log('Monitoring stopped successfully');
 						setButtonStates({monitoring: false});
 					} catch (err) {
@@ -419,7 +420,7 @@
 				// ############################################################
 				document.getElementById('start_tts_button').addEventListener('click', () => {
 					try {
-						mm.StartAutoTTS?.();
+						window.monitorMessages.StartAutoTTS?.();
 						console.log("Auto TTS started");
 						ttsTimer.Start();
 					} catch (err) {
@@ -429,7 +430,7 @@
 
 				document.getElementById('pause_tts_button').addEventListener('click', () => {
 					try {
-						mm.PauseAutoTTS?.();
+						window.monitorMessages.PauseAutoTTS?.();
 						console.log("Auto TTS paused");
 						ttsTimer.Stop();
 					} catch (err) {
@@ -441,19 +442,19 @@
 				// update_info bindings
 				// ############################################################
 				function updateUIFromMonitor() {
-					if (!mm) return;
+					if (!window.monitorMessages) return;
 
 					// next update gauge
-					document.querySelector("#update_info .guage-inner span").textContent = mm.nextUpdate ?? 0;
+					document.querySelector("#update_info .guage-inner span").textContent = window.monitorMessages.nextUpdate ?? 0;
 
 					// tts queue
-					document.querySelector("#update_info>div:nth-child(2)>span").textContent = mm.ttsQueue?.length ?? 0;
+					document.querySelector("#update_info>div:nth-child(2)>span").textContent = window.monitorMessages.ttsQueue?.length ?? 0;
 
 					// tts messages read
-					document.querySelector("#update_info>div:nth-child(3)>span").textContent = mm.ttsMessagesRead ?? 0;
+					document.querySelector("#update_info>div:nth-child(3)>span").textContent = window.monitorMessages.ttsMessagesRead ?? 0;
 
 					// total messages
-					document.querySelector("#update_info>div:nth-child(4)>span").textContent = mm.totalMessages ?? 0;
+					document.querySelector("#update_info>div:nth-child(4)>span").textContent = window.monitorMessages.totalMessages ?? 0;
 				}
 
 				// refresh UI every second
@@ -622,277 +623,131 @@
 					padding-bottom: 0px;
 				}
 			</style>
-			<details>
-				<summary>Youtube Stuff</summary>
-				<ol id='youtube_settings'>
-					<li><label>api Key</label>
-						<div>
-							<input type="password" id="youtube_apiKey" placeholder='eg: 1a2b3c4d5e6f7g'>
-							<button id='show_youtube_apiKey_button'>👁️show</button>
-							<script type="module">
-								window.addEventListener('DOMContentLoaded', () => {
-									document.getElementById('show_youtube_apiKey_button').addEventListener('mousedown', (e) => {
-										document.getElementById('youtube_apiKey').type = 'text';
-										document.getElementById('show_youtube_apiKey_button').innerText = '🙈 show';
-									});
-									document.getElementById('show_youtube_apiKey_button').addEventListener('mouseleave', (e) => {
-										document.getElementById('youtube_apiKey').type = 'password';
-										document.getElementById('show_youtube_apiKey_button').innerText = '👁️show';
-										document.getElementById('toggle_youtube_apiKey_button').style.backgroundColor = 'var(--color_secondary)';
-									});
-								});
-							</script>
-							<button id='toggle_youtube_apiKey_button'>🔁 toggle <span id='yt_apiKey_timer_placement'></span></button>
-
-							<script type="module">
-								import {IntTimer} from './tib_stuff/intTimer.js';
-								window.addEventListener('DOMContentLoaded', () => {
-
-									window.addEventListener('DOMContentLoaded', () => {
-										let yt_apiKey = document.getElementById('youtube_apiKey');
-										let toggle = document.getElementById('toggle_youtube_apiKey_button');
-
-										//{{{3 show/hide functions - DEFINE THESE FIRST
-										function ShowYtApiKey() {
-											console.log('showing yt api');
-											yt_apiKey.type = 'text';
-											toggle.style.backgroundColor = '#ff0000';
-											toggle.style.color = '#fff';
-										}
-
-										function HideYtApiKey() {
-											console.log('hiding yt api');
-											yt_apiKey.type = 'password';
-											toggle.style.backgroundColor = 'var(--color_secondary)';
-											toggle.style.color = '#fff';
-											// Now HideApiKeyTimer will be defined when this is called
-											HideApiKeyTimer.Restart();
-										}
-										//}}}3
-
-										//{{{3 timer creation - CREATE TIMER AFTER FUNCTION DEFINITIONS
-										let HideApiKeyTimer = new IntTimer({
-											'name': 'yt_apiKey_timer_placement',
-											'timeoutDuration': 3,
-											'autostart': false,
-											'listeners': [HideYtApiKey], // ✅ Function is defined now
-										});
-
-										toggle.addEventListener('mousedown', (e) => {
-											if (document.getElementById('youtube_apiKey').type == 'password') {
-												ShowYtApiKey();
-												HideApiKeyTimer.Start();
-											}
-										});
-										//}}}3
-									});
-								});
-							</script>
-						</div>
-					</li>
-					<li><label>channel name</label>
-						<div>
-							<input type="text" id="youtube_channelName" placeholder='no "@"'>
-						</div>
-					</li>
-					<li><label>max Results per update </label>
-						<div>
-							<input id="youtube_maxResults" type="number" min='1' max='50' value='5'>
-						</div>
-					</li>
-					<li><label>update freq</label>
-						<br>
-						<style>
-							#youtube_update_freq {
-								margin-top: 1em;
-								padding: 0px;
-								width: 50%;
-							}
-						</style>
-						<input id='youtube_update_freq' type="range" min="2" max="300" value=20>
-						<!-- TODO: NEEDS UPDATE SCRIPT TO OUTPUT VALUE -->
-						<output>1 update every <span id='youtube_update_freq_display'></span> seconds </output>
-						<script type='module'>
-							window.addEventListener('DOMContentLoaded', () => {
-								const slider = document.getElementById("youtube_update_freq");
-								const display = document.getElementById("youtube_update_freq_display");
-								window.addEventListener('DOMContentLoaded', () => {
-									display.innerHTML = slider.value;
-								});
-								slider.addEventListener('mouseover', (e) => {
-									display.innerHTML = slider.value;
-								});
-								slider.addEventListener('mousemove', (e) => {
-									display.innerHTML = slider.value;
-								});
-							});
-						</script>
-					</li>
-				</ol>
-
-				<button id="youtube_wizard"> click here to begin the stream wizard! 🪄 </button>
-				<script type='module'>
-					window.addEventListener('DOMContentLoaded', () => {
-						let PopUp = window.PopUp;
-						let MonitorMessages = window.monitorMessages;
-
-						document.getElementById('youtube_wizard').addEventListener('click', async (e) => {
-							const monitor = window.monitorMessages;
-							const yt = monitor.yt_config; // ✅ now a YoutubeStuff instance
-
-							yt.args.channelName = document.getElementById("youtube_channelName").value;
-							yt.args.apiKey = document.getElementById("youtube_apiKey").value;
-
-							if (!yt.args.channelName) return PopUp.new({title: 'channel name needed!'});
-							if (!yt.args.apiKey) return PopUp.new({title: 'apiKey needed!'});
-
-							try { // get channel id, if not null apply to html field
-								await yt.GetYoutubeChannelId();
-								console.log("Got channel ID:", yt.args.channelId);
-								document.getElementById("youtube_channelId").value = yt.args.channelId;
-							} catch (err) {
-								PopUp.new({
-									title: "error getting channel id",
-									message: "is the api key and the channel name correct?",
-								});
-							}
-
-							try { // get channel id, if not null apply to html field
-								await yt.GetYoutubeChannelId();
-								console.log("Got channel ID:", yt.args.channelId);
-								document.getElementById("youtube_channelId").value = yt.args.channelId;
-							} catch (err) {
-								// Remove loading popup
-								document.getElementById('popup')?.remove();
-								PopUp.new({
-									title: "error getting channel id",
-									message: "is the api key and the channel name correct?",
-									details: err.message || err.toString()
-								});
-								throw new Error("could not fetch channel id"); // Exit early if channel ID fetch fails
-							}
-
-							try {
-								// get broadcasts; live and scheduled
-								console.log("Getting live broadcasts...");
-								const liveBroadcasts = await yt.GetLiveBroadcasts();
-
-								console.log("Getting upcoming broadcasts...");
-								const upcomingBroadcasts = await yt.GetUpcomingBroadcasts();
-
-								// Combine both arrays
-								const allBroadcasts = [...liveBroadcasts, ...upcomingBroadcasts];
-
-								console.log(`Found ${allBroadcasts.length} total broadcasts`);
-
-								// Remove loading popup
-								document.getElementById('popup')?.remove();
-
-								if (allBroadcasts.length === 0) {
-									PopUp.new({
-										title: 'No broadcasts found',
-										message: 'No live or scheduled broadcasts detected for this channel',
-										details: `Channel ID: ${yt.args.channelId}. Make sure you have a scheduled live stream.`
-									});
-								} else if (allBroadcasts.length === 1) {
-									// Auto-select if only one broadcast
-									const broadcast = allBroadcasts[0];
-									const broadcastId = broadcast.id.videoId;
-
-									document.getElementById("youtube_broadcastId").value = broadcastId;
-									document.getElementById("youtube_broadcast_id_index").value = 0;
-
-									// Store in the yt config
-									yt.args.broadcastId = broadcastId;
-
-									console.log("Auto-selected broadcast:", broadcastId);
-
-									PopUp.new({
-										title: 'Broadcast auto-selected!',
-										message: `Found and auto-selected: "${broadcast.snippet.title}"`,
-										details: `Broadcast ID: ${broadcastId}\nStatus: ${broadcast.snippet.liveBroadcastContent}`,
-										/*timeout: 5000*/
-									});
-								} else {
-									// Multiple broadcasts found - show selection info
-									const broadcastList = allBroadcasts.map((b, index) =>
-										`${index}: "${b.snippet.title}" (${b.snippet.liveBroadcastContent})`
-									).join('\n');
-
-									// Set the first one by default
-									const firstBroadcast = allBroadcasts[0];
-									document.getElementById("youtube_broadcastId").value = firstBroadcast.id.videoId;
-									document.getElementById("youtube_broadcast_id_index").value = 0;
-									yt.args.broadcastId = firstBroadcast.id.videoId;
-
-									PopUp.new({
-										title: `Multiple broadcasts found (${allBroadcasts.length})`,
-										message: 'Selected the first one by default. You can change the "broadcast index" below if needed.',
-										details: broadcastList,
-										/*timeout: 8000*/
-									});
-								}
-
-							} catch (err) {
-								console.error("Error getting broadcasts:", err);
-
-								// Remove loading popup
-								document.getElementById('popup').remove();
-
-								PopUp.new({
-									title: "Error getting broadcasts",
-									message: "Failed to retrieve live or scheduled broadcasts",
-									details: err.message || err.toString()
-								});
-							}
-						});
-					});
-				</script>
-				<br>
-				<sub>please note, this only works with scheduled live streams! does not work with streams that are already
-					live!</sub>
-				<br>
-				<br>
-				<details>
-					<summary> advanced youtube stream details.
-						<br>
-						<sub>
-							you can open this if you're curious, but in general the wizard
-							should handle this for you :3
-						</sub>
-					</summary>
-					<div>
-						<div>
-							<label>channelId</label>
-							<br>
-							<input id='youtube_channelId' type="text" minlength=6 maxlength=64>
-						</div>
-						<div>
-							<output style='
-margin: 3em;
-'>
-								no streams found yet!
-							</output>
-							<br><br>
-						</div>
-						<div>
-							<label>broadcast index</label>
-							<br>
-							<sub>(if you only have 1 stream scheduled, then leave this as 0)</sub>
-							<br>
-							<input id="youtube_broadcast_id_index" type="number" placeholder=0>
-						</div>
-						<label>current broadcastId</label>
-						<br>
-						<input id='youtube_broadcastId' type="text">
-					</div>
-				</details>
-			</details>
 
 			<br>
 
 		</div>
 
+	</div>
+	<div>
+		<style>
+			#youtube-config,
+			#youtube-config>*,
+			#youtube-config>*>*,
+			#youtube-config>*>*>*,
+			#youtube-config>*>*>*>* {
+				background-color: #500;
+				color: #ddd !important;
+				font-family: Helvetica, sans-serif, Arial !important;
+			}
+
+			.yt_form-input_container {
+				display: flex;
+				flex-direction: column;
+			}
+
+			.yt_form-input_container>label {
+				display: inline-block;
+				width: 8em;
+			}
+
+			.yt_form-input_container>input {}
+		</style>
+		<form id="youtube-config">
+			<details>
+				<summary>youtube specific config</summary>
+				<fieldset>
+					<legend>public info</legend>
+					<div class="yt_form-input_container">
+						<label>channelName</label>
+						<input type="text">
+					</div>
+					<div class="yt_form-input_container">
+						<label>channelId</label>
+						<input type="text">
+					</div>
+					<div class="yt_form-input_container">
+						<label>broadcastId</label>
+						<input type="text">
+					</div>
+					<div class="yt_form-input_container">
+						<label>liveChatId</label>
+						<input type="text">
+					</div>
+					<div class="yt_form-input_container">
+						<label>debug</label>
+						<input type="text">
+					</div>
+				</fieldset>
+				<fieldset>
+					<legend>private info (do not share!)</legend>
+					<div class="yt_form-input_container">
+						<label>apiKey</label>
+						<input type="password">
+						<em>DO NOT SHARE THIS OR YOU COULD GET BANNED</em>
+						<aside>this value will not have a toggle visable option to prevent leaks</aside>
+					</div>
+				</fieldset>
+			</details>
+			<div style="max-width:60em; display:inline-block;">
+				<p>provide the channel name and api key, then click here to let the wizard do the rest!</p>
+				<button id="youtube-wizard" style="color:black !important; background-color: transparent; user-select:none;"
+					id="youtube-wizard" type="disabled" value="fill the rest of the inputs!"
+					onclick="() => {console.log('wizard clicked')}">
+					wizard 🧙‍♂️
+				</button>
+			</div>
+		</form>
+		<script type="module">
+			document.addEventListener('DOMContentLoaded', () => {
+				// --- ADD THIS TEST LINE ---
+				console.log("DOM fully loaded. Testing for form existence...");
+
+				// Test 1: Direct console check
+				console.log('Test result:', document.getElementById('youtube-config'));
+				// -------------------------
+
+				const form = document.getElementById('youtube-config');
+
+				if (!form) {
+					console.error("Form with ID 'youtube-config' not found.");
+					return;
+				}
+
+				const containers = form.querySelectorAll('div');
+				containers.forEach(container => {
+					const label = container.querySelector('label');
+					const input = container.querySelector('input');
+
+					if (input) {
+						input.addEventListener("change", () => {
+							if (
+								document.getElementById("youtube-channelName").value != ''
+								&& document.getElementById("youtube-apiKey").value != ''
+							) {
+								document.getElementById("youtube-wizard").setAttribute("type", "button");
+							}
+							else {
+								document.getElementById("youtube-wizard").setAttribute("type", "disabled");
+							}
+
+						})
+					}
+
+					if (label && input) {
+						const labelText = label.textContent.trim();
+						const cleanedText = labelText
+							.replace(/\s+/g, '-') // Replace spaces with hyphens
+							.replace(/[^a-zA-Z0-9-]/g, ''); // Remove illegal ID characters
+
+						const newId = 'youtube-' + cleanedText;
+						input.id = newId;
+						label.htmlFor = newId;
+						console.log(`Assigned new ID: ${newId}`);
+					}
+				});
+			});
+		</script>
 	</div>
 	<hr>
 	<div>
@@ -900,6 +755,8 @@ margin: 3em;
 			table {
 				border: 0.2em solid white;
 				text-align: left;
+				max-width: 80em;
+				width: 100%;
 			}
 
 			table>* {
@@ -911,81 +768,55 @@ margin: 3em;
 				text-align: center;
 			}
 
-			th:nth-child(4),
-			td:nth-child(4) {
-				overflow: scroll;
-				max-height: max-content;
-				max-width: 2em;
-				/* Prevent text from wrapping within the max-width */
+			td,
+			th {
+				word-wrap: break-word;
+				max-width: 40em;
 			}
 
-			/*index
+			td:nth-child(1),
 			th:nth-child(1) {
-				background-color: red;
-				max-width: 7em;
-				word-break: break-all;
-			}
-
-			/*username
-			table:nth-child(2) {
 				background-color: blue;
-				max-width: 5em;
-				word-break: break-all;
+				word-wrap: break-word;
+				max-width: 1em;
 			}
 
-			/*date
-			table:nth-child(3) {
-				background-color: darkcyan;
-				max-width: 5em;
-				word-break: break-all;
+			td:nth-child(3),
+			th:nth-child(3) {
+				word-wrap: break-word;
+				max-width: 3em;
 			}
 
-			/*ttsFlags
-			table:nth-child(4) {
-				background-color: black;
-				max-width: 6em;
-				text-align: left;
+			td:nth-child(4),
+			th:nth-child(4) {
+				word-wrap: break-word;
+				max-width: 4em;
 			}
 
-			/*message
-			table:nth-child(5) {
-				background-color: orange;
-				color: black;
-				max-width: 6em;
+			td:nth-child(5),
+			th:nth-child(5) {
+				word-wrap: break-word;
+				max-width: 3em;
 			}
 
-			/*playMessage
-			table:nth-child(6) {
-				background-color: darkgreen;
-				max-width: 6em;
+			td:nth-child(6),
+			th:nth-child(6) {
+				word-wrap: break-word;
+				max-width: 22em;
 			}
 
-			/*inTtsQueue
-			table:nth-child(7) {
-				background-color: darkred;
-				max-width: 6em;
-			}
-
-			/*inTtsQueue
-			table:nth-child(8) {
-				background-color: darkgreen;
+			td:nth-child(7),
+			th:nth-child(7) {
+				word-wrap: break-word;
 				max-width: 5em;
 			}
 
-			/*timeoutUser
-			table:nth-child(9) {
-				background-color: darkred;
+			td:nth-child(8),
+			th:nth-child(8) {
+				word-wrap: break-word;
 				max-width: 2em;
 			}
 
-			/*block user from tts
-			table:nth-child(10) {
-				background-color: orange;
-				color: black;
-				max-width: 2em;
-			}
-
-			ban user*/
 			table:nth-child(11) {
 				max-width: 2em;
 			}
@@ -1099,83 +930,253 @@ margin: 3em;
 		</details>
 
 		<script type="module">
-			const msgInput = document.getElementById("ttsMessage");
-			const rateInput = document.getElementById("ttsRate");
-			const pitchInput = document.getElementById("ttsPitch");
-			const rateVal = document.getElementById("rateVal");
-			const pitchVal = document.getElementById("pitchVal");
-			const voiceList = document.getElementById("voiceList");
+			// 1. Define function at the module level (not inside the 'load' listener)
+			async function addMessageToTable() {
+				const form = document.getElementById('messageForm');
+				const tableBody = document.querySelector('#messagesTable tbody');
 
-			// character length warning
-			msgInput.addEventListener("input", () => {
-				const len = msgInput.value.length;
-				msgInput.style.color = len > 200 ? "red" : len > 150 ? "gold" : "white";
-			});
+				if (!form || !tableBody) {
+					console.error("Form or Table Body not found.");
+					return;
+				}
 
-			rateInput.addEventListener("input", () => {
-				rateVal.textContent = rateInput.value;
-			});
+				const user = form.user.value;
+				const message = form.message.value;
+				const ttsFlags = form.tts_flags.value;
 
-			pitchInput.addEventListener("input", () => {
-				pitchVal.textContent = pitchInput.value;
-			});
+				if (!user || !message || !ttsFlags) {
+					alert("Please fill in all required fields.");
+					return;
+				}
 
-			function populateVoices() {
-				const voices = window.speechSynthesis.getVoices();
-				voiceList.innerHTML = ""; // clear
+				const newIndex = tableBody.rows.length + 1;
+				const date = new Date().toLocaleTimeString('en-US', {hour12: false});
 
-				voices.forEach((voice, i) => {
-					const tr = document.createElement("tr");
-					tr.innerHTML = `
-        <td>${i}</td>
-        <td>${voice.name}</td>
-        <td>${voice.lang}</td>
-        <td><button data-idx="${i}">▶️</button></td>
-      `;
-					voiceList.appendChild(tr);
-				});
+				// 1. Create the new row
+				const newRow = tableBody.insertRow();
 
-				// add play button events
-				voiceList.querySelectorAll("button").forEach(btn => {
-					btn.addEventListener("click", () => {
-						const idx = btn.getAttribute("data-idx");
-						playVoice(idx);
-					});
-				});
+				// 2. Insert cells with data and elements (10 columns total)
+				newRow.insertCell().textContent = newIndex;
+				newRow.insertCell().textContent = user;
+				newRow.insertCell().textContent = date;
+				newRow.insertCell().textContent = ttsFlags;
+				newRow.insertCell().textContent = await window.monitorMessages.EvaluateMessageScore(message);
+				newRow.insertCell().textContent = message;
+				newRow.insertCell().innerHTML = '<button>Play</button>';
+				newRow.insertCell().innerHTML = '<input type="checkbox" checked>';
+				newRow.insertCell().innerHTML = '<button>Timeout</button>';
+				newRow.insertCell().innerHTML = '<button>Block</button>';
+				newRow.insertCell().innerHTML = '<button>Ban</button>';
+
+				form.message.value = '';
+				form.message.focus();
 			}
 
-			function playVoice(idx) {
-				const voices = window.speechSynthesis.getVoices();
-				const utter = new SpeechSynthesisUtterance(msgInput.value || "Testing voice");
-				utter.voice = voices[idx];
-				utter.rate = parseFloat(rateInput.value);
-				utter.pitch = parseFloat(pitchInput.value);
-				window.speechSynthesis.cancel();
-				window.speechSynthesis.speak(utter);
-			}
+			// NOTE: If you also have the 'exportTableToJson' function, define it here as well.
 
-			// voices may not be ready immediately
-			window.speechSynthesis.onvoiceschanged = populateVoices;
-			populateVoices(); // call once in case already loaded
+			// 2. Use DOMContentLoaded for listener attachment (Better than 'load')
+			document.addEventListener('DOMContentLoaded', () => {
+				const addButton = document.getElementById('addButton');
+
+				if (addButton) {
+					// 3. FIX: Pass the function reference (NO parentheses)
+					addButton.addEventListener('click', addMessageToTable);
+				} else {
+					console.error("Button with ID 'addButton' not found. Check HTML.");
+				}
+			});
+
 		</script>
+		<details>
+			<summary>messages</summary>
+			<div>
+				<h3>Add Test Message</h3>
+				<form id="messageForm">
+					<label for="user">User:</label>
+					<input type="text" id="user" name="user" value="TestUser" required>
 
-	</div>
-	<table id="messagesTable">
-		<tr>
-			<!-- do not impliment this, 3 types of data rows are possible, whitelist: do nothing, graylist: make the row yellow, blacklist: check the "block user from tts" box -->
-			<th>index</th> <!-- index of message -->
-			<th>user</th> <!-- @ of user on youtube -->
-			<th>date</th> <!-- datetime of message -->
-			<th style="max-width:3em;">tts flags</th>
-			<!-- the 3 values that exist are: -r for rate, -v for voice, and -p for pitch -->
-			<th>message</th> <!-- the message -->
-			<th>play message</th> <!-- the message -->
-			<th>in tts que</th> <!-- is a checkbox, if message starts with: "!TTS", "!TIB", or "!BOT" automatically add -->
-			<th>time user out</th> <!-- if clicked, will time user out for 10 minute-->
-			<th>block user from tts</th>
-			<th>ban user </th>
-			<!-- when clicked, will ban the user from the channel, only after entering a special 6 digit pin (prompt the user for pin on click then do), -->
-			<!-- is a checkbox, if checked messages from this user will not automatically be added to the tts queue -->
-		</tr>
-	</table>
+					<label for="message">Message:</label>
+					<input type="text" id="message" name="message" value="Hello, world!" required>
+
+					<label for="tts_flags">TTS Flags (JSON):</label>
+					<input type="text" id="tts_flags" name="tts_flags" value='{"p":1.5,"r":0.8", "v": 50}' required>
+
+					<button type="button" id="addButton">Add Message to Table</button>
+				</form>
+
+			</div>
+			<table id="messagesTable">
+				<tbody>
+					<tr>
+						<!-- do not impliment this, 3 types of data rows are possible, whitelist: do nothing, graylist: make the row yellow, blacklist: check the "block user from tts" box -->
+						<th>index</th> <!-- index of message -->
+						<th>user</th> <!-- @ of user on youtube -->
+						<th style="max-width:3em; overflow:hidden;">date</th> <!-- datetime of message -->
+						<th style="max-width:3em;">tts flags</th>
+						<!-- the 3 values that exist are: -r for rate, -v for voice, and -p for pitch -->
+						<th>msg score</th>
+						<th>message</th> <!-- the message -->
+						<th>play message</th> <!-- the message -->
+						<th>in tts que</th>
+						<!-- is a checkbox, if message starts with: "!TTS", "!TIB", or "!BOT" automatically add -->
+						<th>time user out</th> <!-- if clicked, will time user out for 10 minute-->
+						<th>block user from tts</th>
+						<th>ban user </th>
+						<!-- when clicked, will ban the user from the channel, only after entering a special 6 digit pin (prompt the user for pin on click then do), -->
+						<!-- is a checkbox, if checked messages from this user will not automatically be added to the tts queue -->
+					</tr>
+				</tbody>
+			</table>
+			<div>
+				<script>
+					function exportTableToJson() {
+						// 1. Get the table element
+						const table = document.getElementById("messagesTable");
+						if (!table) {
+							console.error("Table with id 'messagesTable' not found.");
+							return;
+						}
+
+						// 2. Extract header names (column names)
+						// Assumes the first row is the header (<thead>)
+						const headers = [];
+						const headerRow = table.querySelector('thead tr') || table.rows[0];
+						if (headerRow) {
+							for (let i = 0; i < headerRow.cells.length; i++) {
+								const cellText = headerRow.cells[i].textContent.trim();
+
+								// Skip columns that are buttons or checkboxes (based on your column list)
+								// You can adjust these indices if your table structure changes
+								// The columns to skip are: play message, in tts que, time user out, block user from tts, ban user
+								// These correspond to columns 5, 6, 7, 8, 9 (0-indexed)
+								if (i < 5 || i === 6) {
+									// Only include the text-based columns and the checkbox column 'in tts que'
+									// For 'in tts que', we use the header name for consistency
+									headers.push(cellText);
+								}
+							}
+						} else {
+							console.warn("Could not find a header row (<thead> or first <tr>). Using default keys.");
+							// Fallback for missing header
+							headers.push("index", "user", "date", "tts flags", "message");
+						}
+
+
+						// 3. Extract the row data
+						const data = [];
+						// Start from 1 to skip the header row, if no <thead> is used, otherwise iterate all <tr> in <tbody>
+						const bodyRows = table.querySelector('tbody') ? table.querySelector('tbody').rows : Array.from(table.rows).slice(1);
+
+						for (const row of bodyRows) {
+							const rowData = {};
+							let headerIndex = 0;
+
+							for (let i = 0; i < row.cells.length; i++) {
+								const cell = row.cells[i];
+
+								// Skip the action/button columns (5, 7, 8, 9)
+								if (i === 5 || i >= 7) {
+									continue;
+								}
+
+								// Handle the Checkbox column: 'in tts que' (index 6)
+								if (i === 6) {
+									const checkbox = cell.querySelector('input[type="checkbox"]');
+									const key = headers[headerIndex] || "in tts que";
+									rowData[key] = checkbox ? checkbox.checked : false;
+								}
+								// Handle the JSON Object column: 'tts flags' (index 3)
+								else if (i === 3) {
+									const text = cell.textContent.trim();
+									const key = headers[headerIndex] || "tts flags";
+									try {
+										// Attempt to parse the cell content as a JSON object
+										rowData[key] = JSON.parse(text);
+									} catch (e) {
+										// If parsing fails, store as a string or a default empty object
+										console.warn(`Could not parse JSON in 'tts flags' for row ${row.rowIndex}: ${text}`);
+										rowData[key] = text;
+									}
+								}
+								// Handle all other text/int columns (0, 1, 2, 4)
+								else {
+									const key = headers[headerIndex] || `col${i}`;
+									rowData[key] = cell.textContent.trim();
+
+									// Simple type conversion for 'index' column
+									if (key === 'index' && !isNaN(parseInt(rowData[key]))) {
+										rowData[key] = parseInt(rowData[key]);
+									}
+								}
+
+								headerIndex++;
+							}
+							data.push(rowData);
+						}
+
+						// 4. Convert the data array to a JSON string
+						const jsonString = JSON.stringify(data, null, 2); // 'null, 2' for pretty-printing
+
+						// 5. Create a Blob and initiate download
+						const blob = new Blob([jsonString], {type: "application/json"});
+						const url = URL.createObjectURL(blob);
+
+						const a = document.createElement("a");
+						a.href = url;
+						a.download = "messages_data.json"; // Suggested file name
+						document.body.appendChild(a);
+						a.click();
+						document.body.removeChild(a);
+
+						// Clean up the URL object
+						URL.revokeObjectURL(url);
+					}
+				</script>
+				<button onclick="exportTableToJson()">
+					Export Table Data to JSON
+				</button>
+			</div>
+		</details>
+
+
+		<br>
+		<br>
+
+		<details>
+			<summary>clip timestamps</summary>
+			<table style="width:100%;">
+				<tbody>
+					<tr>
+						<th>author</th>
+						<th>message</th>
+						<th>timestamp</th>
+					</tr>
+				</tbody>
+			</table>
+		</details>
+
+		<details>
+			<!--
+		userData = {
+			user1 = {
+				points: int,
+				warnings: [old -> new],
+				isBanned: [old -> new],
+				notes: char* []
+			},
+		}	
+		-->
+			<summary>users</summary>
+			<table style="width:100%;">
+				<tbody>
+					<tr>
+						<th>users</th>
+						<th>points</th>
+						<th>warnings</th>
+						<th>banHistory</th>
+						<th>notes</th>
+					</tr>
+				</tbody>
+			</table>
+		</details>
 </body>

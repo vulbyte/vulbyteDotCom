@@ -917,7 +917,9 @@ textarea {
 	padding: var(--padding);
 }
 
+/*
 textarea::after,
+*/
 textarea::-webkit-resizer {
 	content: "";
 	position: absolute;

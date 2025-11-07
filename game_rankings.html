@@ -343,6 +343,19 @@
 						},
 						*/
 						{
+							name: "Dirt Rally 2.0",
+							img: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/690790/header.jpg?t=1730918452',
+							rankings: {
+								gameplay: 9,
+								graphics: 7.5,
+								audio: 10,
+								story: 5,
+								uniqueness: 8,
+								microtransations: 7,
+							},
+							review: 'fun racing game with a clear niche, if you enjoy the game you will need to buy some tracks to help with repition, weather conditions are a bit limited, and visual popins can very very noticable and destracting. '
+						},
+						{
 							name: "alien: isolation",
 							img: 'https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/214490/header.jpg?t=1728557065',
 							rankings: {
@@ -515,7 +528,7 @@
 								"gameplay": 7,
 								"graphics": 9,
 								"audio": 9,
-								"story": 6,
+								"story": 7,
 								uniqueness: 10,
 							},
 							"review": `
@@ -1229,7 +1242,10 @@ great game, just dont bother with the ending that requires the terminal, it's no
 						}
 						//overall_r8 = overall_r8 / count;
 						//console.log("overall/max:" + overall_r8 / count);
-						let overall = CE({elem: "div", innerText: `${(overall_r8 / count)} /10`, id: "overall"});
+						let overall = CE({
+							elem: "div", innerText: `${(Math.round(overall_r8 * 100 / count)) / 100
+								} /10`, id: "overall"
+						});
 						overall_r8 = overall_r8 / count; //invert for colors
 						r8_color =
 							"#"
