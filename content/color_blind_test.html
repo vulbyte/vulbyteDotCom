@@ -1,0 +1,423 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8" />
+	<title>Color-share Sync</title>
+	<script type="module" src="/client_management.js"></script>
+	<style>
+		/* layout */
+		html,
+		body {
+			height: 100%;
+			margin: 0;
+			font-family: sans-serif;
+		}
+
+		#color-tool {
+			display: grid;
+			grid-template-rows: 1fr auto;
+			height: 100vh;
+			width: 100%;
+		}
+
+		.sections {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			overflow-y: auto;
+			padding-bottom: 6rem;
+			gap: 0;
+		}
+
+		/* flexible tile containers */
+		.block {
+			display: flex;
+			flex-wrap: wrap;
+			align-content: flex-start;
+			justify-content: center;
+			padding: 0.5rem;
+			gap: 0.5rem;
+		}
+
+		.left-block {
+			background: #000;
+		}
+
+		.right-block {
+			background: #fff;
+		}
+
+		/* Visualizations container */
+		.visualizations {
+			grid-column: 1 / -1;
+			background: #333;
+			color: #fff;
+			padding: 2rem;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 1rem;
+			border-top: 2px solid #555;
+		}
+
+		/* card styles */
+		.sub {
+			width: 10rem;
+			height: 15rem;
+			display: grid;
+			grid-template-rows: 3rem 3rem 1fr;
+			justify-items: center;
+			align-items: start;
+			background: none;
+			border: 1px solid #666;
+			border-radius: 0.4rem;
+			padding: 0.5rem;
+			box-sizing: border-box;
+		}
+
+		.color-row {
+			display: flex;
+			gap: 0.5rem;
+			align-items: center;
+		}
+
+		.color-box {
+			width: 3rem;
+			height: 3rem;
+			border: 1px solid #888;
+			box-sizing: border-box;
+		}
+
+		.sliders {
+			display: flex;
+			flex-direction: column;
+			gap: 0.4rem;
+			font-size: 0.9rem;
+			width: 100%;
+		}
+
+		.sliders label {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 0.5rem;
+			color: #fff;
+		}
+
+		.right-block .sliders label {
+			color: #000;
+		}
+
+		.sliders input[type="range"] {
+			width: 70%;
+		}
+
+		/* sticky bottom gradients */
+		#sticky-gradients {
+			position: sticky;
+			bottom: 0;
+			left: 0;
+			width: 100%;
+			display: grid;
+			grid-template-rows: 2.8rem 2.8rem;
+			z-index: 2;
+		}
+
+		#adjustable-gradient,
+		#pure-rgb-gradient {
+			width: 100%;
+			height: 100%;
+		}
+
+		#pure-rgb-gradient {
+			background: linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
+		}
+
+		#rec709-bar {
+			width: 300px;
+			display: flex;
+			border: 1px solid #fff;
+		}
+	</style>
+</head>
+
+<body>
+
+	<div id="color-tool">
+		<div class="sections">
+			<div class="block left-block" id="left-block"></div>
+			<div class="block right-block" id="right-block"></div>
+
+			<div class="visualizations">
+				<h3>Rec.709 Luminance</h3>
+				<div id="rec709-bar"></div>
+				<h3>Radial Sat/Lum Difference</h3>
+				<canvas id="radial-graph" width="300" height="300"></canvas>
+			</div>
+		</div>
+
+		<div id="sticky-gradients">
+			<div id="adjustable-gradient" aria-hidden="true"></div>
+			<div id="pure-rgb-gradient" aria-hidden="true"></div>
+		</div>
+	</div>
+
+
+	<script>
+		/* CORE UTILS */
+		function hslStringToRgb(h, s, l) {
+			s /= 100; l /= 100;
+			const k = n => (n + h / 30) % 12;
+			const a = s * Math.min(l, 1 - l);
+			const f = n => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+			return [Math.round(f(0) * 255), Math.round(f(8) * 255), Math.round(f(4) * 255)];
+		}
+
+		function rgbToHsl(r, g, b) {
+			r /= 255; g /= 255; b /= 255;
+			const max = Math.max(r, g, b), min = Math.min(r, g, b);
+			let h, s, l = (max + min) / 2;
+			if (max === min) {h = s = 0;} else {
+				const d = max - min;
+				s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+				switch (max) {
+					case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+					case g: h = (b - r) / d + 2; break;
+					case b: h = (r - g) / d + 4; break;
+				}
+				h /= 6;
+			}
+			return {h: h * 360, s: s, l: l};
+		}
+
+		function rgbToRec709(r, g, b) {
+			return (r * 0.2126 + g * 0.7152 + b * 0.0722) / 255;
+		}
+
+		/* APP LOGIC */
+		const baseHues = [0, 60, 120, 180, 240, 300];
+		const NUM_PER_SIDE = 6;
+		const TOTAL_CARDS = NUM_PER_SIDE * 2;
+		// Default adjustable sliders start at 50% lightness (bright) or you can change this to 25 to match
+		let adjustableColorValues = baseHues.map(h => ({h, s: 50, l: 50}));
+		const subs = [];
+
+		function buildCards() {
+			const left = document.getElementById('left-block');
+			const right = document.getElementById('right-block');
+
+			function makeCard(i) {
+				const wrapper = document.createElement('div');
+				wrapper.className = 'sub';
+				wrapper.dataset.index = i;
+
+				const row = document.createElement('div');
+				row.className = 'color-row';
+				const before = document.createElement('div');
+				before.className = 'color-box before';
+				const after = document.createElement('div');
+				after.className = 'color-box after';
+				row.appendChild(before);
+				row.appendChild(after);
+
+				const sliders = document.createElement('div');
+				sliders.className = 'sliders';
+				const labS = document.createElement('label');
+				labS.innerHTML = 's <input type="range" min="0" max="100" value="50" data-type="s">';
+				const labL = document.createElement('label');
+				labL.innerHTML = 'l <input type="range" min="0" max="100" value="50" data-type="l">';
+				sliders.appendChild(labS);
+				sliders.appendChild(labL);
+
+				wrapper.appendChild(row);
+				wrapper.appendChild(document.createElement('div'));
+				wrapper.appendChild(sliders);
+				return wrapper;
+			}
+
+			for (let i = 0; i < NUM_PER_SIDE; ++i) left.appendChild(makeCard(i));
+			for (let i = NUM_PER_SIDE; i < TOTAL_CARDS; ++i) right.appendChild(makeCard(i));
+		}
+
+		function init() {
+			buildCards();
+
+			document.querySelectorAll('.sub').forEach((el, i) => {
+				const hue = baseHues[i % NUM_PER_SIDE];
+				const beforeEl = el.querySelector('.before');
+				const afterEl = el.querySelector('.after');
+				const sInput = el.querySelector('input[data-type="s"]');
+				const lInput = el.querySelector('input[data-type="l"]');
+
+				// --- UPDATED: Reference color is now 25% Lightness (Darker) ---
+				beforeEl.style.background = `hsl(${hue},100%,25%)`;
+
+				const item = {el, idx: i, hue, sInput, lInput, beforeEl, afterEl};
+				subs.push(item);
+
+				const onInput = () => {
+					const partnerIdx = (i + NUM_PER_SIDE) % TOTAL_CARDS;
+					const partnerItem = subs[partnerIdx];
+
+					partnerItem.sInput.value = sInput.value;
+					partnerItem.lInput.value = lInput.value;
+
+					updateCard(item, true);
+					updateCard(partnerItem, false);
+				};
+
+				sInput.addEventListener('input', onInput, {passive: true});
+				lInput.addEventListener('input', onInput, {passive: true});
+			});
+
+			loadFromURL();
+			subs.forEach((s) => updateCard(s, true));
+		}
+
+		function updateCard(item, skipUrl) {
+			const {idx, hue, sInput, lInput, afterEl} = item;
+			const s = Number(sInput.value);
+			const l = Number(lInput.value);
+			afterEl.style.background = `hsl(${hue},${s}%,${l}%)`;
+
+			const stopIndex = idx % NUM_PER_SIDE;
+			adjustableColorValues[stopIndex] = {h: hue, s: s, l: l};
+
+			updateAdjustableGradient();
+			updateRec709Bar();
+			drawRadialGraph();
+
+			if (!skipUrl) updateURL();
+		}
+
+		function updateAdjustableGradient() {
+			const g = document.getElementById('adjustable-gradient');
+			const colors = adjustableColorValues.map(c => `hsl(${c.h},${c.s}%,${c.l}%)`);
+			g.style.background = `linear-gradient(to right, ${colors.join(',')}, ${colors[0]})`;
+		}
+
+		function updateURL() {
+			const params = new URLSearchParams();
+			subs.forEach((s, i) => {
+				params.set('c' + i, `${s.sInput.value},${s.lInput.value}`);
+			});
+			const newUrl = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
+			history.replaceState(null, '', newUrl);
+		}
+
+		function loadFromURL() {
+			const params = new URLSearchParams(window.location.search);
+			subs.forEach((s, i) => {
+				const entry = params.get('c' + i);
+				if (!entry) return;
+				const parts = entry.split(',');
+				if (parts.length >= 1 && parts[0] !== '') s.sInput.value = parts[0];
+				if (parts.length >= 2 && parts[1] !== '') s.lInput.value = parts[1];
+			});
+		}
+
+		function updateRec709Bar() {
+			const bar = document.getElementById("rec709-bar");
+			if (!bar) return;
+			bar.innerHTML = "";
+			adjustableColorValues.forEach(hsl => {
+				const [r, g, b] = hslStringToRgb(hsl.h, hsl.s, hsl.l);
+				const lum = rgbToRec709(r, g, b);
+				const div = document.createElement("div");
+				div.style.width = "calc(100% / 6)";
+				div.style.height = "2rem";
+				div.style.background = `rgb(${lum * 255}, ${lum * 255}, ${lum * 255})`;
+				bar.appendChild(div);
+			});
+		}
+
+		/* UPDATED RADIAL GRAPH (Uses 128/half intensity for reference) */
+		function drawRadialGraph() {
+			const canvas = document.getElementById("radial-graph");
+			if (!canvas) return;
+			const ctx = canvas.getContext("2d");
+			const W = canvas.width;
+			const H = canvas.height;
+			const Cx = W / 2;
+			const Cy = H / 2;
+			const R = 120;
+
+			ctx.clearRect(0, 0, W, H);
+
+			/* Rings */
+			ctx.strokeStyle = "#666";
+			ctx.lineWidth = 1;
+			[1, 0.5].forEach(scale => {
+				ctx.beginPath();
+				ctx.arc(Cx, Cy, R * scale, 0, Math.PI * 2);
+				ctx.stroke();
+			});
+
+			/* Axes */
+			ctx.beginPath();
+			ctx.moveTo(Cx - R, Cy);
+			ctx.lineTo(Cx + R, Cy);
+			ctx.moveTo(Cx, Cy - R);
+			ctx.lineTo(Cx, Cy + R);
+			ctx.stroke();
+
+			// --- UPDATED: Reference colors are now 128 (50% intensity) ---
+			const baseColorsRGB = [
+				{r: 128, g: 0, b: 0},     // Red
+				{r: 128, g: 128, b: 0},   // Yellow
+				{r: 0, g: 128, b: 0},     // Green
+				{r: 0, g: 128, b: 128},   // Cyan
+				{r: 0, g: 0, b: 128},     // Blue
+				{r: 128, g: 0, b: 128}    // Magenta
+			];
+
+			const points = adjustableColorValues.map((hslVal, i) => {
+				const [r, g, b] = hslStringToRgb(hslVal.h, hslVal.s, hslVal.l);
+				const ref = baseColorsRGB[i];
+				const refHSL = rgbToHsl(ref.r, ref.g, ref.b);
+				const trgHSL = rgbToHsl(r, g, b);
+
+				const satDiff = Math.abs(trgHSL.s - refHSL.s);
+				const lumDiff = Math.abs(rgbToRec709(r, g, b) - rgbToRec709(ref.r, ref.g, ref.b));
+
+				return {satDiff, lumDiff};
+			});
+
+			points.forEach((p, i) => {
+				const angle = (Math.PI * 2 * i) / 6;
+
+				// 1. SATURATION (Light Red Square)
+				const distS = p.satDiff * R;
+				const xS = Cx + Math.cos(angle) * distS;
+				const yS = Cy + Math.sin(angle) * distS;
+
+				ctx.fillStyle = "#ff9999";
+				ctx.beginPath();
+				const size = 8;
+				ctx.fillRect(xS - size / 2, yS - size / 2, size, size);
+
+				// 2. LUMINANCE (Light Blue Circle)
+				const distL = p.lumDiff * R;
+				const xL = Cx + Math.cos(angle) * distL;
+				const yL = Cy + Math.sin(angle) * distL;
+
+				ctx.fillStyle = "#99ccff";
+				ctx.beginPath();
+				ctx.arc(xL, yL, 5, 0, Math.PI * 2);
+				ctx.fill();
+			});
+
+			// Legend
+			ctx.font = "12px sans-serif";
+			ctx.fillStyle = "#ff9999";
+			ctx.fillText("■ Sat Diff", 10, H - 25);
+			ctx.fillStyle = "#99ccff";
+			ctx.fillText("● Lum Diff", 10, H - 10);
+		}
+
+		init();
+	</script>
+
+</body>
+
+</html>

@@ -1,0 +1,79 @@
+{
+  "kind": "youtube#searchListResponse",
+  "etag": "tXS4LHWnTrg1Mezu4i78xXUXpwc",
+  "regionCode": "CA",
+  "pageInfo": {
+    "totalResults": 2,
+    "resultsPerPage": 2
+  },
+  "items": [
+    {
+      "kind": "youtube#searchResult",
+      "etag": "j5IsFfntfPZXQZtZwvzrsrTFjQ0",
+      "id": {
+        "kind": "youtube#video",
+        "videoId": "GNbXNrjbQds"
+      },
+      "snippet": {
+        "publishedAt": "2025-11-07T00:31:35Z",
+        "channelId": "UCKZigHbgpJG9ldxXMqmiZUg",
+        "title": "can i make an RNG tilling system in godot?| waveform collapse function",
+        "description": "checkout: https://vulbyte.com.",
+        "thumbnails": {
+          "default": {
+            "url": "https://i.ytimg.com/vi/GNbXNrjbQds/default_live.jpg",
+            "width": 120,
+            "height": 90
+          },
+          "medium": {
+            "url": "https://i.ytimg.com/vi/GNbXNrjbQds/mqdefault_live.jpg",
+            "width": 320,
+            "height": 180
+          },
+          "high": {
+            "url": "https://i.ytimg.com/vi/GNbXNrjbQds/hqdefault_live.jpg",
+            "width": 480,
+            "height": 360
+          }
+        },
+        "channelTitle": "vulbyte",
+        "liveBroadcastContent": "upcoming",
+        "publishTime": "2025-11-07T00:31:35Z"
+      }
+    },
+    {
+      "kind": "youtube#searchResult",
+      "etag": "tr8SvPB-FQ1QOkW71QLPe6wLHV8",
+      "id": {
+        "kind": "youtube#video",
+        "videoId": "v0lZIxWT5JI"
+      },
+      "snippet": {
+        "publishedAt": "2025-11-11T03:23:03Z",
+        "channelId": "UCKZigHbgpJG9ldxXMqmiZUg",
+        "title": "how long can we go without an 🍆 joke? | JACKBOX (commnuity gametime!)",
+        "description": "checkout: https://vulbyte.com.",
+        "thumbnails": {
+          "default": {
+            "url": "https://i.ytimg.com/vi/v0lZIxWT5JI/default_live.jpg",
+            "width": 120,
+            "height": 90
+          },
+          "medium": {
+            "url": "https://i.ytimg.com/vi/v0lZIxWT5JI/mqdefault_live.jpg",
+            "width": 320,
+            "height": 180
+          },
+          "high": {
+            "url": "https://i.ytimg.com/vi/v0lZIxWT5JI/hqdefault_live.jpg",
+            "width": 480,
+            "height": 360
+          }
+        },
+        "channelTitle": "vulbyte",
+        "liveBroadcastContent": "upcoming",
+        "publishTime": "2025-11-11T03:23:03Z"
+      }
+    }
+  ]
+}

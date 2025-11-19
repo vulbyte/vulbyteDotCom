@@ -125,9 +125,11 @@ button[type=reset] {
 	/*background-color: var(--color-flare-red);*/
 
 	border-radius: 150px;
+	/*
 	background: linear-gradient(145deg, #f0f0f0, #cacaca);
 	box-shadow: 30px 30px 60px #8b8b8b,
 		-30px -30px 60px #ffffff;
+*/
 }
 
 button[type=button] {
@@ -135,8 +137,10 @@ button[type=button] {
 
 	border-radius: 150px;
 	background: linear-gradient(145deg, #f0f0f0, #cacaca);
+	/*
 	box-shadow: 30px 30px 60px #8b8b8b,
 		-30px -30px 60px #ffffff;
+*/
 }
 
 button[disabled=""] {
@@ -144,8 +148,10 @@ button[disabled=""] {
 
 	border-radius: 150px;
 	background: linear-gradient(145deg, #f0f0f0, #cacaca);
+	/*
 	box-shadow: 30px 30px 60px #8b8b8b,
 		-30px -30px 60px #ffffff;
+*/
 }
 
 code {
@@ -178,6 +184,7 @@ details {
 
 fieldset {
 	border: var(--border-default);
+	margin-bottom: 1em;
 }
 
 form {
@@ -229,6 +236,7 @@ input {
 	font: var(--font-code);
 
 	border-radius: 0.4em;
+
 	box-shadow:
 		inset -0.1em -0.1em 0.5em #ffffff33, inset 0.2em 0.2em 0.5em #77000033;
 	color: var(--color-input);
@@ -277,6 +285,7 @@ output {
 	background-position-x: -1.5px;
 	background-position-y: -0.7px;
 	border-radius: 0.4em;
+
 	box-shadow:
 		inset -0.1em -0.1em 0.5em #ffffff33, inset 0.2em 0.2em 0.5em #77000033;
 	color: var(--color-text-dark);

@@ -22,6 +22,9 @@
 	</script>
 </head>
 
+
+<br>
+
 <body style="">
 	<script type="module">
 		window.addEventListener('beforeunload', function (event) {
@@ -58,18 +61,22 @@
 		</div>
 		<textarea id="messageScoreCheck"></textarea>
 		<script type="module">
+			window.addEventListener('load', () => {
 
-			let testArea = document.getElementById("messageScoreCheck");
-			let messageScore = document.getElementById("messageScoreTest");
+				let testArea = document.getElementById("messageScoreCheck");
+				let messageScore = document.getElementById("messageScoreTest");
 
-			let data;
-			testArea.addEventListener("change", (e) => {
-				window.monitorMessages.EvaluateMessageScore(testArea.value)
-					.then((res) => {
-						data = res;
-						console.log(data);
-						messageScore.innerText = data;
-					});
+				let data;
+				console.log("adding score checker listener");
+				testArea.addEventListener("change", (e) => {
+					window.monitorMessages.ScoreMessage(testArea.value)
+						.then((res) => {
+							console.log("calcing score")
+							data = res;
+							console.log(data);
+							messageScore.innerText = data;
+						});
+				});
 			});
 		</script>
 	</details>
@@ -213,8 +220,13 @@
 					lai.addEventListener("click", (e) => {
 						console.log("loading inputs");
 						for (let i = 0; i < inputs.length; ++i) {
-							input = inputs[i];
-							input.value = localStorage.getItem(String(input.id));
+							try {
+								input = inputs[i];
+								input.value = localStorage.getItem(String(input.id));
+							}
+							catch (err) {
+								console.log("unable to assign value:\n" + input[i] + "\n" + err);
+							}
 						}
 					});
 				});
@@ -242,8 +254,14 @@
 			}
 		</style>
 		<div id='function_buttons'>
-			<button id='start_monitoring_button' style='background-color: darkgreen;'>start monitoring</button>
-			<button id='stop_monitoring_button' style='background-color: darkred;'>stop monitoring</button>
+			<button id='start_monitoring_button' style='background-color: darkgreen;' onload="(()=>(
+						window.AddEventListener('DOMContentLoaded', () => {
+							document.getElementbyId('start_monitoring_button').addEventListener('click', () => {
+								window.monitorMessages.StartMonitoring()
+						})
+					))()">start monitoring </button>
+			<button id='stop_monitoring_button' style='background-color: darkred;'
+				onclick="window.monitorMessages.StopMonitoring()">stop monitoring</button>
 		</div>
 		<!-- {{{7 start/stop + auto tts functions -->
 		<style>
@@ -376,95 +394,9 @@
 				}
 
 				// ############################################################
-				// start monitoring button
-				// ############################################################
-				document.getElementById('start_monitoring_button').addEventListener('click', async () => {
-					console.log('Start monitoring button clicked');
-
-					try {
-						window.monitorMessages.args.timeoutDuration = Number(document.getElementById("timeout_duration").value) || 300;
-
-						await window.monitorMessages.StartMonitoring();
-						console.log('Monitoring started successfully');
-						setButtonStates({monitoring: true});
-					} catch (err) {
-						console.error('Failed to start monitoring:', err);
-						setButtonStates({monitoring: false});
-
-						PopUp.new({
-							title: 'Failed to start monitoring',
-							message: err.message || 'Unknown error occurred',
-							details: err.toString()
-						});
-					}
-				});
-
-				// ############################################################
-				// stop monitoring button
-				// ############################################################
-				document.getElementById('stop_monitoring_button').addEventListener('click', () => {
-					console.log('Stop monitoring button clicked');
-
-					try {
-						window.monitorMessages.StopMonitoring();
-						console.log('Monitoring stopped successfully');
-						setButtonStates({monitoring: false});
-					} catch (err) {
-						console.error('Error stopping monitor:', err);
-						setButtonStates({monitoring: false});
-					}
-				});
-
-				// ############################################################
-				// auto TTS buttons
-				// ############################################################
-				document.getElementById('start_tts_button').addEventListener('click', () => {
-					try {
-						window.monitorMessages.StartAutoTTS?.();
-						console.log("Auto TTS started");
-						ttsTimer.Start();
-					} catch (err) {
-						console.error("Error starting auto TTS:", err);
-					}
-				});
-
-				document.getElementById('pause_tts_button').addEventListener('click', () => {
-					try {
-						window.monitorMessages.PauseAutoTTS?.();
-						console.log("Auto TTS paused");
-						ttsTimer.Stop();
-					} catch (err) {
-						console.error("Error pausing auto TTS:", err);
-					}
-				});
-
-				// ############################################################
-				// update_info bindings
-				// ############################################################
-				function updateUIFromMonitor() {
-					if (!window.monitorMessages) return;
-
-					// next update gauge
-					document.querySelector("#update_info .guage-inner span").textContent = window.monitorMessages.nextUpdate ?? 0;
-
-					// tts queue
-					document.querySelector("#update_info>div:nth-child(2)>span").textContent = window.monitorMessages.ttsQueue?.length ?? 0;
-
-					// tts messages read
-					document.querySelector("#update_info>div:nth-child(3)>span").textContent = window.monitorMessages.ttsMessagesRead ?? 0;
-
-					// total messages
-					document.querySelector("#update_info>div:nth-child(4)>span").textContent = window.monitorMessages.totalMessages ?? 0;
-				}
-
-				// refresh UI every second
-				setInterval(updateUIFromMonitor, 1000);
-
-				// ############################################################
 				// initialize buttons on page load
 				// ############################################################
 				window.addEventListener('DOMContentLoaded', () => {
-					setButtonStates({monitoring: false});
 					console.log('Button states initialized');
 				});
 			});
@@ -554,6 +486,7 @@
 				color: color-mix(in oklab, #0ff, white);
 			}
 		</style>
+		<!--
 		<div id="update_info" style="
 				border:solid white 0.1em;
 				display:flex;  
@@ -563,7 +496,8 @@
 				text-align:left; 
 				width:16em; 
 		">
-			<div><label>next update:</label>
+			<div>
+				<label>next update:</label>
 				<div class="guage">
 					<div class="guage_mask"></div>
 					<div class="guage-inner">
@@ -578,16 +512,45 @@
 			<div><label>total messages:</label><span>9999</span>
 			</div>
 		</div>
+-->
 		<!-- }}}7 -->
 	</div>
 
-	<hgroup style="display:flex; justify-content:space-around; height:3em !important;">
+	<hgroup style="display:flex; justify-content:space-around;">
 		<!--<img style="max-height:100%; width:3em;" src="./non-code_assets/cockatiel_logo.png">-->
 		<h1>cockatiel</h1>
 		<h6>by vulbyte</h6>
 		<img style="max-height:100%; width:3em;"
 			src='https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/0b0fcb64b46a2665d622ce094517332ab6b6cb7f/assets/dev_icon.svg'>
 	</hgroup>
+
+	<div>
+		<form id="upload_form">
+			<div>
+				<label>load unprocessed message</label>
+				<input type="file">
+			</div>
+			<div>
+				<label>load processed message</label>
+				<input type="file">
+			</div>
+			<div>
+				<label>load users data</label>
+				<input type="file">
+				<button </div>
+					<div>
+						<button onclick='(()=>(
+				let uf = document.getElementById("upload_form");
+				let data = new FormData(uf);
+				data = Object.fromEnteries(data);
+
+				window.monitorMessages.AddMessa
+			))()'>
+							load data into system
+						</button>
+					</div>
+		</form>
+	</div>
 
 	<div>
 		<h2>stream info</h2>
@@ -636,9 +599,11 @@
 			#youtube-config>*>*,
 			#youtube-config>*>*>*,
 			#youtube-config>*>*>*>* {
-				background-color: #500;
+				background-color: #ff000022;
 				color: #ddd !important;
 				font-family: Helvetica, sans-serif, Arial !important;
+				border-radius: 0.5em;
+				padding-bottom: 0.3em;
 			}
 
 			.yt_form-input_container {
@@ -663,32 +628,483 @@
 						<input type="text">
 					</div>
 					<div class="yt_form-input_container">
+						<label>apiKey</label>
+						<em>DO NOT SHARE THIS OR YOU COULD GET BANNED</em>
+						<input type="password">
+						<aside>this value will not have a toggle visable option to prevent leaks</aside>
+					</div>
+					<div class="yt_form-input_container">
 						<label>channelId</label>
+						<button type="button" style="background-color:white; color:black !important; padding-top:0.3em;" onclick='(async () => {
+								console.log("getting youtube-channelId!");
+								let api = document.getElementById("youtube-apiKey"); 
+								let channelName = document.getElementById("youtube-channelName"); 
+
+								if (!api || !channelName || !channelName.value.trim()) {
+									console.warn("youtube-wizard triggered in an invalid state"); 
+									return;
+								}; 
+
+								let newConfigValues = {}; 
+								let id = "channelId"; 
+
+								try { 
+									// 1. Await the promise returned by the getter function
+									const channelIdResult = await window.monitorMessages.yt.GetChannelIdFromChannelName(channelName.value.trim());
+
+									// 2. Assign the result to the config object
+									newConfigValues[id] = channelIdResult;
+
+									if (!newConfigValues[id]) {
+										// Check if the result is valid
+										throw new Error("Failed to retrieve a valid channel ID.");
+									}
+
+									// 3. Await the config update call
+									await window.monitorMessages.yt.UpdateConfig(newConfigValues); 
+
+									// 4. Update the UI
+									document.getElementById("youtube-" + id).value = newConfigValues[id]; 
+
+								} catch (err) { 
+									console.error("Originalame error:", err);
+									alert("Could not get or update channelId: " + (err.message || "Unknown error."));
+									// We re-throw or handle the error, avoiding the direct unspecific throw
+								}
+							})()'>
+							click to get channelId
+						</button>
 						<input type="text">
+						<style>
+							/* Styles for the main container wrapping all streams */
+							#youtube-stream_selection {
+								color: white;
+								display: grid;
+								grid-template-columns: repeat(auto-fit, minmax(10em, 1fr));
+								gap: 0.8em;
+								padding: 1em;
+								background-color: black;
+							}
+
+							/* Styles for a single stream container (Card) */
+							.stream-card {
+								/*
+								height: 18rem;
+								width: 32em;*/
+								aspect-ratio: 1.5/1;
+								border-radius: 1rem;
+								position: relative;
+								cursor: pointer;
+								background-color: #fff;
+								overflow: hidden;
+							}
+
+							/* Styles for the section holding the thumbnail and button */
+							.thumbnail-container {
+								/*
+								position: relative;
+								width: 90%;
+								height: 180px;
+								overflow: hidden;*/
+							}
+
+							/* Styles for the thumbnail image */
+							.thumbnail-img {
+								position: absolute;
+								width: 100%;
+								height: 100%;
+								object-fit: cover;
+								display: block;
+							}
+
+							/* Styles for the selection button overlay */
+							.selection-button {
+								position: absolute;
+								top: 0;
+								left: 0;
+								width: 100%;
+								height: 100%;
+								background-color: #000000AA;
+								color: white;
+								font-size: 1.5em;
+								border: none;
+								cursor: pointer;
+								opacity: 1;
+								transition: opacity 0.2s;
+								z-index: 10;
+								border-radius: 0px;
+							}
+
+							.selection-button:hover {
+								background-color: #000000CC;
+							}
+
+							/* Styles for the area below the thumbnail (Icon and Text) */
+							.info-container {
+								background-image: linear-gradient(0deg,
+										#00000099 0%,
+										#00000099 85%,
+										#00000022 95%,
+										#00000000 100%);
+								display: flex;
+								padding: 12px;
+								position: absolute;
+								gap: 8px;
+								align-items: flex-start;
+								bottom: 0px;
+							}
+
+							/* Styles for the icon placeholder wrapper */
+							.icon-container {
+								border-radius: 100%;
+								width: 3rem;
+								height: 3rem;
+								background-color: purple;
+								flex-shrink: 0;
+								margin-top: 2px;
+							}
+
+							/* Styles for the actual icon/avatar placeholder */
+							.channel-icon {
+								/*
+								width: 100%;
+								height: 100%;
+								background-color: #ccc;
+								border-radius: 100%;
+								display: block;*/
+							}
+
+							/* Styles for the text details wrapper */
+							.text-title-wrapper {
+
+								/*
+								flex-grow: 1;
+								overflow: hidden;
+							}
+
+							/* Styles for the video title */
+								.video-title {
+									font-size: 1rem;
+									font-weight: 600;
+									margin: 0 0 4px 0;
+									color: #ffffff;
+								}
+
+								/* Styles for the smaller detail text (Channel name and Date) */
+								.video-details-text {
+									color: #ffffff !important;
+									font-size: 1em;
+								}
+
+								/* Styles for the paragraph elements inside details */
+								.detail-p {
+									/*
+								margin: 0;
+								padding: 0;
+							*/
+								}
+						</style>
+					</div>
+				</fieldset>
+				<fieldset>
+					<button type="button" style="background-color:white; color:black !important; padding-top:0.3em;" onclick="
+
+(async () =>{
+    let streams;
+    let channelData = {}; // Object to hold channel details (icons)
+
+    try{
+        // ASSUMING these functions return the necessary data
+        streams = await window.monitorMessages.yt.GetAllUpcomingBroadcastsAndReturnJson();
+    }
+    catch(err){
+        throw new Error('could not get streams!' + err);
+    }
+
+    console.log('found streams: \n' + streams);
+
+    const d = document;
+    
+    // 1. COLLECT ALL UNIQUE CHANNEL IDs FOR BATCH FETCH
+    const channelIds = new Set();
+    streams.items.forEach(stream => {
+        if (stream.snippet && stream.snippet.channelId) {
+            channelIds.add(stream.snippet.channelId);
+        }
+    });
+
+	/*
+    // 2. FETCH CHANNEL ICONS (ASSUMING A BATCH FUNCTION EXISTS)
+    if (channelIds.size > 0) {
+        try {
+            // NOTE: This assumes window.monitorMessages.yt has a function to fetch channel data based on IDs.
+            const channelsResponse = await window.monitorMessages.yt.GetChannelThumbnailsAndReturnJson(Array.from(channelIds));
+            
+            // Map the channel response items to the channelData object for easy lookup
+            channelsResponse.items.forEach(channel => {
+                // Using 'default' thumbnail for a small icon
+                const iconUrl = channel.snippet.thumbnails.default.url; 
+                channelData[channel.id] = iconUrl;
+            });
+        } catch (err) {
+            console.error('Could not fetch channel icons:', err);
+        }
+    }
+	*/
+    // --- End of icon fetching logic ---
+
+    // Helper function to create elements with properties
+    function CE(args = {
+			elem:'div', 
+			id:undefined, 
+			class:undefined, 
+			innerText:undefined, 
+			innerHTML:undefined, 
+			onclick:undefined, 
+			src:undefined, 
+			type:undefined
+		}){
+        let elem = d.createElement(args.elem);
+        if (args.id) elem.id = args.id;
+        if (args.class) elem.className = args.class; 
+        if (args.innerText) elem.innerText = args.innerText;
+        if (args.innerHTML) elem.innerHTML = args.innerHTML;
+        if (args.onclick) elem.onclick = args.onclick;
+        if (args.src) elem.src = args.src; 
+        if (args.type) elem.type = args.type; 
+        return elem;
+    };
+    
+    // Get the element where streams will be displayed
+    const streamSelectionContainer = d.getElementById('youtube-stream_selection');
+    if (!streamSelectionContainer) {
+        console.error('Target container \'youtube-stream_selection\' not found.');
+        return;
+    }
+    
+    // --- Minimal Styling & Clearing ---
+    streamSelectionContainer.innerHTML = ''; 
+    streamSelectionContainer.className = ''; 
+
+
+    for(let i=0; i < streams.items.length; ++i){
+        const stream = streams.items[i];
+        if (!stream.id || !stream.id.videoId) continue; 
+        
+        let BROADCAST_ID = stream.id.videoId;
+        let channelId = stream.snippet.channelId; 
+        let videoTitleText = stream.snippet.title || 'Untitled Stream';
+        let channelNameText = stream.snippet.channelTitle || 'Unknown Channel';
+        let publishedDate = new Date(stream.snippet.publishedAt).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+        let thumbnailUrl = stream.snippet.thumbnails.high.url;
+        let channelIconUrl = channelData[channelId] || ''; 
+        
+        // --- 1. container (Main Card) ---
+        let container = CE({
+            elem: 'div',
+            id: BROADCAST_ID,
+            class: 'stream-card', // CSS Class
+        });
+
+        // --- 2. thumbnailContainer ---
+        let thumbnailContainer = CE({
+            class: 'thumbnail-container', // CSS Class
+        });
+
+        // --- 2.1. thumbnail (Image) ---
+        let thumbnail = CE({
+            elem: 'img',
+            src: thumbnailUrl,
+            class: 'thumbnail-img', // CSS Class
+        });
+        
+        // --- 2.2. selectionButton (Confirmation Overlay) ---
+        let selectionButton = CE({
+            elem: 'button',
+            innerText: '✅ Select',
+            class: 'selection-button', // CSS Class
+						type:'button',
+            onclick: ((id) => (e) => {
+                e.stopPropagation(); 
+                
+                d.getElementById('youtube-broadcastId').value = id;
+                window.monitorMessages.yt.UpdateConfig({broadcastId: id});
+                
+                // --- Essential Highlighting Logic (border change) ---
+                let elems = d.getElementById('youtube-stream_selection');
+                for(let k = 0; k < elems.children.length; ++k){
+                    const currentCard = elems.children[k];
+                    const currentButton = currentCard.querySelector('.selection-button');
+
+                    if(currentCard.id == id){
+                        // Selected: Apply white border and clear background (if it was set)
+                        currentCard.style.border = 'solid white 0.3rem'; 
+                        currentCard.style.backgroundColor = ''; // Clear background highlight
+                        if(currentButton) currentButton.style.opacity = '0';
+                    } else {
+                        // Unselected: Clear border and clear background
+                        currentCard.style.border = ''; 
+                        currentCard.style.backgroundColor = ''; 
+                        if(currentButton) currentButton.style.opacity = '0';
+                    }
+                }
+            })(BROADCAST_ID),
+        });
+        
+        // Add hover effect logic (must remain in JS)
+        container.onmouseover = (e) => {
+            // Check if the card is already selected (has the white border)
+            if (container.style.border.indexOf('solid white 0.3rem') === -1) {
+                 selectionButton.style.opacity = '1';
+            }
+        };
+        container.onmouseout = (e) => {
+            selectionButton.style.opacity = '0';
+        };
+
+
+        // --- 3. infoContainer (Holds Icon and Text) ---
+        let infoContainer = CE({
+            class: 'info-container', // CSS Class
+        });
+        
+        // --- 3.1. iconContainer ---
+        let iconContainer = CE({
+            class: 'icon-container', // CSS Class
+        });
+
+        // --- 3.1.1. icon (Actual Channel Image) ---
+        let icon = CE({
+            elem: 'img', 
+            src: channelIconUrl, // Set the actual image source
+            class: 'channel-icon', // CSS Class for size and border-radius
+        });
+
+        // --- 3.2. title (Holds all Text Details) ---
+        let title = CE({
+            class: 'text-title-wrapper', // CSS Class
+        });
+
+        // --- 3.2.1. videoTitle ---
+        let videoTitle = CE({
+            elem: 'h3',
+            innerText: videoTitleText,
+            class: 'video-title', // CSS Class
+        });
+        
+        // --- 3.2.2. details (Date and Channel) ---
+        let details = CE({
+            class: 'video-details-text', // CSS Class
+        });
+        
+        // --- 3.2.2.1. channelName ---
+        let channelName = CE({
+            elem: 'p',
+            innerText: channelNameText,
+            class: 'detail-p', // CSS Class
+        });
+        
+        // --- 3.2.2.2. videoDate ---
+        let videoDate = CE({
+            elem: 'p',
+            innerText: 'Scheduled: ' + publishedDate,
+            class: 'detail-p', // CSS Class
+        });
+
+
+        // --- Assembly ---
+        
+        //iconContainer.appendChild(icon);
+        
+        details.appendChild(channelName);
+        details.appendChild(videoDate);
+
+        title.appendChild(videoTitle);
+        title.appendChild(details);
+
+        //infoContainer.appendChild(iconContainer);
+        infoContainer.appendChild(title);
+        
+        thumbnailContainer.appendChild(thumbnail);
+        thumbnailContainer.appendChild(selectionButton);
+
+        container.appendChild(thumbnailContainer);
+        container.appendChild(infoContainer);
+
+        streamSelectionContainer.appendChild(container);
+    }
+})()
+">
+						get scheduled streams
+					</button>
+					<div>
+						<label>select stream</label>
+						<div id="youtube-stream_selection" style="">
+							<span style="
+							background-color:transparent;
+							display: block;
+							text-align:center;
+							margin-top:3em;
+							vertical-align:middle;
+							width:100%;
+						">
+								<em>wizard not started yet</em>, fill api and channel name then try again
+							</span>
+						</div>
 					</div>
 					<div class="yt_form-input_container">
 						<label>broadcastId</label>
 						<input type="text">
 					</div>
+				</fieldset>
+				<fieldset>
 					<div class="yt_form-input_container">
 						<label>liveChatId</label>
-						<input type="text">
-					</div>
-					<div class="yt_form-input_container">
-						<label>debug</label>
+						<button type="button" style="background-color:white; color:black !important; padding-top:0.3em;" onclick='(async () => {
+        try {
+            // Corrected: Get the input element
+            let liveChatIdInput = document.getElementById("youtube-liveChatId"); 
+            liveChatIdInput.value = await window.monitorMessages.yt.GetLiveChatIdFromBroadcastId();
+
+        } catch (error) {
+            console.error("Error executing onclick function:", error);
+        }
+    })()'>
+							get liveChatId
+						</button>
 						<input type="text">
 					</div>
 				</fieldset>
 				<fieldset>
-					<legend>private info (do not share!)</legend>
 					<div class="yt_form-input_container">
-						<label>apiKey</label>
-						<input type="password">
-						<em>DO NOT SHARE THIS OR YOU COULD GET BANNED</em>
-						<aside>this value will not have a toggle visable option to prevent leaks</aside>
+						<label>debug (not wired yet)</label>
+						<script>
+							document.addEventListener('DOMContentLoaded', () => {
+								// Wait for the button and the monitorMessages object to be available
+								const button = document.getElementById('youtube-debug_toggle');
+								if (button && window.monitorMessages && window.monitorMessages.yt) {
+									button.innerText = window.monitorMessages.yt.debugMode;
+								}
+							});
+						</script>
+
+						<button type="button" id="youtube-debug_toggle" style="color:black !important;" onclick="(async ()=>{
+        if(window.monitorMessages.yt.debugMode == true){
+            window.monitorMessages.yt.debugMode = false;
+            // CORRECTED SYNTAX HERE
+            document.getElementById('youtube-debug_toggle').innerText = window.monitorMessages.yt.debugMode;
+        }
+        else{
+            window.monitorMessages.yt.debugMode = true;
+            document.getElementById('youtube-debug_toggle').innerText = window.monitorMessages.yt.debugMode;
+        }
+    })()">
+							value has not been loaded
+						</button>
 					</div>
 				</fieldset>
 			</details>
+			<!--
 			<div style="max-width:60em; display:inline-block;">
 				<p>provide the channel name and api key, then click here to let the wizard do the rest!</p>
 				<button id="youtube-wizard" style="color:black !important; background-color: transparent; user-select:none;"
@@ -696,14 +1112,47 @@
 					onclick="() => {console.log('wizard clicked')}">
 					wizard 🧙‍♂️
 				</button>
+				<script type="module">
+					document.addEventListener('DOMContentLoaded', async () => {
+						let wizard = document.getElementById("youtube-wizard");
+
+						wizard.addEventListener('mousedown', async () => {
+							try {
+								let id = "broadcastId";
+								newConfigValues[id] = await window.monitorMessages.yt.GetBroadcastIdFromChannelId();
+								document.getElementById("youtube-" + id).value = newConfigValues[id];
+							}
+							catch (err) {
+								throw new Error("Could not get or update broadcastId \n", err);
+							}
+
+							try {
+								let id = "liveChatId"
+								newConfigValues["liveChatId"] = await window.monitorMessages.yt.GetLiveChatIdFromBroadcastId();
+								document.getElementById("youtube-" + id).value = newConfigValues[id];
+
+
+								// This replaces the logic that was previously failing on line 736
+								// The poll function handles the waiting and retries automatically
+								const liveChatId = await window.monitorMessages.yt.PollForLiveChatId();
+
+								// Now you can safely use liveChatId, it's guaranteed to be active
+								console.log("Live Chat ID is active and ready to use:", liveChatId);
+
+							} catch (e) {
+								// This catches the error if polling fails after all attempts
+								console.error("Failed to initialize live chat connection:", e);
+								// Throw the application-specific error that was caught
+								throw new Error("Could not get or update liveChatId");
+							}
+						});
+					});
+				</script>
 			</div>
+-->
 		</form>
 		<script type="module">
 			document.addEventListener('DOMContentLoaded', () => {
-				// --- ADD THIS TEST LINE ---
-				console.log("DOM fully loaded. Testing for form existence...");
-
-				// Test 1: Direct console check
 				console.log('Test result:', document.getElementById('youtube-config'));
 				// -------------------------
 
@@ -718,21 +1167,6 @@
 				containers.forEach(container => {
 					const label = container.querySelector('label');
 					const input = container.querySelector('input');
-
-					if (input) {
-						input.addEventListener("change", () => {
-							if (
-								document.getElementById("youtube-channelName").value != ''
-								&& document.getElementById("youtube-apiKey").value != ''
-							) {
-								document.getElementById("youtube-wizard").setAttribute("type", "button");
-							}
-							else {
-								document.getElementById("youtube-wizard").setAttribute("type", "disabled");
-							}
-
-						})
-					}
 
 					if (label && input) {
 						const labelText = label.textContent.trim();
@@ -911,22 +1345,6 @@
 						console.log("Speech synthesis voices have changed (and are likely loaded).");
 					};		</script>
 			</div>
-
-			<h3>Available Voices</h3>
-			<details>
-				<summary>if you wanna skip some of the redundant voices check out in here :3</summary>
-				<table border="1" cellpadding="5" style="border-collapse:collapse; width:100%;">
-					<thead>
-						<tr>
-							<th>Index</th>
-							<th>Name</th>
-							<th>Language</th>
-							<th>Play</th>
-						</tr>
-					</thead>
-					<tbody id="voiceList"></tbody>
-			</details>
-			</table>
 		</details>
 
 		<script type="module">
@@ -1005,28 +1423,6 @@
 				</form>
 
 			</div>
-			<table id="messagesTable">
-				<tbody>
-					<tr>
-						<!-- do not impliment this, 3 types of data rows are possible, whitelist: do nothing, graylist: make the row yellow, blacklist: check the "block user from tts" box -->
-						<th>index</th> <!-- index of message -->
-						<th>user</th> <!-- @ of user on youtube -->
-						<th style="max-width:3em; overflow:hidden;">date</th> <!-- datetime of message -->
-						<th style="max-width:3em;">tts flags</th>
-						<!-- the 3 values that exist are: -r for rate, -v for voice, and -p for pitch -->
-						<th>msg score</th>
-						<th>message</th> <!-- the message -->
-						<th>play message</th> <!-- the message -->
-						<th>in tts que</th>
-						<!-- is a checkbox, if message starts with: "!TTS", "!TIB", or "!BOT" automatically add -->
-						<th>time user out</th> <!-- if clicked, will time user out for 10 minute-->
-						<th>block user from tts</th>
-						<th>ban user </th>
-						<!-- when clicked, will ban the user from the channel, only after entering a special 6 digit pin (prompt the user for pin on click then do), -->
-						<!-- is a checkbox, if checked messages from this user will not automatically be added to the tts queue -->
-					</tr>
-				</tbody>
-			</table>
 			<div>
 				<script>
 					function exportTableToJson() {
@@ -1167,7 +1563,7 @@
 		}	
 		-->
 			<summary>users</summary>
-			<table style="width:100%;">
+			<table style="width:100%; max-height:60vh; overflow:scroll;">
 				<tbody>
 					<tr>
 						<th>users</th>
@@ -1179,4 +1575,281 @@
 				</tbody>
 			</table>
 		</details>
+		<form>
+			<style>
+				#addProcessedMessageField>div {
+					display: flex;
+					flex-direction: row;
+					justify-content: space-between;
+					max-width: 30em;
+				}
+			</style>
+			<details>
+				<summary>add a processed message</summary>
+				<fieldset id="addProcessedMessageField">
+					<legend>add test message</legend>
+					<div>
+						<script>
+							window.addEventListener('load', (async () => {
+								// Helper function to create elements with properties (MUST BE DEFINED HERE)
+								function CE(args = {elem: 'div', id: undefined, class: undefined, innerText: undefined, innerHTML: undefined, onclick: undefined, src: undefined, value: undefined}) {
+									let elem = document.createElement(args.elem || 'div'); // Use 'div' as default
+									if (args.id) elem.id = args.id;
+									if (args.class) elem.className = args.class;
+									if (args.innerText) elem.innerText = args.innerText;
+									if (args.innerHTML) elem.innerHTML = args.innerHTML;
+									if (args.onclick) elem.onclick = args.onclick;
+									if (args.onkeyup) elem.onkeyup = args.onkeyup;
+									if (args.src) elem.src = args.src;
+									if (args.value) elem.value = args.value;
+									return elem;
+								};
+
+								// 1. Define a function to wait for the object
+								const waitForMonitorMessages = () => {
+									return new Promise(resolve => {
+										const check = () => {
+											if (window.monitorMessages && window.monitorMessages.GetAndReturnEmptyMessageTemplate) {
+												resolve(window.monitorMessages);
+											} else {
+												// Check every 50 milliseconds
+												setTimeout(check, 50);
+											}
+										};
+										check();
+									});
+								};
+
+								try {
+									let mm = await waitForMonitorMessages();
+									let mT = await mm.GetAndReturnEmptyMessageTemplate();
+
+									console.warn("Message Template:", JSON.stringify(mT));
+
+									if (mT === undefined || mT === null) {
+										throw new Error("GetAndReturnEmptyMessageTemplate returned undefined or null.");
+									}
+
+									let pmf = document.getElementById("addProcessedMessageField");
+									if (!pmf) {
+										console.error("Target container 'addProcessedMessageField' not found in the DOM.");
+										return;
+									}
+
+									let container, label, input, key, value;
+									const keys = Object.keys(mT);
+
+									// Loop through keys and create inputs
+									for (let i = 0; i < keys.length; ++i) {
+										console.log("adding input");
+										key = keys[i];
+										value = mT[key]; // Assuming value is the default value or empty string
+
+										container = CE({class: `processedMessageField-inputContainer`});
+
+										// LABEL
+										label = CE({elem: 'label', id: `processedMessageField-${key}`, innerText: key + ": "});
+										container.appendChild(label);
+
+										// INPUT (Assuming you want an input field)
+										let defaultValue;
+										switch (key) {
+											case ("template_version"):
+												defaultValue = "1";
+												break;
+											case ("authorName"):
+												defaultValue = "webGUI-tester";
+												break;
+											case ("authorId"):
+												defaultValue = "0000-0000-0000-0000";
+												break;
+											case ("streamOrigin"):
+												defaultValue = "notLive";
+												break;
+											case ("date"):
+												defaultValue = Date.now();
+												break;
+											case ("commands:"):
+												defaultValue = "FIX ME BEFORE YOU USE ME";
+												break;
+											case ("processedMessage"):
+												defaultValue = "";
+												break;
+											case ("platform:"):
+												defaultValue = "webGUI";
+												break;
+											case ("rawMessage"):
+												defaultValue = "Hello from the webGUI!";
+												break;
+											case ("score"):
+												defaultValue = undefined;
+												break;
+											case ("isDeleted"):
+												defaultValue = "false";
+												break;
+											default:
+												defaultValue = "";
+												break;
+										}
+										input = CE({elem: 'input', id: `processedMessageField-inputContainerFor${key}`, value: defaultValue, });
+
+										container.appendChild(input);
+
+										if (key == "processedMessage") {
+											console.log("doing special stuff for the processed message");
+											async function UpdateTestScoreStuff() {
+												let shortestMaxMessage = 255;
+												let input = document.getElementById("processedMessageField-inputContainerForprocessedMessage");
+												let rcd = document.getElementById("processedMessageField-remainingCharsDisplay");
+												let ms = document.getElementById("processedMessageField-score");
+												let score = await window.monitorMessages.ScoreMessage(input.value);
+												let scoreColor = await window.monitorMessages.ColorFromScoreValue(score);
+												input.style.borderColor = scoreColor;
+												rcd.innerText = String(input.value.length + "/" + shortestMaxMessage);
+												if (shortestMaxMessage / input.value.length > 1) {rcd.style.color = "light-green !important";} // BUG: 
+												else {rcd.style.color = "light-red";} // BUG: 
+												ms.innerText = score;
+												ms.style.borderColor = scoreColor; // BUG: 
+											}
+											input.onkeyup = UpdateTestScoreStuff;
+											let rcd = CE({elem: "output", id: "processedMessageField-remainingCharsDisplay", });
+											container.appendChild(rcd);
+											let scoreDis = CE({elem: "output", id: "processedMessageField-score", });
+											container.appendChild(scoreDis);
+										}
+
+										pmf.appendChild(container);
+									}
+									console.log("added all vars to page");
+								} catch (error) {
+									console.error("Initialization failed:", error);
+								}
+							}));
+
+						</script>
+						<!--
+					<div>
+						<input id="testMessage" type='text' style="width:90%;" onkeydown='UpdateTestScoreStuff();'
+							onchange='UpdateTestScoreStuff()'>
+					</div>
+					<div style="display:flexbox; flex-direction:row;">
+						<div style="display:inline-block;">
+							<lable>char count:</lable>
+							<output id="testMessage-remainingCharsDisplay">0/255</output>
+						</div>
+						<div style="display:inline-block;">
+							<label>score:</label>
+							<output id="testMessage-score">...</output>
+						</div>
+					</div>
+					<div>
+						<label>platform</label>
+						<input type='text' value='system'>
+					</div>
+					<div>
+						<label></label>
+					</div>
+-->
+					</div>
+				</fieldset>
+			</details>
+		</form>
+		<table id="messagesTable">
+			<tbody>
+				<tr>
+					<!-- do not impliment this, 3 types of data rows are possible, whitelist: do nothing, graylist: make the row yellow, blacklist: check the "block user from tts" box -->
+					<th>index</th> <!-- index of message -->
+					<th>user</th> <!-- @ of user on youtube -->
+					<th style="max-width:3em; overflow:hidden;">date</th> <!-- datetime of message -->
+					<th style="max-width:3em;">tts flags</th>
+					<!-- the 3 values that exist are: -r for rate, -v for voice, and -p for pitch -->
+					<th>msg score</th>
+					<th>message</th> <!-- the message -->
+					<th>play message</th> <!-- the message -->
+					<th>in tts que</th>
+					<!-- is a checkbox, if message starts with: "!TTS", "!TIB", or "!BOT" automatically add -->
+					<th>time user out</th> <!-- if clicked, will time user out for 10 minute-->
+					<th>block user from tts</th>
+					<th>ban user </th>
+					<!-- when clicked, will ban the user from the channel, only after entering a special 6 digit pin (prompt the user for pin on click then do), -->
+					<!-- is a checkbox, if checked messages from this user will not automatically be added to the tts queue -->
+				</tr>
+			</tbody>
+		</table>
+		<div>
+			<script>
+				/**
+				 * Exports a JavaScript object as a downloaded JSON file.
+				 * * @param {object} data - The JavaScript object to export.
+				 * @param {string} [filename='data.json'] - The desired name for the downloaded file.
+				 */
+				function downloadJson(data, filename = 'data.json') {
+					if (typeof data !== 'object' || data === null) {
+						console.error("Invalid data provided. Must be a non-null object.");
+						return;
+					}
+
+					try {
+						// 1. Convert the object to a JSON string
+						const jsonString = JSON.stringify(data, null, 2); // 'null, 2' formats the JSON nicely
+
+						// 2. Create a Blob containing the JSON data
+						const blob = new Blob([jsonString], {type: 'application/json'});
+
+						// 3. Create a temporary URL for the Blob
+						const url = URL.createObjectURL(blob);
+
+						// 4. Create a temporary <a> element
+						const a = document.createElement('a');
+						a.href = url;
+						a.download = filename; // Set the filename
+
+						// 5. Simulate a click to trigger the download
+						document.body.appendChild(a);
+						a.click();
+
+						// 6. Clean up the temporary URL and element
+						document.body.removeChild(a);
+						URL.revokeObjectURL(url);
+
+						console.log(`Successfully downloaded file: ${filename}`);
+
+					} catch (error) {
+						console.error("Failed to generate or download JSON file:", error);
+					}
+				}
+			</script>
+			<form>
+				<div>
+					<label>download unprocesed messages</label>
+					<input type="button" value="download json" onclick="
+							console.log('getting all data');
+							downloadJson(window.monitorMessages.GetAndReturnUnprocessedMessages(), `unprocessedMessages-${Date.now()}.json`)
+						">
+				</div>
+				<div>
+					<label>download processed messages</label>
+					<input type="button" value="download json" onclick="
+							console.log('getting all data');
+							downloadJson(window.monitorMessages.GetAndReturnProcessedMessages(), `processedMessages-${Date.now()}.json`)
+						">
+				</div>
+				<div>
+					<label>download user data</label>
+					<input type="button" value="download json" onclick="
+							console.log('getting all data');
+							downloadJson(window.monitorMessages.GetAndReturnUsers(), `userData-${Date.now()}.json`)
+						">
+				</div>
+				<div>
+					<label>download all data</label>
+					<input type="button" value="download json" onclick="
+							console.log('getting all data');
+							downloadJson(window.monitorMessages.GetAndReturnUsers(), `unprocessedMessages-${Date.now()}.json`);
+							downloadJson(window.monitorMessages.GetAndReturnProcessedMessages(), `processedMessages-${Date.now()}.json`);
+							downloadJson(window.monitorMessages.GetAndReturnUnprocessedMessages(), `userData-${Date.now()}.json`);
+						">
+				</div>
+			</form>
+		</div>
 </body>
