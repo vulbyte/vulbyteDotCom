@@ -6,7 +6,6 @@ import YoutubeStuff from "./youtubeStuff.js";
 const trigrams = await fetch('./tib_stuff/trigrams.json').then((res) => { return res.json() });;
 
 export default class MonitorMessages {
-	INIT() { };
 	//tldr: this is largely ment to live as state, with functions used to monitor state
 	// VARS private messages should be treated as static.
 	#bannedAtTemplate = {
@@ -97,40 +96,130 @@ export default class MonitorMessages {
 	async GetAndReturnProcessedMessages() {
 		return this.#messages_queue;
 	}
+
+	/**
+	 * @name #flagsTemplate
+	 * @param {Array<string>} flag - the flag[s] to trigger the cmd, must be in an array
+	 * @param {string} value - value for the flag
+	 * @param {string} valueType - type for the input value to modify params
+	 * @param {string} description - tldr of what the flag does to the cmd
+	 * @param {range} if number, min and max values
+	 */
+	#flagsTemplate = {
+		flag: undefined,
+		value: undefined,
+		description: undefined,
+		range: { min: 0.5, max: 3 }
+	}
+	/**
+	 * @name #commandTemplate
+	 * @param {number} template_version - version of the command
+	 * @param {string} command - flag to trigger the command
+	 * @param {Array} flags - additional params to modify the command
+	 * @param {Function} function - what code snippit to trigger when cmd is called
+	 */
 	#commandTemplate = {
 		template_version: 1,
 		command: undefined,
-		flag: undefined,
+		flags: undefined,
 		function: undefined, //function to call when triggered
 	}
+	#commands = [ // only add commands that are implimented
+		{
+			template_version: 1,
+			command: "clip",
+			flags: [
+				{
+					flag: ['p'],
+					value: 1,
+					description: "modifys the pitch of the tts",
+					range: { min: 0.5, max: 3 }
+				},
+				{
+					flag: ['r', 's'],
+					value: 1,
+					description: "modifys the speed [rate] of the tts message",
+					range: { min: 0.5, max: 3 }
+				},
+				{
+					flag: ['v'],
+					value: 1,
+					description: "modifys the voice of the tts message",
+					range: { min: 0.5, max: 3 }
+				},
+			],
+			function: '', //function to call when triggered
+		},
+		{
+			template_version: 1,
+			command: "help",
+			flags: [
+				{
+					flag: ['p'],
+					value: 1,
+					description: "modifys the pitch of the tts",
+					range: { min: 0.5, max: 3 }
+				},
+				{
+					flag: ['r', 's'],
+					value: 1,
+					description: "modifys the speed [rate] of the tts message",
+					range: { min: 0.5, max: 3 }
+				},
+				{
+					flag: ['v'],
+					value: 1,
+					description: "modifys the voice of the tts message",
+					range: { min: 0.5, max: 3 }
+				},
+			],
+			function: '', //function to call when triggered
+		},
+		{
+			template_version: 1,
+			command: "tts",
+			flags: [
+				{
+					flag: ['p'],
+					value: 1,
+					description: "modifys the pitch of the tts",
+					range: { min: 0.5, max: 3 }
+				},
+				{
+					flag: ['r', 's'],
+					value: 1,
+					description: "modifys the speed [rate] of the tts message",
+					range: { min: 0.5, max: 3 }
+				},
+				{
+					flag: ['v'],
+					value: 1,
+					description: "modifys the voice of the tts message",
+					range: { min: 0.5, max: 3 }
+				},
+			],
+			function: this.CallTts, //function to call when triggered
+		},
+	]
+
 	#message_template = {
 		template_version: 1,
 		authorName: "",
 		authorId: "",
 		streamOrigin: "", //what streamid via the platform the message came from
 		date: "",
-		commands: "",
-		processedMessage: "",
+		commands: [],
+		procesedMessage: "",
 		platform: "",
 		rawMessage: "",
 		score: "",
-		isDeleted: "", // archive messages incase user sends something bad then deletes
 	};
-	async GetAndReturnEmptyMessageTemplate() {
-		let res = this.#message_template;
-		for (let i = 0; i < Object.keys(res); ++i) {
-
-		}
-		return this.#message_template;
-	}
-
-	yt = new YoutubeStuff({});
-
 	#clip_queue = [];
 	// NOTE: Assuming this function is part of a class/module where the '#' private syntax is valid.
 	config = {
 		monitorMessages: {
 			debug: true,
+			strictMode: false,
 		},
 		flag: {
 			description: "used to define the token used to trigger the tts,",
@@ -142,184 +231,101 @@ export default class MonitorMessages {
 			],
 			positionSelected: "start", //
 		},
-		commands: { //comes after the token ie: !clip
-			clip: {
-				description: "used to timestamp the current moment for vulbyte",
-				function: this.clipHandler,
-			},
-			help: {
-				description: "used to send the help instructions",
-				function: this.helpHandler,
-			},
-			tts: {
-				description: "used to add a tts message to the queue",
-				function: this.textToSpeechHandler,
-				readAt: "",
-			},
-		},
 	}
 
-	TIMING() { }
+	async MonitorLoop() {
+		const daLoop = new Promise(async (RESOLVE, REJECT) => {
+			let testsForPlatformMessages = [
+				testGetYoutubeV3Messages = new Promise(async (RESOLVE, REJECT) => {
+					await this.GetYoutubeV3Messages();
+					await this.ProcessUnprocessedMessagesQueue();
+					console.log()
+				}),
+			];
 
-	MessageTimer = new IntTimer();
-	TtsTimer = new IntTimer();
 
-	async StartMonitoring() {
-		try {
-			//config
-			if (this.yt.GetApiKey() == undefined) { throw new Error("YT CONFIG DOES NOT HAVE AN API KEY, CANNOT START)"); }
-			if (this.yt.config.liveChatId == undefined) { throw new Error("YT CONFIG DOES NOT HAVE A LIVECHATID, CANNOT START)"); }
-
-			//init
-			await GetMessagesAndAddToUnprocessedQueue();
-			await ProcessUnprocessedAndAddMessageQueue();
-
-			//making the loop for timeout
-			async function DaBiggieBoiLoop() {
-				// process messages into queue
-				this.#unprocessed_queue += await this.GetUnprocessedMessages();
-				this.#messages_queue += await this.ProcessUnprocessedMessageQueue();
-				await this.AddMessagesToTable();
+			// test everything, and if anything fails throw error
+			if (this.config.monitorMessages.strictMode == true) {
+				try {
+					let testAllPlatforms = Promise.all(testsForPlatformMessages)
+						.then(async (values) => {
+							console.log("managed to get messages from each platform successfully:\n" + values);
+						});
+					await testAllPlatforms;
+					RESOLVE("Got ALL PLATFORMS SUCCESSFULLY");
+				}
+				catch (err) {
+					REJECT("FAILED TO GET DATA FROM ALL PLATFORMS");
+				}
+			}
+			// test everything, if error log error
+			else {
+				for (let i = 0; i < testsForPlatforms.length; ++i) {
+					try {
+						await testsForPlatformsMessages[i]();
+					}
+					catch (err) {
+						console.warn("could not get messages from platform:\n", err);
+					}
+				}
 			}
 
-			MessageTimer.TimeoutListeners += DaBiggieBoiLoop;
+		});
+	}
 
-			MessageTimer.Start();
-			TtsTimer.Start();
-			console.log("mm: started timers");
+	GetMessagesTimer = new IntTimer();
+	async MonitoringStart() {
+		try {
+			//test it to see if it works
+			await MonitorLoop();
+			//if works, then you can start the timer
+			this.GetMessagesTimer.AddTimeoutListener(MonitorLoop);
 		}
 		catch (err) {
-			console.error("could not start the monitor messages due to error:\n" + err);
-		}
-
-	}
-
-	async StopMonitoring() {
-		MessageTimer.Stop();
-		TtsTimer.Stop();
-		console.log("mm: stopped timers");
-	}
-
-	async StartAutoTts() {
-
-	}
-
-	async StopAutoTts() {
-
-	}
-
-	DATAFLOW() { }
-
-	ProcessUnprocessedAndAddMessageToQueue() {
-
-	}
-
-	async AddUnprocessedMessagesFromJsonToUnprocessedQueue(input) {
-		if (input == undefined) { throw new Error("input is empty"); }
-
-		let successfulness = {
-			fail: 0,
-			success: 0,
-		}
-
-		for (let i = 0; i < input.length; ++i) {
-			// NOTE if the version needs to be updated, do so here!
-			switch (input[i].version) {
-				case (1):
-					this.#unprocessed_queue += input[i];
-					successfulness.success += 1;
-					break;
-				default:
-					console.warn("incompatable version found, cannot add to list");
-					successfulness.fail += 1;
+			console.log("test loop failed, probably shouldn't continue");
+			if (this.config.monitorMessages.strictMode == true) {
+				throw new Error("error in MonitorLoop(), failed and threw error");
 			}
 		}
+	}
+	async MonitoringStop() {
+		this.GetMessagesTimer.RemoveTimeoutListener(MonitorLoop);
+	}
 
-		console.log(`unprocessed messages added to queue. the ratio of failed to successful messages is: \n❌${successfulness.failed} : ✅${successfulness.success}`);
+	async AutoTtsStart() {
+
+	}
+	async AutoTtsStop() {
+
+	}
+
+	async VerifyConfig() {
+		try {
+			await this.yt.VerifyConfig()
+		}
+		catch (err) {
+			console.log("could not verify config:\n" + err);
+		}
 	}
 
 
-	async AddProcessUnprocessedfMessagesFromJsonToProcessedMessagesQueue(/* this uses the this.#unprocessed_queue*/) {
-		if (this.#unprocessed_queue[0] == undefined) { throw new Error("unprocessed queue is empty"); }
-
-		let successfulness = {
-			fail: 0,
-			success: 0,
-		}
-
-		for (let i = 0; i < input.length; ++i) {
-			// NOTE if the version needs to be updated, do so here!
-			switch (input[i].version) {
-				case (1):
-					this.#messages_queue += input[i];
-					this.
-						successfulness.success += 1;
-					break;
-				default:
-					console.warn("incompatable version found, cannot add to list");
-					successfulness.fail += 1;
-			}
-		}
-
-		console.log(`unprocessed messages added to queue. the ratio of failed to successful messages is: \n❌${successfulness.failed} : ✅${successfulness.success}`);
-	}
-
-
-	async AddUsersFromJsonToProcessedMessagesQueue(input) {
-		if (input == undefined) { throw new Error("input is empty"); }
-
-		let successfulness = {
-			fail: 0,
-			success: 0,
-		}
-
-		for (let i = 0; i < input.length; ++i) {
-			// NOTE if the version needs to be updated, do so here!
-			switch (input[i].version) {
-				case (1):
-					this.#users += input[i];
-					successfulness.success += 1;
-					break;
-				default:
-					console.warn("incompatable version found, cannot add to list");
-					successfulness.fail += 1;
-			}
-		}
-
-		console.log(`unprocessed messages added to queue. the ratio of failed to successful messages is: \n❌${successfulness.failed} : ✅${successfulness.success}`);
-	}
-
-
-
-
-	/**
-	 * @returns {null}
-	 */
-	async GetMessagesAndAddToUnprocessedQueue() {
+	async GetYoutubeV3Messages() {
 		try { //youtube
 			let resp;
 			// Pass the pageToken to get the next batch of messages
 			resp = await this.yt.GetMessages(pageToken);
-
-
-			// IMPORTANT: Store the nextPageToken for the next request
 			if (resp.nextPageToken) {
 				this.nextPageToken = resp.nextPageToken;
 				console.log(`Got nextPageToken: ${this.nextPageToken}`);
 			}
-
-			// Also respect the pollingIntervalMillis if provided
 			if (resp.pollingIntervalMillis) {
 				console.log(`YouTube recommends polling every ${resp.pollingIntervalMillis}ms`);
 			}
-
 			const yt_messages = resp?.items || [];
-
 			if (!yt_messages.length) {
 				console.log("No messages returned");
 				return;
 			}
-
 			for (let i = 0; i < yt_messages.length; ++i) {
 				this.#unprocessed_queue += this.yt_messages[i] //yt_messages
 			}
@@ -343,60 +349,76 @@ export default class MonitorMessages {
 			if (this.config.monitorMessages.debug == true) {
 				console.log("finished adding all the items to the arr");
 			}
-
 		}
 		catch (err) {
 			console.error("Error getting messages from youtube:", err);
 			throw err;
 		}
 	}
-
 	/**
-	 * Filters a message string, keeping only a-zA-Z0-9, space, and a specified set of symbols.
-	 * This implicitly removes emojis and other disallowed characters (like accented letters).
-	 *
-	 * @param {string} message - The input string to be cleaned.
-	 * @returns {string} The cleaned message string.
+	 * @returns {null}
 	 */
-	sanitizeString(message) {
-		if (typeof message !== 'string') {
-			return "";
-		}
+	async GetMessages() {
+		let messageLists = new Promise.all([GetYoutubeV3Messages()]).then((values) => {
 
-		// This regex defines all ALLOWED characters inside the square brackets [].
-		// The caret (^) at the start of the brackets inverts the match, so it matches 
-		// any character NOT in the set. The 'g' flag ensures global replacement.
-		//
-		// Allowed characters:
-		// a-zA-Z0-9: Letters and numbers
-		// \s: Whitespace (spaces, tabs)
-		// ':;?/*&!@#$%^&*()<>:.,": The list of specific symbols you provided
-		//
-		const allowedCharsRegex = /[^a-zA-Z0-9\s':;?/*&!@#$%^&*()<>,.\"]/g;
-
-		let cleanedMessage = message.replace(allowedCharsRegex, '');
-
-		// Normalize spaces: Collapse multiple spaces into a single space, and trim.
-		return cleanedMessage.replace(/\s+/g, ' ').trim();
+		});
 	}
 
-	/**
-	 * Parses the message for the command prefix and command name using array iteration, then dispatches argument parsing.
-	 * @param {string} raw - The raw message string.
-	 * @param {string} commandPrefix - The custom prefix token.
-	 * @returns {object|null} An object containing the command name, flags, and message, or null if no command is matched.
-	 */
-	dispatchCommand(raw, commandPrefix) {
+	sanitizeString(strang) {
+		if (typeof strang !== 'string') {
+			throw new Error("strang is not a string, UNEXPECTED DATA TYPE");
+		}
+
+		const miniscules = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
+		const caps = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+		const numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
+		const specials = ['!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '[', ']', '?', '/', '|', '.', ',', ':', ';'];
+		const valid_chars = miniscules + caps + numbers + specials;
+
+		let matchFound = false;
+		for (let i = 0; i < strang.length; ++i) {
+			for (let j = 0; j < valid_chars.length; ++j) {
+				if (strang[i] == valid_chars[j]) {
+					matchFound = true
+					break;
+				}
+			}
+			if (!matchFound) {
+				strang[i] = '';
+			}
+		}
+		return strang
+	}
+
+	async dispatchCommand(raw, commandPrefix = this.config.flag.token) {
+
+		//quick exit
+		if (raw == '' || raw == undefined || raw == null) { throw new Error("MALFORMED INPUT, raw input is null"); }
+
+
 		if (!raw.startsWith(commandPrefix)) {
 			return { message: raw };
 		}
+		let message = raw.slice(commandPrefix.length, raw.length);
 
-		// Define the array of supported commands
-		const SUPPORTED_COMMANDS = [
-			'tts',
-			'clip',
-			'help'
-		];
+		let ft = this.#flagsTemplate;
+		/*
+		ft.flag
+		ft.range
+		ft.value
+		ft.description
+		*/
+		const cmds = this.#commands;
+
+		for (let i = 0; i < cmds.flags.length; ++i) {
+			if (message.startsWith(smds.flags.flag)) {
+
+			}
+		}
+
+
+
+
 
 		// 1. Isolate the message AFTER the token
 		const messageAfterToken = raw.substring(commandPrefix.length).trim();
@@ -447,6 +469,93 @@ export default class MonitorMessages {
 			default:
 				return null;
 		}
+	}
+
+	async CallTts(input, command = this.#commandTemplate) {
+		command.flags = input.flags || {};
+		let flags = {};
+
+		message = input.message || input.messages || "";
+		if (!message) {
+			console.error("could not call tts, message is empty");
+			return;
+		}
+
+		const getVoices = () => new Promise((resolve) => {
+			let v = window.speechSynthesis.getVoices();
+			if (v && v.length) return resolve(v);
+			const onChange = () => {
+				window.speechSynthesis.removeEventListener('voiceschanged', onChange);
+				resolve(window.speechSynthesis.getVoices());
+			};
+			window.speechSynthesis.addEventListener('voiceschanged', onChange);
+			setTimeout(() => resolve(window.speechSynthesis.getVoices()), 250);
+		});
+
+		const voices = await getVoices();
+		const utter = new SpeechSynthesisUtterance(message);
+
+		let desiredVoice = null;
+		if (flags.v) {
+			const maybeIdx = Number(flags.v);
+			if (!Number.isNaN(maybeIdx) && voices[maybeIdx]) {
+				desiredVoice = voices[maybeIdx];
+			} else {
+				desiredVoice = voices.find(v => v.name === flags.v || v.lang === flags.v);
+			}
+		}
+		if (desiredVoice) utter.voice = desiredVoice;
+
+		utter.rate = Number(flags.r) || 1;
+		utter.pitch = Number(flags.p) || 1;
+
+		window.speechSynthesis.cancel();
+		window.speechSynthesis.speak(utter);
+	}
+
+	ProcessTtsMessage(raw) {
+		if (raw[0] != '!') {
+			//not a cmd, exiting	
+			return null;
+		}
+
+		let command = this.#commandTemplate;
+		command.flags = {
+			p: flagsIn.p || this.#GEBI("ttsPitch")?.value || this.#LSGI("ttsPitch") || "1",
+			r: flagsIn.r || this.#GEBI("ttsRate")?.value || this.#LSGI("ttsRate") || "1",
+			v: flagsIn.v || this.#GEBI("ttsVoice")?.value || this.#LSGI("ttsVoice") || 51,
+		}
+		command.command;
+		command.template_version = 1;
+		command.function = this.CallTts;
+
+		const argsStr = match[2];
+		const parts = argsStr.trim().split(/\s+/);
+
+		let flags = {
+			p: "",
+			r: "",
+			v: "",
+		};
+
+		let msgParts = [];
+		for (let i = 0; i < parts.length; i++) {
+			if (parts[i] === "-r" && parts[i + 1]) {
+				flags.r = parts[i + 1];
+				i++;
+			} else if (parts[i] === "-v" && parts[i + 1]) {
+				flags.v = parts[i + 1];
+				i++;
+			} else if (parts[i] === "-p" && parts[i + 1]) {
+				flags.p = parts[i + 1];
+				i++;
+			} else {
+				msgParts.push(parts[i]);
+			}
+		}
+
+		return { flags, message: msgParts.join(" ") };
+
 	}
 
 	/** 
@@ -527,7 +636,6 @@ export default class MonitorMessages {
 			publishedAt: item.snippet?.publishedAt ?? "",
 		};
 	}
-
 	async ProcessUnprocessedMessageQueue() {
 		for (let i = 0; i < this.#unprocessed_queue.length; ++i) {
 			try {
@@ -554,7 +662,7 @@ export default class MonitorMessages {
 	}
 	#messageDisbatch(message) { }
 	// PUBLIC (laid out by general flow)
-	async AddMessagesToTable(pageToken = undefined) {
+	async GetMessages(pageToken = undefined) {
 
 		console.log(`Processing ${yt_messages.length} messages`);
 
@@ -605,8 +713,15 @@ export default class MonitorMessages {
 			// colors to help readiblity
 			let score = await this.EvaluateMessageScore(safeMessage);
 			let scoreColor = "inherit";
-
-			scoreColor = this.ColorForScoreValue();
+			//highest to lowest
+			if (score > 1000) { scoreColor = "#E62117" }
+			else if (score > 500) { scoreColor = "#E91E63" }
+			else if (score > 200) { scoreColor = "#F57C00" }
+			else if (score > 100) { scoreColor = "#FFCA28" }
+			else if (score > 50) { scoreColor = "#1DE9B6" }
+			else if (score > 20) { scoreColor = "#00E5FF" }
+			else if (score > 0) { scoreColor = "#1E88E5" }
+			else if (score < 0) { scoreColor = "#0000E5" }
 
 
 			const tr = document.createElement("tr");
@@ -663,18 +778,6 @@ export default class MonitorMessages {
 
 		console.log(`Added ${newMessagesCount} new messages to table`);
 		return yt_messages;
-	}
-
-	ColorFromScoreValue(score) {
-		//highest to lowest
-		if (score > 1000) { return "#E62117" }
-		else if (score > 500) { return "#E91E63" }
-		else if (score > 200) { return "#F57C00" }
-		else if (score > 100) { return "#FFCA28" }
-		else if (score > 50) { return "#1DE9B6" }
-		else if (score > 20) { return "#00E5FF" }
-		else if (score > 0) { return "#1E88E5" }
-		return "#0000e5";
 	}
 
 	async ScoreMessage(message) {
@@ -839,112 +942,29 @@ export default class MonitorMessages {
 		return score;
 	}
 
-	TTS_STUFF() { }
-
-	async CallTts(input, command = this.#commandTemplate) {
-		command.flags = input.flags || {};
-		let flags = {};
-
-		message = input.message || input.messages || "";
-		if (!message) {
-			console.error("could not call tts, message is empty");
-			return;
-		}
-
-		const getVoices = () => new Promise((resolve) => {
-			let v = window.speechSynthesis.getVoices();
-			if (v && v.length) return resolve(v);
-			const onChange = () => {
-				window.speechSynthesis.removeEventListener('voiceschanged', onChange);
-				resolve(window.speechSynthesis.getVoices());
-			};
-			window.speechSynthesis.addEventListener('voiceschanged', onChange);
-			setTimeout(() => resolve(window.speechSynthesis.getVoices()), 250);
-		});
-
-		const voices = await getVoices();
-		const utter = new SpeechSynthesisUtterance(message);
-
-		let desiredVoice = null;
-		if (flags.v) {
-			const maybeIdx = Number(flags.v);
-			if (!Number.isNaN(maybeIdx) && voices[maybeIdx]) {
-				desiredVoice = voices[maybeIdx];
-			} else {
-				desiredVoice = voices.find(v => v.name === flags.v || v.lang === flags.v);
-			}
-		}
-		if (desiredVoice) utter.voice = desiredVoice;
-
-		utter.rate = Number(flags.r) || 1;
-		utter.pitch = Number(flags.p) || 1;
-
-		window.speechSynthesis.cancel();
-		window.speechSynthesis.speak(utter);
-	}
-
-	ProcessTtsMessage(raw) {
-		if (raw[0] != '!') {
-			//not a cmd, exiting	
-			return null;
-		}
-
-		let command = this.#commandTemplate;
-		command.flags = {
-			p: flagsIn.p || this.#GEBI("ttsPitch")?.value || this.#LSGI("ttsPitch") || "1",
-			r: flagsIn.r || this.#GEBI("ttsRate")?.value || this.#LSGI("ttsRate") || "1",
-			v: flagsIn.v || this.#GEBI("ttsVoice")?.value || this.#LSGI("ttsVoice") || 51,
-		}
-		command.command;
-		command.template_version = 1;
-		command.function = this.CallTts;
-
-		const argsStr = match[2];
-		const parts = argsStr.trim().split(/\s+/);
-
-		let flags = {
-			p: "",
-			r: "",
-			v: "",
-		};
-
-		let msgParts = [];
-		for (let i = 0; i < parts.length; i++) {
-			if (parts[i] === "-r" && parts[i + 1]) {
-				flags.r = parts[i + 1];
-				i++;
-			} else if (parts[i] === "-v" && parts[i + 1]) {
-				flags.v = parts[i + 1];
-				i++;
-			} else if (parts[i] === "-p" && parts[i + 1]) {
-				flags.p = parts[i + 1];
-				i++;
-			} else {
-				msgParts.push(parts[i]);
-			}
-		}
-
-		return { flags, message: msgParts.join(" ") };
-
-	}
-
 	// RUN
 	constructor(args = {}) {
 		this.args = args;
 		this.firstStart = true;
 
-		let updatedConfiged = {
-			apiKey: this.#GEBI("youtube_apiKey")?.value,
-			broadcastId: this.#GEBI("youtube_broadcastId")?.value,
-		}
+		const apiKey = this.#GEBI("youtube_apiKey")?.value;
+		const broadcastId = this.#GEBI("youtube_broadcastId")?.value;
 
-
+		this.yt = new YoutubeStuff({
+			apiKey: apiKey,
+			broadcastId: broadcastId
+		});
 
 		this.monitorInterval = null;
 		this.messageIndex = 0;
 
 		// IMPORTANT: Store the nextPageToken to get new messages
 		this.nextPageToken = null;
+
+		if (this.config.monitorMessages.debug == true) {
+			console.warn("debug mode on, toggling strict mode to on for testing");
+			this.config.monitorMessages.strictMode == true;
+		}
 	}
 }
 

@@ -141,6 +141,35 @@ export class IntTimer {
 			}
 		}
 	}
+	AddTimeOutListener(func = undefined) {
+		if (func == undefined) { throw new Error("arguement function is undefined"); }
+
+		let matchFound = false;
+		for (let i = 0; i < this.timeoutListeners.length; ++i) {
+			if (this.timeoutListeners[i] == func) {
+				console.warn('match to attempted add found, not adding the functions due to duplication concerns');
+			}
+		}
+		if (matchFound == false) {
+			this.timeoutListeners += func;
+		}
+		return;
+	}
+	RemoveTimeoutListener(func = undefined) {
+		if (func == undefined) { throw new Error("arguement function is undefined"); }
+
+		let matchFound = false;
+		for (let i = 0; i < this.timeoutListeners.length; ++i) {
+			if (this.timeoutListeners[i] == func) {
+				console.warn('match to attempted add found, not adding the functions due to duplication concerns');
+				this.timeoutListeners.pop(i);
+			}
+		}
+		if (matchFound == false) {
+			console.warn("function passed has not been matched to another in the function array, is there an error in the logic somewhere?");
+		}
+		return;
+	}
 	async Timeout() {
 		if (this.debugMode) {
 			console.log(`intTimer: ${this.name} has timedOut`);
