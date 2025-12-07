@@ -528,15 +528,15 @@ function Footer() {
 			support.appendChild(s_e);
 
 			let a = document.createElement("a");
-			a.href = "support@vulbyte.com";
+			a.href = "mailto:support@vulbyte.com";
 			a.innerText = "support@vulbyte.com";
+			a.targer = "_blank";
 			support.appendChild(a);;
 
 			return support;
 		}
 		//}}}3 create support
 		f.appendChild(CreateSupport());
-
 
 		let hr = document.createElement("hr");
 		hr.style.marginTop = "10em";
@@ -604,9 +604,9 @@ catch (err) {
 try {
 	var global_style = document.createElement('link');
 	global_style.rel = `stylesheet`;
-	global_style.href = `/themes/cartridge.css`;
+	global_style.href = `/themes/modern_dark.css`;
 
-	if (global_style.href.includes("cartridge.css")) {
+	if (global_style.href.includes("modern_dark.css")) {
 		let buttons = document.getElementsByTagName("button");
 
 		let og;
