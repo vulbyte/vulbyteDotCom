@@ -39,11 +39,18 @@
 }
 
 /* ---------------- Base Reset ---------------- */
+@font-face {
+    font-family: 'Test09'; /* <-- 1. Choose a unique name for your custom font */
+    src: url("/assets/test09-v1r42.otf") format("opentype"); /* <-- 2. Point to the file */
+    font-weight: normal;
+    font-style: normal;
+}
+
 html {
     font-size: 100%;
     background: var(--color-bg);
     color: var(--color-text);
-    font-family: url("/assets/test09-v1r42.otf"), ui-sans-serif, system-ui, sans-serif;
+    font-family: "Test09", ui-sans-serif, system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
 }
 
