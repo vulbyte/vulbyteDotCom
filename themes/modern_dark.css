@@ -43,7 +43,7 @@ html {
     font-size: 100%;
     background: var(--color-bg);
     color: var(--color-text);
-    font-family: ui-sans-serif, system-ui, sans-serif;
+    font-family: url("/assets/test09-v1r42.otf"), ui-sans-serif, system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
 }
 
