@@ -20,67 +20,6 @@
 		import {IntTimer} from './tib_stuff/intTimer.js';
 		window.IntTimer = new IntTimer();
 	</script>
-</head>
-
-
-<br>
-
-<body style="">
-	<script type="module">
-		window.addEventListener('beforeunload', function (event) {
-			// Check if there is unsaved data before showing the alert
-			const hasUnsavedChanges = true; // Replace with your actual check (e.g., a boolean flag)
-
-			if (hasUnsavedChanges) {
-				// Cancel the event.
-				event.preventDefault("the data has not been saved yet, please give me a sec to save the data!");
-
-				// Chrome requires returnValue to be set.
-				event.returnValue = 'the data base has not been backed up yet and will new values will not be saved!';
-
-				// The actual text displayed to the user is determined by the browser
-				// and is usually a standard message like "Are you sure you want to leave?"
-				// You cannot customize the actual message shown in modern browsers.
-			}
-		});
-	</script>
-	<details>
-		<summary>TiB config: click here to edit the cost of actions and defaults</summary>
-		<div><label>voice:</label><input type="number" default="51"></div>
-		<div><label>pitch:</label><input type="number" default="1.1"></div>
-		<div><label>rate:</label><input type="number" default="0.9"></div>
-		<div><label>soundboard cost:</label><input type="number" value="1000"></div>
-		<div><label>tts cost:</label><input type="number" value="3000"></div>
-	</details>
-
-	<details>
-		<summary>messageScoreChecker</summary>
-		<div>
-			<lavel>score:</lavel>
-			<output id="messageScoreTest">0</output>
-		</div>
-		<textarea id="messageScoreCheck"></textarea>
-		<script type="module">
-			window.addEventListener('load', () => {
-
-				let testArea = document.getElementById("messageScoreCheck");
-				let messageScore = document.getElementById("messageScoreTest");
-
-				let data;
-				console.log("adding score checker listener");
-				testArea.addEventListener("change", (e) => {
-					window.monitorMessages.ScoreMessage(testArea.value)
-						.then((res) => {
-							console.log("calcing score")
-							data = res;
-							console.log(data);
-							messageScore.innerText = data;
-						});
-				});
-			});
-		</script>
-	</details>
-	<!-- {{{7 chats to monitor -->
 	<div style="
 			background-color: #000; /* Example background color */
 			border-top: solid white 0.1em;
@@ -95,113 +34,10 @@
 			height:min-content;
 			width: 100%;
 		"> <!-- this group is for the controls stuck to the bottom of the screen -->
-		<style>
-			#enabled_streams {
-				display: flex;
-				justify-content: space-evenly;
-				width: min-content;
-			}
-
-			#enabled_streams>div {
-				border-radius: 1em;
-				background-color: var(--color_primary);
-				display: flex;
-				justify-content: center;
-				margin-bottom: 0.8em;
-				padding: 0.2em;
-			}
-		</style>
-		<div style="width:10%; display:flex; flex-direction:column; justify-content:space-between;">
-			<label>chats to monitor</label>
-			<div id='enabled_streams'>
-				<style>
-					:root {
-						--icon_size: 1.4em;
-					}
-
-					#enabled_streams svg {
-						height: calc(var(--icon_size)*.9);
-						width: calc(var(--icon_size)*.9);
-					}
-
-					#enabled_streams>div {
-						height: var(--icon_size);
-						width: var(--icon_size);
-					}
-				</style>
-				<div id="facebook_enabled" style='background-color:#550000' checked="false"><label><svg
-							xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" fill="url(#facebook__a)" height="40" width="40">
-							<defs>
-								<linearGradient x1="50%" x2="50%" y1="97.078%" y2="0%" id="facebook__a">
-									<stop offset="0%" stop-color="#0062E0" />
-									<stop offset="100%" stop-color="#19AFFF" />
-								</linearGradient>
-							</defs>
-							<path
-								d="M15 35.8C6.5 34.3 0 26.9 0 18 0 8.1 8.1 0 18 0s18 8.1 18 18c0 8.9-6.5 16.3-15 17.8l-1-.8h-4l-1 .8z" />
-							<path fill="#FFF"
-								d="m25 23 .8-5H21v-3.5c0-1.4.5-2.5 2.7-2.5H26V7.4c-1.3-.2-2.7-.4-4-.4-4.1 0-7 2.5-7 7v4h-4.5v5H15v12.7c1 .2 2 .3 3 .3s2-.1 3-.3V23h4z" />
-						</svg></label></div>
-				<div id="twitch_enabled" style='background-color:#550000' checked="false"><label><svg
-							xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 2400 2800">
-							<path fill="#fff" d="m2200 1300-400 400h-400l-350 350v-350H600V200h1600z" />
-							<g fill="#9146ff">
-								<path
-									d="M500 0 0 500v1800h600v500l500-500h400l900-900V0H500zm1700 1300-400 400h-400l-350 350v-350H600V200h1600v1100z" />
-								<path d="M1700 550h200v600h-200zm-550 0h200v600h-200z" />
-							</g>
-						</svg></label> </div>
-				<div id="twitter_enabled" style='background-color:#550000' checked="false"><label><svg viewBox="0 0 256 209"
-							width="256" height="209" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid">
-							<path
-								d="M256 25.45c-9.42 4.177-19.542 7-30.166 8.27 10.845-6.5 19.172-16.793 23.093-29.057a105.183 105.183 0 0 1-33.351 12.745C205.995 7.201 192.346.822 177.239.822c-29.006 0-52.523 23.516-52.523 52.52 0 4.117.465 8.125 1.36 11.97-43.65-2.191-82.35-23.1-108.255-54.876-4.52 7.757-7.11 16.78-7.11 26.404 0 18.222 9.273 34.297 23.365 43.716a52.312 52.312 0 0 1-23.79-6.57c-.003.22-.003.44-.003.661 0 25.447 18.104 46.675 42.13 51.5a52.592 52.592 0 0 1-23.718.9c6.683 20.866 26.08 36.05 49.062 36.475-17.975 14.086-40.622 22.483-65.228 22.483-4.24 0-8.42-.249-12.529-.734 23.243 14.902 50.85 23.597 80.51 23.597 96.607 0 149.434-80.031 149.434-149.435 0-2.278-.05-4.543-.152-6.795A106.748 106.748 0 0 0 256 25.45"
-								fill="#55acee" />
-						</svg></label> </div>
-				<div id="youtube_enabled" style='background-color:#550000' checked="false"><label><svg viewBox="0 0 256 180"
-							width="256" height="180" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid">
-							<path
-								d="M250.346 28.075A32.18 32.18 0 0 0 227.69 5.418C207.824 0 127.87 0 127.87 0S47.912.164 28.046 5.582A32.18 32.18 0 0 0 5.39 28.24c-6.009 35.298-8.34 89.084.165 122.97a32.18 32.18 0 0 0 22.656 22.657c19.866 5.418 99.822 5.418 99.822 5.418s79.955 0 99.82-5.418a32.18 32.18 0 0 0 22.657-22.657c6.338-35.348 8.291-89.1-.164-123.134Z"
-								fill="red" />
-							<path fill="#FFF" d="m102.421 128.06 66.328-38.418-66.328-38.418z" />
-						</svg></label></div>
-			</div>
-		</div>
-		<script type='module'>
-			window.addEventListener('DOMContentLoaded', () => {
-				console.log('making the buttons fancy')
-				let elem = document.getElementById('enabled_streams')
-
-				for (let i = elem.children.length - 1; i >= 0; --i) {
-					let child = elem.children[i];
-					let default_color = child.style.backgroundColor;
-					//below was for enabled/disabled text, no longer needed
-					//child.id = child.children[0].innerText.slice(0, child.children[0].innerText.indexOf(':')) + '_button';
-					child.setAttribute('checked', false);
-					child.style.backgroundColor = '#550000' //`color-mix(in oklab, (${default_color}, rgb(0,0,0)))`
-
-					child.style.userSelect = 'none';
-					child.addEventListener('click', (e) => {
-						console.log('platform toggle clicked');
-						if (child.getAttribute('checked') == 'true') {
-							console.log('setting false');
-							child.setAttribute('checked', false);
-							child.style.backgroundColor = '#550000';
-						}
-						else {
-							console.log('setting true');
-							child.setAttribute('checked', true);
-							child.style.backgroundColor = '#005500';
-						}
-					});
-				}
-			});
-		</script>
-		<!-- }}}7 -->
-
-		<!-- {{{7 -->
-		<div style="display:flex; flex-direction:column;">
-			<button id="sai" style="background-color:lightgreen;">save all inputs</button>
-			<button id="lai" style="background-color:powderblue;">load all inputs</button>
+		<!-- {{{7 controls-->
+		<div style="display:flex; flex-direction:column; z-index:1000;">
+			<button type="button" id="sai" style="background-color:lightgreen;">save all inputs</button>
+			<button type="button" id="lai" style="background-color:powderblue;">load all inputs</button>
 			<script type="module">
 				window.addEventListener('DOMContentLoaded', (e) => {
 					let sai = document.getElementById("sai");
@@ -221,11 +57,15 @@
 						console.log("loading inputs");
 						for (let i = 0; i < inputs.length; ++i) {
 							try {
+								if(inputs[i] == undefined){
+									console.warn(`input at the index ${i} is undefined, skipping`);
+									continue;
+								}
 								input = inputs[i];
 								input.value = localStorage.getItem(String(input.id));
 							}
 							catch (err) {
-								console.log("unable to assign value:\n" + input[i] + "\n" + err);
+								console.error("unable to assign value:\n" + input[i] + "\n" + err);
 							}
 						}
 					});
@@ -254,15 +94,17 @@
 			}
 		</style>
 		<div id='function_buttons'>
-			<button id='start_monitoring_button' style='background-color: darkgreen;' onload="(()=>(
-						window.AddEventListener('DOMContentLoaded', () => {
-							document.getElementById('start_monitoring_button').addEventListener('click', () => {
-								console.log('start_monitoring_button clicked');
-								window.monitorMessages.StartMonitoring()
+			<button type="button" id='start_monitoring_button' style='background-color: darkgreen;'>start monitoring </button> 
+			<script type="module">
+					window.addEventListener('DOMContentLoaded', () => {
+						document.getElementById('start_monitoring_button').addEventListener('click', () => {
+							console.log('start_monitoring_button clicked');
+							window.monitorMessages.MonitoringStart();
 						})
-					))()">start monitoring </button>
-			<button id='stop_monitoring_button' style='background-color: darkred;'
-				onclick="window.monitorMessages.StopMonitoring()">stop monitoring</button>
+					});
+			</script>
+			<button type="button" id='stop_monitoring_button' style='background-color: darkred;'
+				onclick="window.monitorMessages.MonitoringStop()">stop monitoring</button>
 		</div>
 		<!-- {{{7 start/stop + auto tts functions -->
 		<style>
@@ -284,122 +126,27 @@
 			}
 		</style>
 		<div id='function_buttons'>
-			<button id='start_tts_button' style='background-color: darkblue; color: white;'>start auto tts</button>
-			<button id='pause_tts_button' style='background-color: goldenrod;'>pause auto tts</button>
+			<button type="button" id='start_tts_button' style='background-color: darkblue; color: white;'>start auto tts</button>
+			<button type="button" id='pause_tts_button' style='background-color: goldenrod;'>pause auto tts</button>
 			<br>
 			<label for="timeout_duration">timeout duration (seconds)</label>
 			<input id="timeout_duration" type="number" value="300" min="10" step="10" />
 		</div>
 		<script type='module'>
-			import {IntTimer} from "./tib_stuff/intTimer.js";
 			window.addEventListener('DOMContentLoaded', () => {
-				//add update for on change to re-init the timer				
-				let ttsTimer = new IntTimer({
-					name: "ttsTimer",
-					timeoutDuration: document.getElementById("timeout_duration").value, // This is a DOM element!
-					timeoutListeners: [ReadNextTts],
-					debugMode: true,
-				});
-
-				document.getElementById("timeout_duration").addEventListener("change", () => {
-					//window.PopUp({"message": "turn off tts first!"});
-					ttsTimer.timeoutDuration = document.getElementById("timeout_duration").value;
-					ttsTimer.Restart();
-				})
-
-				function ReadNextTts() {
-					console.log("ReadNextTts function called!");
-
-					let table = document.getElementById("messagesTable");
-
-					if (!table) {
-						console.log("messagesTable not found");
-						return;
-					}
-
-					console.log(`Table has ${table.rows.length} rows`);
-
-					// Debug: Check what's in each row
-					for (let i = 0; i < table.rows.length; ++i) {
-						let row = table.rows[i];
-						console.log(`Row ${i} has ${row.cells.length} cells`);
-
-						// Check if cell 6 exists and what type of element it is
-						if (row.cells[6]) {
-							console.log(`Row ${i}, cell 6 exists:`, row.cells[6]);
-							console.log(`Row ${i}, cell 6 innerHTML:`, row.cells[6].innerHTML);
-
-							// Check if it's a checkbox
-							let checkbox = row.cells[6].querySelector('input[type="checkbox"]');
-							if (checkbox) {
-								console.log(`Row ${i}, checkbox found, checked: ${checkbox.checked}`);
-								if (checkbox.checked) {
-									checkbox.checked = false;
-									console.log(`Pressing button in row ${i}`);
-									row.cells[5].children[0].click();
-									break;
-								}
-							} else {
-								// Maybe the checkbox IS the cell content?
-								if (row.cells[6].type === 'checkbox') {
-									console.log(`Row ${i}, cell 6 IS a checkbox, checked: ${row.cells[6].checked}`);
-									if (row.cells[6].checked) {
-										row.cells[6].checked = false;
-										console.log(`Pressing button in row ${i}`);
-										row.cells[5].children[0].click();
-										break;
-									}
-								} else {
-									console.log(`Row ${i}, cell 6 is not a checkbox:`, row.cells[6].tagName);
-								}
-							}
-						} else {
-							console.log(`Row ${i}, cell 6 does not exist`);
-						}
-					}
-
-					console.log("ReadNextTts function finished");
-				}// unique input 
-
-				// ############################################################
-				// imports from window
-				// ############################################################
-				const PopUp = window.PopUp;
-				const assert = window.assert;
-				console.log('monitor buttons script loaded');
-
 				// ############################################################
 				// helper to update button states
 				// ############################################################
-				function setButtonStates({monitoring}) {
-					const startBtn = document.getElementById('start_monitoring_button');
-					const stopBtn = document.getElementById('stop_monitoring_button');
+					const startBtn = document.getElementById('start_tts_button');
+					const stopBtn = document.getElementById('pause_tts_button');
 
-					if (monitoring) {
-						startBtn.disabled = true;
-						startBtn.style.opacity = '0.5';
-						startBtn.textContent = 'monitoring...';
+					startBtn.addEventListener('click', () => {
+						window.monitorMessages.AutoTtsStart();
+					});
 
-						stopBtn.disabled = false;
-						stopBtn.style.opacity = '1';
-						stopBtn.textContent = 'stop monitoring';
-					} else {
-						startBtn.disabled = false;
-						startBtn.style.opacity = '1';
-						startBtn.textContent = 'start monitoring';
-
-						stopBtn.disabled = true;
-						stopBtn.style.opacity = '0.5';
-						stopBtn.textContent = 'stop monitoring';
-					}
-				}
-
-				// ############################################################
-				// initialize buttons on page load
-				// ############################################################
-				window.addEventListener('DOMContentLoaded', () => {
-					console.log('Button states initialized');
-				});
+					stopBtn.addEventListener('click', () => {
+						window.monitorMessages.AutoTtsStop();
+					});
 			});
 		</script>
 		<!-- }}}7 -->
@@ -516,6 +263,68 @@
 -->
 		<!-- }}}7 -->
 	</div>
+</head>
+
+<h1>NOTHING HERE IS FINISHED, IF YOU FOUND YOUR WAY HERE NOTHING ON THIS PAGE IS COMMITTAL AND MANY FEATURES ARE BROKEN/BEING WORKED ON LIVE.</h1>
+
+
+<br>
+
+<body style="">
+	<script type="module">
+		window.addEventListener('beforeunload', function (event) {
+			// Check if there is unsaved data before showing the alert
+			const hasUnsavedChanges = true; // Replace with your actual check (e.g., a boolean flag)
+
+			if (hasUnsavedChanges) {
+				// Cancel the event.
+				event.preventDefault("the data has not been saved yet, please give me a sec to save the data!");
+
+				// Chrome requires returnValue to be set.
+				event.returnValue = 'the data base has not been backed up yet and will new values will not be saved!';
+
+				// The actual text displayed to the user is determined by the browser
+				// and is usually a standard message like "Are you sure you want to leave?"
+				// You cannot customize the actual message shown in modern browsers.
+			}
+		});
+	</script>
+	<details>
+		<summary>TiB config: click here to edit the cost of actions and defaults</summary>
+		<div><label>voice:</label><input type="number" default="51"></div>
+		<div><label>pitch:</label><input type="number" default="1.1"></div>
+		<div><label>rate:</label><input type="number" default="0.9"></div>
+		<div><label>soundboard cost:</label><input type="number" value="1000"></div>
+		<div><label>tts cost:</label><input type="number" value="3000"></div>
+	</details>
+
+	<details>
+		<summary>messageScoreChecker</summary>
+		<div>
+			<lavel>score:</lavel>
+			<output id="messageScoreTest">0</output>
+		</div>
+		<textarea id="messageScoreCheck"></textarea>
+		<script type="module">
+			window.addEventListener('load', () => {
+
+				let testArea = document.getElementById("messageScoreCheck");
+				let messageScore = document.getElementById("messageScoreTest");
+
+				let data;
+				console.log("adding score checker listener");
+				testArea.addEventListener("change", (e) => {
+					window.monitorMessages.ScoreMessage(testArea.value)
+						.then((res) => {
+							console.log("calcing score")
+							data = res;
+							console.log(data);
+							messageScore.innerText = data;
+						});
+				});
+			});
+		</script>
+	</details>
 
 	<hgroup style="display:flex; justify-content:space-around;">
 		<!--<img style="max-height:100%; width:3em;" src="./non-code_assets/cockatiel_logo.png">-->
@@ -538,19 +347,372 @@
 			<div>
 				<label>load users data</label>
 				<input type="file">
-				<button </div>
+				</div>
 					<div>
-						<button onclick='(()=>(
+						<input type="button" style="background-color:var(--color_confirm); color: black;"
+							 onclick='(()=>(
 				let uf = document.getElementById("upload_form");
 				let data = new FormData(uf);
 				data = Object.fromEnteries(data);
 
 				window.monitorMessages.AddMessa
-			))()'>
-							load data into system
-						</button>
+			))()' value="load data into system"></label>
 					</div>
 		</form>
+	</div>
+	
+	<div>
+		<details style=""><summary>🧪 the process + testing 🧪</summary>
+			<details><summary>process</summary>
+			<div>
+			<aside>the ✨ redenotes a flow that requires you to have a subscription atleast at a "mega-teir" to use.</aside>
+			<div style="color:#ccc;">get channel data from platform</div>
+			<div style="display:flex;"><div>↓</div></div>
+			<div style="color:#ccc;">receive messages from platform in native format</div>
+			<div style="display:flex;"><div>↓</div></div>
+			<div style="color:#ccc;">add messages to unprocessed que for later processing</div>
+			<div style="display:flex;"><div>↓</div><div>✨→add messages to unproccessed db for quickstart and archival-ness.</div></div>
+			<div style="color:#ccc;">parse unprocessed and format them into the cockiteal format</div>
+			<div style="display:flex;"><div>↓</div><div>✨→add messages to message db queue, can add mods to view and monitor these messages</div></div>
+			<div style="color:#ccc;">do whatever the message entales</div>
+			</div>
+			</details>
+			<div>
+					<form>
+				<h3>testing</h3>
+				<aside>note: anything done here will not be added to the actual process, and is simply to test functionality. <br><u><em style="color:#ffb;">DO NOT USE THIS TO ADD DATA TO THE PROCESS, IT WILL NOT WORK</em></u></aside>
+				<div 
+					id="test-add_to_unprocessed_queue" 
+					style=""
+				>
+						<fieldset>
+							<legend>add messages to unprocessed queue:</legend>
+							<div style="display:flex;">
+								<div style="max-height:10em; overflow:scroll;">
+									<output id="unprocessed_youtube_message_raw_response" style="max-height:10rem; overflow-y:scroll; font-family:monospace; color:var(--color_warning);">
+										{
+										"kind": "youtube#liveChatMessageListResponse",
+										"etag": "MG3TMQnVmeK-Gj4aszUbx7HCVSM",
+										"pollingIntervalMillis": 1995,
+										"pageInfo": {
+										"totalResults": 10,
+										"resultsPerPage": 10
+										},
+										"nextPageToken": "GKTSjaXE35ADIOaC0L3H35AD",
+										"items": [
+										{
+										"kind": "youtube#liveChatMessage",
+										"etag": "7UKcHN1EfCGU4sMbPulLDDsM0ww",
+										"id": "LCC.EhwKGkNQNno1TXZDMzVBREZVMFVyUVlkbEVJQ3p3",
+										"snippet": {
+										"type": "textMessageEvent",
+										"liveChatId": "Cg0KC3VCVS1Pa0t5N0VVKicKGFVDS1ppZ0hiZ3BKRzlsZHhYTXFtaVpVZxILdUJVLU9rS3k3RVU",
+										"authorChannelId": "UCKZigHbgpJG9ldxXMqmiZUg",
+										"publishedAt": "2025-11-07T07:30:55.259559+00:00",
+										"hasDisplayContent": true,
+										"displayMessage": "THIS IS A REGULAR MESSAGE",
+										"textMessageDetails": {
+										"messageText": "THIS IS A REGULAR MESSAGE"
+										}
+										},
+										"authorDetails": {
+										"channelId": "UCKZigHbgpJG9ldxXMqmiZUg",
+										"channelUrl": "http://www.youtube.com/channel/UCKZigHbgpJG9ldxXMqmiZUg",
+										"displayName": "@vulbyte",
+										"profileImageUrl": "https://yt3.ggpht.com/jrcU7ZjcLMBzCQbU6QMucPmC-cBiHOFrmTpDS9gDzUdH9FUTyzqgrkX9-rXzRh6Fac_HWWgNoEA=s88-c-k-c0x00ffffff-no-rj",
+										"isVerified": false,
+										"isChatOwner": true,
+										"isChatSponsor": false,
+										"isChatModerator": false
+										}
+										},
+										{
+										"kind": "youtube#liveChatMessage",
+										"etag": "uW0sHBnZmDyMsu_6sly0enesYF0",
+										"id": "LCC.EhwKGkNMMnh2OF9DMzVBREZXekR3Z1FkSVZ3a0RR",
+										"snippet": {
+										"type": "textMessageEvent",
+										"liveChatId": "Cg0KC3VCVS1Pa0t5N0VVKicKGFVDS1ppZ0hiZ3BKRzlsZHhYTXFtaVpVZxILdUJVLU9rS3k3RVU",
+										"authorChannelId": "UCKZigHbgpJG9ldxXMqmiZUg",
+										"publishedAt": "2025-11-07T07:31:03.04114+00:00",
+										"hasDisplayContent": true,
+										"displayMessage": "!TTS THIS IS A TTS MESSAGE",
+										"textMessageDetails": {
+										"messageText": "!TTS THIS IS A TTS MESSAGE"
+										}
+										},
+										"authorDetails": {
+										"channelId": "UCKZigHbgpJG9ldxXMqmiZUg",
+										"channelUrl": "http://www.youtube.com/channel/UCKZigHbgpJG9ldxXMqmiZUg",
+										"displayName": "@vulbyte",
+										"profileImageUrl": "https://yt3.ggpht.com/jrcU7ZjcLMBzCQbU6QMucPmC-cBiHOFrmTpDS9gDzUdH9FUTyzqgrkX9-rXzRh6Fac_HWWgNoEA=s88-c-k-c0x00ffffff-no-rj",
+										"isVerified": false,
+										"isChatOwner": true,
+										"isChatSponsor": false,
+										"isChatModerator": false
+										}
+										},
+										{
+										"kind": "youtube#liveChatMessage",
+										"etag": "wtCJdyD06ttdzLCNIO1tLyhkmZs",
+										"id": "LCC.EhwKGkNJeVRvOVBDMzVBREZRcm1sQWtkOGNBMkVR",
+										"snippet": {
+										"type": "textMessageEvent",
+										"liveChatId": "Cg0KC3VCVS1Pa0t5N0VVKicKGFVDS1ppZ0hiZ3BKRzlsZHhYTXFtaVpVZxILdUJVLU9rS3k3RVU",
+										"authorChannelId": "UCKZigHbgpJG9ldxXMqmiZUg",
+										"publishedAt": "2025-11-07T07:31:10.966769+00:00",
+										"hasDisplayContent": true,
+										"displayMessage": "!CLIP THIS IS A CLIP MESSAGE",
+										"textMessageDetails": {
+										"messageText": "!CLIP THIS IS A CLIP MESSAGE"
+										}
+										},
+										"authorDetails": {
+										"channelId": "UCKZigHbgpJG9ldxXMqmiZUg",
+										"channelUrl": "http://www.youtube.com/channel/UCKZigHbgpJG9ldxXMqmiZUg",
+										"displayName": "@vulbyte",
+										"profileImageUrl": "https://yt3.ggpht.com/jrcU7ZjcLMBzCQbU6QMucPmC-cBiHOFrmTpDS9gDzUdH9FUTyzqgrkX9-rXzRh6Fac_HWWgNoEA=s88-c-k-c0x00ffffff-no-rj",
+										"isVerified": false,
+										"isChatOwner": true,
+										"isChatSponsor": false,
+										"isChatModerator": false
+										}
+										},
+										{
+										"kind": "youtube#liveChatMessage",
+										"etag": "IV_tEkBxHmFZ-8UWQrmPgRkWRfo",
+										"id": "LCC.EhwKGkNMRGl1TWJEMzVBREZUTEtGZ2tkaEg0OHVn",
+										"snippet": {
+										"type": "textMessageEvent",
+										"liveChatId": "Cg0KC3VCVS1Pa0t5N0VVKicKGFVDS1ppZ0hiZ3BKRzlsZHhYTXFtaVpVZxILdUJVLU9rS3k3RVU",
+										"authorChannelId": "UCTn0r_p1PGYpKrLtY5wylAA",
+										"publishedAt": "2025-11-07T07:35:12.494044+00:00",
+										"hasDisplayContent": true,
+										"displayMessage": "dsgdsgfdsfdsgdsgdsgds heloooo?",
+										"textMessageDetails": {
+										"messageText": "dsgdsgfdsfdsgdsgdsgds heloooo?"
+										}
+										},
+										"authorDetails": {
+										"channelId": "UCTn0r_p1PGYpKrLtY5wylAA",
+										"channelUrl": "http://www.youtube.com/channel/UCTn0r_p1PGYpKrLtY5wylAA",
+										"displayName": "@chilidog2469",
+										"profileImageUrl": "https://yt3.ggpht.com/ytc/AIdro_ksuZOTp92qOmvcZ6HPmyqGfl9lS6iG11y617p88a_IJw=s88-c-k-c0x00ffffff-no-rj",
+										"isVerified": false,
+										"isChatOwner": false,
+										"isChatSponsor": true,
+										"isChatModerator": true
+										}
+										},
+										{
+										"kind": "youtube#liveChatMessage",
+										"etag": "GqW5X8akBA1ar4yyHmUud9PALDA",
+										"id": "LCC.EhwKGkNNM1g2OHpEMzVBREZVdlRsQWtkWS1rV3dn",
+										"snippet": {
+										"type": "textMessageEvent",
+										"liveChatId": "Cg0KC3VCVS1Pa0t5N0VVKicKGFVDS1ppZ0hiZ3BKRzlsZHhYTXFtaVpVZxILdUJVLU9rS3k3RVU",
+										"authorChannelId": "UCTn0r_p1PGYpKrLtY5wylAA",
+										"publishedAt": "2025-11-07T07:35:25.910608+00:00",
+										"hasDisplayContent": true,
+										"displayMessage": "!tts -r 0.8 Tony am is summon?",
+										"textMessageDetails": {
+										"messageText": "!tts -r 0.8 Tony am is summon?"
+										}
+										},
+										"authorDetails": {
+										"channelId": "UCTn0r_p1PGYpKrLtY5wylAA",
+										"channelUrl": "http://www.youtube.com/channel/UCTn0r_p1PGYpKrLtY5wylAA",
+										"displayName": "@chilidog2469",
+										"profileImageUrl": "https://yt3.ggpht.com/ytc/AIdro_ksuZOTp92qOmvcZ6HPmyqGfl9lS6iG11y617p88a_IJw=s88-c-k-c0x00ffffff-no-rj",
+										"isVerified": false,
+										"isChatOwner": false,
+										"isChatSponsor": true,
+										"isChatModerator": true
+										}
+										},
+										{
+										"kind": "youtube#liveChatMessage",
+										"etag": "NRL4maYzTO3PAC_x65jzd7Ljsl0",
+										"id": "LCC.EhwKGkNPMnc3TmJEMzVBREZSX0hGZ2tkUTdFdzVn",
+										"snippet": {
+										"type": "textMessageEvent",
+										"liveChatId": "Cg0KC3VCVS1Pa0t5N0VVKicKGFVDS1ppZ0hiZ3BKRzlsZHhYTXFtaVpVZxILdUJVLU9rS3k3RVU",
+										"authorChannelId": "UCTn0r_p1PGYpKrLtY5wylAA",
+										"publishedAt": "2025-11-07T07:35:46.896389+00:00",
+										"hasDisplayContent": true,
+										"displayMessage": "!tts -r 0.8 fuzziness ACTIVATE",
+										"textMessageDetails": {
+										"messageText": "!tts -r 0.8 fuzziness ACTIVATE"
+										}
+										},
+										"authorDetails": {
+										"channelId": "UCTn0r_p1PGYpKrLtY5wylAA",
+										"channelUrl": "http://www.youtube.com/channel/UCTn0r_p1PGYpKrLtY5wylAA",
+										"displayName": "@chilidog2469",
+										"profileImageUrl": "https://yt3.ggpht.com/ytc/AIdro_ksuZOTp92qOmvcZ6HPmyqGfl9lS6iG11y617p88a_IJw=s88-c-k-c0x00ffffff-no-rj",
+										"isVerified": false,
+										"isChatOwner": false,
+										"isChatSponsor": true,
+										"isChatModerator": true
+										}
+										},
+										{
+										"kind": "youtube#liveChatMessage",
+										"etag": "xRdSYZdfQg3FeucV41NilTFcEGo",
+										"id": "LCC.EhwKGkNJdnZfdkxEMzVBREZUYU41UWNkNkl3YUR3",
+										"snippet": {
+										"type": "textMessageEvent",
+										"liveChatId": "Cg0KC3VCVS1Pa0t5N0VVKicKGFVDS1ppZ0hiZ3BKRzlsZHhYTXFtaVpVZxILdUJVLU9rS3k3RVU",
+										"authorChannelId": "UCTn0r_p1PGYpKrLtY5wylAA",
+										"publishedAt": "2025-11-07T07:36:45.918102+00:00",
+										"hasDisplayContent": true,
+										"displayMessage": "!tts -r 0.8do vulbibble need more?",
+										"textMessageDetails": {
+										"messageText": "!tts -r 0.8do vulbibble need more?"
+										}
+										},
+										"authorDetails": {
+										"channelId": "UCTn0r_p1PGYpKrLtY5wylAA",
+										"channelUrl": "http://www.youtube.com/channel/UCTn0r_p1PGYpKrLtY5wylAA",
+										"displayName": "@chilidog2469",
+										"profileImageUrl": "https://yt3.ggpht.com/ytc/AIdro_ksuZOTp92qOmvcZ6HPmyqGfl9lS6iG11y617p88a_IJw=s88-c-k-c0x00ffffff-no-rj",
+										"isVerified": false,
+										"isChatOwner": false,
+										"isChatSponsor": true,
+										"isChatModerator": true
+										}
+										},
+										{
+										"kind": "youtube#liveChatMessage",
+										"etag": "uMKQfRxn2Kwx57iPSnoi-Xb81Fg",
+										"id": "LCC.EhwKGkNJR3Y5SlRFMzVBREZYalp3Z1FkeHY4SV9R",
+										"snippet": {
+										"type": "textMessageEvent",
+										"liveChatId": "Cg0KC3VCVS1Pa0t5N0VVKicKGFVDS1ppZ0hiZ3BKRzlsZHhYTXFtaVpVZxILdUJVLU9rS3k3RVU",
+										"authorChannelId": "UCKZigHbgpJG9ldxXMqmiZUg",
+										"publishedAt": "2025-11-07T07:37:57.049178+00:00",
+										"hasDisplayContent": true,
+										"displayMessage": "no! thanks very much!",
+										"textMessageDetails": {
+										"messageText": "no! thanks very much!"
+										}
+										},
+										"authorDetails": {
+										"channelId": "UCKZigHbgpJG9ldxXMqmiZUg",
+										"channelUrl": "http://www.youtube.com/channel/UCKZigHbgpJG9ldxXMqmiZUg",
+										"displayName": "@vulbyte",
+										"profileImageUrl": "https://yt3.ggpht.com/jrcU7ZjcLMBzCQbU6QMucPmC-cBiHOFrmTpDS9gDzUdH9FUTyzqgrkX9-rXzRh6Fac_HWWgNoEA=s88-c-k-c0x00ffffff-no-rj",
+										"isVerified": false,
+										"isChatOwner": true,
+										"isChatSponsor": false,
+										"isChatModerator": false
+										}
+										},
+										{
+										"kind": "youtube#liveChatMessage",
+										"etag": "dZQlyvg47nGOfZl5e_1gT1Xwxws",
+										"id": "LCC.EhwKGkNMTzVocHJFMzVBREZVWUVMd2dkS29VdDJn",
+										"snippet": {
+										"type": "textMessageEvent",
+										"liveChatId": "Cg0KC3VCVS1Pa0t5N0VVKicKGFVDS1ppZ0hiZ3BKRzlsZHhYTXFtaVpVZxILdUJVLU9rS3k3RVU",
+										"authorChannelId": "UCTn0r_p1PGYpKrLtY5wylAA",
+										"publishedAt": "2025-11-07T07:38:07.831271+00:00",
+										"hasDisplayContent": true,
+										"displayMessage": "we done here?",
+										"textMessageDetails": {
+										"messageText": "we done here?"
+										}
+										},
+										"authorDetails": {
+										"channelId": "UCTn0r_p1PGYpKrLtY5wylAA",
+										"channelUrl": "http://www.youtube.com/channel/UCTn0r_p1PGYpKrLtY5wylAA",
+										"displayName": "@chilidog2469",
+										"profileImageUrl": "https://yt3.ggpht.com/ytc/AIdro_ksuZOTp92qOmvcZ6HPmyqGfl9lS6iG11y617p88a_IJw=s88-c-k-c0x00ffffff-no-rj",
+										"isVerified": false,
+										"isChatOwner": false,
+										"isChatSponsor": true,
+										"isChatModerator": true
+										}
+										},
+										{
+										"kind": "youtube#liveChatMessage",
+										"etag": "wZedzx5281klRig9yMhCWpSxXks",
+										"id": "LCC.EhwKGkNQekVqYVhFMzVBREZhczlyUVlkRks0UlFR",
+										"snippet": {
+										"type": "textMessageEvent",
+										"liveChatId": "Cg0KC3VCVS1Pa0t5N0VVKicKGFVDS1ppZ0hiZ3BKRzlsZHhYTXFtaVpVZxILdUJVLU9rS3k3RVU",
+										"authorChannelId": "UCKZigHbgpJG9ldxXMqmiZUg",
+										"publishedAt": "2025-11-07T07:38:31.015716+00:00",
+										"hasDisplayContent": true,
+										"displayMessage": "yee, dms",
+										"textMessageDetails": {
+										"messageText": "yee, dms"
+										}
+										},
+										"authorDetails": {
+										"channelId": "UCKZigHbgpJG9ldxXMqmiZUg",
+										"channelUrl": "http://www.youtube.com/channel/UCKZigHbgpJG9ldxXMqmiZUg",
+										"displayName": "@vulbyte",
+										"profileImageUrl": "https://yt3.ggpht.com/jrcU7ZjcLMBzCQbU6QMucPmC-cBiHOFrmTpDS9gDzUdH9FUTyzqgrkX9-rXzRh6Fac_HWWgNoEA=s88-c-k-c0x00ffffff-no-rj",
+										"isVerified": false,
+										"isChatOwner": true,
+										"isChatSponsor": false,
+										"isChatModerator": false
+										}
+										}
+										]
+										}
+									</output>
+									<div>
+										<label>valid_input_valid?:</label>
+										<output id="valid_unprocessed_message_input_valid">🦜</output>
+									</div>	
+
+									<script type="module">
+										window.addEventListener("DOMContentLoaded", () => {	
+											console.log("evaluating test input");
+											const d = document;
+											const input = d.getElementById("unprocessed_youtube_message_raw_response").innerHTML;
+											const out = d.getElementById("valid_unprocessed_message_input_valid");
+											try{
+												JSON.parse(input);
+												console.log("test input pass");
+												out.innerHTML = "✅";	
+											}
+											catch(err){
+												console.error(`INPUT JSON IS NOT VALID\n${input}\n`, err);
+												out.innerHTML = "❌";	
+											}
+										});
+									</script>
+								</div>
+								<input 
+									type="button" 
+									value="test with valid input"
+									style="
+										background-color:var(--color_confirm); 
+										color:black;
+								">
+								<div>
+								<input type="file">
+								<input 
+									type="button" 
+									value="test with input" 
+									style="
+										background-color:var(--color_warning); 
+										color:black;
+										height:fit-content;
+								">
+								</div>
+							</div>
+					<div class="test-status_lights" style="display:flex; justify-content:space-around;">
+						<div><label>input_valid:</label><output>🦜</output></div>	
+						<div><label>completed_successfully:</label><output>🦜</output></div>	
+					</div>
+						</fieldset>
+			</div>
+					</form>
+		</details>
 	</div>
 
 	<div>
@@ -1108,7 +1270,7 @@
 			<!--
 			<div style="max-width:60em; display:inline-block;">
 				<p>provide the channel name and api key, then click here to let the wizard do the rest!</p>
-				<button id="youtube-wizard" style="color:black !important; background-color: transparent; user-select:none;"
+				<button type="button" id="youtube-wizard" style="color:black !important; background-color: transparent; user-select:none;"
 					id="youtube-wizard" type="disabled" value="fill the rest of the inputs!"
 					onclick="() => {console.log('wizard clicked')}">
 					wizard 🧙‍♂️
@@ -1209,12 +1371,14 @@
 				max-width: 40em;
 			}
 
+			/*
 			td:nth-child(1),
 			th:nth-child(1) {
 				background-color: blue;
 				word-wrap: break-word;
 				max-width: 1em;
 			}
+			*/
 
 			td:nth-child(3),
 			th:nth-child(3) {
@@ -1255,26 +1419,32 @@
 			table:nth-child(11) {
 				max-width: 2em;
 			}
-
+	
+			/*
 			th:nth-child(2n+1) {
 				background-color: #222;
 			}
+			*/
 
 			th {
 				padding: 0.3em;
 			}
 
+			/*
 			tr:nth-child(2n+1) {
 				background-color: #222;
 			}
+			*/
 
 			tr:nth-child(2n+1)>td {
 				color: white;
 			}
 
+			/*
 			tr:nth-child(2n+1)>td:nth-child(2n+1) {
 				background-color: #333;
 			}
+			*/
 		</style>
 		<details>
 			<summary>test tts and tts settings</summary>
@@ -1302,7 +1472,7 @@
 
 			<div>
 				<label for="playDemoTTS">demo with current settings:</label>
-				<button id="playDemoTTS" type="button">click me (ear warning)</button>
+				<button type="button" id="playDemoTTS" type="button">click me (ear warning)</button>
 				<script type="module">
 					document.getElementById("playDemoTTS").addEventListener("click", () => {
 						console.log("demoing current tts default");
@@ -1529,7 +1699,7 @@
 						URL.revokeObjectURL(url);
 					}
 				</script>
-				<button onclick="exportTableToJson()">
+				<button type="button" onclick="exportTableToJson()">
 					Export Table Data to JSON
 				</button>
 			</div>
@@ -1755,6 +1925,8 @@
 				</fieldset>
 			</details>
 		</form>
+		<div id="newMessagesTable">
+			</div>
 		<table id="messagesTable">
 			<tbody>
 				<tr>

@@ -203,7 +203,7 @@ function Navbar() {
 			`gotta go fast!`,
 			`now blasingly fast!`,
 			`no longer using hamsters!`,
-			"buy spotify premium",
+			"dont buy spotify premium",
 			"linus said the hard R",
 			"shout out to @bubbshalub",
 			"subscribe to youtube",

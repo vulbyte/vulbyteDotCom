@@ -1,5 +1,33 @@
 const reviews = 
 [
+	/*
+		{
+				name: "",
+				img: "",
+				rankings: {
+						gameplay: 6.5,
+						graphics: 10,
+						audio: 9,
+						story: 6.25,
+						uniqueness: 9,
+				},
+				links: {steam: ""},
+				review: ""
+		},
+		*/
+		{
+				name: "Klonoa: door to phantomile",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1730680/header.jpg?t=1708327336",
+				rankings: {
+						gameplay: 4,
+						graphics: 7,
+						audio: 6,
+						story: 3,
+						uniqueness: 8,
+				},
+				links: {steam: "https://store.steampowered.com/app/1730680/Klonoa_Phantasy_Reverie_Series/"},
+				review: "it's 'cat in the hat video game's daddy from 1980s. as someone who didn't grow up wit this game, it has a lot of rough edges. maybe the remake butchered it. however, the game feel like it needs a tonne of work if it resembels the original at all."
+		},
 		{
 				name: "DOOM (2016)",
 				img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/379720/header.jpg?t=1750784856',
@@ -280,7 +308,7 @@ const reviews =
 				audio: 10,
 				story: 5,
 				uniqueness: 8,
-				microtransactions: 7,
+				microtransations: 7,
 			},
 			review: 'fun racing game with a clear niche, if you enjoy the game you will need to buy some tracks to help with repition, weather conditions are a bit limited, and visual popins can very very noticable and destracting. '
 		},
@@ -821,7 +849,7 @@ playing against bots is funner, but the bots can be far too repetitive.`
 				audio: 7,
 				story: 3,
 				uniqueness: 3,
-				microtransactions: 2,
+				microtransations: 2,
 			},
 			links: {
 				steam: "https://store.steampowered.com/app/690790/DiRT_Rally_20/"

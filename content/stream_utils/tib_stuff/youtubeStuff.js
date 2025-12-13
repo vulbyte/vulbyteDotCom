@@ -74,7 +74,7 @@ export default class YoutubeStuff {
 			throw new Error("cannot getChannelId, apiKey is undefined");
 		}
 		try {
-			const channelIdUrl = new URL(urls.getChannelId);
+			const channelIdUrl = new URL(this.#urls.getChannelId);
 			channelIdUrl.search = new URLSearchParams({
 				key: this.#config.apiKey,
 				q: this.#config.channelName,
@@ -102,7 +102,7 @@ export default class YoutubeStuff {
 			throw new Error("cannot getBroadcastId, apiKey is undefined");
 		}
 		try {
-			const broadcastUrl = new URL(urls.getBroadcast);
+			const broadcastUrl = new URL(this.#urls.getBroadcast);
 			broadcastUrl.search = new URLSearchParams({
 				part: "id,liveStreamingDetails",
 				chart: "mostPopular",
@@ -123,7 +123,6 @@ export default class YoutubeStuff {
 		}
 	}
 
-	// NEW: Get the liveChatId from a broadcast
 	async GetLiveChatIdFromBroadcastUrl() {
 		if (this.#config.apiKey == undefined) {
 			throw new Error("cannot getLiveChatId, apiKey is undefined");
@@ -132,7 +131,7 @@ export default class YoutubeStuff {
 			throw new Error("cannot getLiveChatId, broadcastId is undefined");
 		}
 		try {
-			const broadcastUrl = new URL(urls.getBroadcast);
+			const broadcastUrl = new URL(this.#urls.getBroadcast);
 			broadcastUrl.search = new URLSearchParams({
 				part: "liveStreamingDetails",
 				id: this.#config.broadcastId,
@@ -156,6 +155,72 @@ export default class YoutubeStuff {
 			}
 		}
 	}
+
+	async GetLiveChatIdFromBroadcastId(broadcastId = this.#config.broadcastId || undefined) {
+		if(broadcastId==undefined){
+			try{
+				let fromLocalStorage = LocalStorage.getItem("youtube-broadcastId");
+				let fromHtml = document.getElementById("youtube-broadcastId");
+				if(fromLocalStorage != ""){this.#config.broadcastId = fromLocalStorage;}
+				else if(fromHtml != ""){this.#config.broadcastId = fromHtml;}
+				else{throw new Error("unable to get broadcastId form available sources")}
+			}
+			catch(err){
+				throw new Error("no broadcastId provided\n" + err);
+			}
+		}
+	    // 1. Construct the API request URL for videos.list
+	    const requestUrl = new URL(this.#urls.getBroadcast);
+	    
+	    // The 'part' parameter must include 'liveStreamingDetails' to get the liveChatId
+	    requestUrl.searchParams.append('part', 'liveStreamingDetails');
+	    
+	    // The 'id' parameter is the broadcast/video ID
+	    requestUrl.searchParams.append('id', broadcastId);
+	    
+	    // Your YouTube API Key
+	    // NOTE: Replace 'YOUR_API_KEY' with the actual variable holding your key.
+	    requestUrl.searchParams.append('key', this.#config.apiKey);
+
+	    try {
+		// 2. Make the appropriate GET request
+		const response = await fetch(requestUrl.toString());
+
+		if (!response.ok) {
+		    // Handle HTTP errors (e.g., 400, 403, 404, 500)
+		    const errorBody = await response.json();
+		    console.error(`HTTP error! Status: ${response.status}`, errorBody);
+		    throw new Error(`Failed to fetch broadcast details: ${response.statusText}`);
+		}
+
+		// 3. Parse the JSON response
+		const data = await response.json();
+
+		// 4. Extract the liveChatId
+		// Check if there are any items returned
+		if (data.items && data.items.length > 0) {
+		    const item = data.items[0];
+
+		    // The liveChatId is nested under liveStreamingDetails
+		    const liveChatId = item.liveStreamingDetails?.activeLiveChatId;
+
+		    if (liveChatId) {
+			return liveChatId;
+		    } else {
+			console.log(`Broadcast ID ${broadcastId} does not appear to have an active live chat ID.`);
+			return null;
+		    }
+		} else {
+		    console.log(`No video found for ID: ${broadcastId}`);
+		    return null;
+		}
+	    } catch (error) {
+		console.error('Error in GetLiveChatIdFromBroadcastId:', error);
+		// Depending on your application, you might re-throw the error or return null
+		return null;
+	    }
+	}
+
 
 	/**
 	 * @name GetAllUpcomingBroadcastsAndReturnJson
@@ -205,36 +270,49 @@ export default class YoutubeStuff {
 	}
 
 	// Fetch messages from the live chat
-	async GetMessages(pageToken = undefined) {
-		//returns json such as: './yt_v3_test.json'
-		if (this.#config.apiKey == undefined) {
-			throw new Error("cannot getMessages, apiKey is undefined");
-		}
-		try {
-			if (!this.#config.liveChatId) {
-				await this.GetLiveChatId();
-			}
+	#nextPageToken = null;
+// Fetch messages from the live chat
+async GetMessages(pageToken = undefined) {
+    //returns json such as: './yt_v3_test.json'
+    if (this.#config.apiKey == undefined) {
+        throw new Error("cannot getMessages, apiKey is undefined");
+    }
+    try {
+        if (!this.#config.liveChatId) {
+            await this.GetLiveChatId();
+        }
 
-			const messagesUrl = new URL(urls.getMessages);
-			messagesUrl.search = new URLSearchParams({
-				key: this.#config.apiKey,
-				part: "id,snippet,authorDetails",
-				liveChatId: this.#config.liveChatId,
-				maxResults: this.#config.maxResults || 200,
-			}).toString();
+        const messagesUrl = new URL(this.#urls.getMessages);
+        messagesUrl.search = new URLSearchParams({
+            key: this.#config.apiKey,
+            part: "id,snippet,authorDetails",
+            liveChatId: this.#config.liveChatId,
+            maxResults: this.#config.maxResults || 200,
+        }).toString();
 
-			if (pageToken) {
-				messagesUrl.searchParams.set("pageToken", pageToken);
-			}
+        // 1. Use the persisted token if no pageToken is explicitly passed
+        const tokenToUse = pageToken || this.#nextPageToken;
+        
+        if (tokenToUse) {
+            messagesUrl.searchParams.set("pageToken", tokenToUse);
+        }
 
-			const res = await fetch(messagesUrl);
-			const data = await res.json();
+        const res = await fetch(messagesUrl);
+        const data = await res.json();
+        
+        // 2. CRITICAL STEP: Store the nextPageToken for the next request
+        if (data.nextPageToken) {
+            this.#nextPageToken = data.nextPageToken;
+            
+            // Note: If you have a separate timer for polling, you should use data.pollingIntervalMillis 
+            // to adjust the timing for maximum efficiency, but we'll focus on the token here.
+        }
 
-			return data;
-		} catch (err) {
-			throw new Error("Failed to get messages: " + err.message);
-		}
-	}
+        return data;
+    } catch (err) {
+        throw new Error("Failed to get messages: " + err.message);
+    }
+}
 }
 
 

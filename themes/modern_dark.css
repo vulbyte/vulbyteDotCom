@@ -245,3 +245,17 @@ img {
     border-radius: var(--border_radius_default);
 }
 
+
+form {
+	border-radius: calc(var(--border_radius_default) + var(--padding_default) -(0.1rem));
+	border: 0.1rem solid var(--color-border);
+	padding:var(--padding_default);
+}
+fieldset {
+	border-radius: calc(var(--border_radius_default) + var(--padding_default) -(0.1rem));
+	border: 0.1rem solid var(--color-border);
+	padding:var(--padding_default);
+}
+legend {
+
+}
