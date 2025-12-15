@@ -6,7 +6,7 @@ export default class YoutubeStuff {
 		channelId: this.#CheckStorageThenSearchPage("youtube-channelId") || undefined,
 		broadcastId: this.#CheckStorageThenSearchPage("youtube-broadcastId") || undefined,
 		liveChatId: this.#CheckStorageThenSearchPage("youtube-liveChatId") || undefined,
-		pageCount: 0,
+		pageCount: undefined,
 		debug: false,
 	}
 
@@ -269,29 +269,30 @@ export default class YoutubeStuff {
 		}
 	}
 
-	// Fetch messages from the live chat
-	#nextPageToken = null;
-// Fetch messages from the live chat
-async GetMessages(pageToken = undefined) {
-    //returns json such as: './yt_v3_test.json'
+async GetMessages(pageToken = this.#config.pageCount) {
     if (this.#config.apiKey == undefined) {
         throw new Error("cannot getMessages, apiKey is undefined");
     }
-    try {
-        if (!this.#config.liveChatId) {
-            await this.GetLiveChatId();
-        }
+    
+    if (!this.#config.liveChatId) {
+        throw new Error("cannot getMessages, liveChatId is undefined. Please set it via config.");
+    }
 
+    try {
         const messagesUrl = new URL(this.#urls.getMessages);
         messagesUrl.search = new URLSearchParams({
             key: this.#config.apiKey,
             part: "id,snippet,authorDetails",
             liveChatId: this.#config.liveChatId,
-            maxResults: this.#config.maxResults || 200,
+            maxResults: this.#config.maxResults || 200, 
         }).toString();
 
-        // 1. Use the persisted token if no pageToken is explicitly passed
-        const tokenToUse = pageToken || this.#nextPageToken;
+        const tokenToUse = pageToken;
+
+        if (this.#config.debug) {
+            console.log(`[GetMessages] Current token in config: ${this.#config.pageCount}`);
+            console.log(`[GetMessages] Token being sent: ${tokenToUse}`);
+        }
         
         if (tokenToUse) {
             messagesUrl.searchParams.set("pageToken", tokenToUse);
@@ -300,65 +301,129 @@ async GetMessages(pageToken = undefined) {
         const res = await fetch(messagesUrl);
         const data = await res.json();
         
-        // 2. CRITICAL STEP: Store the nextPageToken for the next request
-        if (data.nextPageToken) {
-            this.#nextPageToken = data.nextPageToken;
-            
-            // Note: If you have a separate timer for polling, you should use data.pollingIntervalMillis 
-            // to adjust the timing for maximum efficiency, but we'll focus on the token here.
+        if (data.error) {
+            console.error("YouTube API Error Details:", data.error); 
+            throw new Error(`YouTube API Error: ${data.error.message}`);
         }
 
+        // Store the next page token
+        if (data.nextPageToken) {
+            this.#config.pageCount = data.nextPageToken;
+            if (this.#config.debug) {
+                console.log(`[GetMessages] Updated next page token: ${this.#config.pageCount}`);
+            }
+        }
+        
+        // IMPORTANT: Store YouTube's recommended polling interval
+        if (data.pollingIntervalMillis) {
+            this.#config.pollingInterval = data.pollingIntervalMillis;
+            if (this.#config.debug) {
+                console.log(`[GetMessages] YouTube recommends polling every ${data.pollingIntervalMillis}ms`);
+            }
+        }
+        
         return data;
     } catch (err) {
+        console.error('Error fetching live chat messages:', err.message);
         throw new Error("Failed to get messages: " + err.message);
     }
 }
+
+// In GetAllMessages() - increase the delay
+async GetAllMessages() {
+    if (this.#config.debug) {
+        console.log("[GetAllMessages] Starting to fetch all historical messages...");
+    }
+
+    const allMessages = [];
+    let pageToken = null;
+    let pageCount = 0;
+
+    while (true) {
+        pageCount++;
+        
+        if (this.#config.debug) {
+            console.log(`[GetAllMessages] Fetching page ${pageCount}...`);
+        }
+
+        const data = await this.GetMessages(pageToken);
+        
+        if (data.items && data.items.length > 0) {
+            allMessages.push(...data.items);
+            
+            if (this.#config.debug) {
+                console.log(`[GetAllMessages] Page ${pageCount}: Got ${data.items.length} messages (Total: ${allMessages.length})`);
+            }
+        }
+
+        // If there's a nextPageToken, there are more pages to fetch
+        if (data.nextPageToken) {
+            pageToken = data.nextPageToken;
+            
+            // INCREASED DELAY: YouTube recommends waiting for pollingIntervalMillis
+            // Default to 5 seconds if not provided
+            const delayMs = data.pollingIntervalMillis || 5000;
+            
+            if (this.#config.debug) {
+                console.log(`[GetAllMessages] Waiting ${delayMs}ms before next request...`);
+            }
+            
+            await new Promise(resolve => setTimeout(resolve, delayMs));
+        } else {
+            // No more pages - we're caught up!
+            if (this.#config.debug) {
+                console.log(`[GetAllMessages] Caught up! Total messages: ${allMessages.length}`);
+            }
+            break;
+        }
+    }
+
+    return allMessages;
 }
 
-
-
-
-/* add api key then paste this into the the console to get messages
-async function qGetLiveChatId(videoId) {
-	const videoDetailsUrl = new URL("https://www.googleapis.com/youtube/v3/videos");
-	videoDetailsUrl.search = new URLSearchParams({
-		key: '',
-		id: videoId,
-		part: 'liveStreamingDetails' // Request the details that contain the chat ID
-	}).toString();
-
-	const res = await fetch(videoDetailsUrl);
-	const data = await res.json();
-
-	// Extract the long chat ID
-	if (data.items && data.items.length > 0 && data.items[0].liveStreamingDetails) {
-		return data.items[0].liveStreamingDetails.activeLiveChatId;
-	}
-	throw new Error("Could not find activeLiveChatId for this video ID.");
-}
-const qliveChatId = await qGetLiveChatId('uBU-OkKy7EU');
-async function qGetMessages(liveChatId = qliveChatId) {
-	const messagesUrl = new URL("https://www.googleapis.com/youtube/v3/liveChat/messages");
-	messagesUrl.search = new URLSearchParams({
-		key: '',
-		liveChatId: liveChatId, // This is the long, correct ID
-		maxResults: 200,
-		part: 'snippet,authorDetails', // ⬅️ THIS IS CRUCIAL
-	}).toString();
-
-	const res = await fetch(messagesUrl);
-	const data = await res.json();
-
-	// Check for success or error
-	if (res.ok) {
-		return JSON.stringify(data, null, 2);
-	} else {
-		// Return the error message if the request still fails for another reason
-		return JSON.stringify({ error: data }, null, 2);
-	}
+GetPollingInterval() {
+    return this.#config.pollingInterval || 5000; // Default to 5 seconds
 }
 
+// NEW: Method for continuous polling (after initial catch-up)
+async StartPolling(onNewMessages, intervalMs = 5000) {
+    // First, catch up on all historical messages
+    const historicalMessages = await this.GetAllMessages();
+    
+    if (typeof onNewMessages === 'function') {
+        onNewMessages(historicalMessages, true); // true = initial batch
+    }
 
-// Combine the two steps:
-console.log(await qGetMessages());
-*/
+    if (this.#config.debug) {
+        console.log(`[StartPolling] Starting real-time polling every ${intervalMs}ms...`);
+    }
+
+    // Now poll for new messages using the stored pageToken
+    const pollInterval = setInterval(async () => {
+        try {
+            const data = await this.GetMessages(); // Uses stored token
+            
+            if (data.items && data.items.length > 0) {
+                if (this.#config.debug) {
+                    console.log(`[StartPolling] Got ${data.items.length} new messages`);
+                }
+                
+                if (typeof onNewMessages === 'function') {
+                    onNewMessages(data.items, false); // false = new messages
+                }
+            }
+        } catch (err) {
+            console.error('[StartPolling] Error during polling:', err);
+        }
+    }, intervalMs);
+
+    // Return function to stop polling
+    return () => {
+        clearInterval(pollInterval);
+        if (this.#config.debug) {
+            console.log('[StartPolling] Stopped polling');
+        }
+    };
+}
+
+}

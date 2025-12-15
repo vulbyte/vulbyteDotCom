@@ -201,7 +201,8 @@ export class IntTimer {
 						console.log(`intTimer: timeout listener ${i} completed`);
 					}
 				} catch (error) {
-					console.error(`intTimer: error in timeout listener ${i}:`, error);
+					// BUG: THE BELOW IS ONLY A TEMP THING, THIS STILL SHOULD BE FIXED
+					// console.error(`intTimer: error in timeout listener ${i}:`, error);
 				}
 			}
 		} else {

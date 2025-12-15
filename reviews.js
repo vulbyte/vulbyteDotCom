@@ -5,22 +5,121 @@ const reviews =
 				name: "",
 				img: "",
 				rankings: {
-						gameplay: 6.5,
-						graphics: 10,
-						audio: 9,
-						story: 6.25,
-						uniqueness: 9,
+						gameplay: 5,
+						graphics: 5,
+						audio: 5,
+						story: 5,
+						uniqueness: 5,
 				},
 				links: {steam: ""},
-				review: ""
+				review: "<a href='' target='_blank'> orignally played on youtube here</a>"
 		},
 		*/
+		{
+			name: "5 nights at Timokha 4: School",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3296200/header.jpg?t=1735010296",
+				rankings: {
+						gameplay: 6,
+						graphics: 5,
+						audio: 3,
+						uniqueness: 6,
+				},
+				links: {steam: "https://store.steampowered.com/app/3296200/5_nights_at_Timokha_4_School/"},
+				review: "<a href='https://www.youtube.com/live/s4RfohvAP4I' target='_blank'> orignally played on youtube here: https://www.youtube.com/live/s4RfohvAP4I </a> ⚠️this entire game was russian outside of the menus so there's a massive language barrier⚠️the game was funny obsurd, but i feel like most of the humor was crude in a bad way, however i felt like this game was a bit of a fun 'fuck it i don't need this 2$' sorta game. if you don't speak russian you'll prboably have a rought time, if you do lmk how it goes for you lol"
+		},
+		{
+			name: "Ghost Master: Resurrection",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3289090/header.jpg?t=1761859479",
+				rankings: {
+						gameplay: 9,
+						graphics: 7,
+						audio: 6,
+						story: 8,
+						uniqueness: 10,
+				},
+				links: {steam: "https://store.steampowered.com/app/3289090/Ghost_Master_Resurrection/"},
+				review: "<a href='https://www.youtube.com/live/s4RfohvAP4I' target='_blank'> orignally played on youtube here: https://www.youtube.com/live/s4RfohvAP4I </a> it's a fun top down game, where instead of pleasing all the humans inside you're trynig to haunt them to get them to leave. a fun little twist on the genre, it's fun but is a bit dated so teh controls are rather clunky. that being said the game far and away makes up for it with its personality that it absolutely oozes"
+		},
+		{
+				name: "Super Hexagon",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/221640/header.jpg?t=1653925774",
+				rankings: {
+						gameplay: 8,
+						graphics: 10,
+						audio: 10,
+						uniqueness: 10,
+				},
+				links: {steam: "https://store.steampowered.com/app/221640/Super_Hexagon/"},
+				review: "<a href='https://www.youtube.com/live/s4RfohvAP4I' target='_blank'> orignally played on youtube here: https://www.youtube.com/live/s4RfohvAP4I </a> the game is very simple and smal, but it's very very fun. a great game to add to your arsonal of 'i have a few minutes but dont want to get into something' games. i bought it when it came out and still love, never had an issue with it"
+		},
+		{
+				name: "Russian Life Simulator",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1070330/header.jpg?t=1749477331",
+				rankings: {
+						gameplay: 2,
+						graphics: 5,
+						audio: 7,
+						uniqueness: 3,
+				},
+				links: {steam: "https://store.steampowered.com/app/1070330/Russian_Life_Simulator/"},
+				review: "<a href='https://www.youtube.com/live/s4RfohvAP4I' target='_blank'> orignally played on youtube here: https://www.youtube.com/live/s4RfohvAP4I </a> cookie clicker with a meme russian twist. most of is prety obvious, some fun little gafs. do yours a favor and get an auto clicker, it will make your life so much easier."
+		},
+		{
+				name: "Press X to Not Die",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/402330/header.jpg?t=1756071866",
+				rankings: {
+						gameplay: 3,
+						graphics: 8,
+						audio: 4,
+						story: 6,
+						uniqueness: 10,
+				},
+				links: {steam: "https://store.steampowered.com/app/402330/Press_X_to_Not_Die/"},
+				review: "<a href='https://www.youtube.com/live/s4RfohvAP4I' target='_blank'> orignally played on youtube here: https://www.youtube.com/live/s4RfohvAP4I </a> I AM A GAMER THERE FOR I SURVIVED"
+		},
+		{
+				name: "Mister Furry: Hot Muscles",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1578220/2b44eb2081f6410206afa084555438c370ab4e63/header.jpg?t=1746979349",
+				rankings: {
+						gameplay: 6,
+						graphics: 5,
+						audio: 4,
+						story: 6,
+						uniqueness: 7,
+				},
+				links: {steam: "https://store.steampowered.com/app/1578220/Mister_Furry_Hot_Muscles/"},
+				review: "<a href='https://www.youtube.com/live/s4RfohvAP4I' target='_blank'> orignally played on youtube here: https://www.youtube.com/live/s4RfohvAP4I </a> it's funny at times, butis mostly jsut shock humor. the game lacks subtly and i mostly just feel concerned i'm going to be flashed more then skidding into the joke, and i love these kinda jokes. tho all the buff furries make me ho-💥"
+		},
+		{
+				name: "it's spring again",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/434210/header.jpg?t=1760395596",
+				rankings: {
+						gameplay: 3,
+						graphics: 7,
+						audio: 6,
+						uniqueness: 4,
+				},
+				links: {steam: "https://store.steampowered.com/app/434210/Its_Spring_Again/"},
+				review: "<a href='https://www.youtube.com/live/s4RfohvAP4I' target='_blank'> orignally played on youtube here: https://www.youtube.com/live/s4RfohvAP4I </a> its' a cute kids game, i feel like some ui stuff is not entuitive enough for kids to properly underrstand, aswell as the experience is really really short. fine game but leave a lot to be desired"
+		},
+		{
+			name: "Dont Crash: The Political Game",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1389270/header.jpg?t=1755742612",
+				rankings: {
+						gameplay: 7,
+						graphics: 4,
+						audio: 4,
+						uniqueness: 6,
+				},
+				links: {steam: "https://store.steampowered.com/app/1389270/Dont_Crash__The_Political_Game/"},
+				review: "<a href='https://www.youtube.com/live/s4RfohvAP4I' target='_blank'> orignally played on youtube here: https://www.youtube.com/live/s4RfohvAP4I </a> a fun little joke game, lacks depth but lowkey is actually surprisingly fun. ai can be really brutal to fight so you need to pick your enounters, if not you get bonned pertty easy, kinda wish there was a sniper ngl lol"
+		},
 		{
 				name: "Amnesia: The Bunker",
 				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1944430/header.jpg?t=1734702362",
 				rankings: {
 						gameplay: 6,
-						graphics: 8,
+						graphics: 9,
 						audio: 8,
 						story: 6,
 						uniqueness: 9,

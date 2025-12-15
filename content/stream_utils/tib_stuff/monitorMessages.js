@@ -98,8 +98,76 @@ version : 1, iat : "", eat : "", reason : "", appeals : []
 /**
  * @returns {JSON}
  */
-async GetAndReturnUsers(){return this.#users;
+async AddProcessedMessagesToQueue(input){
+	if(input == ''){
+		throw new Error("input is undefined, not doing anything");
+	}
+	//try convert to object if string
+	if(typeof(input) == 'string'){
+		try{
+			if(
+				input.includes(".json")
+			){
+				await fetch(input).then((res) => {
+					input = res.json();
+				})
+			}
+			else if(typeof(input) == "object"){
+				JSON.parse(input);
+			}
+			else {
+				throw new Error("input is no ta string or object, cannot parse");
+			}
+		}
+		catch(err){
+			console.error(err);
+		}
+	}	
+
+	function mergeSortedLists(listA, listB) {
+	    let mergedList = Array(listA.length + listB.length);
+	    let i = 0; // Pointer for listA
+	    let j = 0; // Pointer for listB
+
+	    // 1. Core Comparison Loop
+	    // Keep running as long as there are elements in both lists to compare
+	    while (i < listA.length && j < listB.length) {
+		
+		// Compare the elements
+		if (listA[i].unixTime <= listB[j].unixTime) {
+		    // listA item is older or equal (push A)
+		    mergedList.push(listA[i]);
+		    i++;
+		} else {
+		    // listB item is older (push B)
+		    mergedList.push(listB[j]);
+		    j++;
+		}
+	    }
+
+	    // 2. Append Remaining Elements
+	    // One of the loops above finished. Copy any remaining elements 
+	    // from the other list (only one of these will ever run)
+	    
+	    // Append remaining from listA
+	    if (i < listA.length) {
+		mergedList.push(...listA.slice(i));
+	    }
+	    
+	    // Append remaining from listB
+	    if (j < listB.length) {
+		mergedList.push(...listB.slice(j));
+	    }
+	    
+	    return mergedList;
+	}
+	this.#messages_queue = mergeSortedLists(this.#messages_queue, input);
 }
+
+/**
+ * @returns {JSON}
+ */
+async GetAndReturnUsers(){return this.#users;}
 #unprocessed_queue = []; // messages returned from yt fetch
 /**
  * @name unpressed_queue
@@ -407,7 +475,7 @@ _parseCommandString(rawText) {
                   newMessage.template_version = 1;
                   newMessage.platform = "YouTube";
                   newMessage.rawMessage = unprocessedMsg; // Keep reference to the container
-                  newMessage.date = unprocessedMsg.dateTime;
+                  newMessage.unixTime = unprocessedMsg.date;
                   newMessage.authorName = author.displayName;
                   newMessage.authorId = author.channelId;
                   newMessage.streamOrigin = snippet.liveChatId; // Or videoId if you prefer
@@ -503,53 +571,6 @@ async ProcessUnprocessedMessagesQueue(maxAmount = 50) {
 }
 
 
-async #DaLoop(){
-    const timeoutDuration = 5000;
-    
-    // Note: The Promise/setTimeout structure is maintained as requested
-    new Promise(async (RESOLVE, REJECT) => { 
-        setTimeout(async () => {
-            try {
-                console.log(`[MonitorLoop] Starting cycle. Queue size: ${this.#unprocessed_queue.length}`);
-                
-                // --- 1. GET MESSAGES (Fetch) ---
-                // Assume this returns the raw API response object { items: [...], nextPageToken: ... }
-                const newMessagesRaw = await this.#serviceHandlers.youtube.GetMessages(); 
-                
-                const rawItems = newMessagesRaw?.items || [];
-                
-                console.log("new youtube messages are:\n");
-                console.log(JSON.stringify(newMessagesRaw, null, 2));
-                console.log(`[MonitorLoop] Fetched ${rawItems.length} new messages.`);
-
-                for (let i = 0; i < rawItems.length; ++i) {
-                    // Pass the single raw item to the helper function
-                    await this.ParseAndAddYouTubeV3MessagesToUnprocessedQueue(rawItems[i]);
-                }
-
-                console.log("new unprocessed_queue: \n" + JSON.stringify(this.#unprocessed_queue, null, 2));
-		} catch (err) {
-		        console.error("[MonitorLoop ERROR] Cycle failed:", err);
-		        // Reject here for fetch/initial setup failure
-		        REJECT("COULD NOT GET NEW MESSAGES:\n" + err.message);
-		}
-
-                // --- 2. PROCESS QUEUE (Command Parsing) ---
-                try{
-                    console.log("processing unprocessed messages");
-                    await this.ProcessUnprocessedMessagesQueue();
-                    
-                    console.log("new messages_queue: \n" + JSON.stringify(this.#messages_queue, null, 2));
-                    RESOLVE("DATA PROCESSED SUCCESSFULLY"); // Resolve here for success
-                }
-                catch(err){
-                    const msg = ("COULD NOT PROCESS UNPROCESSED_QUEUE IN TIME: " + err);
-                    console.error(msg)
-                    REJECT(msg);
-                }
-        }, timeoutDuration);
-    });
-}
 
 async MonitorLoop() {
 	console.log("starting Loop MonitoringLoop");
@@ -571,41 +592,100 @@ async MonitorLoop() {
     }
 
 
-                GetMessagesTimer = new IntTimer();
-                async MonitoringStart() {
-			let cleanTest = false;
-			try{
-				await this.#DaLoop();
-				cleanTest = true;
-			}
-			catch(err){
-				console.error("MONITORINGLOOP() FAILED AND THREW ERROR");
-				cleanTest = false;
-			}
+GetMessagesTimer = new IntTimer();
 
-			this.GetMessagesTimer.AddTimeoutListener(this.MonitorLoop);
-			// TODO: start the timer kronk
-			this.GetMessagesTimer.timeoutDuration = 20;
-			this.GetMessagesTimer.tickListeners += (() => {console.log(this.GetMessagesTimer.time)})
-			this.GetMessagesTimer.Start();
-		};
+async MonitoringStart() {
+    try {
+        console.log(`[MonitoringStart] Catching up on all historical messages...`);
+        console.log(`[MonitoringStart] Queue size: ${this.#unprocessed_queue.length}`);
+        
+        // Get all historical messages (with proper delays built-in)
+        const allHistoricalMessages = await this.#serviceHandlers.youtube.GetAllMessages(); 
+        
+        console.log(`[MonitoringStart] Fetched ${allHistoricalMessages.length} historical messages.`);
 
-		/*
-                  try {
-                    // test it to see if it works
-                    await MonitorLoop();
-                    // if works, then you can start the timer
-                    this.GetMessagesTimer.AddTimeoutListener(MonitorLoop);
-                  } catch (err) {
-                    console.log(
-                        "test loop failed, probably shouldn't continue");
-                    if (this.config.monitorMessages.strictMode == true) {
-                      throw new Error(
-                          "error in MonitorLoop(), failed and threw error");
-                    }
-                  }
-                }
-		*/
+        // Add all historical messages to queue
+        for (let i = 0; i < allHistoricalMessages.length; ++i) {
+            this.ParseAndAddYouTubeV3MessagesToUnprocessedQueue(allHistoricalMessages[i]);
+        }
+
+        console.log(`[MonitoringStart] Unprocessed queue size: ${this.#unprocessed_queue.length}`);
+        
+        // Process queue
+        console.log("Processing historical messages...");
+        await this.ProcessUnprocessedMessagesQueue();
+        
+        console.log("[MonitoringStart] Historical catch-up complete!");
+
+    } catch (err) {
+        console.error("[MonitoringStart ERROR] Failed during initial catch-up:", err);
+        throw err;
+    }
+
+    // Start polling loop
+    try {
+        console.log("[MonitoringStart] Starting polling loop for new messages...");
+        
+        // Use YouTube's recommended polling interval (stored in config after first GetMessages call)
+        const pollingInterval = this.#serviceHandlers.youtube.GetPollingInterval() || 8000;
+        
+        console.log(`[MonitoringStart] Using polling interval: ${pollingInterval}ms`);
+        
+        this.GetMessagesTimer.AddTimeoutListener(() => this.#DaLoop());
+        this.GetMessagesTimer.timeoutDuration = pollingInterval;
+        
+        this.GetMessagesTimer.tickListeners.push(() => {
+            console.log(`[Timer] Tick: ${this.GetMessagesTimer.time}`);
+        });
+        
+        this.GetMessagesTimer.Start();
+        console.log("[MonitoringStart] Polling started successfully!");
+        
+    } catch (err) {
+        console.error("[MonitoringStart ERROR] Failed to start polling loop:", err);
+        throw err;
+    }
+}
+
+
+async #DaLoop() {
+    try {
+        console.log(`[DaLoop] Starting cycle. Queue size: ${this.#unprocessed_queue.length}`);
+        
+        // --- 1. GET NEW MESSAGES (Uses stored pageToken automatically) ---
+        const newMessagesRaw = await this.#serviceHandlers.youtube.GetMessages(); 
+        
+        const rawItems = newMessagesRaw?.items || [];
+        
+        if (rawItems.length > 0) {
+            console.log("New YouTube messages:");
+            console.log(JSON.stringify(newMessagesRaw, null, 2));
+            console.log(`[DaLoop] Fetched ${rawItems.length} new messages.`);
+
+            for (let i = 0; i < rawItems.length; ++i) {
+                this.ParseAndAddYouTubeV3MessagesToUnprocessedQueue(rawItems[i]);
+            }
+
+            console.log("Updated unprocessed_queue:\n" + JSON.stringify(this.#unprocessed_queue, null, 2));
+        } else {
+            console.log("[DaLoop] No new messages this cycle.");
+        }
+
+        // --- 2. PROCESS QUEUE ---
+        if (this.#unprocessed_queue.length > 0) {
+            console.log("Processing unprocessed messages...");
+            await this.ProcessUnprocessedMessagesQueue();
+            
+            console.log("Updated messages_queue:\n" + JSON.stringify(this.#messages_queue, null, 2));
+            console.log("[DaLoop] Cycle completed successfully");
+        }
+        
+    } catch (err) {
+        console.error("[DaLoop ERROR] Cycle failed:", err);
+        // Don't throw - let the timer continue trying
+    }
+}
+
 
                 async MonitoringStop() {
 		  this.GetMessagesTimer.Stop(); 
@@ -617,81 +697,80 @@ async MonitorLoop() {
 /**
  * Internal helper: Finds the oldest message with a TTS command that has not been read.
  * CRITICAL: This only processes messages that have BOTH a TTS command AND ttsHasRead === false
- * * ⭐️ FIX: Changed from .find() to a .filter() and then select the first one,
  * which is effectively the oldest if the queue is FIFO chronological. Most importantly,
  * it now awaits the execution before completing the function, preventing a new 
  * call of AutoTtsStart/loop from executing on a new message before the previous one is finished.
  */
 async _playOldestUnreadTts() {
-    if (!this.#messages_queue || this.#messages_queue.length === 0) {
-        console.log("Auto TTS: Message queue is empty.");
-        return;
+	if (!this.#messages_queue || this.#messages_queue.length === 0) {
+		console.warn("Auto TTS: Message queue is empty.");
+		return;
+	}
+	console.log(`Auto TTS: Checking ${this.#messages_queue.length} messages in queue...`);
+	//check msg has commands
+	let ttsIndex = -1;
+
+	let msg;
+	for(let i = 0; i < this.#messages_queue.length; ++i){
+		msg = this.#messages_queue[i];
+		// 1. Must have commands array
+		if (msg.commands.length === 0) {
+		    continue;
+		} 
+
+		//check cmd is a tts command
+		let ttsFound = false;
+		for(let j = 0; j < msg.commands.length; ++j){
+			if(msg.commands[j].command == "tts"){
+				ttsFound = true;
+				break;	
+			}
+		}
+		if(!ttsFound){
+			continue;	
+		}
+
+		//check message hasn't been read
+		if(!msg.state || msg.state.ttsHasRead == false){
+			console.log(`Auto TTS: Found unread TTS message from ${msg.authorName}: "${msg.processedMessage}"`);
+			ttsIndex = i;
+			break;
+		}
+		if(i == this.#messages_queue.length-1){console.warn("erached end of mesasge queue without finding a match")}
+	};
+	if(ttsIndex == -1){
+		console.warn("no tts mesasges found in the queue");
+		return;
+	}
+
+	if(message == undefined){
+		console.warn("msg is empty" + "\n" + JSON.stringify(msg, null, 2));
+	}
+	
+// ... (message selection logic above)
+
+console.log("attempting to execute command from tts message" + "\n" + JSON.stringify(msg, null, 2));
+let cmdExecuteAttempted = false;
+for(let i = 0; i < msg.commands.length; ++i){
+    // ✅ CORRECTED: Access the command property of the array element at index i
+    if(msg.commands[i].command != "tts"){ 
+        continue  
     }
+    cmdExecuteAttempted = true;
 
-    console.log(`Auto TTS: Checking ${this.#messages_queue.length} messages in queue...`);
-
-    // Find the first message (oldest) that has BOTH a TTS command AND is unread
-    const messageObj = this.#messages_queue.find(msg => {
-        // 1. Must have commands array
-        if (!Array.isArray(msg.commands) || msg.commands.length === 0) {
-            return false;
-        }
-        
-        // 2. Must have a TTS command
-        const ttsCmd = msg.commands.find(c => c.command === 'tts');
-        if (!ttsCmd) {
-            return false;
-        }
-
-        // 3. Must have state object with ttsHasRead property
-        // The processing loop guarantees this for TTS commands
-        if (!msg.state || !msg.state.hasOwnProperty('ttsHasRead')) {
-            // This case should ideally not happen if processing is correct.
-            console.warn("Auto TTS: Found TTS command without state property. Forcing state init.");
-            if (!msg.state) msg.state = {};
-            msg.state.ttsHasRead = false; // Initialize and check again
-        }
-
-        // 4. ttsHasRead must be explicitly false
-        const isUnread = msg.state.ttsHasRead === false;
-        
-        if (isUnread) {
-            console.log(`Auto TTS: Found unread TTS message from ${msg.authorName}: "${msg.processedMessage}"`);
-        }
-        
-        return isUnread;
-    });
-
-    // If a valid unread TTS message is found, execute it
-    if (messageObj) {
-        const ttsCmd = messageObj.commands.find(c => c.command === 'tts');
-        
-        if (ttsCmd && typeof ttsCmd.func === 'function') {
-            console.log(`Auto TTS: Reading message from ${messageObj.authorName}: "${messageObj.processedMessage}"`);
-            
-            try {
-                // ⭐️ CRITICAL: AWAIT the execution. This ensures the next
-                // loop only starts after the audio is complete and the state is set.
-                await ttsCmd.func(); 
-                console.log("Auto TTS: Message read successfully. State should now be ttsHasRead=true");
-            } catch (error) {
-                console.error("Auto TTS execution error:", error);
-                // Mark as read on failure to prevent infinite retries
-                if (!messageObj.state) {
-                    messageObj.state = {};
-                }
-                messageObj.state.ttsHasRead = true;
-            }
-        } else {
-            console.warn("Auto TTS: Found 'tts' command but function is missing/malformed. Marking as read.");
-            if (!messageObj.state) {
-                messageObj.state = {};
-            }
-            messageObj.state.ttsHasRead = true;
-        }
-    } else {
-        console.log("Auto TTS: No unread TTS messages found in queue.");
+    switch(msg.template_version){
+        case(1):
+            await this.CallTts(msg);
+            // After successful call, you might want to break the loop 
+            // if you only want to execute the first TTS command.
+            // break;
+        default:
+            throw new Error("no compatable command version found" + "\n" + JSON.stringify(msg, null, 2));
     }
+}
+if(cmdExecuteAttempted == false){
+    throw new Error("somehow message selected did not have a tts command attached" + "\n" + JSON.stringify(msg, null, 2));
+}
 }
 
 
@@ -771,72 +850,87 @@ AutoTtsStop() {
  * @param {Object} messageState - Reference to the message.state object (messageObj.state)
  * @returns {Promise<void>}
  */
-async CallTts(message, flags, messageState) { 
-    console.log("CallTts: Starting TTS for message:", message);
-    console.log("CallTts: messageState received:", messageState);
-    
-    if (!message || message.trim() === "") {
-        // ⭐️ FIX: Always set state to read on empty message to prevent looping
-        if (messageState) messageState.ttsHasRead = true;
-        throw new Error("TTS message is empty.");
-    }
+async CallTts(message, messages_queue_index = undefined) { 
+	console.log("CallTts: Starting TTS for message:", message);
 
-    const getVoices = () => new Promise((resolve) => {
-        let voices = window.speechSynthesis.getVoices();
-        if (voices.length > 0) {
-            resolve(voices);
-        } else {
-            window.speechSynthesis.onvoiceschanged = () => {
-                voices = window.speechSynthesis.getVoices();
-                resolve(voices);
-            };
-        }
-    });
+	if (!message) {
+		//message.messageState.ttsHasRead = true;
+		throw new Error("TTS message is empty.");
+	}
 
-    const voices = await getVoices();
-    const utter = new SpeechSynthesisUtterance(message);
+	const getVoices = () => new Promise((resolve) => {
+	let voices = window.speechSynthesis.getVoices();
+	if (voices.length > 0) {
+	    resolve(voices);
+	} else {
+	    window.speechSynthesis.onvoiceschanged = () => {
+		voices = window.speechSynthesis.getVoices();
+		resolve(voices);
+	    };
+	}
+	});
 
-    // Apply flags
-    utter.rate = Number(flags.r) || 1; 
-    utter.pitch = Number(flags.p) || 1;
-    
-    // Apply voice if specified
-    if (flags.v !== undefined && voices[flags.v]) {
-        utter.voice = voices[flags.v];
-    }
+	const voices = await getVoices();
+	const TTS = new SpeechSynthesisUtterance(message);
 
-    console.log("CallTts: Starting speech synthesis...");
+	let flags;
+	if(message.commands){
+		for(let i = 0; i < message.commands.length; ++i){
+			if(message.commands[i].command == "tts"){
+				flags = message.commands[i].params;
+			}
+		}
+	}
+	if(flags == null){
+		console.warn("no params found for flag, this is an unexpected state. here's the object:\n", JSON.stringify(message, null, 2));
+	}
+	if(flags != null){
+		// Apply flags
+		TTS.rate = Number(flags.r) || 1; 
+		TTS.pitch = Number(flags.p) || 1;
 
-    // ⭐️ CRITICAL: Wrap speak in Promise and wait for completion
-    return new Promise((resolve, reject) => {
-        utter.onend = () => {
-            console.log("CallTts: Speech completed successfully.");
-            // ⭐️ Set ttsHasRead flag when speech completes
-            if (messageState) {
-                console.log("CallTts: Setting ttsHasRead = true");
-                messageState.ttsHasRead = true;
-                console.log("CallTts: messageState after update:", messageState);
-            } else {
-                console.error("CallTts: WARNING - messageState is null/undefined! Cannot update read status.");
-            }
-            resolve();
-        };
+		if (flags.v !== undefined && voices[flags.v]) {
+			TTS.voice = voices[flags.v];
+		}
+	}
 
-        utter.onerror = (event) => {
-            console.error("CallTts: TTS error:", event);
-            // Set flag on error to prevent re-reading failing messages
-            if (messageState) {
-                console.log("CallTts: Error occurred, setting ttsHasRead = true anyway");
-                messageState.ttsHasRead = true; 
-            }
-            reject(new Error(`TTS failed: ${event.error}`));
-        };
-        
-        // Cancel any ongoing speech and start new one
-        window.speechSynthesis.cancel();
-        window.speechSynthesis.speak(utter);
-        console.log("CallTts: Speech queued");
-    });
+	if(messages_queue_index != undefined){
+		console.log("no messages_queue_index given, attempting to find message");
+		for(let i = 0; i < this.#messages_queue.length; ++i){
+			if( //check auth, msg, and unixTime to verify that the message is very very likely the same message
+				message.authorId == this.#messages_queue[i].authorId
+				&& message.rawMessage.data.displayMessage == this.#messages_queue[i].rawMessage.data.displayMessage 
+				&& mesasge.unixTime == this.#messages_queue[i].unixTime
+			){
+				messages_queue_index = i;	
+				console.log("message found at index: " + i);
+				break;
+			}
+		}
+		if(messages_queue_index){
+			console.warn("could not find matching message from queue, it is possible this is a text or something else, IF THIS IS UNINTENTIONAL YOU GOT SOME DEBUGGING TO DO");
+		}
+	};
+
+	return new Promise((resolve, reject) => {
+		TTS.onend = () => {
+			let log = "CallTts: Speech completed successfully."; 
+		    	console.log(log);
+			resolve(log); 
+		};
+
+		TTS.onerror = (e) => {
+		    	console.error("CallTts: TTS error:", e);
+		    	// Set flag on error to prevent re-reading failing messages
+			messageState.ttsHasRead = 'ERROR'; 
+			reject(new Error(`TTS failed: ${e.error}`));
+		}
+		console.log("CallTts: Starting speech synthesis...");
+		window.speechSynthesis.cancel();
+		window.speechSynthesis.speak(TTS);
+	});
+
+	// Cancel any ongoing speech and start new one
 }
 
 
@@ -859,7 +953,7 @@ async CallTts(message, flags, messageState) {
                     ?.value || this.#LSGI("ttsVoice") || 51, };
 		  command.command;
                   command.template_version = 1;
-                  command.func = this.CallTts;
+                  command.func = this.CallTts(message);
 
                   const argsStr = match[2];
                   const parts = argsStr.trim().split(/\s + /);
@@ -1069,7 +1163,7 @@ async ParseAndAddYouTubeV3MessagesToUnprocessedQueue(rawMessage) {
                   return yt_messages;
                 }
 
-                async ScoreMessage(message) {
+                async ScoreMessage(message) { // TODO: MORSE CODE BREAKS THE SCORE: "..-. ..- -.-. -.- / -- --.- / .-.. .. ..-. ." == 440
                   // 1. DEFINE ALL SCORING FUNCTIONS (using arrow functions for
                   // 'this' context)
                   const CheckPunctuation = (message) => {
@@ -1100,7 +1194,7 @@ async ParseAndAddYouTubeV3MessagesToUnprocessedQueue(rawMessage) {
                         }
                       }
                     }
-                    console.log(`score CheckPunctuation() : ${score}`);
+                    //console.log(`score CheckPunctuation() : ${score}`);
                     return score;
                   };
 
@@ -1124,10 +1218,10 @@ async ParseAndAddYouTubeV3MessagesToUnprocessedQueue(rawMessage) {
                         }
                       }
 
-                      console.log(`score CheckTrigrams() : ${score}`);
+                      //console.log(`score CheckTrigrams() : ${score}`);
                       return score;
                     } catch (err) {
-                      console.error("Original error in CheckTrigrams:", err);
+                      //console.error("Original error in CheckTrigrams:", err);
                       throw new Error("Error processing trigrams logic.");
                     }
                   };
@@ -1142,7 +1236,7 @@ async ParseAndAddYouTubeV3MessagesToUnprocessedQueue(rawMessage) {
                         score -= 50;
                       }
                     }
-                    console.log(`score CheckForRepeats() : ${score}`);
+                    //console.log(`score CheckForRepeats() : ${score}`);
                     return score;
                   };
 
@@ -1153,7 +1247,7 @@ async ParseAndAddYouTubeV3MessagesToUnprocessedQueue(rawMessage) {
                     } else {
                       score -= 10;
                     }
-                    console.log(`score CheckForCaps() : ${score}`);
+                    //console.log(`score CheckForCaps() : ${score}`);
                     return score;
                   };
 
@@ -1176,7 +1270,7 @@ async ParseAndAddYouTubeV3MessagesToUnprocessedQueue(rawMessage) {
                       score += 20;
                     }
 
-                    console.log(`score CheckForSpaces() : ${score}`);
+                    ///console.log(`score CheckForSpaces() : ${score}`);
                     return score;
                   };
 
@@ -1188,7 +1282,7 @@ async ParseAndAddYouTubeV3MessagesToUnprocessedQueue(rawMessage) {
                         score -= 20;
                       }
                     }
-                    console.log(`score CheckForSpaceInChunk : ${score}`);
+                    //console.log(`score CheckForSpaceInChunk : ${score}`);
                     return score;
                   };
 
@@ -1217,7 +1311,7 @@ async ParseAndAddYouTubeV3MessagesToUnprocessedQueue(rawMessage) {
                     score += funcScore;
 
                     if (this.config.monitorMessages.debug == true) {
-                      console.log(`score eval at function call : ${score}`);
+                      //console.log(`score eval at function call : ${score}`);
                     }
                   }
 
