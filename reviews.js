@@ -16,6 +16,19 @@ const reviews =
 		},
 		*/
 		{
+				name: "Amnesia: The Bunker",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1944430/header.jpg?t=1734702362",
+				rankings: {
+						gameplay: 6,
+						graphics: 8,
+						audio: 8,
+						story: 6,
+						uniqueness: 9,
+				},
+				links: {steam: "https://store.steampowered.com/app/1944430/Amnesia_The_Bunker/"},
+			review: "stream: <a href='https://www.youtube.com/watch?v=7M93qzI5oBM' target='_blank'>https://www.youtube.com/watch?v=7M93qzI5oBM</a> the game is quite fun, i feel like the first 4 or so hours were really fun, the next 2 hours feel a bit tedious, and the ending at the very end sacrificed player agency for a dogshit cutscene. genuinely play this game if you're a horror fan, but my god that last room fucking sucks. great game however now even writing this 30 minutes after the end has me peeved."
+		},
+		{
 				name: "Klonoa: door to phantomile",
 				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1730680/header.jpg?t=1708327336",
 				rankings: {

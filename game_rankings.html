@@ -13,11 +13,11 @@
         }
         
         /* --- General Layout --- */
-				tr {
-					border-bottom: solid white 0.2em;
-					padding-top: 0.6em;
-					padding-bottom: 0.6em;
-				}
+                tr {
+                    border-bottom: solid white 0.2em;
+                    padding-top: 0.6em;
+                    padding-bottom: 0.6em;
+                }
         
         #review_table {
             width: 100%;
@@ -40,7 +40,7 @@
             align-items: center; /* Center content horizontally */
             vertical-align: top;
             padding-bottom: 1em;
-						min-width: 10em;
+                        min-width: 10em;
         }
 
         /* NEW: Container for the image, needs to take up all remaining vertical space */
@@ -94,15 +94,15 @@
         .col-ratings {
             vertical-align: top;
             min-width: 8em; /* Ensures rating column doesn't get too squished */
-						width:10em;
+                        width:10em;
         }
 
         /* COLUMN 3: TLDR (Text) */
-				.col-tldr, .col-tldr > div {
+                .col-tldr, .col-tldr > div {
             vertical-align: top;
-						width:20em;
-						max-height: 17em;
-						overflow-y: scroll;
+                        width:20em;
+                        max-height: 17em;
+                        overflow-y: scroll;
         }
 
 
@@ -293,10 +293,10 @@
                 max-height: 15rem; 
             }
             
-						.col-ratings * {
-							justify-content:center;
+                        .col-ratings * {
+                            justify-content:center;
               text-align: center; /* Revert this if flex is fully used, but keeping for safety */
-						}
+                        }
 
             /* Center the game column content */
             .col-game {
@@ -306,7 +306,7 @@
             .col-tldr > div {
                  max-height: 10em;
                  overflow: visible;
-								 width:auto;
+                                 width:auto;
             }
         }
     </style>
@@ -585,12 +585,25 @@
     const sortKeys = new Set(['overall']); 
     reviews.forEach(r => Object.keys(r.rankings).forEach(k => sortKeys.add(k)));
     select.innerHTML = ''; 
+    
+    // --- ADDED: Date Sorting Options ---
+    const dateNew = document.createElement('option');
+    dateNew.value = 'date-desc';
+    dateNew.innerText = 'Date (New to Old)';
+    select.appendChild(dateNew);
+
+    const dateOld = document.createElement('option');
+    dateOld.value = 'date-asc';
+    dateOld.innerText = 'Date (Old to New)';
+    select.appendChild(dateOld);
+    // -----------------------------------
+
     sortKeys.forEach(key => {
         const optH = document.createElement('option'); optH.value = `${key}-desc`; optH.innerText = `${key} (High to Low)`; select.appendChild(optH);
         const optL = document.createElement('option'); optL.value = `${key}-asc`; optL.innerText = `${key} (Low to High)`; select.appendChild(optL);
     });
 
-    /* --- TABLE GENERATION (Unchanged Logic) --- */
+    /* --- TABLE GENERATION --- */
     
     function renderTable(sortMethod) {
         let table = document.getElementById("review_table").querySelector("tbody");
@@ -602,6 +615,13 @@
         let sortedReviews = [...reviews].map((r, i) => ({...r, originalIndex: i}));
         
         sortedReviews.sort((a, b) => {
+            // --- MODIFIED: Date Sorting Logic ---
+            if (key === 'date') {
+                const dateA = new Date(a.date || 0).getTime();
+                const dateB = new Date(b.date || 0).getTime();
+                return dir === 'asc' ? dateA - dateB : dateB - dateA;
+            }
+            // ------------------------------------
             let valA = GraphManager.getRating(a, key) || 0;
             let valB = GraphManager.getRating(b, key) || 0;
             return dir === 'asc' ? valA - valB : valB - valA;
@@ -700,11 +720,28 @@
     select.addEventListener('change', (e) => {
         const val = e.target.value;
         if(!val) return;
-        renderTable(val); GraphManager.draw(val); DistributionManager.draw(val);
+        
+        renderTable(val); 
+        
+        // --- MODIFIED: Prevent Charts Breaking on Date Sort ---
+        // If sorting by date, force the charts to use 'overall' ratings
+        // otherwise they try to plot "date" as a score and fail.
+        let chartSort = val.startsWith('date') ? 'overall-desc' : val;
+        // ----------------------------------------------------
+
+        GraphManager.draw(chartSort); 
+        DistributionManager.draw(chartSort);
     });
-    const defaultSort = 'overall-desc';
+
+    // --- MODIFIED: New Default Sort ---
+    const defaultSort = 'date-desc'; 
     select.value = defaultSort; 
-    renderTable(defaultSort); GraphManager.draw(defaultSort); DistributionManager.draw(defaultSort);
+    
+    // Logic to handle initial chart draw
+    renderTable(defaultSort); 
+    GraphManager.draw('overall-desc'); // Force overall for initial date sort
+    DistributionManager.draw('overall-desc');
+    // ----------------------------------
 
 </script>     
         </div>

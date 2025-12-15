@@ -1949,80 +1949,82 @@
 				</tr>
 			</tbody>
 		</table>
-		<div>
-			<script>
-				/**
-				 * Exports a JavaScript object as a downloaded JSON file.
-				 * * @param {object} data - The JavaScript object to export.
-				 * @param {string} [filename='data.json'] - The desired name for the downloaded file.
-				 */
-				function downloadJson(data, filename = 'data.json') {
-					if (typeof data !== 'object' || data === null) {
-						console.error("Invalid data provided. Must be a non-null object.");
-						return;
-					}
 
-					try {
-						// 1. Convert the object to a JSON string
-						const jsonString = JSON.stringify(data, null, 2); // 'null, 2' formats the JSON nicely
+<div>
+    <script>
+        /**
+         * Exports a JavaScript object as a downloaded JSON file.
+         * @param {object} data - The JavaScript object to export.
+         * @param {string} [filename='data.json'] - The desired name for the downloaded file.
+         */
+        function downloadJson(data, filename = 'data.json') {
+            if (typeof data !== 'object' || data === null) {
+                console.error("Invalid data provided. Must be a non-null object.");
+                return;
+            }
 
-						// 2. Create a Blob containing the JSON data
-						const blob = new Blob([jsonString], {type: 'application/json'});
+            try {
+                // ... (downloadJson function body is unchanged)
+                const jsonString = JSON.stringify(data, null, 2);
+                const blob = new Blob([jsonString], {type: 'application/json'});
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
 
-						// 3. Create a temporary URL for the Blob
-						const url = URL.createObjectURL(blob);
+                document.body.appendChild(a);
+                a.click();
 
-						// 4. Create a temporary <a> element
-						const a = document.createElement('a');
-						a.href = url;
-						a.download = filename; // Set the filename
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
 
-						// 5. Simulate a click to trigger the download
-						document.body.appendChild(a);
-						a.click();
+                console.log(`Successfully downloaded file: ${filename}`);
 
-						// 6. Clean up the temporary URL and element
-						document.body.removeChild(a);
-						URL.revokeObjectURL(url);
+            } catch (error) {
+                console.error("Failed to generate or download JSON file:", error);
+            }
+        }
+    </script>
+    <form>
+        <div>
+            <label>download unprocesed messages</label>
+            <input type="button" value="download json" onclick="
+                (async () => { // Corrected: wrapped in async function
+                    console.log('getting all data');
+                    downloadJson(await window.monitorMessages.GetAndReturnUnprocessedMessages(), `unprocessedMessages-${Date.now()}.json`)
+                })();
+            ">
+        </div>
+        <div>
+            <label>download processed messages</label>
+            <input type="button" value="download json" onclick="
+                (async () => { // Corrected: wrapped in async function
+                    console.log('getting all data');
+                    downloadJson(await window.monitorMessages.GetAndReturnProcessedMessages(), `processedMessages-${Date.now()}.json`)
+                })();
+            ">
+        </div>
+        <div>
+            <label>download user data</label>
+            <input type="button" value="download json" onclick="
+                (async () => { // Corrected: wrapped in async function
+                    console.log('getting all data');
+                    downloadJson(await window.monitorMessages.GetAndReturnUsers(), `userData-${Date.now()}.json`)
+                })();
+            ">
+        </div>
+        <div>
+            <label>download all data</label>
+            <input type="button" value="download json" onclick="
+                (async () => { // Corrected: wrapped in async function
+                    console.log('getting all data');
+                    downloadJson(await window.monitorMessages.GetAndReturnUsers(), `userData-${Date.now()}.json`);
+                    downloadJson(await window.monitorMessages.GetAndReturnProcessedMessages(), `processedMessages-${Date.now()}.json`);
+                    downloadJson(await window.monitorMessages.GetAndReturnUnprocessedMessages(), `unprocessedMessages-${Date.now()}.json`);
+                })();
+            ">
+        </div>
+    </form>
+</div>
 
-						console.log(`Successfully downloaded file: ${filename}`);
-
-					} catch (error) {
-						console.error("Failed to generate or download JSON file:", error);
-					}
-				}
-			</script>
-			<form>
-				<div>
-					<label>download unprocesed messages</label>
-					<input type="button" value="download json" onclick="
-							console.log('getting all data');
-							downloadJson(window.monitorMessages.GetAndReturnUnprocessedMessages(), `unprocessedMessages-${Date.now()}.json`)
-						">
-				</div>
-				<div>
-					<label>download processed messages</label>
-					<input type="button" value="download json" onclick="
-							console.log('getting all data');
-							downloadJson(window.monitorMessages.GetAndReturnProcessedMessages(), `processedMessages-${Date.now()}.json`)
-						">
-				</div>
-				<div>
-					<label>download user data</label>
-					<input type="button" value="download json" onclick="
-							console.log('getting all data');
-							downloadJson(window.monitorMessages.GetAndReturnUsers(), `userData-${Date.now()}.json`)
-						">
-				</div>
-				<div>
-					<label>download all data</label>
-					<input type="button" value="download json" onclick="
-							console.log('getting all data');
-							downloadJson(window.monitorMessages.GetAndReturnUsers(), `unprocessedMessages-${Date.now()}.json`);
-							downloadJson(window.monitorMessages.GetAndReturnProcessedMessages(), `processedMessages-${Date.now()}.json`);
-							downloadJson(window.monitorMessages.GetAndReturnUnprocessedMessages(), `userData-${Date.now()}.json`);
-						">
-				</div>
-			</form>
-		</div>
 </body>

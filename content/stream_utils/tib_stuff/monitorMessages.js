@@ -55,7 +55,7 @@ export default class MonitorMessages {
 
 // tldr: this is largely ment to live as state, with functions used to monitor
 // state
-//  VARS private messages should be treated as static.
+// VARS private messages should be treated as static.
 #bannedAtTemplate = {
   datetime : "", unbannedAt : [], bannAppeals : [],
 }
@@ -126,7 +126,8 @@ async GetAndReturnUsers(){return this.#users;
 /**
  * @returns {JSON}
  */
-async GetAndReturnUnprocessedMessages(){return this.#unprocessed_queue;
+async GetAndReturnUnprocessedMessages(){
+	return this.#unprocessed_queue;
 }
 #messages_queue = [];
 /**
@@ -173,6 +174,25 @@ async GetAndReturnProcessedMessages(){return this.#messages_queue;
 }
 
 #commands = [ // only add commands that are implimented
+	{
+		template_version: 1,
+		command: "rank",
+		flags: [
+			{
+				flag: ['d'],
+				value: 1,
+				description: "for people to add/update their rankings on a game",
+				range: { min: 0.1, max: 10 }
+			},
+		],
+		func: '', //function to call when triggered
+		AuthNeeded: { 
+			owner: false,
+			admin: false,
+			mod: false,
+			trused: false
+		}
+	},
 	{
 		template_version: 1,
 		command: "clip",
@@ -231,12 +251,6 @@ async GetAndReturnProcessedMessages(){return this.#messages_queue;
 				description: "modifys the voice of the tts message",
 				range: { min: 0, max: 180 }
 			},
-			{
-				flag: ["read"],
-				value: false,
-				description: "an internal flag used to mark if a message is read.",
-				range: {min: 0, max: 1}
-			}
 		],
 		AuthNeeded: { 
 			owner: false,
@@ -247,6 +261,7 @@ async GetAndReturnProcessedMessages(){return this.#messages_queue;
 	},
 ]
 
+// ⭐️ FIX: Removed the 'state: {}' object from the template to prevent all new messages from sharing the same reference.
 #message_template = {
 	template_version: 1,
 	authorName: "",
@@ -259,6 +274,7 @@ async GetAndReturnProcessedMessages(){return this.#messages_queue;
 	rawMessage: "",
 	score: "",
 };
+
 #clip_queue = [];
 	// NOTE: Assuming this function is part of a class/module where
 	config = {
@@ -279,31 +295,18 @@ async GetAndReturnProcessedMessages(){return this.#messages_queue;
 	  },
 	}
 
-                /**
-                 * Helper: Parses a raw string (e.g., "!tts -r 2.0 Hello World")
-                 * Identifies commands from #commands, extracts flags, and
-                 * returns clean text.
-                 */
-/**
- * Helper: Parses a raw string (e.g., "!tts -r 2.0 Hello World")
- * Identifies commands from #commands, extracts flags, and
- * returns clean text.
- */
+
+
 _parseCommandString(rawText) {
     const result = {foundCommands : [], cleanText : rawText};
 
-    if (!rawText.startsWith('!'))
-        return result;
+    if (!rawText.startsWith('!')) return result;
 
     const tokens = rawText.split(/\s+/);
-    if (tokens.length == 0)
-        return result;
+    if (tokens.length == 0) return result;
 
-    const potentialCommandName =
-        tokens[0].substring(1).toLowerCase();
-
-    const commandConfig = this.#commands.find(
-        c => c.command == potentialCommandName);
+    const potentialCommandName = tokens[0].substring(1).toLowerCase();
+    const commandConfig = this.#commands.find(c => c.command == potentialCommandName);
 
     if (commandConfig) {
         const commandName = commandConfig.command;
@@ -314,43 +317,31 @@ _parseCommandString(rawText) {
             params : {}
         };
 
-        // --- PHASE 1: Parse provided flags from the message ---
+        // --- PHASE 1: Parse provided flags ---
         let messageStartIndex = 1;
-        
         for (let i = 1; i < tokens.length; i++) {
             const token = tokens[i];
-
             if (token.startsWith('-')) {
                 const flagKey = token.substring(1); 
-
-                const flagDef = commandConfig.flags.find(
-                    f => f.flag.includes(flagKey));
+                const flagDef = commandConfig.flags.find(f => f.flag.includes(flagKey));
 
                 if (flagDef) {
                     const flagAlias = flagDef.flag[0]; 
                     const valueToken = tokens[i + 1];
-                    
-                    const isNumericFlag = typeof flagDef.value === 'number';
                     let val = null;
+                    const isNumericFlag = typeof flagDef.value === 'number';
 
                     if (isNumericFlag) {
-                        if (valueToken && !isNaN(parseFloat(valueToken))) {
-                            val = parseFloat(valueToken);
-                        }
+                        if (valueToken && !isNaN(parseFloat(valueToken))) val = parseFloat(valueToken);
                     } else { 
-                        if (valueToken) {
-                            val = valueToken;
-                        }
+                        if (valueToken) val = valueToken;
                     }
                     
                     if (val !== null) {
                         if (isNumericFlag && flagDef.range) {
-                            val = Math.max(flagDef.range.min,
-                                           Math.min(flagDef.range.max, val));
+                            val = Math.max(flagDef.range.min, Math.min(flagDef.range.max, val));
                         }
-
                         commandData.params[flagAlias] = val;
-
                         i++;
                         messageStartIndex = i + 1;
                     }
@@ -361,40 +352,39 @@ _parseCommandString(rawText) {
             }
         }
 
-        // --- PHASE 2: Apply defaults for missing flags ---
+        // --- PHASE 2: Apply defaults ---
         commandConfig.flags.forEach(flagDef => {
             const flagAlias = flagDef.flag[0];
-            
             if (commandData.params[flagAlias] === undefined) {
                 const defaultValue = this._getCommandDefault(commandName, flagAlias);
-                
-                if (defaultValue !== null) {
-                    commandData.params[flagAlias] = defaultValue;
-                }
+                if (defaultValue !== null) commandData.params[flagAlias] = defaultValue;
             }
         });
 
-        // Reconstruct the message text minus the command and flags
         const actualMessageParts = tokens.slice(messageStartIndex);
         result.cleanText = actualMessageParts.join(" ");
         
-        // ⭐️ CRITICAL FIX: Bind the execution function to correctly pass all three arguments.
-        commandData.func = async () => {
-            if (typeof commandData._rawFunc === 'function') {
+        // ⭐️ UPDATE: We just prepare the function here. 
+        // We cannot bind the 'messageObject' yet because it doesn't exist.
+        // The binding will happen in the processor or we pass it dynamically.
+        // For now, let's keep it simple: The function expects (message, flags, messageState).
+        commandData.func = async (injectedState) => {
+             if (typeof commandData._rawFunc === 'function') {
                 await commandData._rawFunc.call(
                     this, 
-                    result.cleanText,   
-                    commandData.params, 
-                    commandData         // Passed as the third argument!
+                    result.cleanText, 
+                    commandData.params,
+                    injectedState // This will be passed when called
                 );
             }
         };
 
         result.foundCommands.push(commandData);
     }
-
     return result;
 }
+
+
 
                 /**
                  * Specific processor for YouTube API v3 messages.
@@ -407,7 +397,10 @@ _parseCommandString(rawText) {
 
                   // 1. Initialize the new processed message object
                   const newMessage = {
-                    ... this.#message_template
+                    ... this.#message_template,
+                    // ⭐️ CRITICAL FIX: Initialize 'state' with a NEW object literal 
+                    // to prevent reference sharing (state pollution).
+                    state: {} 
                   }; // Shallow copy template
 
                   // 2. Map basic metadata
@@ -447,62 +440,63 @@ _parseCommandString(rawText) {
 async ProcessUnprocessedMessagesQueue(maxAmount = 50) {
     let i = 0;
     while (this.#unprocessed_queue.length > 0 && i < maxAmount) {
-        // Take the first item (FIFO)
         const currentItem = this.#unprocessed_queue.shift();
 
         try {
             let processedResult = null;
-
+            // Route to platform processor
             switch (String(`${currentItem.platform}_v${currentItem.apiVersion}`).toLowerCase()) {
                 case 'youtube_v3':
-                    // Assume ProcessYouTubeV3 returns the message object 
                     processedResult = await this.ProcessYouTubeV3(currentItem);
                     break;
                 default:
                     console.warn(`No processor found for ${currentItem.platform} v${currentItem.apiVersion}`);
-                    currentItem.failedProcessingAt = Date.now();
                     break;
             }
 
             if (processedResult) {
                 const messageText = processedResult.processedMessage;
+                
+                // Initialize state object if missing (should not happen with fix)
+                if (!processedResult.state) processedResult.state = {};
 
-                // ⭐️ CORRECTED STEP: Iterate commands, perform lookup, and bind the function
+                // Process commands if they exist
                 if (processedResult.commands && processedResult.commands.length > 0) {
+                    
+                    let hasTtsCommand = false;
+
+                    // Bind all commands with state
                     processedResult.commands.forEach(cmd => {
-                        
-                        // 1. LOOKUP: Find the original command definition object using the CORRECT property: this.#commands
                         const commandDefinition = this.#commands.find(
                             def => def.command === cmd.command
                         );
+                        if (!commandDefinition || typeof commandDefinition.func !== 'function') return;
 
-                        if (!commandDefinition) {
-                            console.error(`Unknown command: '${cmd.command}'. Cannot bind function.`);
-                            return; 
-                        }
-
-                        // 2. EXTRACT: Get the original, unbound function reference (e.g., this.CallTts)
                         const originalFuncRef = commandDefinition.func; 
                         const params = cmd.params;
                         
-                        // Safety check
-                        if (typeof originalFuncRef !== 'function') {
-                            console.error(`Command definition for '${cmd.command}' is invalid. 'func' is not a callable function.`);
-                            return; 
+                        // ⭐️ CRITICAL: Initialize ttsHasRead if it's a TTS command
+                        if (cmd.command === 'tts') {
+                            hasTtsCommand = true;
+                            // Initialize ttsHasRead only if it's a tts command
+                            processedResult.state.ttsHasRead = false;
                         }
                         
-                        // 3. BIND: Overwrite cmd.func with the new zero-argument closure.
-                        // This closure is now ready to be called via cmd.func()
-                        cmd.func = () => originalFuncRef.call(this, messageText, params); 
+                        // BIND: Overwrite cmd.func, passing processedResult.state
+                        // The bound function will call CallTts(messageText, params, processedResult.state)
+                        cmd.func = () => originalFuncRef.call(this, messageText, params, processedResult.state); 
                     });
-                }
 
+                    // ⭐️ NEW: Only add ttsHasRead if there was an actual TTS command found.
+                    // (This should be redundant due to the check inside the loop, but is a fail-safe)
+                    if (hasTtsCommand && processedResult.state.ttsHasRead === undefined) {
+                        processedResult.state.ttsHasRead = false;
+                    }
+                }
                 this.#messages_queue.push(processedResult);
             }
-
         } catch (error) {
             console.error("Error processing message:", error);
-            currentItem.failedProcessingAt = Date.now();
         }
         i = ++i;
     }
@@ -615,294 +609,236 @@ async MonitorLoop() {
 
                 async MonitoringStop() {
 		  this.GetMessagesTimer.Stop(); 
-                  this.GetMessagesTimer.RemoveTimeoutListener(MonitorLoop);
+                  this.GetMessagesTimer.RemoveTimeoutListener(this.MonitorLoop);
                 }
 
 
 
-// Add this private variable to the top of your class to hold the timer instance:
+/**
+ * Internal helper: Finds the oldest message with a TTS command that has not been read.
+ * CRITICAL: This only processes messages that have BOTH a TTS command AND ttsHasRead === false
+ * * ⭐️ FIX: Changed from .find() to a .filter() and then select the first one,
+ * which is effectively the oldest if the queue is FIFO chronological. Most importantly,
+ * it now awaits the execution before completing the function, preventing a new 
+ * call of AutoTtsStart/loop from executing on a new message before the previous one is finished.
+ */
+async _playOldestUnreadTts() {
+    if (!this.#messages_queue || this.#messages_queue.length === 0) {
+        console.log("Auto TTS: Message queue is empty.");
+        return;
+    }
+
+    console.log(`Auto TTS: Checking ${this.#messages_queue.length} messages in queue...`);
+
+    // Find the first message (oldest) that has BOTH a TTS command AND is unread
+    const messageObj = this.#messages_queue.find(msg => {
+        // 1. Must have commands array
+        if (!Array.isArray(msg.commands) || msg.commands.length === 0) {
+            return false;
+        }
+        
+        // 2. Must have a TTS command
+        const ttsCmd = msg.commands.find(c => c.command === 'tts');
+        if (!ttsCmd) {
+            return false;
+        }
+
+        // 3. Must have state object with ttsHasRead property
+        // The processing loop guarantees this for TTS commands
+        if (!msg.state || !msg.state.hasOwnProperty('ttsHasRead')) {
+            // This case should ideally not happen if processing is correct.
+            console.warn("Auto TTS: Found TTS command without state property. Forcing state init.");
+            if (!msg.state) msg.state = {};
+            msg.state.ttsHasRead = false; // Initialize and check again
+        }
+
+        // 4. ttsHasRead must be explicitly false
+        const isUnread = msg.state.ttsHasRead === false;
+        
+        if (isUnread) {
+            console.log(`Auto TTS: Found unread TTS message from ${msg.authorName}: "${msg.processedMessage}"`);
+        }
+        
+        return isUnread;
+    });
+
+    // If a valid unread TTS message is found, execute it
+    if (messageObj) {
+        const ttsCmd = messageObj.commands.find(c => c.command === 'tts');
+        
+        if (ttsCmd && typeof ttsCmd.func === 'function') {
+            console.log(`Auto TTS: Reading message from ${messageObj.authorName}: "${messageObj.processedMessage}"`);
+            
+            try {
+                // ⭐️ CRITICAL: AWAIT the execution. This ensures the next
+                // loop only starts after the audio is complete and the state is set.
+                await ttsCmd.func(); 
+                console.log("Auto TTS: Message read successfully. State should now be ttsHasRead=true");
+            } catch (error) {
+                console.error("Auto TTS execution error:", error);
+                // Mark as read on failure to prevent infinite retries
+                if (!messageObj.state) {
+                    messageObj.state = {};
+                }
+                messageObj.state.ttsHasRead = true;
+            }
+        } else {
+            console.warn("Auto TTS: Found 'tts' command but function is missing/malformed. Marking as read.");
+            if (!messageObj.state) {
+                messageObj.state = {};
+            }
+            messageObj.state.ttsHasRead = true;
+        }
+    } else {
+        console.log("Auto TTS: No unread TTS messages found in queue.");
+    }
+}
+
+
+/**
+ * Private member to hold the timer instance.
+ */
 #autoTtsTimer = null; 
+
+/**
+ * Starts the Auto TTS system with immediate execution and periodic checks.
+ */
 async AutoTtsStart() {
     console.log("Starting Auto TTS System...");
 
+    // 1. Stop any existing timer for clean start
     if (this.#autoTtsTimer) {
-        await this.AutoTtsStop();
+        this.AutoTtsStop();
     }
 
-    // Instantiate IntTimer with the callback configured as a timeout listener
+    // 2. Execute immediately on start (test/trigger)
+    console.log("Auto TTS: Executing immediate initial run...");
+    await this._playOldestUnreadTts(); 
+    
+    const intervalSeconds = 10; 
+
+    // 3. Setup the loop timer
     this.#autoTtsTimer = new IntTimer({
         name: "AutoTTS_Loop",
-        timeoutDuration: 20, // 20 seconds
-        timeoutListeners: [ 
-            async () => { await this._playOldestUnreadTts(); } 
+        timeoutDuration: intervalSeconds,
+        maxDuration: 0,      // 0 = infinite looping
+        autoStart: false,
+        debugMode: false,
+
+        // Action: Called when timer completes its cycle
+        timeoutListeners: [
+            async () => {
+                console.log(`Auto TTS: Cycle complete. Checking for TTS messages after ${intervalSeconds}s.`);
+                // ⭐️ CRITICAL: await the function call in the listener as well
+                await this._playOldestUnreadTts(); 
+            }
         ],
-        autoStart: true,
-        // Set debugMode to true to see 'tick' logs
-        debugMode: false 
+
+        // Logging: Called every second
+        tickListeners: [
+            () => {
+                const currentElapsed = this.#autoTtsTimer.time || 0;
+                const remaining = Math.max(0, intervalSeconds - currentElapsed);
+                console.log(`Auto TTS: Next check in ${remaining}s`);
+            }
+        ]
     });
 
-    if (this.#autoTtsTimer.alive !== true) {
-        this.#autoTtsTimer.Start();
-    }
+    // 4. Start the loop
+    this.#autoTtsTimer.Start();
+    console.log(`Auto TTS: System running. Will check for new TTS messages every ${intervalSeconds} seconds.`);
 }
 
-async AutoTtsStop() {
+/**
+ * Stops the Auto TTS system.
+ */
+AutoTtsStop() {
     if (this.#autoTtsTimer) {
         console.log("Stopping Auto TTS System...");
-        await this.#autoTtsTimer.Stop(); // Calls the Stop method in IntTimer
+        this.#autoTtsTimer.Stop(); 
         this.#autoTtsTimer = null;
-    }
-}
-
-/**
- * Internal helper to find and play the oldest unread TTS message.
- * This is where the 'read' flag is EVALUATED.
- */
-async _playOldestUnreadTts() {
-    if (this.#messages_queue.length === 0) return;
-
-    for (const messageObj of this.#messages_queue) {
-        
-        if (!messageObj.commands || messageObj.commands.length === 0) continue;
-
-        // PROTOCOL: Access the commands and scan for the TTS command
-        const ttsCmd = messageObj.commands.find(c => c.command === 'tts');
-
-        // PROTOCOL: Check the 'read' flag on the command's parameters
-        if (ttsCmd && !ttsCmd.params.read) {
-            
-            try {
-                // Execute the bound function. 
-                // This call will execute CallTts() and MARK THE MESSAGE AS READ.
-                if (typeof ttsCmd.func === 'function') {
-                    await ttsCmd.func();
-                } else {
-                    console.warn("AutoTts: TTS command found but function is missing.");
-                }
-
-                // Play only ONE message per cycle
-                return; 
-
-            } catch (error) {
-                console.error("AutoTts execution error, skipping message:", error);
-            }
-        }
+        console.log("Auto TTS: System stopped.");
+    } else {
+        console.log("Auto TTS: No active system to stop.");
     }
 }
 
 
-                async VerifyConfig() {
-                  try {
-                    await this.yt.VerifyConfig()
-                  } catch (err) {
-                    throw new Error("could not verify config:\n" + err);
-                  }
-                }
-
 /**
- * Fetches the latest batch of messages from the YouTube Live Chat API (v3),
- * updates the polling token, and returns the messages parsed into the standard template.
- * * @returns {Array<Object>} An array of new messages formatted according to the unprocessed template.
+ * Executes the Text-to-Speech command using the message and flags.
+ * @param {string} message The clean message text to speak.
+ * @param {Object} flags The command parameters/flags.
+ * @param {Object} messageState - Reference to the message.state object (messageObj.state)
+ * @returns {Promise<void>}
  */
-
-                /**
-                 * @returns {null}
-                 */
-		// TODO: this for when i add more platforms
-                async GetMessages() {
-                  let messageLists = new Promise.all([this.yt.GetMessages])
-                                         .then((values) => {
-
-                                                            });
-                }
-
-                sanitizeString(strang) {
-                  if (typeof strang != 'string') {
-                    throw new Error(
-                        "strang is not a string, UNEXPECTED DATA TYPE");
-                  }
-
-                  const miniscules = [
-                    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i',
-                    'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
-                    's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
-                  ];
-                  const caps = [
-                    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I',
-                    'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
-                    'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
-                  ];
-                  const numbers =
-                      [ '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' ];
-                  const specials = [
-                    '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '[', ']',
-                    '?', '/', '|', '.', ',', ':', ';'
-                  ];
-                  const valid_chars = miniscules + caps + numbers + specials;
-
-                  let matchFound = false;
-                  for (let i = 0; i < strang.length; ++i) {
-                    for (let j = 0; j < valid_chars.length; ++j) {
-                      if (strang[i] == valid_chars[j]) {
-                        matchFound = true; break;
-                      }
-                    }
-                    if (!matchFound) {
-                      strang[i] = '';
-                    }
-                  }
-                  return strang
-                }
-
-                async dispatchCommand(raw,
-                                      commandPrefix = this.config.flag.token) {
-
-                  // quick exit
-                  if (raw == '' || raw == undefined || raw == null) {
-                    throw new Error("MALFORMED INPUT, raw input is null");
-                  }
-
-                  if (!raw.startsWith(commandPrefix)) {
-                    return {message : raw};
-                  }
-                  let message = raw.slice(commandPrefix.length, raw.length);
-
-                  let ft = this.#flagsTemplate;
-                  /*
-                  ft.flag
-                  ft.range
-                  ft.value
-                  ft.description
-                  */
-                  const cmds = this.#commands;
-
-                  for (let i = 0; i < cmds.flags.length; ++i) {
-                    if (message.startsWith(smds.flags.flag)) {
-                    }
-                  }
-
-                  // 1. Isolate the message AFTER the token
-                  const messageAfterToken =
-                      raw.substring(commandPrefix.length).trim();
-
-                  let commandName = null;
-                  let argsStr = null;
-
-                  // 2. Iterate over the array to find a command match
-                  for (const command of SUPPORTED_COMMANDS) {
-                    // Create the full expected command string (e.g., "tts ")
-                    const commandString = command + ' ';
-
-                    // Check if the message starts with the command followed by
-                    // a space
-                    if (messageAfterToken.toLowerCase().startsWith(
-                            commandString)) {
-                      commandName = command;
-                      // The arguments are everything after the command and the
-                      // first space
-                      argsStr =
-                          messageAfterToken.substring(commandString.length)
-                              .trim();
-                      break; // Stop iteration once a command is found
-                    }
-
-                    // Also check for the case where the command is alone (e.g.,
-                    // "!prefixhelp")
-                    if (messageAfterToken.toLowerCase() == command) {
-                      commandName = command;
-                      argsStr = ""; // No arguments
-                      break;
-                    }
-                  }
-
-                  if (!commandName) {
-                    // Prefix used, but command is unrecognized
-                    return null;
-                  }
-
-                  // The rest of the logic remains the same:
-                  let parsedArgs;
-
-                  // 3. Use a SWITCH statement to determine which argument
-                  // parser to use
-                  switch (commandName) {
-                  case ('tts'):
-                    // Delegate complex argument/flag parsing to a dedicated
-                    // function
-                    return this.ProcessTtsMessage(message);
-                  case ('clip'):
-                  case ('help'):
-                    // For simple commands, just use the arguments string
-                    // parsedArgs = { flags: {}, message: argsStr };
-                    // break;
-
-                  default:
-                    return null;
-                  }
-                }
-
-/**
- * Executes the Text-to-Speech command using the message and flags 
- * passed directly from the command dispatcher.
- * * @param {string} message The clean message text to speak.
- * @param {Object} flags The command parameters/flags (e.g., { p: 1.5, r: 1.0, v: 2 }).
- * @returns {void}
- */
-async CallTts(message, flags, commandObject) {
-    // New third argument: commandObject (This is the object we need to modify)
+async CallTts(message, flags, messageState) { 
+    console.log("CallTts: Starting TTS for message:", message);
+    console.log("CallTts: messageState received:", messageState);
     
-    if (!message) {
-        throw new Error("could not call tts, message is empty after processing.");
+    if (!message || message.trim() === "") {
+        // ⭐️ FIX: Always set state to read on empty message to prevent looping
+        if (messageState) messageState.ttsHasRead = true;
+        throw new Error("TTS message is empty.");
     }
 
     const getVoices = () => new Promise((resolve) => {
-        let v = window.speechSynthesis.getVoices();
-        if (v && v.length)
-            return resolve(v);
-        const onChange = () => {
-            window.speechSynthesis.removeEventListener(
-                'voiceschanged', onChange);
-            resolve(window.speechSynthesis.getVoices());
-        };
-        window.speechSynthesis.addEventListener('voiceschanged', onChange);
-        setTimeout(() => resolve(window.speechSynthesis.getVoices()), 250);
+        let voices = window.speechSynthesis.getVoices();
+        if (voices.length > 0) {
+            resolve(voices);
+        } else {
+            window.speechSynthesis.onvoiceschanged = () => {
+                voices = window.speechSynthesis.getVoices();
+                resolve(voices);
+            };
+        }
     });
 
     const voices = await getVoices();
     const utter = new SpeechSynthesisUtterance(message);
 
-    // 3. Apply Flags (Using the extracted `flags` object)
-
-    let desiredVoice = null;
-    
-    // Check for 'v' (voice) flag
-    if (flags.v) {
-        const maybeIdx = Number(flags.v);
-        
-        if (!Number.isNaN(maybeIdx) && voices[maybeIdx]) {
-            desiredVoice = voices[maybeIdx];
-        } else {
-            desiredVoice = voices.find(
-                v => v.name == flags.v || v.lang == flags.v);
-        }
-    }
-    if (desiredVoice)
-        utter.voice = desiredVoice;
-
-    // Apply 'r' (rate) and 'p' (pitch) flags
+    // Apply flags
     utter.rate = Number(flags.r) || 1; 
     utter.pitch = Number(flags.p) || 1;
-
-    // 4. Speak
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak(utter);
-
-    // ⭐️ CRITICAL FIX: Mark the message as read after execution.
-    // The commandObject argument *is* the command in the queue that holds the state.
-    if (commandObject && commandObject.params) {
-        commandObject.params.read = true; // SETS THE FLAG TRUE
+    
+    // Apply voice if specified
+    if (flags.v !== undefined && voices[flags.v]) {
+        utter.voice = voices[flags.v];
     }
+
+    console.log("CallTts: Starting speech synthesis...");
+
+    // ⭐️ CRITICAL: Wrap speak in Promise and wait for completion
+    return new Promise((resolve, reject) => {
+        utter.onend = () => {
+            console.log("CallTts: Speech completed successfully.");
+            // ⭐️ Set ttsHasRead flag when speech completes
+            if (messageState) {
+                console.log("CallTts: Setting ttsHasRead = true");
+                messageState.ttsHasRead = true;
+                console.log("CallTts: messageState after update:", messageState);
+            } else {
+                console.error("CallTts: WARNING - messageState is null/undefined! Cannot update read status.");
+            }
+            resolve();
+        };
+
+        utter.onerror = (event) => {
+            console.error("CallTts: TTS error:", event);
+            // Set flag on error to prevent re-reading failing messages
+            if (messageState) {
+                console.log("CallTts: Error occurred, setting ttsHasRead = true anyway");
+                messageState.ttsHasRead = true; 
+            }
+            reject(new Error(`TTS failed: ${event.error}`));
+        };
+        
+        // Cancel any ongoing speech and start new one
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(utter);
+        console.log("CallTts: Speech queued");
+    });
 }
+
 
 
                 ProcessTtsMessage(raw) {
@@ -953,12 +889,10 @@ async CallTts(message, flags, commandObject) {
                   return {flags, message : msgParts.join(" ")};
                 }
 
-// Inside MessageProcessor class...
-
 /**
  * Parses a single raw YouTube Live Chat Message object and adds it to the 
  * standardized unprocessed message template.
- * * @param {Object} rawMessage A single raw message object from the YouTube API 'items' array.
+ * @param {Object} rawMessage A single raw message object from the YouTube API 'items' array.
  * @returns {void}
  */
 async ParseAndAddYouTubeV3MessagesToUnprocessedQueue(rawMessage) {
@@ -1171,15 +1105,6 @@ async ParseAndAddYouTubeV3MessagesToUnprocessedQueue(rawMessage) {
                   };
 
                   const CheckTrigrams = async(message) => {
-                    // ⭐️ CRITICAL FIX: Ensure #trigrams data is loaded before
-                    // accessing it
-                    /*
-                    if (!Array.isArray(this.#trigrams) || this.#trigrams.length
-                    === 0) { console.warn("Trigrams data is not yet loaded or is
-                    empty. Skipping CheckTrigrams."); return 0;
-                    }
-                    */
-
                     let score = 0;
                     try {
                       const words = message.trim().toLowerCase().split(/\s + /);
@@ -1189,8 +1114,6 @@ async ParseAndAddYouTubeV3MessagesToUnprocessedQueue(rawMessage) {
                           const currentTrigram = word.slice(0, 3);
                           let validTrigramFound = false;
 
-                          // This is now safe: 'this' context is correct and
-                          // data is checked
                           if (trigrams.includes(currentTrigram)) {
                             score += 50;
                             validTrigramFound = true;
@@ -1205,7 +1128,6 @@ async ParseAndAddYouTubeV3MessagesToUnprocessedQueue(rawMessage) {
                       return score;
                     } catch (err) {
                       console.error("Original error in CheckTrigrams:", err);
-                      // Re-throw the application error
                       throw new Error("Error processing trigrams logic.");
                     }
                   };
@@ -1265,8 +1187,6 @@ async ParseAndAddYouTubeV3MessagesToUnprocessedQueue(rawMessage) {
                       if (!chunk.includes(" ")) {
                         score -= 20;
                       }
-                      // The original logic had no else block, so we maintain
-                      // that
                     }
                     console.log(`score CheckForSpaceInChunk : ${score}`);
                     return score;
@@ -1278,7 +1198,7 @@ async ParseAndAddYouTubeV3MessagesToUnprocessedQueue(rawMessage) {
 
                   const funcs = [
                     CheckPunctuation,
-                    CheckTrigrams, // ASYNC function
+                    CheckTrigrams,
                     CheckForRepeats,
                     CheckForCaps,
                     CheckForSpaces,
@@ -1288,15 +1208,12 @@ async ParseAndAddYouTubeV3MessagesToUnprocessedQueue(rawMessage) {
                   for (const func of funcs) {
                     let funcScore;
 
-                    // ⭐️ CRITICAL FIX: Await the async function to prevent
-                    // NaN/Promise error
                     if (func.constructor.name == 'AsyncFunction') {
                       funcScore = await func(message);
                     } else {
                       funcScore = func(message);
                     }
 
-                    // Add the returned numerical score
                     score += funcScore;
 
                     if (this.config.monitorMessages.debug == true) {
@@ -1312,9 +1229,9 @@ async ParseAndAddYouTubeV3MessagesToUnprocessedQueue(rawMessage) {
 /**
  * Renders the processed messages into a visual HTML table based on the provided
  * mock structure, styles, and pagination logic.
- * * NOTE: This function relies on the existence of `this.#messages_queue` 
+ * NOTE: This function relies on the existence of `this.#messages_queue` 
  * (array of processed message objects).
- * * @param {number} pageIndex - The current page of messages to display (0 is newest).
+ * @param {number} pageIndex - The current page of messages to display (0 is newest).
  * @param {number} itemsPerPage - Number of messages per page.
  * @returns {void}
  */
@@ -1372,9 +1289,8 @@ RenderMessagesTable(pageIndex = 0, itemsPerPage = 10) {
         }
         #${containerId} tr { background-color: #2a2a2a; color: white; }
         
-        /* Style for the new command buttons */
         .command-trigger-button {
-            background-color: #3873C7; /* A medium blue for action */
+            background-color: #3873C7;
             color: white;
             border: none;
             padding: 4px 8px;
@@ -1392,7 +1308,6 @@ RenderMessagesTable(pageIndex = 0, itemsPerPage = 10) {
     // 3. Create Table Structure
     const table = document.createElement('table');
     
-    // Create the header
     const thead = document.createElement('thead');
     thead.innerHTML = `
         <tr>
@@ -1420,7 +1335,6 @@ RenderMessagesTable(pageIndex = 0, itemsPerPage = 10) {
     pageItems.forEach(msg => {
         const tr = document.createElement('tr');
         
-        // --- Dynamic Color Logic ---
         let platformColorVar = '--youtube-color'; 
         if (msg.platform?.toLowerCase().includes('twitch')) platformColorVar = '--twitch-color';
 
@@ -1444,7 +1358,6 @@ RenderMessagesTable(pageIndex = 0, itemsPerPage = 10) {
             box-shadow: 0 1px 3px rgba(0,0,0,0.12);
         `;
 
-        // --- Time Ago Logic (First Seen) ---
         const now = Date.now();
         const firstSeenTime = msg.date || msg.dateTime || now; 
         const diffSeconds = Math.floor((now - firstSeenTime) / 1000);
@@ -1457,8 +1370,6 @@ RenderMessagesTable(pageIndex = 0, itemsPerPage = 10) {
         else if (diffSeconds > 60) timeString = `${Math.floor(diffSeconds / 60)}min ago`;
         else if (diffSeconds > 10) timeString = `${diffSeconds}s ago`;
 
-
-        // --- User Roles for Profile Gradient ---
         const authorDetails = msg.rawMessage?.data?.authorDetails;
         const isOwner = authorDetails?.isChatOwner;
         const isMod = authorDetails?.isChatModerator;
@@ -1472,7 +1383,6 @@ RenderMessagesTable(pageIndex = 0, itemsPerPage = 10) {
         
         const profileGradient = `radial-gradient(ellipse closest-side, ${gradientStops.join(', ')})`;
 
-        // --- Command Cell Content Generation ---
         const commandCellDiv = document.createElement('div');
         commandCellDiv.style.cssText = "display:flex; flex-direction:column; font-size: 0.9em; color: white; text-shadow: 1px 1px 1px black;";
 
@@ -1485,20 +1395,17 @@ RenderMessagesTable(pageIndex = 0, itemsPerPage = 10) {
                     <div style="font-size:0.8em; opacity:0.9; overflow-wrap:break-word;">${JSON.stringify(cmd.params)}</div>
                 `;
                 
-                // ⭐️ NEW: Add a button to call the bound function
                 if (typeof cmd.func === 'function') {
                     const funcButton = document.createElement('button');
                     funcButton.innerText = `Run ${cmd.command}`;
                     funcButton.className = 'command-trigger-button';
                     
-                    // Bind the function to the button click event
-                    // We wrap it in an arrow function to ensure it runs asynchronously/safely
                     funcButton.onclick = async () => {
                         console.log(`Executing command: ${cmd.command} for message: ${msg.processedMessage}`);
                         try {
-                            await cmd.func();
-                            // Optional: Give visual feedback that the command ran
-                            funcButton.innerText = 'Run Success!';
+                            // Call the bound function which already has the state reference
+                            await cmd.func(); 
+                            funcButton.innerText = 'Success!';
                             funcButton.disabled = true;
                             setTimeout(() => {
                                 funcButton.innerText = `Run ${cmd.command}`;
@@ -1506,10 +1413,30 @@ RenderMessagesTable(pageIndex = 0, itemsPerPage = 10) {
                             }, 1500);
                         } catch (e) {
                             console.error(`Error running ${cmd.command}:`, e);
-                            funcButton.innerText = 'Run Error';
+                            funcButton.innerText = 'Error';
                         }
                     };
-                    cmdDiv.appendChild(funcButton);
+                    commandCellDiv.appendChild(funcButton);
+                    
+                    // Display current TTS state next to the button for debugging/UX
+                    if (cmd.command === 'tts') {
+                         const stateSpan = document.createElement('span');
+                         stateSpan.innerText = ` (Read: ${!!msg.state.ttsHasRead})`;
+                         stateSpan.style.color = msg.state.ttsHasRead ? '#7CFC00' : '#FFD700'; // Green if read, Yellow if unread
+                         cmdDiv.appendChild(stateSpan);
+
+                         // Check box for manual state change - useful for monitoring the fix
+                         const checkbox = document.createElement('input');
+                         checkbox.type = 'checkbox';
+                         checkbox.checked = !!msg.state.ttsHasRead;
+                         checkbox.onchange = (e) => {
+                             msg.state.ttsHasRead = e.target.checked;
+                             stateSpan.innerText = ` (Read: ${!!msg.state.ttsHasRead})`;
+                             stateSpan.style.color = msg.state.ttsHasRead ? '#7CFC00' : '#FFD700';
+                             console.log(`Manually set ttsHasRead for ${msg.authorName} to ${msg.state.ttsHasRead}`);
+                         };
+                         cmdDiv.prepend(checkbox);
+                    }
                 }
                 commandCellDiv.appendChild(cmdDiv);
             });
@@ -1517,8 +1444,6 @@ RenderMessagesTable(pageIndex = 0, itemsPerPage = 10) {
             commandCellDiv.innerHTML = '<span style="opacity:0.5;">-</span>';
         }
 
-
-        // --- Assemble the Row (Using existing HTML structure for user/message/controls) ---
         tr.innerHTML = `
             <td>
                 <a href="${authorDetails?.channelUrl || '#'}" target="_blank" style="text-decoration:none; color:inherit;">
@@ -1569,16 +1494,14 @@ RenderMessagesTable(pageIndex = 0, itemsPerPage = 10) {
             </td>
         `;
 
-        // Manually insert the command content into the command cell to preserve the onclick binding
         tr.querySelector('.command-cell').appendChild(commandCellDiv);
-
         tbody.appendChild(tr);
     });
 
     table.appendChild(tbody);
     container.appendChild(table);
 
-    // 6. Navigation Controls (unchanged)
+    // 6. Navigation Controls
     const navDiv = document.createElement('div');
     navDiv.style.cssText = "width:100%; display:flex; justify-content:center; margin-top: 10px;";
     
@@ -1627,25 +1550,21 @@ RenderMessagesTable(pageIndex = 0, itemsPerPage = 10) {
     fieldset.appendChild(btnReload); 
     
     navDiv.appendChild(fieldset);
-
     container.appendChild(navDiv);
 
-    // 7. FINAL APPENDING STEP
+    // 7. Final append
     const existingContainer = document.getElementById(containerId);
     if (!existingContainer) {
-        document.body.prepend(container); // Using appendChild for simplicity, but prepending is fine too
+        document.body.prepend(container);
     }
 }
 
 
 
 /**
- * Renders a settings form to manage default flag values for commands,
- * allowing users to test execution directly from the UI.
- * NOTE: The command must have a 'func' defined to be testable.
+ * Renders a settings form to manage default flag values for commands.
  */
 RenderDefaultCommandSettings() {
-    // 1. Setup container
     const containerId = "default_command_settings";
     let container = document.getElementById(containerId);
     if (!container) {
@@ -1671,30 +1590,24 @@ RenderDefaultCommandSettings() {
     container.appendChild(table);
     const tbody = document.getElementById('default_command_tbody');
 
-    // 2. Iterate over all defined commands
     this.#commands.forEach(commandDef => {
         const commandName = commandDef.command;
         const flags = commandDef.flags || [];
         const tr = document.createElement('tr');
         tr.style.borderBottom = '1px solid #444';
         
-        // Command Name Cell
         const nameTd = document.createElement('td');
         nameTd.style.padding = '10px';
         nameTd.innerHTML = `<strong>!${commandName}</strong>`;
         tr.appendChild(nameTd);
 
-        // Inputs Cell
         const inputsTd = document.createElement('td');
         inputsTd.style.padding = '10px';
         const formGroup = document.createElement('div');
         formGroup.style.cssText = "display: flex; flex-wrap: wrap; gap: 10px;";
 
-        let hasInputs = false;
-
-        // 3. Iterate over command flags and generate inputs
         flags.forEach(flagDef => {
-            const flagAlias = flagDef.flag[0]; // e.g., 'p'
+            const flagAlias = flagDef.flag[0];
             const inputId = `cmd-default-${commandName}-${flagAlias}`;
             const isNumeric = typeof flagDef.value === 'number';
 
@@ -1703,7 +1616,6 @@ RenderDefaultCommandSettings() {
 
             const label = document.createElement('label');
             label.htmlFor = inputId;
-            // Use the main flag alias and description
             label.innerText = `-${flagAlias.toUpperCase()}: ${flagDef.description.split(' ')[1] || 'Value'}`;
             label.title = flagDef.description;
             label.style.fontSize = '0.9em';
@@ -1725,19 +1637,16 @@ RenderDefaultCommandSettings() {
                 input.type = 'text'; 
             }
             
-            // Add a class for easy retrieval of all inputs for this command
             input.classList.add(`flag-input-${commandName}`);
 
             div.appendChild(label);
             div.appendChild(input);
             formGroup.appendChild(div);
-            hasInputs = true;
         });
 
         inputsTd.appendChild(formGroup);
         tr.appendChild(inputsTd);
 
-        // Action Cell
         const actionTd = document.createElement('td');
         actionTd.style.padding = '10px';
         
@@ -1746,12 +1655,10 @@ RenderDefaultCommandSettings() {
             runButton.innerText = `Run !${commandName}`;
             runButton.style.cssText = "background-color: #007bff; color: white; border: none; padding: 8px 15px; cursor: pointer; border-radius: 4px;";
             
-            // 4. Bind the function call to the button
             runButton.onclick = async () => {
                 runButton.disabled = true;
                 runButton.innerText = 'Running...';
                 
-                // Collect the current values from the form inputs for this command
                 const currentParams = {};
                 const inputs = document.querySelectorAll(`.flag-input-${commandName}`);
                 inputs.forEach(input => {
@@ -1762,14 +1669,10 @@ RenderDefaultCommandSettings() {
                     }
                 });
 
-                // A simple command call often includes a message. 
-                // Since this is a default settings test, we'll use a placeholder message.
                 const testMessage = `Testing command !${commandName} with UI defaults.`;
 
                 try {
-                    // Call the original function using .call to set the 'this' context, 
-                    // passing the test message and the collected parameters.
-                    await commandDef.func.call(this, testMessage, currentParams);
+                    await commandDef.func.call(this, testMessage, currentParams, {});
                     
                     runButton.innerText = 'Success!';
                     console.log(`Successfully executed !${commandName}:`, currentParams);
@@ -1797,26 +1700,181 @@ RenderDefaultCommandSettings() {
 
 /**
  * Helper to safely retrieve the current default value from the settings form.
- * @param {string} commandName 
- * @param {string} flagAlias 
- * @returns {string|number|null} The current input value, or null if not found.
  */
 _getCommandDefault(commandName, flagAlias) {
     const inputId = `cmd-default-${commandName}-${flagAlias}`;
     const input = document.getElementById(inputId);
     if (input) {
-        // If it's a number input, return the number value. Otherwise, return the string value.
         return input.type === 'number' ? parseFloat(input.value) : input.value;
     }
     return null;
 }
 
+                async VerifyConfig() {
+                  try {
+                    await this.yt.VerifyConfig()
+                  } catch (err) {
+                    throw new Error("could not verify config:\n" + err);
+                  }
+                }
 
+                async GetMessages() {
+                  let messageLists = new Promise.all([this.yt.GetMessages])
+                                         .then((values) => {
 
-                // RUN
+                                                            });
+                }
+
+                sanitizeString(strang) {
+                  if (typeof strang != 'string') {
+                    throw new Error(
+                        "strang is not a string, UNEXPECTED DATA TYPE");
+                  }
+
+                  const miniscules = [
+                    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i',
+                    'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
+                    's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
+                  ];
+                  const caps = [
+                    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I',
+                    'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
+                    'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
+                  ];
+                  const numbers =
+                      [ '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' ];
+
+const specials = [
+                    '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '[', ']',
+                    '?', '/', '|', '.', ',', ':', ';'
+                  ];
+                  const valid_chars = miniscules + caps + numbers + specials;
+
+                  let matchFound = false;
+                  for (let i = 0; i < strang.length; ++i) {
+                    for (let j = 0; j < valid_chars.length; ++j) {
+                      if (strang[i] == valid_chars[j]) {
+                        matchFound = true; break;
+                      }
+                    }
+                    if (!matchFound) {
+                      strang[i] = '';
+                    }
+                  }
+                  return strang
+                }
+
+                async dispatchCommand(raw,
+                                      commandPrefix = this.config.flag.token) {
+
+                  // quick exit
+                  if (raw == '' || raw == undefined || raw == null) {
+                    throw new Error("MALFORMED INPUT, raw input is null");
+                  }
+
+                  if (!raw.startsWith(commandPrefix)) {
+                    return {message : raw};
+                  }
+                  let message = raw.slice(commandPrefix.length, raw.length);
+
+                  let ft = this.#flagsTemplate;
+                  const cmds = this.#commands;
+
+                  for (let i = 0; i < cmds.flags.length; ++i) {
+                    if (message.startsWith(smds.flags.flag)) {
+                    }
+                  }
+
+                  const messageAfterToken =
+                      raw.substring(commandPrefix.length).trim();
+
+                  let commandName = null;
+                  let argsStr = null;
+
+                  for (const command of SUPPORTED_COMMANDS) {
+                    const commandString = command + ' ';
+
+                    if (messageAfterToken.toLowerCase().startsWith(
+                            commandString)) {
+                      commandName = command;
+                      argsStr =
+                          messageAfterToken.substring(commandString.length)
+                              .trim();
+                      break;
+                    }
+
+                    if (messageAfterToken.toLowerCase() == command) {
+                      commandName = command;
+                      argsStr = "";
+                      break;
+                    }
+                  }
+
+                  if (!commandName) {
+                    return null;
+                  }
+
+                  let parsedArgs;
+
+                  switch (commandName) {
+                  case ('tts'):
+                    return this.ProcessTtsMessage(message);
+                  case ('clip'):
+                  case ('help'):
+
+                  default:
+                    return null;
+                  }
+                }
+
+                ProcessTtsMessage(raw) {
+                  if (raw[0] != '!') {
+                    return null;
+                  }
+
+                  let command = this.#commandTemplate;
+                  command.flags = {
+                    p : flagsIn.p || this.#GEBI("ttsPitch")
+                    ?.value || this.#LSGI("ttsPitch") || "1",
+                    r
+                    : flagsIn.r || this.#GEBI("ttsRate")
+                    ?.value || this.#LSGI("ttsRate") || "1",
+                    v
+                    : flagsIn.v || this.#GEBI("ttsVoice")
+                    ?.value || this.#LSGI("ttsVoice") || 51, };
+		  command.command;
+                  command.template_version = 1;
+                  command.func = this.CallTts;
+
+                  const argsStr = match[2];
+                  const parts = argsStr.trim().split(/\s + /);
+
+                  let flags = {
+                    p : "",
+                    r : "",
+                    v : "",
+                  };
+
+                  let msgParts = [];
+                  for (let i = 0; i < parts.length; i++) {
+                    if (parts[i] == "-r" && parts[i + 1]) {
+                      flags.r = parts[i + 1];
+                      i++;
+                    } else if (parts[i] == "-v" && parts[i + 1]) {
+                      flags.v = parts[i + 1];
+                      i++;
+                    } else if (parts[i] == "-p" && parts[i + 1]) {
+                      flags.p = parts[i + 1];
+                      i++;
+                    } else {
+                      msgParts.push(parts[i]);
+                    }
+                  }
+
+                  return {flags, message : msgParts.join(" ")};
+                }
+
         	constructor(args = {}) {
-                  //console.warn(`all tests passed : $ { this.testResults }`);
-
                   this.args = args;
                   this.firstStart = true;
 
@@ -1829,7 +1887,6 @@ _getCommandDefault(commandName, flagAlias) {
                   this.monitorInterval = null;
                   this.messageIndex = 0;
 
-                  // IMPORTANT: Store the nextPageToken to get new messages
                   this.nextPageToken = null;
 
                   if (this.config.monitorMessages.debug == true) {
@@ -1837,11 +1894,8 @@ _getCommandDefault(commandName, flagAlias) {
                     this.config.monitorMessages.strictMode == true;
                   }
 
-        // Ensure DOM is ready (though typically this runs after page load)
 		this.RenderMessagesTable();
 		this.RenderDefaultCommandSettings()
                 
 	}
 }
-
-
