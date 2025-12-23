@@ -41,34 +41,47 @@
 			<script type="module">
 				window.addEventListener('DOMContentLoaded', (e) => {
 					let sai = document.getElementById("sai");
+					sai.addEventListener("click", (() => {SaveOrLoadInput("save")}));
 					let lai = document.getElementById("lai");
+					lai.addEventListener("click", (() => {SaveOrLoadInput("load")}));
 
-					let inputs = document.getElementsByTagName("input");
-					let input;
-					sai.addEventListener("click", (e) => {
-						console.log("saving inputs");
-						for (let i = 0; i < inputs.length; ++i) {
-							input = inputs[i];
-							localStorage.setItem(String(input.id), input.value);
-						}
-					});
 
-					lai.addEventListener("click", (e) => {
-						console.log("loading inputs");
+					/**
+					* @param {string} wut_do - save/load
+					*/
+					function SaveOrLoadInput(wut_do){
+						let inputs = document.getElementsByTagName("input");
+						let input;
+						console.log("saving/loading inputs");
 						for (let i = 0; i < inputs.length; ++i) {
 							try {
-								if(inputs[i] == undefined){
+								if( // skip conditions
+									inputs[i] == undefined
+									|| inputs[i].tagName == "BUTTON"									
+									|| (inputs[i].tagName == "INPUT" && inputs[i].getAttribute("type") == "button")
+								){
 									console.warn(`input at the index ${i} is undefined, skipping`);
 									continue;
 								}
-								input = inputs[i];
-								input.value = localStorage.getItem(String(input.id));
+
+								switch(wut_do.toLowerCase()){
+									case("save"):
+										input = inputs[i];
+										localStorage.setItem(String(input.id), input.value);
+										continue;
+									case("load"):
+										input = inputs[i];
+										input.value = localStorage.getItem(String(input.id));
+										continue;
+									default: 
+										throw new Error("wut_do doesn't have value save/load: " + wut_do);
+								}
 							}
 							catch (err) {
 								console.error("unable to assign value:\n" + input[i] + "\n" + err);
 							}
 						}
-					});
+					}
 				});
 			</script>
 		</div>

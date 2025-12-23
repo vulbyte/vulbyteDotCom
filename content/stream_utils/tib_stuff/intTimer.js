@@ -28,13 +28,13 @@ export class IntTimer {
 		//tick stuff
 		this.incr = args.incr || 1; // the step per second, if less than 1 will be rounded to 1
 		this.tickData = args.tickData || undefined; // data to be passed 
-		this.tickListeners = args.tickListeners || undefined; // data to be 
+		this.tickListeners = args.tickListeners || [];
 
 		this.tickAndTimeout = args.tickAndTimeout || true // if true, timeout will tick with a timeout when they happen, if false only timeout will be called
 
 		//timeout stuff
 		this.timeoutData = args.timeoutData || undefined; // data to be passed 
-		this.timeoutListeners = args.timeoutListeners || undefined;
+		this.timeoutListeners = args.timeoutListeners || [];
 		this.timeoutDuration = args.timeout || args.timeoutDuration || 10; // duration until Timeout() is called
 		this.killOnTimeout = args.timeout || true; // if false, will repeat until stopped manually
 		this.maxDuration = args.maxDuration || 0; // 0 or less will mean no max timer
@@ -201,7 +201,7 @@ export class IntTimer {
 						console.log(`intTimer: timeout listener ${i} completed`);
 					}
 				} catch (error) {
-					// BUG: THE BELOW IS ONLY A TEMP THING, THIS STILL SHOULD BE FIXED
+					// : THE BELOW IS ONLY A TEMP THING, THIS STILL SHOULD BE FIXED
 					// console.error(`intTimer: error in timeout listener ${i}:`, error);
 				}
 			}

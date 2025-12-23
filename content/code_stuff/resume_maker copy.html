@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script type="module" src="/client_management.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Builder</title>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <style>
+        /* 1. SCREEN-ONLY UI LAYOUT */
+        .main-container { display: flex; gap: 20px; padding: 20px; height: 100vh; box-sizing: border-box; }
+        .editor-side { flex: 1; max-width: 40%; overflow-y: auto; padding-right: 10px; }
+
+/* Removes the "Paper" restriction and makes it a fluid overview */
+.preview-side {
+    flex: 1;
+    background: #f5f5f5;
+    padding: 40px;
+    overflow-y: auto;
+}
+
+#resume-paper {
+    background: white;
+    width: 100%;
+    max-width: 800px; /* Limits width for readability */
+    margin: 0 auto;
+    padding: 40px;
+    min-height: 100%; /* Instead of fixed height */
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+        .resume-header { text-align: center; margin-bottom: 15px; }
+        .resume-header h1 { margin: 0; font-size: 2.2em; text-transform: uppercase; }
+        .contact-line { font-size: 0.9em; margin-top: 5px; border-bottom: 1.5px solid; padding-bottom: 8px; }
+        .section-title { border-bottom: 1px solid; text-transform: uppercase; font-weight: bold; font-size: 1.1em; margin: 18px 0 8px 0; }
+        .entry { margin-bottom: 10px; page-break-inside: avoid; }
+        .entry-header { display: flex; justify-content: space-between; font-weight: bold; }
+        .pill-container { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; }
+        .pill { border: 1px solid; padding: 1px 6px; font-size: 0.85em; border-radius: 3px; }
+
+        /* 3. EDITOR UI */
+        .draggable-section { border: 1px solid #ddd; padding: 12px; margin-bottom: 15px; border-radius: 4px; position: relative; }
+        .section-header { display: flex; align-items: center; gap: 10px; cursor: pointer; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+        .drag-handle { cursor: grab; color: #999; font-size: 1.2em; }
+        .collapse-content { display: none; margin-top: 10px; }
+        .collapse-content.show { display: block; }
+        
+        .item-box { border: 1px solid #eee; padding: 8px; margin-top: 8px; border-radius: 4px; }
+        .item-header { display: flex; justify-content: space-between; font-size: 0.85em; color: #555; cursor: pointer; padding: 4px; margin-bottom: 5px; }
+        
+        .field-row { width: 100%; margin-bottom: 6px; box-sizing: border-box; display: block; border: 1px solid #ccc; padding: 6px; border-radius: 2px; font-family: sans-serif; }
+        .theme-editor { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; padding: 15px; border: 1px solid #ddd; border-radius: 4px; }
+        
+        button { cursor: pointer; padding: 4px 8px; border: 1px solid #ccc; border-radius: 3px; font-size: 0.85em; }
+        .btn-add { font-weight: bold; }
+        .btn-delete { color: #cc0000; border: none; background: transparent; }
+
+        /* 4. PRINT LOGIC */
+        @media print {
+            @page { margin: 0; margin-bottom:1in; margin-top:1in;}
+            body * { visibility: hidden; }
+            .print, .print * { visibility: visible; }
+            .print { position: absolute; left: 0; top: 0; width: 100% !important; box-shadow: none !important; padding: 0.5in !important; margin: 0 !important; }
+            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-container">
+    <div class="editor-side">
+        <h3 style="margin-top:0">Resume Builder</h3>
+        
+        <div class="theme-editor">
+            <div><label>Font</label><select id="th-font" class="field-row" onchange="updateTheme()"><option value="'Georgia', serif">Serif</option><option value="'Arial', sans-serif">Sans</option><option value="'Courier New', monospace">Mono</option></select></div>
+            <div><label>Size</label><input type="number" id="th-size" class="field-row" value="14" oninput="updateTheme()"></div>
+            <div><label>Paper</label><input type="color" id="th-bg" class="field-row" value="#ffffff" oninput="updateTheme()"></div>
+            <div><label>Text</label><input type="color" id="th-text" class="field-row" value="#111111" oninput="updateTheme()"></div>
+        </div>
+
+        <div style="margin-bottom: 20px; display: flex; gap: 8px;">
+            <button onclick="downloadJSON()">💾 Save Data</button>
+            <button onclick="document.getElementById('importFile').click()">📂 Load Data</button>
+            <input type="file" id="importFile" onchange="importJSON(event)" style="display:none">
+            <button onclick="window.print()" style="background:#2ecc71; color:white; border:none; font-weight:bold;">📄 Save PDF</button>
+        </div>
+
+        <div class="draggable-section">
+            <div class="section-header" onclick="toggleCollapse('personal-info')">
+                <strong>👤 Personal Details</strong>
+            </div>
+            <div id="personal-info" class="collapse-content show">
+                <input type="text" id="in-name" class="field-row" placeholder="Full Name" oninput="updatePersonal()">
+                <input type="text" id="in-email" class="field-row" placeholder="Email" oninput="updatePersonal()">
+                <input type="text" id="in-phone" class="field-row" placeholder="Phone" oninput="updatePersonal()">
+                <input type="text" id="in-loc" class="field-row" placeholder="Location" oninput="updatePersonal()">
+                <input type="text" id="in-link" class="field-row" placeholder="Portfolio/LinkedIn" oninput="updatePersonal()">
+                <textarea id="in-sum" class="field-row" placeholder="Summary" oninput="updatePersonal()" style="height:60px"></textarea>
+            </div>
+        </div>
+
+        <div id="drag-container"></div>
+    </div>
+
+    <div class="preview-side">
+        <div id="resume-paper" class="print">
+            <div class="resume-header">
+                <h1 id="out-name">NAME</h1>
+                <div id="out-contact" class="contact-line"></div>
+            </div>
+            <div id="out-summary" style="margin-top: 10px;"></div>
+            <div id="out-sections"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+let resumeData = {
+    name: "", email: "", phone: "", location: "", summary: "", link: "",
+    theme: { font: "'Georgia', serif", size: 14, bg: "#ffffff", text: "#111111" },
+    order: [
+        { id: 'jobs', label: 'Experience', items: [], type: 'list', collapsed: false },
+        { id: 'edu', label: 'Education', items: [], type: 'list', collapsed: false },
+        { id: 'certs', label: 'Certifications', items: [], type: 'list', collapsed: false }, // Targets this ID
+        { id: 'skills', label: 'Skills', items: [], type: 'pills', collapsed: false }
+    ]
+};
+
+
+    function toggleCollapse(id) {
+        document.getElementById(id).classList.toggle('show');
+    }
+
+    function toggleSection(sIdx) {
+        resumeData.order[sIdx].collapsed = !resumeData.order[sIdx].collapsed;
+        render();
+    }
+
+    function toggleItem(sIdx, iIdx) {
+        const item = resumeData.order[sIdx].items[iIdx];
+        item.collapsed = !item.collapsed;
+        render();
+    }
+
+    function updatePersonal() {
+        ['name', 'email', 'phone', 'location', 'link', 'summary'].forEach(k => {
+            const el = document.getElementById('in-' + (k==='summary'?'sum':k));
+            if(el) resumeData[k] = el.value;
+        });
+        renderPreview();
+    }
+
+    function updateTheme() {
+        resumeData.theme.font = document.getElementById('th-font').value;
+        resumeData.theme.size = document.getElementById('th-size').value;
+        resumeData.theme.bg = document.getElementById('th-bg').value;
+        resumeData.theme.text = document.getElementById('th-text').value;
+        renderPreview();
+    }
+
+function addItem(sId) {
+    const s = resumeData.order.find(x => x.id === sId);
+    let newItem;
+    
+    if (s.type === 'pills') {
+        newItem = { val: "Skill" };
+    } else if (sId === 'certs') {
+        newItem = { Title: "", Issuer: "", DateCompleted: "", Expiry: "", Desc: "" };
+    } else if (sId === 'edu') {
+        newItem = { Degree: "", School: "", Date: "" };
+    } else {
+        newItem = { Role: "", Company: "", Start: "", End: "", Desc: "" };
+    }
+    
+    s.items.push({...newItem, collapsed: false});
+    s.collapsed = false; 
+    render();
+}
+
+    function render() {
+        const container = document.getElementById('drag-container');
+        container.innerHTML = '';
+        
+        resumeData.order.forEach((s, sIdx) => {
+            const div = document.createElement('div');
+            div.className = 'draggable-section';
+            div.setAttribute('data-id', s.id);
+            div.innerHTML = `
+                <div class="section-header">
+                    <span class="drag-handle">⠿</span>
+                    <strong style="flex:1" onclick="toggleSection(${sIdx})">${s.label} (${s.items.length})</strong>
+                    <button class="btn-add" onclick="addItem('${s.id}')">+</button>
+                </div>
+                <div class="collapse-content ${s.collapsed ? '' : 'show'}">
+                    ${s.items.map((it, iIdx) => `
+                        <div class="item-box">
+                            <div class="item-header" onclick="toggleItem(${sIdx}, ${iIdx})">
+                                <span>${it.Role || it.Degree || it.Certificate || it.val || 'New Item'}</span>
+                                <button class="btn-delete" onclick="event.stopPropagation(); resumeData.order[${sIdx}].items.splice(${iIdx},1); render();">✕</button>
+                            </div>
+                            <div class="collapse-content ${it.collapsed ? '' : 'show'}">
+                                ${Object.keys(it).filter(k => k !== 'collapsed').map(k => `
+                                    <label style="font-size:9px; color:#888;">${k.toUpperCase()}</label>
+                                    ${k === 'Desc' ? 
+                                        `<textarea class="field-row" oninput="resumeData.order[${sIdx}].items[${iIdx}].${k}=this.value;renderPreview()">${it[k]}</textarea>` :
+                                        `<input class="field-row" value="${it[k]}" oninput="resumeData.order[${sIdx}].items[${iIdx}].${k}=this.value;renderPreview()">`
+                                    }
+                                `).join('')}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>`;
+            container.appendChild(div);
+        });
+
+        // Initialize Sortable
+        new Sortable(container, {
+            handle: '.drag-handle',
+            animation: 150,
+            onEnd: (evt) => {
+                const movedItem = resumeData.order.splice(evt.oldIndex, 1)[0];
+                resumeData.order.splice(evt.newIndex, 0, movedItem);
+                renderPreview();
+            }
+        });
+        renderPreview();
+    }
+
+function renderPreview() {
+    const t = resumeData.theme;
+    const paper = document.getElementById('resume-paper');
+    paper.style.backgroundColor = t.bg;
+    paper.style.color = t.text;
+    paper.style.fontFamily = t.font;
+    paper.style.fontSize = t.size + "px";
+    
+    document.getElementById('out-name').innerText = resumeData.name || "YOUR NAME";
+    const contact = document.getElementById('out-contact');
+    const details = [resumeData.email, resumeData.phone, resumeData.location, resumeData.link].filter(x=>x).join(' • ');
+    contact.innerText = details;
+    contact.style.display = details ? "block" : "none";
+    contact.style.borderColor = t.text;
+
+    document.getElementById('out-summary').innerText = resumeData.summary;
+
+    const out = document.getElementById('out-sections');
+    out.innerHTML = '';
+    resumeData.order.forEach(s => {
+        if (!s.items.length) return;
+        let html = `<div class="section-title" style="border-color:${t.text}">${s.label}</div>`;
+        
+        if (s.type === 'pills') {
+            html += `<div class="pill-container">${s.items.map(it => `<span class="pill" style="border-color:${t.text}">${it.val}</span>`).join('')}</div>`;
+        } else {
+            html += s.items.map(it => {
+                // Logic to handle both standard dates and Cert specific dates
+                let dateLine = "";
+                if (s.id === 'certs') {
+                    const parts = [];
+                    if (it.DateCompleted) parts.push(it.DateCompleted);
+                    if (it.Expiry) parts.push(`Expires: ${it.Expiry}`);
+                    dateLine = parts.join(' — ');
+                } else {
+                    dateLine = it.Date || (it.Start ? (it.Start + (it.End ? " - " + it.End : "")) : "");
+                }
+
+                return `
+                <div class="entry">
+                    <div class="entry-header">
+                        <strong>${it.Title || it.Role || it.Certificate || it.Degree || ''}</strong>
+                        <span>${dateLine}</span>
+                    </div>
+                    <div style="font-style:italic;">${it.Company || it.Issuer || it.School || ''}</div>
+                    ${it.Desc ? `<div style="white-space: pre-line; font-size: 0.95em; margin-top:4px;">${it.Desc}</div>` : ''}
+                </div>`}).join('');
+        }
+        out.innerHTML += html;
+    });
+}
+
+    function downloadJSON() {
+        const blob = new Blob([JSON.stringify(resumeData)], {type: "application/json"});
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = "resume.json"; a.click();
+    }
+
+    function importJSON(e) {
+        const reader = new FileReader();
+        reader.onload = (ev) => { 
+            resumeData = JSON.parse(ev.target.result); 
+            document.getElementById('in-name').value = resumeData.name || "";
+            document.getElementById('in-email').value = resumeData.email || "";
+            document.getElementById('in-phone').value = resumeData.phone || "";
+            document.getElementById('in-loc').value = resumeData.location || "";
+            document.getElementById('in-link').value = resumeData.link || "";
+            document.getElementById('in-sum').value = resumeData.summary || "";
+            render(); 
+        };
+        reader.readAsText(e.target.files[0]);
+    }
+
+    window.onload = render;
+</script>
+</body>
+</html>
