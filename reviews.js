@@ -71,7 +71,7 @@ const reviews =
 				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/211070/header.jpg?t=1685146935",
 				rankings: {
 						gameplay: 8,
-						graphics: 9,
+						graphics: 8,
 						audio: 8,
 						story: 5,
 						uniqueness: 8,
