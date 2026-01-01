@@ -39,6 +39,53 @@ export default class YoutubeStuff {
 
 	constructor() { }
 
+	/*
+	async TestYoutubeStuffAndDisplay(){
+		function CE(args = {elem: 'div', id: undefined, class: undefined, innerText: undefined, innerHTML: undefined, onclick: undefined, src: undefined, value: undefined}) {
+			let elem = document.createElement(args.elem || 'div'); // Use 'div' as default
+			if (args.id) elem.id = args.id;
+			if (args.class) elem.className = args.class;
+			if (args.innerText) elem.innerText = args.innerText;
+			if (args.innerHTML) elem.innerHTML = args.innerHTML;
+			if (args.onclick) elem.onclick = args.onclick;
+			if (args.onkeyup) elem.onkeyup = args.onkeyup;
+			if (args.src) elem.src = args.src;
+			if (args.value) elem.value = args.value;
+			return elem;
+		};
+
+		//init 
+		let parent = CE();
+		let helperId = "helper" + String(Math.random());
+		let helperVal = String(Math.random());
+		let Result = {
+			name: "",
+			msg: "",
+			ok: "",
+		};
+		function UpdateResult(){
+			Result.name = nme;
+			Result.msg = msg;
+			Result.ok = ok;
+		}
+
+		//helpers	
+		try{
+			UpdateResult("#GEBI", "testing #GEBI", false);
+			document.appendChild(CE({id:helperId, innerText:helperVal}));
+			this.#GEBI(helperId);
+		}
+		catch(err){
+
+		}
+		CE()
+		this.#LSGI();	
+
+		this.#CheckStorageThenSearchPage(helperId);
+		//functions
+	}
+	*/
+
 	/**
 	 * @description takes in a dictionary of values, if the value exists within config it will update said value
 	 */
@@ -54,6 +101,7 @@ export default class YoutubeStuff {
 		}
 	}
 
+	/*
 	async VerifyConfig() {
 		let checkConfig = new Promise((RESOLVE, REJECT) => {
 			if (this.#config.apiKey == undefined || this.#config.apiKey == '') { REJECT("VALUE '' IS NULL OR UNDEFINED, CANNOT GET YOUTUBE MESSAGES") }
@@ -68,6 +116,7 @@ export default class YoutubeStuff {
 			RESOLVE("youtube should be ready");
 		});
 	}
+	*/
 
 	async GetChannelIdFromChannelName() {
 		if (this.#config.apiKey == undefined) {
@@ -88,6 +137,8 @@ export default class YoutubeStuff {
 
 			const channelId = data.items?.[0]?.id?.channelId;
 			if (!channelId) throw new Error("No channelId found in response");
+
+			console.log()(`got channelId as: ${channelId}`);
 
 			this.#config.channelId = channelId;
 			return channelId;
@@ -115,6 +166,8 @@ export default class YoutubeStuff {
 
 			const broadcastId = data.items?.[0]?.id;
 			if (!broadcastId) throw new Error("No broadcastId found");
+
+			console.log(`got broadcastId: ${broadcastId}`);
 
 			this.#config.broadcastId = broadcastId;
 			return broadcastId;
@@ -144,6 +197,8 @@ export default class YoutubeStuff {
 			const liveChatId = data.items?.[0]?.liveStreamingDetails?.activeLiveChatId;
 			if (!liveChatId) throw new Error("No liveChatId found");
 
+			console.log(`got liveChatId: ${liveChatId}`);
+
 			this.#config.liveChatId = liveChatId;
 			return liveChatId;
 		} catch (err) {
@@ -155,72 +210,6 @@ export default class YoutubeStuff {
 			}
 		}
 	}
-
-	async GetLiveChatIdFromBroadcastId(broadcastId = this.#config.broadcastId || undefined) {
-		if(broadcastId==undefined){
-			try{
-				let fromLocalStorage = LocalStorage.getItem("youtube-broadcastId");
-				let fromHtml = document.getElementById("youtube-broadcastId");
-				if(fromLocalStorage != ""){this.#config.broadcastId = fromLocalStorage;}
-				else if(fromHtml != ""){this.#config.broadcastId = fromHtml;}
-				else{throw new Error("unable to get broadcastId form available sources")}
-			}
-			catch(err){
-				throw new Error("no broadcastId provided\n" + err);
-			}
-		}
-	    // 1. Construct the API request URL for videos.list
-	    const requestUrl = new URL(this.#urls.getBroadcast);
-	    
-	    // The 'part' parameter must include 'liveStreamingDetails' to get the liveChatId
-	    requestUrl.searchParams.append('part', 'liveStreamingDetails');
-	    
-	    // The 'id' parameter is the broadcast/video ID
-	    requestUrl.searchParams.append('id', broadcastId);
-	    
-	    // Your YouTube API Key
-	    // NOTE: Replace 'YOUR_API_KEY' with the actual variable holding your key.
-	    requestUrl.searchParams.append('key', this.#config.apiKey);
-
-	    try {
-		// 2. Make the appropriate GET request
-		const response = await fetch(requestUrl.toString());
-
-		if (!response.ok) {
-		    // Handle HTTP errors (e.g., 400, 403, 404, 500)
-		    const errorBody = await response.json();
-		    console.error(`HTTP error! Status: ${response.status}`, errorBody);
-		    throw new Error(`Failed to fetch broadcast details: ${response.statusText}`);
-		}
-
-		// 3. Parse the JSON response
-		const data = await response.json();
-
-		// 4. Extract the liveChatId
-		// Check if there are any items returned
-		if (data.items && data.items.length > 0) {
-		    const item = data.items[0];
-
-		    // The liveChatId is nested under liveStreamingDetails
-		    const liveChatId = item.liveStreamingDetails?.activeLiveChatId;
-
-		    if (liveChatId) {
-			return liveChatId;
-		    } else {
-			console.log(`Broadcast ID ${broadcastId} does not appear to have an active live chat ID.`);
-			return null;
-		    }
-		} else {
-		    console.log(`No video found for ID: ${broadcastId}`);
-		    return null;
-		}
-	    } catch (error) {
-		console.error('Error in GetLiveChatIdFromBroadcastId:', error);
-		// Depending on your application, you might re-throw the error or return null
-		return null;
-	    }
-	}
-
 
 	/**
 	 * @name GetAllUpcomingBroadcastsAndReturnJson
@@ -259,7 +248,7 @@ export default class YoutubeStuff {
 				throw new Error(`YouTube API Error: ${data.error.message}`);
 			}
 
-			console.log(`✅ Retrieved raw data for ${data.items?.length || 0} upcoming streams for channel ${this.#config.channelId}.`);
+			console.log(`✅ Retrieved raw data for ${data.items?.length} upcoming streams for channel ${this.#config.channelId}.`);
 
 			return data;
 
@@ -269,161 +258,104 @@ export default class YoutubeStuff {
 		}
 	}
 
-async GetMessages(pageToken = this.#config.pageCount) {
-    if (this.#config.apiKey == undefined) {
-        throw new Error("cannot getMessages, apiKey is undefined");
-    }
-    
-    if (!this.#config.liveChatId) {
-        throw new Error("cannot getMessages, liveChatId is undefined. Please set it via config.");
-    }
+	async GetMessagesAtPage(pageToken = this.#config.pageCount) {
+	    if (this.#config.apiKey == undefined) {
+		throw new Error("cannot getMessages, apiKey is undefined");
+	    }
+	    
+	    if (!this.#config.liveChatId) {
+		throw new Error("cannot getMessages, liveChatId is undefined. Please set it via config.");
+	    }
 
-    try {
-        const messagesUrl = new URL(this.#urls.getMessages);
-        messagesUrl.search = new URLSearchParams({
-            key: this.#config.apiKey,
-            part: "id,snippet,authorDetails",
-            liveChatId: this.#config.liveChatId,
-            maxResults: this.#config.maxResults || 200, 
-        }).toString();
+	    try {
+		const messagesUrl = new URL(this.#urls.getMessages);
+		messagesUrl.search = new URLSearchParams({
+		    key: this.#config.apiKey,
+		    part: "id,snippet,authorDetails",
+		    liveChatId: this.#config.liveChatId,
+		    maxResults: this.#config.maxResults || 200, 
+		}).toString();
 
-        const tokenToUse = pageToken;
+		const tokenToUse = pageToken;
 
-        if (this.#config.debug) {
-            console.log(`[GetMessages] Current token in config: ${this.#config.pageCount}`);
-            console.log(`[GetMessages] Token being sent: ${tokenToUse}`);
-        }
-        
-        if (tokenToUse) {
-            messagesUrl.searchParams.set("pageToken", tokenToUse);
-        }
+		if (this.#config.debug) {
+		    console.log(`[GetMessages] Current token in config: ${this.#config.pageCount}`);
+		    console.log(`[GetMessages] Token being sent: ${tokenToUse}`);
+		}
+		
+		if (tokenToUse) {
+		    messagesUrl.searchParams.set("pageToken", tokenToUse);
+		}
 
-        const res = await fetch(messagesUrl);
-        const data = await res.json();
-        
-        if (data.error) {
-            console.error("YouTube API Error Details:", data.error); 
-            throw new Error(`YouTube API Error: ${data.error.message}`);
-        }
+		const res = await fetch(messagesUrl);
+		const data = await res.json();
+		
+		if (data.error) {
+		    console.error("YouTube API Error Details:", data.error); 
+		    throw new Error(`YouTube API Error: ${data.error.message}`);
+		}
 
-        // Store the next page token
-        if (data.nextPageToken) {
-            this.#config.pageCount = data.nextPageToken;
-            if (this.#config.debug) {
-                console.log(`[GetMessages] Updated next page token: ${this.#config.pageCount}`);
-            }
-        }
-        
-        // IMPORTANT: Store YouTube's recommended polling interval
-        if (data.pollingIntervalMillis) {
-            this.#config.pollingInterval = data.pollingIntervalMillis;
-            if (this.#config.debug) {
-                console.log(`[GetMessages] YouTube recommends polling every ${data.pollingIntervalMillis}ms`);
-            }
-        }
-        
-        return data;
-    } catch (err) {
-        console.error('Error fetching live chat messages:', err.message);
-        throw new Error("Failed to get messages: " + err.message);
-    }
-}
+		// Store the next page token
+		if (data.nextPageToken) {
+		    this.#config.pageCount = data.nextPageToken;
+		    if (this.#config.debug) {
+			console.log(`[GetMessages] Updated next page token: ${this.#config.pageCount}`);
+		    }
+		}
+		
+		// IMPORTANT: Store YouTube's recommended polling interval
+		if (data.pollingIntervalMillis) {
+		    this.#config.pollingInterval = data.pollingIntervalMillis;
+		    if (this.#config.debug) {
+			console.log(`[GetMessages] YouTube recommends polling every ${data.pollingIntervalMillis}ms`);
+		    }
+		}
 
-// In GetAllMessages() - increase the delay
-async GetAllMessages() {
-    if (this.#config.debug) {
-        console.log("[GetAllMessages] Starting to fetch all historical messages...");
-    }
+		    console.log(`got messages at page:\n ${data.stringify(data)}`);
+		
+		return data;
+	    } catch (err) {
+		console.error('Error fetching live chat messages:', err.message);
+		throw new Error("Failed to get messages: " + err.message);
+	    }
+	}
 
-    const allMessages = [];
-    let pageToken = null;
-    let pageCount = 0;
-
-    while (true) {
-        pageCount++;
-        
-        if (this.#config.debug) {
-            console.log(`[GetAllMessages] Fetching page ${pageCount}...`);
-        }
-
-        const data = await this.GetMessages(pageToken);
-        
-        if (data.items && data.items.length > 0) {
-            allMessages.push(...data.items);
-            
-            if (this.#config.debug) {
-                console.log(`[GetAllMessages] Page ${pageCount}: Got ${data.items.length} messages (Total: ${allMessages.length})`);
-            }
-        }
-
-        // If there's a nextPageToken, there are more pages to fetch
-        if (data.nextPageToken) {
-            pageToken = data.nextPageToken;
-            
-            // INCREASED DELAY: YouTube recommends waiting for pollingIntervalMillis
-            // Default to 5 seconds if not provided
-            const delayMs = data.pollingIntervalMillis || 5000;
-            
-            if (this.#config.debug) {
-                console.log(`[GetAllMessages] Waiting ${delayMs}ms before next request...`);
-            }
-            
-            await new Promise(resolve => setTimeout(resolve, delayMs));
-        } else {
-            // No more pages - we're caught up!
-            if (this.#config.debug) {
-                console.log(`[GetAllMessages] Caught up! Total messages: ${allMessages.length}`);
-            }
-            break;
-        }
-    }
-
-    return allMessages;
-}
-
-GetPollingInterval() {
-    return this.#config.pollingInterval || 5000; // Default to 5 seconds
-}
+	GetPollingInterval() {
+	    return this.#config.pollingInterval || 5000; // Default to 5 seconds
+	}
 
 // NEW: Method for continuous polling (after initial catch-up)
-async StartPolling(onNewMessages, intervalMs = 5000) {
-    // First, catch up on all historical messages
-    const historicalMessages = await this.GetAllMessages();
-    
-    if (typeof onNewMessages === 'function') {
-        onNewMessages(historicalMessages, true); // true = initial batch
-    }
+	async StartPolling(onNewMessages, intervalMs = 5000) {
+	    if (this.#config.debug) {
+		console.log(`[StartPolling] Starting real-time polling every ${intervalMs}ms...`);
+	    }
 
-    if (this.#config.debug) {
-        console.log(`[StartPolling] Starting real-time polling every ${intervalMs}ms...`);
-    }
+	    // Now poll for new messages using the stored pageToken
+	    const pollInterval = setInterval(async () => {
+		try {
+		    const data = await this.GetMessages(); // Uses stored token
+		    
+		    if (data.items && data.items.length > 0) {
+			if (this.#config.debug) {
+			    console.log(`[StartPolling] Got ${data.items.length} new messages`);
+			}
+			
+			if (typeof onNewMessages === 'function') {
+			    onNewMessages(data.items, false); // false = new messages
+			}
+		    }
+		} catch (err) {
+		    console.error('[StartPolling] Error during polling:', err);
+		}
+	    }, intervalMs);
 
-    // Now poll for new messages using the stored pageToken
-    const pollInterval = setInterval(async () => {
-        try {
-            const data = await this.GetMessages(); // Uses stored token
-            
-            if (data.items && data.items.length > 0) {
-                if (this.#config.debug) {
-                    console.log(`[StartPolling] Got ${data.items.length} new messages`);
-                }
-                
-                if (typeof onNewMessages === 'function') {
-                    onNewMessages(data.items, false); // false = new messages
-                }
-            }
-        } catch (err) {
-            console.error('[StartPolling] Error during polling:', err);
-        }
-    }, intervalMs);
-
-    // Return function to stop polling
-    return () => {
-        clearInterval(pollInterval);
-        if (this.#config.debug) {
-            console.log('[StartPolling] Stopped polling');
-        }
-    };
-}
+	    // Return function to stop polling
+	    return () => {
+		clearInterval(pollInterval);
+		if (this.#config.debug) {
+		    console.log('[StartPolling] Stopped polling');
+		}
+	    };
+	}
 
 }

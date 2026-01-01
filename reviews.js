@@ -16,6 +16,133 @@ const reviews =
 		},
 		*/
 		{
+				name: "blameless",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/530330/header.jpg?t=1567232080",
+				rankings: {
+						gameplay: 4,
+						graphics: 4,
+						audio: 7,
+						story: 6,
+						uniqueness: 7,
+				},
+				links: {steam: "https://store.steampowered.com/app/530330/Blameless/"},
+				review: "<a href='https://www.youtube.com/watch?v=Qj3wg9-5QeQ' target='_blank'> orignally played on youtube here: https://www.youtube.com/watch?v=Qj3wg9-5QeQ</a>"
+		},
+		{
+				name: "5 NIGHTS AT BOBR KURWA",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3583060/56bced90d6b5122a4cc4b26c795d6d03fbdf6aab/header.jpg?t=1743307667",
+				rankings: {
+						gameplay: 6.5,
+						graphics: 6,
+						audio: 4,
+						story: 4,
+						uniqueness: 4,
+				},
+				links: {steam: "https://store.steampowered.com/app/3583060/5_NIGHTS_AT_BOBR_KURWA/"},
+				review: "<a href='https://www.youtube.com/watch?v=Qj3wg9-5QeQ' target='_blank'> orignally played on youtube here: https://www.youtube.com/watch?v=Qj3wg9-5QeQ</a>"
+		},
+		{
+				name: "Car Mechanic Simulator 2015",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/320300/header.jpg?t=1750427326",
+				rankings: {
+						gameplay: 6,
+						graphics: 6,
+						audio: 6,
+						uniqueness: 9,
+				},
+				links: {steam: "https://store.steampowered.com/app/320300/Car_Mechanic_Simulator_2015/"},
+				review: "<a href='https://www.youtube.com/watch?v=Qj3wg9-5QeQ' target='_blank'> orignally played on youtube here: https://www.youtube.com/watch?v=Qj3wg9-5QeQ</a>"
+		},
+		{
+				name: "Black Rose",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/453890/header.jpg?t=1640161442",
+				rankings: {
+						gameplay: 7,
+						graphics: 8,
+						audio: 4,
+						story: 4,
+						uniqueness: 4,
+				},
+				links: {steam: "https://store.steampowered.com/app/453890/Black_Rose/"},
+				review: "<a href='https://www.youtube.com/watch?v=Qj3wg9-5QeQ' target='_blank'> orignally played on youtube here: https://www.youtube.com/watch?v=Qj3wg9-5QeQ</a>"
+		},
+		{
+				name: "Check vs Mate (aka battle vs chess)",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/211070/header.jpg?t=1685146935",
+				rankings: {
+						gameplay: 8,
+						graphics: 9,
+						audio: 8,
+						story: 5,
+						uniqueness: 8,
+				},
+				links: {steam: "https://store.steampowered.com/app/211070/Check_vs_Mate/"},
+				review: "<a href='https://www.youtube.com/watch?v=Qj3wg9-5QeQ' target='_blank'> orignally played on youtube here: https://www.youtube.com/watch?v=Qj3wg9-5QeQ</a>"
+		},
+		{
+				name: "Alice Mesmerizing Episodes of Neurosis (AMEN)",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3355430/header.jpg?t=1766221507",
+				rankings: {
+						gameplay: 4,
+						graphics: 6,
+						audio: 4,
+						story: 6,
+						uniqueness: 3,
+				},
+				links: {steam: "https://store.steampowered.com/app/3355430/Alice_Mesmerizing_Episodes_of_Neurosis_AMEN/"},
+				review: "<a href='https://www.youtube.com/watch?v=Qj3wg9-5QeQ' target='_blank'> orignally played on youtube here: https://www.youtube.com/watch?v=Qj3wg9-5QeQ</a>"
+		},
+		{
+			name: "memology: italitan war meme",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3852580/5f7f0627d1b1b15a7daf998b17af7042ee401978/header.jpg?t=1760543376",
+				rankings: {
+						gameplay: 3,
+						graphics: 3,
+						audio: 4,
+						uniqueness: 6,
+				},
+				links: {steam: "https://store.steampowered.com/app/3852580/MEMOLOGY_ITALIAN_MEME_WAR/"},
+				review: "<a href='https://www.youtube.com/watch?v=Qj3wg9-5QeQ' target='_blank'> orignally played on youtube here: https://www.youtube.com/watch?v=Qj3wg9-5QeQ</a>"
+		},
+		{
+				name: "8 ball",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/818530/header.jpg?t=1735740937",
+				rankings: {
+						gameplay: 3,
+						graphics: 4,
+						audio: 6,
+						uniqueness: 4,
+				},
+				links: {steam: "https://store.steampowered.com/app/818530/8_Ball/"},
+				review: "<a href='https://www.youtube.com/watch?v=Qj3wg9-5QeQ' target='_blank'> orignally played on youtube here: https://www.youtube.com/watch?v=Qj3wg9-5QeQ</a>"
+		},
+		{
+				name: "OLDTV",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/643270/header.jpg?t=1694713917",
+				rankings: {
+						gameplay: 9,
+						graphics: 9,
+						audio: 7,
+						story: 5,
+						uniqueness: 10,
+				},
+				links: {steam: "https://store.steampowered.com/app/643270/OLDTV/"},
+				review: "<a href='https://www.youtube.com/watch?v=Qj3wg9-5QeQ' target='_blank'> orignally played on youtube here: https://www.youtube.com/watch?v=Qj3wg9-5QeQ</a>"
+		},
+		{
+				name: "PUNCH_OUT (wii)",
+				img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRPYmL7KRG8O6SZkzxuwicnUtNkVQ4Qc9oSMg&s",
+				rankings: {
+						gameplay: 10,
+						graphics: 9,
+						audio: 9,
+						story: 6.5,
+						uniqueness: 10,
+				},
+				links: {nintendo: "https://www.nintendo.com/en-gb/Games/Wii/PUNCH-OUT--282706.html"},
+				review: "<a href='https://www.youtube.com/watch?v=Qj3wg9-5QeQ' target='_blank'> orignally played on youtube here: https://www.youtube.com/watch?v=Qj3wg9-5QeQ</a>"
+		},
+		{
 			name: "5 nights at Timokha 4: School",
 				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3296200/header.jpg?t=1735010296",
 				rankings: {
@@ -45,7 +172,7 @@ const reviews =
 				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/221640/header.jpg?t=1653925774",
 				rankings: {
 						gameplay: 8,
-						graphics: 10,
+						graphics: 9,
 						audio: 10,
 						uniqueness: 10,
 				},

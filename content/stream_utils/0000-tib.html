@@ -794,7 +794,8 @@
 
 			.yt_form-input_container>input {}
 		</style>
-		<form id="youtube-config">
+		<form id="youtube-config" style="width:100%;">
+			<div style="display:flex; flex-direction:row; width:100%; grid-template-rows:repeat(auto-fill minmax(50%, 50%))">
 			<details>
 				<summary>youtube specific config</summary>
 				<fieldset>
@@ -1280,6 +1281,9 @@
 					</div>
 				</fieldset>
 			</details>
+			<output id="youtube-config_display" style="display:flex; flex-direction:column; width:50%;">
+			</output>
+	</div>
 			<!--
 			<div style="max-width:60em; display:inline-block;">
 				<p>provide the channel name and api key, then click here to let the wizard do the rest!</p>

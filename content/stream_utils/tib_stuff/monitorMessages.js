@@ -595,32 +595,10 @@ async MonitorLoop() {
 GetMessagesTimer = new IntTimer();
 
 async MonitoringStart() {
-    try {
-        console.log(`[MonitoringStart] Catching up on all historical messages...`);
-        console.log(`[MonitoringStart] Queue size: ${this.#unprocessed_queue.length}`);
-        
-        // Get all historical messages (with proper delays built-in)
-        const allHistoricalMessages = await this.#serviceHandlers.youtube.GetAllMessages(); 
-        
-        console.log(`[MonitoringStart] Fetched ${allHistoricalMessages.length} historical messages.`);
-
-        // Add all historical messages to queue
-        for (let i = 0; i < allHistoricalMessages.length; ++i) {
-            this.ParseAndAddYouTubeV3MessagesToUnprocessedQueue(allHistoricalMessages[i]);
-        }
-
-        console.log(`[MonitoringStart] Unprocessed queue size: ${this.#unprocessed_queue.length}`);
-        
-        // Process queue
-        console.log("Processing historical messages...");
-        await this.ProcessUnprocessedMessagesQueue();
-        
-        console.log("[MonitoringStart] Historical catch-up complete!");
-
-    } catch (err) {
-        console.error("[MonitoringStart ERROR] Failed during initial catch-up:", err);
-        throw err;
-    }
+	// asset
+	
+	
+	// test
 
     // Start polling loop
     try {
@@ -653,7 +631,7 @@ async #DaLoop() {
         console.log(`[DaLoop] Starting cycle. Queue size: ${this.#unprocessed_queue.length}`);
         
         // --- 1. GET NEW MESSAGES (Uses stored pageToken automatically) ---
-        const newMessagesRaw = await this.#serviceHandlers.youtube.GetMessages(); 
+        const newMessagesRaw = await this.#serviceHandlers.youtube.GetMessagesAtPage(); 
         
         const rawItems = newMessagesRaw?.items || [];
         
