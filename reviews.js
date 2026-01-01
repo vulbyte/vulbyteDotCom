@@ -245,10 +245,10 @@ const reviews =
 				name: "Amnesia: The Bunker",
 				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1944430/header.jpg?t=1734702362",
 				rankings: {
-						gameplay: 6,
+						gameplay: 8,
 						graphics: 9,
 						audio: 8,
-						story: 6,
+						story: 7.5,
 						uniqueness: 9,
 				},
 				links: {steam: "https://store.steampowered.com/app/1944430/Amnesia_The_Bunker/"},
