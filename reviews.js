@@ -16,6 +16,157 @@ const reviews =
 		},
 		*/
 		{
+				name: "Juno; new origins",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/870200/header.jpg?t=1749669773",
+				rankings: {
+						gameplay: 9,
+						graphics: 6,
+						audio: 4,
+						uniqueness: 10,
+				},
+				links: {steam: "https://store.steampowered.com/app/870200/Juno_New_Origins/"},
+				review: "<a href='https://www.youtube.com/watch?v=IN9ORD5Joc8' target='_blank'> orignally played on youtube here: https://www.youtube.com/watch?v=IN9ORD5Joc8</a>"
+		},
+		{
+				name: "Beeny",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2125770/header.jpg?t=1673950252",
+				rankings: {
+						gameplay: 8,
+						graphics: 9,
+						audio: 8,
+						story: 4,
+						uniqueness: 8,
+				},
+				links: {steam: "https://store.steampowered.com/app/2125770/Beeny/"},
+				review: "<a href='https://www.youtube.com/watch?v=IN9ORD5Joc8' target='_blank'> orignally played on youtube here: https://www.youtube.com/watch?v=IN9ORD5Joc8</a>"
+		},
+		{
+				name: "Basement",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/340150/header.jpg?t=1584560370",
+				rankings: {
+						gameplay: 5,
+						graphics: 7,
+						audio: 5,
+						story: 6,
+						uniqueness: 7,
+				},
+				links: {steam: "https://store.steampowered.com/app/340150/Basement/"},
+				review: "<a href='https://www.youtube.com/watch?v=IN9ORD5Joc8' target='_blank'> orignally played on youtube here: https://www.youtube.com/watch?v=IN9ORD5Joc8</a>"
+		},
+		{
+				name: "BANG! BANG! Totally Accurate Redneck Simulator ",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/651380/header.jpg?t=1588627596",
+				rankings: {
+						gameplay: 6,
+						graphics: 5,
+						audio: 4,
+						uniqueness: 6,
+				},
+				links: {steam: "https://store.steampowered.com/app/651380/BANG_BANG_Totally_Accurate_Redneck_Simulator/"},
+				review: "<a href='https://www.youtube.com/watch?v=IN9ORD5Joc8' target='_blank'> orignally played on youtube here: https://www.youtube.com/watch?v=IN9ORD5Joc8</a>"
+		},
+		{
+				name: "the last proton",
+				img: "https://external-preview.redd.it/d-gCR_fvrrJ4I1GeQvKwE8q13K-wRgWE2RwLKciIuhQ.jpg?width=1080&crop=smart&auto=webp&s=9e4a130fedb9f59a576bff8e4ad38bfdb99e634e",
+				rankings: {
+						gameplay: 4,
+						graphics: 7,
+						audio: 6,
+						story: 6,
+						uniqueness: 4,
+				},
+				links: {website: "https://www.gamesindustry.biz/studio-caught-by-steams-fake-game-crackdown-says-reputation-is-destroyed-beyond-repair"},
+				review: "<a href='https://www.youtube.com/watch?v=IN9ORD5Joc8' target='_blank'> orignally played on youtube here: https://www.youtube.com/watch?v=IN9ORD5Joc8</a>"
+		},
+		{
+				name: "Doombile Brainrot",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3768020/8b3fdfa3c9c6a85c71fa4a5345e580028e30ceb3/header.jpg?t=1750254716",
+				rankings: {
+						gameplay: 2,
+						graphics: 2,
+						audio: 4,
+						story: 2,
+						uniqueness: 3,
+				},
+				links: {steam: "https://store.steampowered.com/app/3768020/Doomvile_Brainrot/"},
+				review: "<a href='https://www.youtube.com/watch?v=IN9ORD5Joc8' target='_blank'> orignally played on youtube here: https://www.youtube.com/watch?v=IN9ORD5Joc8</a>"
+		},
+		{
+				name: "Antenna",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/443580/header.jpg?t=1477864446",
+				rankings: {
+						gameplay: 6,
+						graphics: 9,
+						audio: 6,
+						story: 3,
+						uniqueness: 6,
+				},
+				links: {steam: "https://store.steampowered.com/app/443580/Antenna/"},
+				review: "<a href='https://www.youtube.com/watch?v=IN9ORD5Joc8' target='_blank'> orignally played on youtube here: https://www.youtube.com/watch?v=IN9ORD5Joc8</a>"
+		},
+		{
+				name: "Alien Destoryer",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1697420/header.jpg?t=1627628730",
+				rankings: {
+						gameplay: 4,
+						graphics: 6,
+						audio: 2,
+						uniqueness: 4,
+				},
+				links: {steam: "https://store.steampowered.com/app/1697420/Alien_Destroyer/"},
+				review: "<a href='https://www.youtube.com/watch?v=IN9ORD5Joc8' target='_blank'> orignally played on youtube here: https://www.youtube.com/watch?v=IN9ORD5Joc8</a>"
+		},
+		{
+				name: "Lethal League Blaze",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/553310/header.jpg?t=1699872274",
+				rankings: {
+						gameplay: 8.5,
+						graphics: 10,
+						audio: 8,
+						story: 7,
+						uniqueness: 10,
+				},
+				links: {steam: "https://store.steampowered.com/app/553310/Lethal_League_Blaze/"},
+				review: "<a href='https://www.youtube.com/watch?v=IN9ORD5Joc8' target='_blank'> orignally played on youtube here: https://www.youtube.com/watch?v=IN9ORD5Joc8</a>"
+		},
+		{
+				name: "BLOODSAINT",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/2998040/header.jpg?t=1733421728",
+				rankings: {
+						gameplay: 6,
+						graphics: 7,
+						audio: 8,
+						uniqueness: 6,
+				},
+				links: {steam: "https://store.steampowered.com/app/2998040/BLOODSAINT/"},
+				review: "<a href='https://www.youtube.com/watch?v=IN9ORD5Joc8' target='_blank'> orignally played on youtube here: https://www.youtube.com/watch?v=IN9ORD5Joc8</a>"
+		},
+		{
+				name: "Bear Football",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/674570/header.jpg?t=1677159202",
+				rankings: {
+						gameplay: 1.5,
+						graphics: 2,
+						audio: 2,
+						uniqueness: 2,
+				},
+				links: {steam: "https://store.steampowered.com/app/674570/Bear_Football/"},
+				review: "<a href='https://www.youtube.com/watch?v=IN9ORD5Joc8' target='_blank'> orignally played on youtube here: https://www.youtube.com/watch?v=IN9ORD5Joc8</a>"
+		},
+		{
+				name: "air marty",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1076880/header.jpg?t=1585087256",
+				rankings: {
+						gameplay: 3,
+						graphics: 4,
+						audio: 5,
+						story: 5,
+						uniqueness: 9,
+				},
+				links: {steam: "https://store.steampowered.com/app/1076880/Air_Marty/"},
+				review: "<a href='https://www.youtube.com/watch?v=IN9ORD5Joc8' target='_blank'> orignally played on youtube here: https://www.youtube.com/watch?v=IN9ORD5Joc8</a>"
+		},
+		{
 				name: "blameless",
 				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/530330/header.jpg?t=1567232080",
 				rankings: {
@@ -608,7 +759,7 @@ const reviews =
 			name: "escape the backrooms (not-completed)",
 			img: 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1943950/c5ecb6ccafea6eb86d1ab6413f452eb07dcee27f/header.jpg?t=1758195724',
 			rankings: {
-				gameplay: 5.5,
+				gameplay: 6.5,
 				graphics: 8,
 				audio: 6,
 				story: 5,
