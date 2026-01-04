@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+</head>
+<body>
+		
+</body>
+</html>
+
+<script type="module">
+function popoutDiv() {
+    var divText = document.getElementById("contentToPopout").outerHTML;
+    
+    // Open a new window with specific features (width, height, etc.)
+    var myWindow = window.open('', 'popupWindowName', 'width=400,height=300,scrollbars=yes,resizable=yes');
+    
+    // Check if the window was successfully opened
+    if (myWindow) {
+        // Write the div's HTML content into the new window's document
+        myWindow.document.open();
+        myWindow.document.write('<html><head><title>Pop-out Window</title>');
+        // Optional: include CSS styles for the new window content
+        myWindow.document.write('<style>body { font-family: sans-serif; padding: 10px; }</style>');
+        myWindow.document.write('</head><body>');
+        myWindow.document.write(divText); // Insert the div content
+        myWindow.document.write('</body></html>');
+        myWindow.document.close(); // Finish loading the page
+    } else {
+        alert('Popup window blocked! Please allow popups for this site.');
+    }
+}
+</script>
+

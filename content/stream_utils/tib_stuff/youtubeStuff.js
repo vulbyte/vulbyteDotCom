@@ -1,4 +1,3 @@
-
 export default class YoutubeStuff {
 	config = {
 		apiKey,		

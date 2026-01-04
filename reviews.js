@@ -12,9 +12,156 @@ const reviews =
 						uniqueness: 5,
 				},
 				links: {steam: ""},
-				review: "<a href='' target='_blank'> orignally played on youtube here</a>"
+				review: "<a href='https://www.youtube.com/watch?v=qEL0XYEpwIQ' target='_blank'> orignally played on youtube here https://www.youtube.com/watch?v=qEL0XYEpwIQ</a>"
 		},
 		*/
+		{
+				name: "Barro racign",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1307090/header.jpg?t=1738798261",
+				rankings: {
+						gameplay: 6,
+						graphics: 6,
+						audio: 3,
+						uniqueness: 4,
+				},
+				links: {steam: "https://store.steampowered.com/app/1307090/Barro_Racing/"},
+				review: "<a href='https://www.youtube.com/watch?v=qEL0XYEpwIQ' target='_blank'> orignally played on youtube here https://www.youtube.com/watch?v=qEL0XYEpwIQ</a> i had fun ,but i wouldn't call it a good game. it's fun to play around with for like 20minutes, but after that there's no value outside local co-op. if it's a dollar or less it's a fun fuck around but there's only just enough here to call it a game."
+		},
+		{
+				name: "All you can eat",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/663240/header.jpg?t=1576515579",
+				rankings: {
+						gameplay: 4,
+						graphics: 9,
+						audio: 4,
+						story: 7,
+						uniqueness: 6,
+				},
+				links: {steam: "https://store.steampowered.com/app/663240/All_You_Can_Eat/"},
+				review: "<a href='https://www.youtube.com/watch?v=qEL0XYEpwIQ' target='_blank'> orignally played on youtube here https://www.youtube.com/watch?v=qEL0XYEpwIQ</a>"
+		},
+		{
+				name: "Boo! Are you scared? The Chests Game",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3380740/header.jpg?t=1738089981",
+				rankings: {
+						gameplay: 6,
+						graphics: 4,
+						audio: 3,
+						uniqueness: 5.5,
+				},
+				links: {steam: "https://store.steampowered.com/app/3380740/Boo_Are_you_scared_The_Chests_Game/"},
+				review: "<a href='https://www.youtube.com/watch?v=qEL0XYEpwIQ' target='_blank'> orignally played on youtube here https://www.youtube.com/watch?v=qEL0XYEpwIQ</a>"
+		},
+		{
+				name: "bitburner",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1812820/header.jpg?t=1727842438",
+				rankings: {
+						gameplay: 4,
+						graphics: 3,
+						story: 3,
+						uniqueness: 7,
+				},
+				links: {steam: "https://store.steampowered.com/app/1812820/Bitburner/"},
+				review: "<a href='https://www.youtube.com/watch?v=qEL0XYEpwIQ' target='_blank'> orignally played on youtube here https://www.youtube.com/watch?v=qEL0XYEpwIQ</a>"
+		},
+		{
+				name: "Astray",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/329200/header.jpg?t=1619434865",
+				rankings: {
+						gameplay: 6,
+						graphics: 7,
+						audio: 8,
+						story: 4,
+						uniqueness: 6,
+				},
+				links: {steam: "https://store.steampowered.com/app/329200/Astray/"},
+				review: "<a href='https://www.youtube.com/watch?v=qEL0XYEpwIQ' target='_blank'> orignally played on youtube here https://www.youtube.com/watch?v=qEL0XYEpwIQ</a>"
+		},
+		{
+				name: "Bee simulator",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/914750/header.jpg?t=1765609376",
+				rankings: {
+						gameplay: 5,
+						graphics: 9,
+						audio: 7,
+						story: 3,
+						uniqueness: 7,
+				},
+				links: {steam: "https://store.steampowered.com/app/914750/Bee_Simulator/"},
+				review: "<a href='https://www.youtube.com/watch?v=qEL0XYEpwIQ' target='_blank'> orignally played on youtube here https://www.youtube.com/watch?v=qEL0XYEpwIQ</a>"
+		},
+		{
+				name: "Medusa's Labyrinth",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/436110/header.jpg?t=1572337950",
+				rankings: {
+						gameplay: 4,
+						graphics: 7,
+						audio: 8,
+						story: 4,
+						uniqueness: 4,
+				},
+				links: {steam: "https://store.steampowered.com/app/436110/Medusas_Labyrinth/"},
+				review: "<a href='https://www.youtube.com/watch?v=qEL0XYEpwIQ' target='_blank'> orignally played on youtube here https://www.youtube.com/watch?v=qEL0XYEpwIQ</a> cute short horror game, too fucking dark to see anything consistently"
+		},
+		{
+				name: "rock paper sissors",
+				img: "",
+				rankings: {
+						gameplay: 5,
+						graphics: 4,
+						uniqueness: 6,
+				},
+				links: {steam: "https://www.rpsgame.org/"},
+				review: "<a href='https://www.youtube.com/watch?v=qEL0XYEpwIQ' target='_blank'> orignally played on youtube here https://www.youtube.com/watch?v=qEL0XYEpwIQ</a>"
+		},
+		{
+				name: "google coin flip",
+				img: "https://cdn2.free-power-point-templates.com/articles/wp-content/uploads/2020/11/flip-a-coin-with-google.gif",
+				rankings: {
+						gameplay: 6,
+						graphics: 5,
+						uniqueness: 4,
+				},
+				links: {website: "https://www.google.com/search?q=google+coin+flip"},
+				review: "<a href='https://www.youtube.com/watch?v=qEL0XYEpwIQ' target='_blank'> orignally played on youtube here https://www.youtube.com/watch?v=qEL0XYEpwIQ</a>"
+		},
+		{
+				name: "Keep digging",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3585800/9b2548eda14759f6a4aa1d861ca100c7c437bbe8/header.jpg?t=1757581771",
+				rankings: {
+						gameplay: 7,
+						graphics: 6.5,
+						audio: 6,
+						story: 6,
+						uniqueness: 6,
+				},
+				links: {steam: "https://store.steampowered.com/app/3585800/Keep_Digging/"},
+				review: "<a href='https://www.youtube.com/watch?v=qEL0XYEpwIQ' target='_blank'> orignally played on youtube here https://www.youtube.com/watch?v=qEL0XYEpwIQ</a> very fun, but feels like an asset flip and could use a lot more polish"
+		},
+		{
+				name: "myers-briggs test",
+				img: "https://www.16personalities.com/static/images/system/logo.svg",
+				rankings: {
+						gameplay: 6,
+						graphics: 6,
+						audio: 1,
+						uniqueness: 3,
+				},
+				links: {website: "https://www.16personalities.com/free-personality-test"},
+				review: "<a href='https://www.youtube.com/watch?v=qEL0XYEpwIQ' target='_blank'>although this si fun, pelase don't believe in this stuff. you are so much more dynamic and capible then just being one of 16 personalities. i am apparently an ENTF-T acording to chat lol orignally played on youtube here https://www.youtube.com/watch?v=qEL0XYEpwIQ</a>"
+		},
+		{
+				name: "Binaries",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/435800/header.jpg?t=1729502301",
+				rankings: {
+						gameplay: 7,
+						graphics: 9,
+						audio: 5,
+						uniqueness: 6,
+				},
+				links: {steam: "https://store.steampowered.com/app/435800/Binaries/"},
+				review: "<a href='https://www.youtube.com/watch?v=qEL0XYEpwIQ' target='_blank'> orignally played on youtube here https://www.youtube.com/watch?v=qEL0XYEpwIQ</a>"
+		},
 		{
 				name: "Juno; new origins",
 				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/870200/header.jpg?t=1749669773",
