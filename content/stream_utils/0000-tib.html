@@ -1,12 +1,375 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<script src="/client_management.js" type="module"></script>
-	<title>tib 4</title>
-</head>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<script src="/client_management.js" type="module"></script>
+		<title>tib 4</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Geist+Mono:wght@100..900&family=Permanent+Marker&display=swap" rel="stylesheet">
+	</head>
 <body>
- <h1>TiB</h1>	
+	<h1>TiB</h1>	
+	<style>
+		:root{
+			--tib_padding: 0.4rem;
+			--tib_border: 0.1rem solid white;
+			--tib_border-radius: calc(var(--tib_padding))
+		}
+
+		#tib_controls>* {
+			border-radius: 1em;	
+			padding: 1.4rem;
+		}
+	</style>
+	<div 
+	id="tib_controls" 
+	style="
+	height:90vh; 
+	width:90vw; 
+	display:flex;
+	">
+			<!-- chat -->
+		<div 
+		style="
+		border: var(--tib_border);
+		border-color:#330; 
+		width: 20rem; 
+		min-width:18rem;
+
+		padding:calc(var(--tib_padding)*4);
+
+		/*transform:rotate3d(-1, 0, 0, 45deg);*/
+		">
+			<style>
+				@font-face {
+					font-family: GeistMono-Black;
+					src: url(/assets/GeistMono-Black.otf)
+				}
+
+			.chat_message {
+			background-color: #300;
+			width:16rem;
+			display:flex;
+			flex-direction:column;
+			}
+
+			.chat_message-pfp>img{}
+
+			</style>
+			<div class="chat_message" style="
+			background-color: transparent;
+			width:16rem;
+			display:flex;
+			flex-direction:column;
+			padding-left:var(--tib_padding);
+			">
+			<div style="width:16rem;" style="display:flex; flex-direction:column;">
+			<div style="background-color:transparent">
+			<style>
+				@keyframes background_scroll{
+					from{
+						background-position-x:0rem;
+						background-position-y:0rem;
+					}
+					to{
+						background-position-x:2rem;
+						background-position-y:-1rem;
+					}
+				}
+
+				@keyframes rocking {
+					0%{transform:rotateZ(-5deg);}
+					50%{ transform:rotateZ(2deg); }
+					100%{ transform:rotateZ(-5deg); }
+				}
+
+				@keyframes rocking2 {
+					0%{transform:translateX(0.4rem)translateY(-1.7rem)rotateZ(-5deg); }
+					50%{transform:translateX(0.4rem)translateY(-1.7rem)rotateZ(2deg); }
+					100%{transform:translateX(0.4rem)translateY(-1.7rem)rotateZ(-5deg); }
+				}
+
+
+			transform:translateX(0.4rem)translateY(-1.7rem)rotateZ(5deg);
+			</style>
+			<div class="user_info animated_interactible" style="
+			animation: background_scroll 3s, rocking 4s;
+			animation-timing-function:linear, ease-in-out;
+			animation-iteration-count: infinite, infinite;
+
+			background: #880000;
+			background-image: radial-gradient(circle at center, #a44 0%, #a44 25%, transparent 25%); 
+			background-repeat:repeat;
+			background-size:1rem 1rem;
+
+			border-top-left-radius: calc(var(--tib_border-radius)*4);
+			border-top-right-radius:calc(var(--tib_border-radius)*4);
+			border-bottom-right-radius:calc(var(--tib_border-radius)*4);
+
+			padding:var(--tib_padding);
+
+			/*overflow:hidden;*/
+
+			position:relative;
+			display:flex;
+			flex-direction:row;
+			justify-content:space-between;
+			width:100%;
+
+			transform-origin: bottom left;
+			transform:
+				rotateZ(-5deg);
+
+			font-family: GeistMono-Black;
+			font-weight:bolder;
+
+
+			z-index:1000;
+			">
+			<div style="width:2rem; height:2rem; position:absolute; left:-1.8rem; bottom:0rem; border-radius:0rem;">
+				<img src="./tib_stuff/exciting_tail.png" style="border-radius:0rem; filter:brightness(0.5);">
+			</div>
+			<style>
+				.message_overlay{
+							border-top-left-radius:calc(var(--tib_border-radius)*4);
+							border-top-right-radius:calc(var(--tib_border-radius)*4);
+							border-bottom-right-radius:calc(var(--tib_border-radius)*4);
+							display:flex;
+							flex-direction:row;
+							justify-content:space-around;
+							width:100%; 
+							height:100%; 
+							position:absolute; 
+							/*padding:var(--tib_padding);*/
+							left:0rem;
+							top:0rem;
+							transition-duration: 100ms; color:transparent;background-color:transparent;
+							z-index:1003;
+				}
+				.message_overlay>*{
+					font-size:2.3rem;
+				}
+
+				.message_overlay:hover{		
+							background-color: #000000cc; 
+							color:white;
+				}
+
+				.animated_interactible{
+							animation-play-state:paused;
+				}
+
+			</style>
+			<div class="message_overlay animated_interactible" style="">
+				<div>🔗</div>
+				<div>❌</div>
+				<div>☑️</div>
+				<div>🦜</div>
+			</div>
+			<div style="aspect-ratio:1/1; width: 100%; height:4rem; display:flex; justify-content:space-between;">
+			<div class="chat_messasge-pfp_container" style="width:min-content; display:flex; flex-direction:row;">
+			<div style="
+			height:4rem !important; 
+			width:4rem !important;
+			background-image: 
+			linear-gradient(45deg, #03f, transparent, transparent), /*mod*/
+			linear-gradient(100deg, #0f0, transparent), /*spon*/
+			linear-gradient(225deg, #f00, transparent), /*verf*/
+			linear-gradient(315deg, #ff0, transparent); /*own*/
+			border-radius:100%;
+
+			display:flex;
+			flex-direction:row;
+			justify-content: center;
+
+			position:relative;
+			">
+			<picture class="chat_message-pfp" style="
+			display:flex;
+			flex-direction:column;
+			justify-content:center;
+
+			width:90%;
+			">
+			<source src="/assets/headshot_doodle.png" type="image/png">
+			<img src="/assets/worble.png" style="
+			border-radius:100%; height:90%;
+			"/>
+			</picture>
+			<div style="
+			position:absolute; 
+			right:0px; 
+			bottom:0px; 
+			width:1.2rem; 
+			height:1.2rem;
+			">
+			<picture>
+			<img src="/assets/icon.png">
+			</picture>
+			</div>
+			</div>
+			</div>
+			<span>@</span>
+			<span class="username_container" style="overflow:hidden; width:calc(100%-1.2rem); text-overflow:ellipsis; height:1.5rem;"> 
+			usernameUSERNAMEusernameUSERNAME
+			</span>
+			</div>
+			<style>
+				@keyframes badge_spin{
+					from{transform:rotateZ(0deg);}
+					to{transform:rotateZ(35deg);}
+				}
+			</style>
+			<div class="chat_ranking" style="
+				width:2rem;
+				height:2rem; 
+				position:absolute; 
+				right:-0.7rem; 
+				bottom: -0.7rem;
+			">
+				<img src="./tib_stuff/top_chatter_badge.svg" style="
+					animation: badge_spin 2s;
+					animation-timing-function: linear;
+					animation-iteration-count: infinite;
+					position:absolute;
+					left:0rem;
+					top:0rem;
+				">
+				<span style="
+					font-size:1.5rem;
+					position:absolute;
+					left:0.1rem;
+					top:-0.2rem;
+				">#1</span>
+			</div>
+			</div>
+			<p style="
+			animation: rocking2 4s;
+			animation-timing-function: ease-in-out;
+			animation-iteration-count: infinite;
+			animation-delay:500ms;
+
+			background-color:#ddd;
+			color:black;
+
+			border-top-right-radius:		calc(var(--tib_border-radius)*4);
+			border-bottom-left-radius:	calc(var(--tib_border-radius)*4);
+			border-bottom-right-radius:	calc(var(--tib_border-radius)*4);
+
+			padding:var(--tib_padding);
+
+
+			transform-origin: top left;
+			transform:
+				translateX(0.4rem)
+				translateY(-1.7rem)
+				rotateZ(5deg);
+
+			width:90%;
+			position:relative;
+			z-index:999;
+			">
+			Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate.</p>
+			</div>
+			</div>
+			</div>
+		</div>
+		<script>
+		let myPopout = null;
+
+		function openPopout() {
+		// Open the window and store it in our variable
+		myPopout = window.open('popout.html', 'PopoutName', 'width=400,height=400');
+		}
+
+		// Listen for when the main page is closed or refreshed
+		window.addEventListener('beforeunload', function() {
+		if (myPopout && !myPopout.closed) {
+		myPopout.close();
+		}
+		});
+		</script>
+		<!-- main -->
+		<div 
+		style="
+		background-color:#303; 
+		height:100%; 
+		width:75%; 
+		overflow:hidden;
+		">
+		<div style="
+		height:80%; 
+		overflow-y: scroll; 
+		overflow-x:hidden;
+		">
+		<details 
+		style="
+		border: var(--tib_border); 
+		border-radius: var(--tib_border-radius); 
+		padding:0.5rem;
+		">
+		<summary>youtube config</summary>
+		<div class="youtube-config-input">
+			<label> channelName<label>
+			<div style="display:flex; flex-direction:row;">
+				<span style="
+				  font-size:2.4rem;
+					padding: var(--input-pad);
+					background: var(--color-surface);
+					border: 0.1rem solid var(--color-border);
+					border-top-left-radius: var(--border_radius_default);
+					border-bottom-left-radius: var(--border_radius_default);
+					color: var(--color-text);
+					font-size: var(--font-size-base);
+					transition:
+							background var(--transition),
+							border-color var(--transition),
+							opacity var(--transition),
+							transform var(--transition);
+					">@</span><input style="
+						display:inline-block;
+					border-top-left-radius:			0rem;
+					border-bottom-left-radius:	0rem;
+				" id="youtube-config-channelName" placeholder="vulbyte"></input>
+			</div>
+		</div>
+		<div class="youtube-config-input">
+		<label> apiKey<label>
+		<input type="password" id="youtube-config-apiKey"></input>
+		</div>
+		<div class="youtube-config-input">
+		<label> channelId<label>
+		<input id="youtube-config-channelId"></input>
+		</div>
+		<div class="youtube-config-input">
+		<label> broadcastId<label>
+		<input id="youtube-config-broadcastId"></input>
+		</div>
+		<div class="youtube-config-input">
+		<label> liveChatId<label>
+		<input id="youtube-config-liveChatId"></input>
+		</div>
+		</details>
+		</div>
+		<!-- controls -->
+		<div style="background-color:#033; border-radius:1.4rem; height:20%; position:relative; bottom:0px; display:flex; flex-direction:row;">
+			<div style="height: 100%; width:16rem; padding:calc(var(--tib_padding)*4);">
+				<input type="button" value="save all inputs" 
+					style="background-color: #0ff; color:black; user-select:none;"
+				/>				
+				<input type="button" value="load all inputs"style="background-color: #ff0; color:black; user-select:none;"/>			
+			</div>	
+			<div>
+				<div style="height: 100%; width:16rem; padding:calc(var(--tib_padding)*4);">
+					<input type="button" value="start monitoring messages" 
+															 style="background-color: #0f0; color:black; user-select:none;"
+															 />				
+					<input type="button" value="stop monitoring messages"style="background-color: #f00; color:black; user-select:none;"/>			
+				</div>	
+			</div>
+		</div>
+	</div>
 </body>
 </html>

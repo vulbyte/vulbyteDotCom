@@ -16,6 +16,19 @@ const reviews =
 		},
 		*/
 		{
+				name: "Happy Humble Burger Farm",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1433340/header.jpg?t=1759513869",
+				rankings: {
+						gameplay: 8,
+						graphics: 7,
+						audio: 8,
+						story: 8,
+						uniqueness: 8,
+				},
+				links: {steam: "https://store.steampowered.com/app/1433340/Happys_Humble_Burger_Farm/"},
+				review: "<a href='https://www.youtube.com/watch?v=xNKRu6lBrwU' target='_blank'> orignally played on youtube here https://www.youtube.com/watch?v=xNKRu6lBrwU</a>. a fun game with a surprisingly solid cooking mechanic. some thnigs like the backpack aren't explained very clearly, there's some graphical jank and incnosistencies which i don't feel like are intentional and are a touch distractnig, and there's some mechanical jank that happens (trying to get out of the water is an absolute pain), but other then that, pretty good :3 (thank you felix)!"
+		},
+		{
 				name: "Barro racign",
 				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1307090/header.jpg?t=1738798261",
 				rankings: {
