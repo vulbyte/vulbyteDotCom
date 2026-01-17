@@ -1,3 +1,4 @@
+// THIS IS OLD, DO NOT USE ANYMORE. PLEASE REFER TO: https://github.com/vulbyte/youtubeV3ApiAccessor
 // Fixed YoutubeStuff class
 export class YoutubeStuff {
 	config = {
@@ -18,6 +19,7 @@ export class YoutubeStuff {
 			const data = await response.json();
 			if (data.items && data.items.length > 0) {
 				const channelId = data.items[0].id;
+				this.config.channelId = channelId;
 				console.log(`Channel ID: ${channelId}`);
 				return channelId;
 			} else {

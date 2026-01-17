@@ -13,168 +13,72 @@ const reviews =
 						uniqueness: 5,
 				},
 				links: {steam: ""},
-				review: "<a href='https://www.youtube.com/watch?v=UFnT6qdRy_Q' target='_blank'> orignally played on youtube here https://www.youtube.com/watch?v=UFnT6qdRy_Q</a>"
+				review: "<a href='https://www.youtube.com/watch?v=FyO_LcwnK5I' target='_blank'> orignally played on youtube here https://www.youtube.com/watch?v=FyO_LcwnK5I</a>"
 		},
 		*/
 		{
-				name: "Airscape - The Fall of Gravity",
-				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/317250/header.jpg?t=1574484005",
+				name: "",
+				img: "",
 				rankings: {
-						gameplay: 6.5,
-						graphics: 6.5,
-						audio: 6,
-						story: 4,
-						uniqueness: 9,
-				},
-				links: {steam: "https://store.steampowered.com/app/317250/Airscape__The_Fall_of_Gravity/"},
-				review: "<a href='https://www.youtube.com/watch?v=UFnT6qdRy_Q' target='_blank'> orignally played on youtube here https://www.youtube.com/watch?v=UFnT6qdRy_Q</a>"
-		},
-		{
-				name: "Calvin Tucker's Farm Animal Racing",
-				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/809900/header.jpg?t=1520588489",
-				rankings: {
-						gameplay: 7.5,
-						graphics: 9,
-						audio: 7,
-						uniqueness: 6,
-				},
-				links: {steam: "https://store.steampowered.com/app/809900/Calvin_Tuckers_Farm_Animal_Racing/"},
-				review: "it's fun, but can be a little repotitve quickly. i'd say abouyt an hour of fun. if you have like 3$usd and wanna play around it's a fun little 30min-couple hour thing if you like kart racers <a href='https://www.youtube.com/watch?v=UFnT6qdRy_Q' target='_blank'> orignally played on youtube here https://www.youtube.com/watch?v=UFnT6qdRy_Q</a>"
-		},
-		{
-				name: "Horace",
-				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/629090/header.jpg?t=1591188599",
-				rankings: {
-						gameplay: 7,
-						graphics: 9,
-						audio: 6,
-						story: 8,
-						uniqueness: 8,
-				},
-				links: {steam: "https://store.steampowered.com/app/629090/Horace/"},
-				review: "asterisk: i played this game for about 30 minutes, however the trailer shows much more content then i played and i don't believe the game is trying to scam anyone, so i think this review is not valid, however as per tradition i will review it anyways <a href='https://www.youtube.com/watch?v=UFnT6qdRy_Q' target='_blank'> orignally played on youtube here https://www.youtube.com/watch?v=UFnT6qdRy_Q</a>"
-		},
-		{
-				name: "Bit Blaster XL",
-				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/433950/78163a0d17719e45ec372fffe960478bc84183cf/header.jpg?t=1745903625",
-				rankings: {
-						gameplay: 7,
-						graphics: 7,
-						audio: 6.5,
-						uniqueness: 7.5,
-				},
-				links: {steam: "https://store.steampowered.com/app/433950/Bit_Blaster_XL/"},
-				review: "<a href='https://www.youtube.com/watch?v=UFnT6qdRy_Q' target='_blank'> orignally played on youtube here https://www.youtube.com/watch?v=UFnT6qdRy_Q</a>"
-		},
-		{
-				name: "A Buttload of Free Games",
-				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275070/header.jpg?t=1764782587",
-				rankings: {
-						gameplay: 8,
-						graphics: 6,
-						audio: 7,
-						uniqueness: 9,
-				},
-				links: {steam: "https://store.steampowered.com/app/1275070/A_Buttload_of_Free_Games/"},
-				review: "<a href='https://www.youtube.com/watch?v=UFnT6qdRy_Q' target='_blank'> orignally played on youtube here https://www.youtube.com/watch?v=UFnT6qdRy_Q</a>"
-		},
-		{
-				name: "cop rush",
-				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3728810/2fa8fff7750d51c4e2db9e9ac1fa1e88b09e8e91/header.jpg?t=1767083441",
-				rankings: {
-						gameplay: 2,
-						graphics: 3,
-						audio: 1,
+						gameplay: 5,
+						graphics: 5,
+						audio: 5,
+						story: 5,
 						uniqueness: 5,
 				},
-				links: {steam: "https://store.steampowered.com/app/3728810/Cop_Rush/"},
-				review: "<a href='https://www.youtube.com/watch?v=UFnT6qdRy_Q' target='_blank'> orignally played on youtube here https://www.youtube.com/watch?v=UFnT6qdRy_Q</a>"
+				links: {steam: ""},
+				review: "<a href='https://www.youtube.com/watch?v=FyO_LcwnK5I' target='_blank'> orignally played on youtube here https://www.youtube.com/watch?v=FyO_LcwnK5I</a>"
 		},
 		{
-				name: "castle break",
-				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1018130/header.jpg?t=1757197688",
+				name: "",
+				img: "",
 				rankings: {
-						gameplay: 6.5,
-						graphics: 7,
-						audio: 6.5,
-						uniqueness: 7,
-				},
-				links: {steam: "https://store.steampowered.com/app/1018130/Castle_Break/"},
-				review: "<a href='https://www.youtube.com/watch?v=UFnT6qdRy_Q' target='_blank'> orignally played on youtube here https://www.youtube.com/watch?v=UFnT6qdRy_Q</a>"
-		},
-		{
-				name: "iron danger",
-				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/899310/header.jpg?t=1759323578",
-				rankings: {
-						gameplay: 6,
-						graphics: 10,
-						audio: 7,
+						gameplay: 5,
+						graphics: 5,
+						audio: 5,
 						story: 5,
-						uniqueness: 8,
-				},
-				links: {steam: "https://store.steampowered.com/app/899310/Iron_Danger/"},
-				review: "<a href='https://www.youtube.com/watch?v=UFnT6qdRy_Q' target='_blank'> orignally played on youtube here https://www.youtube.com/watch?v=UFnT6qdRy_Q</a>"
-		},
-		{
-				name: "Automachef",
-				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/984800/header.jpg?t=1761824259",
-				rankings: {
-						gameplay: 8,
-						graphics: 7,
-						audio: 8,
-						uniqueness: 7,
-				},
-				links: {steam: "https://store.steampowered.com/app/984800/Automachef/"},
-				review: "<a href='https://www.youtube.com/watch?v=FyO_LcwnK5I' target='_blank'> orignally played on youtube here https://www.youtube.com/watch?v=FyO_LcwnK5I</a>"
-		},
-		{
-				name: "Cat Quest",
-				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/593280/69324384b1da76cab8a6215c42f5d5f34a0e1290/header.jpg?t=1756984217",
-				rankings: {
-						gameplay: 6.5,
-						graphics: 8,
-						audio: 7,
-						story: 5,
-						uniqueness: 8,
-				},
-				links: {steam: "https://store.steampowered.com/app/593280/Cat_Quest/"},
-				review: "<a href='https://www.youtube.com/watch?v=FyO_LcwnK5I' target='_blank'> orignally played on youtube here https://www.youtube.com/watch?v=FyO_LcwnK5I</a>"
-		},
-		{
-				name: "Caterpillarnoid",
-				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1349920/header.jpg?t=1653656592",
-				rankings: {
-						gameplay: 7,
-						graphics: 7,
-						audio: 6,
-						uniqueness: 3,
-				},
-				links: {steam: "https://store.steampowered.com/app/1349920/Caterpillarnoid/"},
-				review: "<a href='https://www.youtube.com/watch?v=FyO_LcwnK5I' target='_blank'> orignally played on youtube here https://www.youtube.com/watch?v=FyO_LcwnK5I</a>"
-		},
-		{
-				name: "close your eyes [old version]",
-				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/377330/c8d8c555e37e28190ecd34dae23ca4b0d73ce5bc/header.jpg?t=1746732306",
-				rankings: {
-						gameplay: 4,
-						graphics: 6.5,
-						audio: 6,
-						uniqueness: 6,
-				},
-				links: {steam: "https://store.steampowered.com/app/377330/Close_Your_Eyes_Old_Version/"},
-				review: "<a href='https://www.youtube.com/watch?v=FyO_LcwnK5I' target='_blank'> orignally played on youtube here https://www.youtube.com/watch?v=FyO_LcwnK5I</a>"
-		},
-		{
-				name: "The Bard's Tale IV: Director's Cut",
-				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1091980/header.jpg?t=1689780612",
-				rankings: {
-						gameplay: 7,
-						graphics: 7,
-						audio: 9,
-						story: 6,
 						uniqueness: 5,
 				},
-				links: {steam: "https://store.steampowered.com/app/1091980/The_Bards_Tale_IV_Directors_Cut/"},
+				links: {steam: ""},
+				review: "<a href='https://www.youtube.com/watch?v=FyO_LcwnK5I' target='_blank'> orignally played on youtube here https://www.youtube.com/watch?v=FyO_LcwnK5I</a>"
+		},
+		{
+				name: "",
+				img: "",
+				rankings: {
+						gameplay: 5,
+						graphics: 5,
+						audio: 5,
+						story: 5,
+						uniqueness: 5,
+				},
+				links: {steam: ""},
+				review: "<a href='https://www.youtube.com/watch?v=FyO_LcwnK5I' target='_blank'> orignally played on youtube here https://www.youtube.com/watch?v=FyO_LcwnK5I</a>"
+		},
+		{
+				name: "",
+				img: "",
+				rankings: {
+						gameplay: 5,
+						graphics: 5,
+						audio: 5,
+						story: 5,
+						uniqueness: 5,
+				},
+				links: {steam: ""},
+				review: "<a href='https://www.youtube.com/watch?v=FyO_LcwnK5I' target='_blank'> orignally played on youtube here https://www.youtube.com/watch?v=FyO_LcwnK5I</a>"
+		},
+		{
+				name: "",
+				img: "",
+				rankings: {
+						gameplay: 5,
+						graphics: 5,
+						audio: 5,
+						story: 5,
+						uniqueness: 5,
+				},
+				links: {steam: ""},
 				review: "<a href='https://www.youtube.com/watch?v=FyO_LcwnK5I' target='_blank'> orignally played on youtube here https://www.youtube.com/watch?v=FyO_LcwnK5I</a>"
 		},
 		{

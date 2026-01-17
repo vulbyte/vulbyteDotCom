@@ -4,6 +4,10 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<script src="/client_management.js" type="module"></script>
+		<script type="module">
+			import monitorMessages from './tib_stuff/monitorMessages.js';
+			window.mm = new MonitorMessages();
+		</script>
 		<title>tib 4</title>
 		<link rel="preconnect" href="https://fonts.googleapis.com">
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -276,21 +280,6 @@
 			</div>
 			</div>
 		</div>
-		<script>
-		let myPopout = null;
-
-		function openPopout() {
-		// Open the window and store it in our variable
-		myPopout = window.open('popout.html', 'PopoutName', 'width=400,height=400');
-		}
-
-		// Listen for when the main page is closed or refreshed
-		window.addEventListener('beforeunload', function() {
-		if (myPopout && !myPopout.closed) {
-		myPopout.close();
-		}
-		});
-		</script>
 		<!-- main -->
 		<div 
 		style="
@@ -310,9 +299,24 @@
 		border-radius: var(--tib_border-radius); 
 		padding:0.5rem;
 		">
+		<style>
+			.youtube-config-input > label {
+				display:block;
+			}
+			.youtube-config-input > input {
+				display:inline; 
+				width:90%;
+			}
+			.youtube-config-input > span {
+				display:inline; 
+				width: 10%;
+				padding-left:1rem;
+			}
+		</style>
 		<summary>youtube config</summary>
 		<div class="youtube-config-input">
-			<label> channelName<label>
+			<label> channelName</label>
+		<div>
 			<div style="display:flex; flex-direction:row;">
 				<span style="
 				  font-size:2.4rem;
@@ -336,20 +340,76 @@
 			</div>
 		</div>
 		<div class="youtube-config-input">
-		<label> apiKey<label>
+		<label> apiKey</label>
 		<input type="password" id="youtube-config-apiKey"></input>
 		</div>
-		<div class="youtube-config-input">
-		<label> channelId<label>
-		<input id="youtube-config-channelId"></input>
+		<input type="button" value="click to complete" onclick='(()=>{
+			function GEBI(id){
+												 if(id=="undefined"){throw new Error("Error getting document by id");}
+												 return document.getElementById(id);
+			}
+			window.mm.yt.config.channelName = document.getElementById("youtube-config-channelName");	
+			window.mm.yt.config.apiKey = document.getElementById("youtube-config-apiKey");	
+
+			window.mm.yt.getChannelIdByHandle();
+
+			let broadcasts = window.mm.yt.getLiveAndUpcomming();
+			console.log("broadcasts:", broadcasts);
+
+			window.mm.yt.getLiveChatId();
+			})()'/>
 		</div>
-		<div class="youtube-config-input">
-		<label> broadcastId<label>
-		<input id="youtube-config-broadcastId"></input>
+		<div style="
+			background: var(--color-surface-hover);		
+			border: 0.1rem solid var(--color-border);
+			border-color: var(--color-border-light);
+			height: 10rem; 	
+			overflow-x:scroll;
+			width:90%; 	
+		">
+		<style>
+			.broadcastSelector {
+				position:relative;
+				height:9rem;
+				width: 16rem;
+				background-repeat:no-repeat;
+				background-size:cover;
+			}
+			.broadcastSelector > .video_info {
+				background-image:linear-gradient(
+						90deg,
+						#000000aa 0%, 
+						#000000dd 20%, 
+						#000000dd 80%, 
+						#000000aa 100%
+					);
+				border-radius:0.5rem;
+				position:absolute;
+				bottom:0px;
+				left:0px;
+				width:12rem;
+				height:4rem;
+			}
+		</style>
+			<div class="broadcastSelector" style="background-image:url(https://i.ytimg.com/vi/lPm_FM-ESbY/default_live.jpg)">
+				<div class="video_info">
+					<div class="title">${obj.snippet.title}</div>
+					<div class="videoId">${obj.id.videoId}</div>
+				</div>
+			</div>
 		</div>
-		<div class="youtube-config-input">
-		<label> liveChatId<label>
-		<input id="youtube-config-liveChatId"></input>
+
+		<div class="youtube-config-input youtube-config-channelId">
+		<label> channelId</label>
+		<input id="youtube-config-channelId"></input><span style="inline">💤</span>
+		</div>
+		<div class="youtube-config-input youtube-config-broadcastId">
+		<label> broadcastId</label>
+		<input id="youtube-config-broadcastId"></input><span style="inline">💤</span>
+		</div>
+		<div class="youtube-config-input youtube-config-liveChatId">
+		<label> liveChatId</label>
+		<input id="youtube-config-liveChatId"></input><span style="inline">💤</span>
 		</div>
 		</details>
 		</div>
