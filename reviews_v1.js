@@ -1,12 +1,9 @@
-const reviews = 
+const reviews_v1 = 
 [
 	/*
 		{
 				name: "",
 				img: "",
-				datePlayed: "",
-				completed: false,
-				stream: "",
 				rankings: {
 						gameplay: 5,
 						graphics: 5,
@@ -19,23 +16,6 @@ const reviews =
 				review: ""
 		},
 		*/
-		{
-				name: "",
-				img: "",
-				datePlayed: "",
-				completed: false,
-				stream: "",
-				rankings: {
-						gameplay: 5,
-						graphics: 5,
-						audio: 5,
-						story: 5,
-						microtransactions: 5,
-						uniqueness: 5,
-				},
-				links: {steam: ""},
-				review: ""
-		},
 		{
 				name: "Airscape - The Fall of Gravity",
 				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/317250/header.jpg?t=1574484005",
@@ -1900,4 +1880,4 @@ playing against bots is funner, but the bots can be far too repetitive.`
 		}
 	];
 
-export default reviews;
+export default reviews_v1;

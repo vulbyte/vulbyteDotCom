@@ -392,7 +392,10 @@
         youtube: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/1024px-YouTube_full-color_icon_%282017%29.svg.png?20240107144800"
     };
     
-    import reviews from "./reviews.js";;
+    import reviews_v1 from "./reviews_v1.js"; // initial reviews
+		import reviews_v2 from "./reviews_v2.js"; // reviews expanded with metadata
+		let reviews = [...reviews_v2, ...reviews_v1]; // reviews are LIFO sorted
+
 
     function CE(args = {}) {
         let elem = document.createElement(args.elem || "div");

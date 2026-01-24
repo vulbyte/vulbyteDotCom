@@ -1,9 +1,5 @@
-import YoutubeStuff from "https://raw.githubusercontent.com/vulbyte/youtubeV3ApiAccessor/refs/heads/main/youtube_state.mjs";
-let yt = new YoutubeStuff();
-
-import TTSManager from "https://raw.githubusercontent.com/vulbyte/webTTSManager/refs/heads/main/TTSManager.mjs"
-let tts = new TTSManager();
-
+import YoutubeV3 from "./imports/youtubeV3ApiAccessor/youtube_state.js"
+import TTSManager from "./imports/webTTSManager/TTSManager.js";
 import {IntTimer} from "./intTimer.js";
 
 // magic values
@@ -40,6 +36,10 @@ class testTemplate {
 };
 
 export default class MonitorMessages {
+	config = {
+		debugMode: true,
+	}
+	yt = new YoutubeV3();
   // testResults.passed for status
   //
 	/*
@@ -59,10 +59,6 @@ export default class MonitorMessages {
 	// VARS private messages should be treated as static.
 	#bannedAtTemplate = {
 	  datetime : "", unbannedAt : [], bannAppeals : [],
-	}
-	#serviceHandlers = {
-	// loose to be extensiable
-	youtube : new YoutubeStuff(),
 	}
 	#channelTemplate = {
 	version : 1, platform : "", channelName : "", channelId : ""
@@ -180,7 +176,7 @@ export default class MonitorMessages {
 	 * will have a value from Date.now()
 	 * @return {Array<Object>}
 	 */
-	#unprocessed_message_template = {
+	#unprocessed_message_template_v1 = {
 		version : 1,
 		apiVersion : 3, // youtube,
 		data : undefined,
@@ -189,6 +185,9 @@ export default class MonitorMessages {
 		failedProcessingAt : undefined,
 	}
 	#messages_queue = [];
+	async GetMessagesQueue(){
+		return this.#messages_queue;
+	}
 	/**
 	 * @name #flagsTemplate
 	 * @param {Array<string>} flag - the flag[s] to trigger the cmd, must be in an
@@ -314,7 +313,6 @@ export default class MonitorMessages {
 		},
 	]
 
-	// ⭐️ FIX: Removed the 'state: {}' object from the template to prevent all new messages from sharing the same reference.
 	#message_template = {
 		template_version: 1,
 		authorName: "",
@@ -326,6 +324,7 @@ export default class MonitorMessages {
 		platform: "",
 		rawMessage: "",
 		score: "",
+		state: {}
 	};
 
 	#clip_queue = [];
@@ -348,147 +347,6 @@ export default class MonitorMessages {
 		  },
 		}
 
-
-
-	_parseCommandString(rawText) {
-	    const result = {foundCommands : [], cleanText : rawText};
-
-	    if (!rawText.startsWith('!')) return result;
-
-	    const tokens = rawText.split(/\s+/);
-	    if (tokens.length == 0) return result;
-
-	    const potentialCommandName = tokens[0].substring(1).toLowerCase();
-	    const commandConfig = this.#commands.find(c => c.command == potentialCommandName);
-
-	    if (commandConfig) {
-		const commandName = commandConfig.command;
-		
-		const commandData = {
-		    command : commandName, 
-		    _rawFunc : commandConfig.func, 
-		    params : {}
-		};
-
-		// --- PHASE 1: Parse provided flags ---
-		let messageStartIndex = 1;
-		for (let i = 1; i < tokens.length; i++) {
-		    const token = tokens[i];
-		    if (token.startsWith('-')) {
-			const flagKey = token.substring(1); 
-			const flagDef = commandConfig.flags.find(f => f.flag.includes(flagKey));
-
-			if (flagDef) {
-			    const flagAlias = flagDef.flag[0]; 
-			    const valueToken = tokens[i + 1];
-			    let val = null;
-			    const isNumericFlag = typeof flagDef.value === 'number';
-
-			    if (isNumericFlag) {
-				if (valueToken && !isNaN(parseFloat(valueToken))) val = parseFloat(valueToken);
-			    } else { 
-				if (valueToken) val = valueToken;
-			    }
-			    
-			    if (val !== null) {
-				if (isNumericFlag && flagDef.range) {
-				    val = Math.max(flagDef.range.min, Math.min(flagDef.range.max, val));
-				}
-				commandData.params[flagAlias] = val;
-				i++;
-				messageStartIndex = i + 1;
-			    }
-			}
-		    } else {
-			messageStartIndex = i;
-			break;
-		    }
-		}
-
-		// --- PHASE 2: Apply defaults ---
-		commandConfig.flags.forEach(flagDef => {
-		    const flagAlias = flagDef.flag[0];
-		    if (commandData.params[flagAlias] === undefined) {
-			const defaultValue = this._getCommandDefault(commandName, flagAlias);
-			if (defaultValue !== null) commandData.params[flagAlias] = defaultValue;
-		    }
-		});
-
-		const actualMessageParts = tokens.slice(messageStartIndex);
-		result.cleanText = actualMessageParts.join(" ");
-		
-		// ⭐️ UPDATE: We just prepare the function here. 
-		// We cannot bind the 'messageObject' yet because it doesn't exist.
-		// The binding will happen in the processor or we pass it dynamically.
-		// For now, let's keep it simple: The function expects (message, flags, messageState).
-		commandData.func = async (injectedState) => {
-		     if (typeof commandData._rawFunc === 'function') {
-			await commandData._rawFunc.call(
-			    this, 
-			    result.cleanText, 
-			    commandData.params,
-			    injectedState // This will be passed when called
-			);
-		    }
-		};
-
-		result.foundCommands.push(commandData);
-	    }
-	    return result;
-	}
-
-
-
-/**
-* Specific processor for YouTube API v3 messages.
-* Maps YouTube raw data to your standard #message_template.
-*/
-async ProcessYouTubeV3(unprocessedMsg) {
-const raw = unprocessedMsg.data;
-const snippet = raw.snippet;
-const author = raw.authorDetails;
-
-// 1. Initialize the new processed message object
-const newMessage = {
-... this.#message_template,
-// ⭐️ CRITICAL FIX: Initialize 'state' with a NEW object literal 
-// to prevent reference sharing (state pollution).
-state: {} 
-}; // Shallow copy template
-
-// 2. Map basic metadata
-newMessage.template_version = 1;
-newMessage.platform = "YouTube";
-newMessage.rawMessage = unprocessedMsg; // Keep reference to the container
-newMessage.unixTime = unprocessedMsg.date;
-newMessage.authorName = author.displayName;
-newMessage.authorId = author.channelId;
-newMessage.streamOrigin = snippet.liveChatId; // Or videoId if you prefer
-
-// 3. Extract text content
-// YouTube messages can be simple text or fan funding, etc. We
-// target textMessageEvent.
-let textContent = "";
-if (snippet.type == 'textMessageEvent') {
-textContent = snippet.textMessageDetails.messageText;
-} else if (snippet.displayMessage) {
-// Fallback for other types
-textContent = snippet.displayMessage;
-}
-
-// 4. Parse for commands
-// We use a helper helper to strip commands/flags and return
-// clean text
-const parseResult = this._parseCommandString(textContent);
-
-newMessage.commands = parseResult.foundCommands;
-parseResult.cleanText = this.sanitizeString(parseResult.cleanText);
-newMessage.processedMessage = parseResult.cleanText;
-
-newMessage.score = await this.ScoreMessage(parseResult.cleanText);
-
-return newMessage;
-}
 
 	async ProcessUnprocessedMessagesQueue(maxAmount = 50) {
 	    let i = 0;
@@ -555,108 +413,94 @@ return newMessage;
 	    }
 	}
 
-
-
-	async MonitorLoop() {
-		console.log("starting Loop MonitoringLoop");
-		const TimeoutDuration = 5000;
-		
-		// Note: The outer REJECT will fire immediately. A better polling pattern 
-		// is typically done with recursion/setInterval, but this follows your structure.
-
-	//	console.log("daLoop set up, calling");
-		//await daLoop;
-		//console.log("daLoop called");
-
-		
-		// This line is needed to kick off the next loop cycle if you want continuous polling
-		// If this is only meant to be a single-shot function, remove the line below.
-		
-		// Recursive call to start the next cycle after the timeout/processing finishes
-		//return this.MonitorLoop(); 
-	    }
-
-
 	GetMessagesTimer = new IntTimer();
-
 	async MonitoringStart() {
-		// assess
-		
-		// test
-
-		// Start polling loop
-		setInterval(async () => {
-			try {
-				let yt_messages = await this.yt.GetMessages().then((res) => {
-					messages = res.json();
-					let message_template = {
-						template_version: 1,
-						authorName: "",
-						authorId: "",
-						streamOrigin: "", //what streamid via the platform the message came from
-						unixTime: "",
-						commands: [],
-						processedMessage: "",
-						platform: "",
-						rawMessage: "",
-						score: "",
-					};
-
-					for(let i = 0; i < messages.length; ++i){
-						this.#message_queue += ProcessYouTubeV3(messages[i]);
-					}
-				});
-			} 
-			catch (err) {
-				console.err(err);
-			}
-		}, 15000);
+		try {
+			// assess	
+			// test
+			this.#DaLoop();
+			this.GetMessagesTimer.AddTimeoutListener(this.#DaLoop);
+	// Start polling loop
+			this.GetMessagesTimer.Start();
+		}
+		catch (err) {
+			console.error("error with monitoring start\n", err);
+		}
 	}
 
 
 	async #DaLoop() {
-	    try {
-		console.log(`[DaLoop] Starting cycle. Queue size: ${this.#unprocessed_queue.length}`);
-		
-		// --- 1. GET NEW MESSAGES (Uses stored pageToken automatically) ---
-		const newMessagesRaw = await this.#serviceHandlers.youtube.GetMessagesAtPage(); 
-		
-		const rawItems = newMessagesRaw?.items || [];
-		
-		if (rawItems.length > 0) {
-		    console.log("New YouTube messages:");
-		    console.log(JSON.stringify(newMessagesRaw, null, 2));
-		    console.log(`[DaLoop] Fetched ${rawItems.length} new messages.`);
+		try{
+			console.log("loop triggered, attempting to get messages");
+			let messages = await this.yt.getChatMessages();
 
-		    for (let i = 0; i < rawItems.length; ++i) {
-			this.ParseAndAddYouTubeV3MessagesToUnprocessedQueue(rawItems[i]);
-		    }
+			if(messages == null){
+				console.warn("messages got from api is null, is there an issue?");
+				return;
+			}
 
-		    console.log("Updated unprocessed_queue:\n" + JSON.stringify(this.#unprocessed_queue, null, 2));
-		} else {
-		    console.log("[DaLoop] No new messages this cycle.");
+			//ERROR PAST HERE, MESSAGES IS NULL'd AT SOME POINT
+			for(let i = 0; i < messages.length; ++i){
+				this.ParseAndAddYouTubeV3MessagesToUnprocessedQueue(messages[i]);
+			}
+			//no load balancer yet, this can later be added, but for now we'll just leave it as an O^2 loop because it'll be easier to impliment new features later
+			for(let i = 0; i < this.#unprocessed_queue; ++i){
+				this.#messages_queue += this.ProcessYouTubeV3Message_v1(this.#unprocessed_queue[i]);
+				//add parent and give score to parent user
+				this.#unprocessed_queue.slice(i, 1);
+			}
+			if(this.config.debugMode){
+				console.log("here's the update messages_queue: \n", this.#messages_queue);	
+			}
+
+			messages = await this.GetMessagesQueue();
+			console.log("COMPLETELY PROCESSED MESSAGES: \n", messages);
 		}
-
-		// --- 2. PROCESS QUEUE ---
-		if (this.#unprocessed_queue.length > 0) {
-		    console.log("Processing unprocessed messages...");
-		    await this.ProcessUnprocessedMessagesQueue();
-		    
-		    console.log("Updated messages_queue:\n" + JSON.stringify(this.#messages_queue, null, 2));
-		    console.log("[DaLoop] Cycle completed successfully");
+		catch(err){
+			console.error("error processing youtube messages\n", err);
 		}
-		
-	    } catch (err) {
-		console.error("[DaLoop ERROR] Cycle failed:", err);
-		// Don't throw - let the timer continue trying
-	    }
 	}
 
 
-			async MonitoringStop() {
-			  this.GetMessagesTimer.Stop(); 
-			  this.GetMessagesTimer.RemoveTimeoutListener(this.MonitorLoop);
-			}
+	async MonitoringStop() {
+	  this.GetMessagesTimer.Stop(); 
+	  this.GetMessagesTimer.RemoveTimeoutListener(this.#DaLoop);
+	}
+
+	/**
+	* Specific processor for YouTube API v3 messages.
+	* Maps YouTube raw data to your standard #message_template.
+	*/
+	async ProcessYouTubeV3Message_v1(unprocessedMsg) {
+		const rmo = unprocessedMsg.data; // rawMessageObject
+
+		// 1. Initialize the new processed message object
+		const newMessage = this.#message_template; // Shallow copy template
+		newMessage.template_version = 1; // WARN: make new function if this needs to be changed
+		newMessage.authorName = rmo.authorDetails.displayName;
+		newMessage.authorId= rmo.authorDetails.channelId;
+		newMessage.streamOrigin= rmo.snippet.liveChatId; //what streamid via the platform the message came from
+		newMessage.unixTime= unprocessedMsg.dateTime; //use when received by server/app to help reduce dependancies
+		newMessage.platform= "youtube";
+
+		//sanitize string
+		message = rmo.snippet.textMessageDetails.messageText;
+		if(this.CheckMessageForBannedWords(message)){
+			// TODO: shadow ban user, and flag for review
+		};
+		message = this.SanitizeString(message);
+		message = this.ParseCommandFromMessage(message);
+		newMessage.processedMessage = message.seperatedText;
+		newMessage.score= await this.ScoreMessage(message.seperatedMessage);
+		newMessage.commands = message.foundCommands;
+		newMessage.state = {};
+		if(mesasge.foundCommands.tts != undefined) {
+			newMessage.state.ttsHasBeenRead = false;
+		}
+		newMessage.rawMessage= rmo.snippet.textMessageDetails.messageText;
+
+		return newMessage;
+	}
 
 
 
@@ -968,8 +812,8 @@ return newMessage;
 	    // Create a new message object based on the class template
 	    const processedMessage = {
 		// Use a shallow copy of the template to avoid modifying the template itself
-		version : this.#unprocessed_message_template.version,
-		apiVersion : this.#unprocessed_message_template.apiVersion,
+		version : this.#unprocessed_message_template_v1.version,
+		apiVersion : 3, // WARN: do not change this, if this needs to be changed make a new function
 		platform : "YouTube",
 		// Set dynamic/specific fields
 		data : rawMessage, // Store the entire raw message object
@@ -1770,22 +1614,7 @@ return newMessage;
 	    return null;
 	}
 
-                async VerifyConfig() {
-                  try {
-                    await this.yt.VerifyConfig()
-                  } catch (err) {
-                    throw new Error("could not verify config:\n" + err);
-                  }
-                }
-
-                async GetMessages() {
-                  let messageLists = new Promise.all([this.yt.GetMessages])
-                                         .then((values) => {
-
-                                                            });
-                }
-
-                sanitizeString(strang) {
+                SanitizeString(strang) {
                   if (typeof strang != 'string') {
                     throw new Error(
                         "strang is not a string, UNEXPECTED DATA TYPE");
@@ -1818,11 +1647,243 @@ const specials = [
                       }
                     }
                     if (!matchFound) {
-                      strang[i] = '';
+                      strang[i] = ''; // remove invalid character
                     }
                   }
                   return strang
                 }
+
+	ParseCommandFromMessage(rawText) {
+	    const result = {
+		    foundCommands : [], 
+		    seperatedText : rawText
+	    };
+
+	    if (!rawText.startsWith('!')){
+		    result.seperatedText = rawText
+		    return result;
+	    } 
+
+	    const tokens = rawText.split(/\s+/);
+	    if (tokens.length == 0) return result;
+
+	    const potentialCommandName = tokens[0].substring(1).toLowerCase();
+	    const commandConfig = this.#commands.find(c => c.command == potentialCommandName);
+
+	    if (commandConfig) {
+		const commandName = commandConfig.command;
+		
+		const commandData = {
+		    command : commandName, 
+		    _rawFunc : commandConfig.func, 
+		    params : {}
+		};
+
+		// --- PHASE 1: Parse provided flags ---
+		let messageStartIndex = 1;
+		for (let i = 1; i < tokens.length; i++) {
+		    const token = tokens[i];
+		    if (token.startsWith('-')) {
+			const flagKey = token.substring(1); 
+			const flagDef = commandConfig.flags.find(f => f.flag.includes(flagKey));
+
+			if (flagDef) {
+			    const flagAlias = flagDef.flag[0]; 
+			    const valueToken = tokens[i + 1];
+			    let val = null;
+			    const isNumericFlag = typeof flagDef.value === 'number';
+
+			    if (isNumericFlag) {
+				if (valueToken && !isNaN(parseFloat(valueToken))) val = parseFloat(valueToken);
+			    } else { 
+				if (valueToken) val = valueToken;
+			    }
+			    
+			    if (val !== null) {
+				if (isNumericFlag && flagDef.range) {
+				    val = Math.max(flagDef.range.min, Math.min(flagDef.range.max, val));
+				}
+				commandData.params[flagAlias] = val;
+				i++;
+				messageStartIndex = i + 1;
+			    }
+			}
+		    } else {
+			messageStartIndex = i;
+			break;
+		    }
+		}
+
+		// --- PHASE 2: Apply defaults ---
+		commandConfig.flags.forEach(flagDef => {
+		    const flagAlias = flagDef.flag[0];
+		    if (commandData.params[flagAlias] === undefined) {
+			const defaultValue = this._getCommandDefault(commandName, flagAlias);
+			if (defaultValue !== null) commandData.params[flagAlias] = defaultValue;
+		    }
+		});
+
+		const actualMessageParts = tokens.slice(messageStartIndex);
+		result.cleanText = actualMessageParts.join(" ");
+		
+		commandData.func = async (injectedState) => {
+		     if (typeof commandData._rawFunc === 'function') {
+			await commandData._rawFunc.call(
+			    this, 
+			    result.cleanText, 
+			    commandData.params,
+			    injectedState // This will be passed when called
+			);
+		    }
+		};
+
+		result.foundCommands.push(commandData);
+	    }
+	    return result;
+	}
+
+	async CheckMessageForBannedWords(inMessage = undefined){ //TODO: optimize this a bunch
+		if(inMessage == undefined){
+			console.warn("in message is undefined, is this intentional?");
+			return false;
+		}
+		//import csv file
+		let bannedWordsString = imporFileAsString("./IMPORT_FILE_TEST.csv");
+		bannedWordsString.toLowerCase();
+		//parse to array
+		let bannedWordsArray, wordStartIndex = undefined;
+		for(let i = 0; i < bannedWordsString.length; ++i){
+			if(
+				bannedWordsString[i] == " " 
+				|| bannedWordsString[i] == "," 
+				|| i ==bannedWordsString.length-1
+			){
+				if(wordStartIndex != undefined){
+					continue;
+				} 
+
+				if(i == bannedWordsString.length-1 && wordStartIndex != undefined){ //handles end of file
+					bannedWordsArray += bannedWordsString.slice(wordStartIndex, i);
+				}
+				bannedWordsArray += bannedWordsString.slice(wordStartIndex, i);
+				wordStartIndex = undefined;
+			}
+			if(wordStartIndex == undefined){
+				wordStartIndex = i;
+			}
+		}
+		//TODO: make tree for bad words to optimize	
+
+		//check message without spaces or caps for bad word	
+		let formattedMessage = new Array(inMessage.length-1);
+		for(let i = 0; i < inMessage.length; ++i){
+			switch(inMessage[i]){
+				case("@"):
+				case("4"):
+					formattedMessage[i] = 'a';
+					break;
+				case("6"):
+				case("8"):
+					formattedMessage[i] = 'b';
+					break;
+				case("<"):
+				case("["):
+					formattedMessage[i] = 'c';
+				case("]"):
+					formattedMessage[i] = 'd';
+					break;
+				case("3"):
+					formattedMessage[i] = 'e';
+					break;
+					// formattedMessage[i] = 'f';
+				case("9"):
+					formattedMessage[i] = 'g';
+					break;
+				case("#"):
+					formattedMessage[i] = 'h';
+					break;
+				case("1"):
+				case("!"):
+					formattedMessage[i] = 'i';
+					break;
+					// formattedMessage[i] = 'j';
+					// formattedMessage[i] = 'k';
+				case("("):
+				case(")"):
+				case("\\"):
+				case("/"):
+				case("|"):
+					formattedMessage[i] = 'l';
+					break;
+					// formattedMessage[i] = 'm';
+					// formattedMessage[i] = 'n';
+					// formattedMessage[i] = 'o';
+					// formattedMessage[i] = 'p';
+					// formattedMessage[i] = 'q';
+					// formattedMessage[i] = 'r';
+				case("5"):
+				case("$"):
+					formattedMessage[i] = 's';
+					break;
+				case("7"):
+					formattedMessage[i] = 't';
+					break;
+					// formattedMessage[i] = 'u';
+					// formattedMessage[i] = 'v';
+					// formattedMessage[i] = 'w';
+					// formattedMessage[i] = 'x';
+					// formattedMessage[i] = 'y';
+				case(">"): UNKNOWN
+				case("%"):
+					formattedMessage[i] = 'z';
+					break;
+				default: 
+					console.warn("unaccounted case for input: ", inMessage[i]);
+					formattedMessage[i] = '';
+					break;
+			}
+		}
+		formattedMessage = String(formattedMessage).toLowerCase();
+		for(let i = 0; i < formattedMessage.length; ++i){ // BUG: THIS IS REALLY FUGGIN SLOW FIX IT YOU LAZY PIECE OF SHIZA
+			// TODO: replace this with a tree to be far faster
+			for(let j = 0; j < bannedWordsArray.length; ++j){
+				if(formattedMessage[i] == bannedWordsArray[j][0]){
+					for(let k = 0; k < bannedWordsArray[j].length; ++k){
+						if(formattedMessage[i+k] != bannedWordsArray[j][k]){
+							break;
+						}
+						if(k == bannedWordsArra[j].length-1){
+							return true;
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	async importFileAsString(url) {
+	  try {
+	    // Fetch the file from the specified URL
+	    const response = await fetch(url);
+
+	    // Check if the request was successful
+	    if (!response.ok) {
+	      throw new Error(`HTTP error! status: ${response.status}`);
+	    }
+
+	    // Get the response body as a plain text string
+	    const fileContent = await response.text();
+
+	    return fileContent;
+
+	  } catch (error) {
+	    console.error('Error fetching file:', error);
+	    // You might want to return a default value or re-throw the error
+	    return null;
+	  }
+	}
+
 
                 async dispatchCommand(raw,
                                       commandPrefix = this.config.flag.token) {

@@ -5,8 +5,10 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<script src="/client_management.js" type="module"></script>
 		<script type="module">
-			import monitorMessages from './tib_stuff/monitorMessages.js';
-			window.mm = new MonitorMessages();
+			import MonitorMessages from './tib_stuff/monitorMessages.js';
+			let mm = new MonitorMessages()		
+			window.mm = mm;
+			console.log("mm added to window");
 		</script>
 		<title>tib 4</title>
 		<link rel="preconnect" href="https://fonts.googleapis.com">
@@ -343,37 +345,92 @@
 		<label> apiKey</label>
 		<input type="password" id="youtube-config-apiKey"></input>
 		</div>
-		<input type="button" value="click to complete" onclick='(()=>{
-			function GEBI(id){
-												 if(id=="undefined"){throw new Error("Error getting document by id");}
-												 return document.getElementById(id);
+		<input type="button" value="click to complete" onclick='(async ()=>{
+			 try{
+				async function GEBI(id){
+													 if(id=="undefined"){throw new Error("Error getting document by id");}
+													 return document.getElementById(id);
+				}
+				window.mm.yt.config.channelName = document.getElementById("youtube-config-channelName").value;	
+				window.mm.yt.config.apiKey = document.getElementById("youtube-config-apiKey").value;	
+
+				await window.mm.yt.getChannelId();
+
+				let broadcasts = await window.mm.yt.getLiveAndUpcoming();
+				console.log("broadcasts:", broadcasts);
+				let broadcastsContainer = document.getElementById("broadcastsContainer");
+
+				for(let i = 0; i < broadcasts.length; ++i){
+					b = broadcasts[i];
+
+					let bs = document.createElement("div"); //broadcastSelector
+					bs.style = `background-image:url(${b.snippet.thumbnails.default.url})`;
+					bs.classList.add("broadcastSelector");
+						let vi = document.createElement("div"); //video info
+						vi.classList.add("video_info");
+							let t = document.createElement("div"); //title
+							t.innerText = b.snippet.title;
+							t.classList.add("title");	
+							vi.appendChild(t);
+							let vidId = document.createElement("div"); //video info
+							vidId.innerText = b.id.videoId;
+							vidId.classList.add("videoId");
+						vi.appendChild(vidId);
+					
+				  bs.addEventListener("click", async () => {
+							async function InitManagers(){
+								try { // loop for youtube
+									window.mm.yt.config.broadcastId = b.id.videoId;
+
+									document.getElementById("youtube-config-channelId").value = b.snippet.channelId;
+									document.getElementById("youtube-config-broadcastId").value = b.id.videoId;
+
+									let lcid = await window.mm.yt.getLiveChatId();
+									console.log(lcid);
+									document.getElementById("youtube-config-liveChatId").value = lcid;
+
+									let messages = await window.mm.yt.getChatMessages()
+									console.log("test get of messages to validate is working:\n", messages);	
+								} catch (err) {
+									console.error("[DaLoop ERROR] Cycle failed:", err);
+									// Dont throw - let the timer continue trying
+								}
+							}
+
+							InitManagers();
+
+							window.mm.MonitoringStart();
+					});
+					bs.appendChild(vi);
+					broadcastsContainer.appendChild(bs);
+				}
+			 /*
+				window.addEventListener("DOMContentLoaded", (event) => {
+				});
+			 */
 			}
-			window.mm.yt.config.channelName = document.getElementById("youtube-config-channelName");	
-			window.mm.yt.config.apiKey = document.getElementById("youtube-config-apiKey");	
-
-			window.mm.yt.getChannelIdByHandle();
-
-			let broadcasts = window.mm.yt.getLiveAndUpcomming();
-			console.log("broadcasts:", broadcasts);
-
-			window.mm.yt.getLiveChatId();
+		 catch(err){
+			console.error("error with onclick: \n", err)
+		}
 			})()'/>
 		</div>
-		<div style="
-			background: var(--color-surface-hover);		
-			border: 0.1rem solid var(--color-border);
-			border-color: var(--color-border-light);
-			height: 10rem; 	
-			overflow-x:scroll;
-			width:90%; 	
-		">
 		<style>
 			.broadcastSelector {
+				border-radius:1rem;
+				border: 0.2rem solid transparent;
 				position:relative;
-				height:9rem;
-				width: 16rem;
+				height:7rem;
+				width: 14rem;
 				background-repeat:no-repeat;
 				background-size:cover;
+			}
+			.broadcastSelector:hover {
+				border: 0.2rem solid gray;
+				border-radius:1rem;
+			}
+			.broadcastSelector:active {
+				border: 0.2rem solid white;
+				border-radius:1rem;
 			}
 			.broadcastSelector > .video_info {
 				background-image:linear-gradient(
@@ -389,14 +446,18 @@
 				left:0px;
 				width:12rem;
 				height:4rem;
+
+				user-select:none;
 			}
 		</style>
-			<div class="broadcastSelector" style="background-image:url(https://i.ytimg.com/vi/lPm_FM-ESbY/default_live.jpg)">
-				<div class="video_info">
-					<div class="title">${obj.snippet.title}</div>
-					<div class="videoId">${obj.id.videoId}</div>
-				</div>
-			</div>
+		<div id="broadcastsContainer" style="
+			background: var(--color-surface-hover);		
+			border: 0.1rem solid var(--color-border);
+			border-color: var(--color-border-light);
+			height: 10rem; 	
+			overflow-x:scroll;
+			width:90%; 	
+		">
 		</div>
 
 		<div class="youtube-config-input youtube-config-channelId">
@@ -423,10 +484,18 @@
 			</div>	
 			<div>
 				<div style="height: 100%; width:16rem; padding:calc(var(--tib_padding)*4);">
-					<input type="button" value="start monitoring messages" 
-															 style="background-color: #0f0; color:black; user-select:none;"
-															 />				
-					<input type="button" value="stop monitoring messages"style="background-color: #f00; color:black; user-select:none;"/>			
+					<input 
+						type="button" 
+						value="start monitoring messages" 
+						style="background-color: #0f0; color:black; user-select:none;"
+						onclick='(() => {window.mm.MonitoringStart();})()'
+					/>				
+					<input 
+						type="button" 
+						value="stop monitoring messages"
+						style="background-color: #f00; color:black; user-select:none;"
+						onclick='(() => {window.mm.MonitoringStop();})()'
+					/>			
 				</div>	
 			</div>
 		</div>
