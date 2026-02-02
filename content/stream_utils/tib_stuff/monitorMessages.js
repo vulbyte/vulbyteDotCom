@@ -1,6 +1,7 @@
 import YoutubeV3 from "./imports/youtubeV3ApiAccessor/youtube_state.js"
 import TTSManager from "./imports/webTTSManager/TTSManager.js";
 import {IntTimer} from "./intTimer.js";
+import {DebugPrint} from "/lib/DebugPrint.mjs";
 
 // magic values
 const trigrams = await fetch('./tib_stuff/trigrams.json')
@@ -39,6 +40,7 @@ export default class MonitorMessages {
 	config = {
 		debugMode: true,
 	}
+	
 	yt = new YoutubeV3();
   // testResults.passed for status
   //
@@ -52,8 +54,7 @@ export default class MonitorMessages {
     passed = true;
     return passed;
   */
-		
-
+	
 	// tldr: this is largely ment to live as state, with functions used to monitor
 	// state
 	// VARS private messages should be treated as static.
@@ -162,6 +163,9 @@ export default class MonitorMessages {
 		this.#messages_queue = mergeSortedLists(this.#messages_queue, input);
 	}
 	#unprocessed_queue =[]; // messages returned from yt fetch
+	async GetUnprocessedQueue(){
+		return this.#unprocessed_queue;
+	}
 	/**
 	 * @name unpressed_queue
 	 * @description - template for messages that have not been processed
@@ -415,13 +419,14 @@ export default class MonitorMessages {
 
 	GetMessagesTimer = new IntTimer();
 	async MonitoringStart() {
+		DebugPrint("running the loop once as a test");
 		try {
 			// assess	
 			// test
-			this.#DaLoop();
-			this.GetMessagesTimer.AddTimeoutListener(this.#DaLoop);
+			await this.#DaLoop();
+			//this.GetMessagesTimer.AddTimeoutListener(this.#DaLoop);
 	// Start polling loop
-			this.GetMessagesTimer.Start();
+			//this.GetMessagesTimer.Start();
 		}
 		catch (err) {
 			console.error("error with monitoring start\n", err);
@@ -430,31 +435,117 @@ export default class MonitorMessages {
 
 
 	async #DaLoop() {
-		try{
-			console.log("loop triggered, attempting to get messages");
-			let messages = await this.yt.getChatMessages();
+		DebugPrint("loop for messages started", "", "log", "background-color: #505");
+		try{ //yt get
+			DebugPrint("loop triggered, attempting to get messages");
+			let messages = await this.yt.getChatMessages().then(async (res)=>{
+				const messages = res;
+					
+				DebugPrint(`value from messages is: ${JSON.stringify(messages)}`);
 
-			if(messages == null){
-				console.warn("messages got from api is null, is there an issue?");
-				return;
-			}
+				if(
+					messages == null 
+					|| messages == undefined
+					|| messages == ""
+				){
+					DebugPrint("messages got from api is null, is there an issue?");
+					return;
+				}
+				else {
+					DebugPrint("mesages received, got:", JSON.stringify(messages));
+					// DebugPrint("due to nullness, callagin again with a clear'd page token");
+					// this.yt.config.nextPageToken = undefined;
+					// const tryagain = setTimeout(async ()=>{
+					// 	console.log("RETRY HAS BEEN CALLED");
+					// 	messages = await this.yt.getChatMessages();
+					// 	if(
+					// 		messages == null 
+					// 		|| messages == undefined
+					// 		|| messages == ""
+					// 	){
+					// 		DebugPrint("messages got from api is null, is there an issue?");
+					// 		return;
+					// 	}
+					// 	DebugPrint("messages from null'd call: ", messages);
+					// }, 2000);
+					// await tryagain;
+				}
 
-			//ERROR PAST HERE, MESSAGES IS NULL'd AT SOME POINT
-			for(let i = 0; i < messages.length; ++i){
-				this.ParseAndAddYouTubeV3MessagesToUnprocessedQueue(messages[i]);
-			}
-			//no load balancer yet, this can later be added, but for now we'll just leave it as an O^2 loop because it'll be easier to impliment new features later
-			for(let i = 0; i < this.#unprocessed_queue; ++i){
-				this.#messages_queue += this.ProcessYouTubeV3Message_v1(this.#unprocessed_queue[i]);
-				//add parent and give score to parent user
-				this.#unprocessed_queue.slice(i, 1);
-			}
-			if(this.config.debugMode){
-				console.log("here's the update messages_queue: \n", this.#messages_queue);	
-			}
+				DebugPrint("passing messages into quick parse", messages);
+				// ERROR: PAST HERE, MESSAGES IS NULL'd AT SOME POINT
+				let message;
+				DebugPrint("about to process youtube messages from fetch responce", messages);
+				for(let i = 0; i < messages.items.length; ++i){
+					message = messages.items[i];
+					DebugPrint("message for processing:", message);
+					message = this.ParseAndAddYouTubeV3MessagesToUnprocessedQueue(message);
+					if(message == undefined){
+						DebugPrint("message after attempting to add to unprocessed_queue is undefined, skipping add");
+						continue;
+					}
+					DebugPrint("processed message: \n", message);
+					this.#unprocessed_queue.push(message);
+				}
 
-			messages = await this.GetMessagesQueue();
-			console.log("COMPLETELY PROCESSED MESSAGES: \n", messages);
+				DebugPrint("starting to process unprocessed_queue", this.#unprocessed_queue);
+				let u_msg, p_msg;
+				// TODO: YOUR NEXT DEBUGGINGS SESSION STARTS HERE CHUCKLE FUCK
+				for(let i = 0; i < this.#unprocessed_queue; ++i){
+					try{
+						if(this.#unprocessed_queue[i].failedProcessingAt != undefined){
+							//if message has errored, skip because it needs to be tested
+							continue;
+						}
+						u_msg = this.unprocessed_queue[i];
+						DebugPrint("u_msg = ", u_msg);
+						p_msg = await this.ProcessYouTubeV3Message_v1(message);
+						DebugPrint("p_msg = ", p_msg);
+
+						this.#messages_queue.push(p_msg);
+						// score message and add to user total score
+
+						p_msg.score
+
+						let user;
+						//convert to a tree struct for speed
+						function findUserAndAddScore(){
+							for(let j = 0; j < this.#users.length; ++j){
+								user = this.users[j];
+								for(let k = 0; k < this.#users.channels; ++k){
+									if(user[k].id == p_msg.authorId){
+										DebugPrint("found user with matching id, adding score to user total");
+										this.users[j].points += Number(p_msg.score);
+										return;
+									}
+								};
+							}
+
+							this.#users += {
+							 	version : 1, 
+							 	authorName : p_msg.authorName,
+							 	channels : [
+									p_msg.authorId
+								],
+							 	uuid : crypto.randomUUID(),
+							 	ttsBans : [],
+							 	channelBans : [],
+							 	firstSeen: Date.now(),
+							 	points: p_msg.score,	
+							}
+						};
+
+						findUserAndAddScore(p_msg.channelId, p_msg.score);	
+					}	
+					catch(err){
+						DebugPrint(err.trace, '', "error");
+					}
+				}
+				if(this.config.debugMode){
+					DebugPrint("here's the update messages_queue: \n", this.#messages_queue);	
+				}
+
+			});
+			DebugPrint("COMPLETELY PROCESSED MESSAGES: \n", this.#messages_queue);
 		}
 		catch(err){
 			console.error("error processing youtube messages\n", err);
@@ -516,7 +607,7 @@ export default class MonitorMessages {
 			console.warn("Auto TTS: Message queue is empty.");
 			return;
 		}
-		console.log(`Auto TTS: Checking ${this.#messages_queue.length} messages in queue...`);
+		DebugPrint(`Auto TTS: Checking ${this.#messages_queue.length} messages in queue...`);
 		//check msg has commands
 		let ttsIndex = -1;
 
@@ -542,7 +633,7 @@ export default class MonitorMessages {
 
 			//check message hasn't been read
 			if(!msg.state || msg.state.ttsHasRead == false){
-				console.log(`Auto TTS: Found unread TTS message from ${msg.authorName}: "${msg.processedMessage}"`);
+				DebugPrint(`Auto TTS: Found unread TTS message from ${msg.authorName}: "${msg.processedMessage}"`);
 				ttsIndex = i;
 				break;
 			}
@@ -559,7 +650,7 @@ export default class MonitorMessages {
 		
 	// ... (message selection logic above)
 
-	console.log("attempting to execute command from tts message" + "\n" + JSON.stringify(msg, null, 2));
+	DebugPrint("attempting to execute command from tts message" + "\n" + JSON.stringify(msg, null, 2));
 	let cmdExecuteAttempted = false;
 	for(let i = 0; i < msg.commands.length; ++i){
 	    // ✅ CORRECTED: Access the command property of the array element at index i
@@ -593,7 +684,7 @@ export default class MonitorMessages {
 	 * Starts the Auto TTS system with immediate execution and periodic checks.
 	 */
 	async AutoTtsStart() {
-	    console.log("Starting Auto TTS System...");
+	    DebugPrint("Starting Auto TTS System...");
 
 	    // 1. Stop any existing timer for clean start
 	    if (this.#autoTtsTimer) {
@@ -601,7 +692,7 @@ export default class MonitorMessages {
 	    }
 
 	    // 2. Execute immediately on start (test/trigger)
-	    console.log("Auto TTS: Executing immediate initial run...");
+	    DebugPrint("Auto TTS: Executing immediate initial run...");
 	    await this._playOldestUnreadTts(); 
 	    
 	    const intervalSeconds = 10; 
@@ -617,7 +708,7 @@ export default class MonitorMessages {
 		// Action: Called when timer completes its cycle
 		timeoutListeners: [
 		    async () => {
-			console.log(`Auto TTS: Cycle complete. Checking for TTS messages after ${intervalSeconds}s.`);
+			DebugPrint(`Auto TTS: Cycle complete. Checking for TTS messages after ${intervalSeconds}s.`);
 			// ⭐️ CRITICAL: await the function call in the listener as well
 			await this._playOldestUnreadTts(); 
 		    }
@@ -628,14 +719,14 @@ export default class MonitorMessages {
 		    () => {
 			const currentElapsed = this.#autoTtsTimer.time || 0;
 			const remaining = Math.max(0, intervalSeconds - currentElapsed);
-			console.log(`Auto TTS: Next check in ${remaining}s`);
+			DebugPrint(`Auto TTS: Next check in ${remaining}s`);
 		    }
 		]
 	    });
 
 	    // 4. Start the loop
 	    this.#autoTtsTimer.Start();
-	    console.log(`Auto TTS: System running. Will check for new TTS messages every ${intervalSeconds} seconds.`);
+	    DebugPrint(`Auto TTS: System running. Will check for new TTS messages every ${intervalSeconds} seconds.`);
 	}
 
 	/**
@@ -643,12 +734,12 @@ export default class MonitorMessages {
 	 */
 	AutoTtsStop() {
 	    if (this.#autoTtsTimer) {
-		console.log("Stopping Auto TTS System...");
+		DebugPrint("Stopping Auto TTS System...");
 		this.#autoTtsTimer.Stop(); 
 		this.#autoTtsTimer = null;
-		console.log("Auto TTS: System stopped.");
+		DebugPrint("Auto TTS: System stopped.");
 	    } else {
-		console.log("Auto TTS: No active system to stop.");
+		DebugPrint("Auto TTS: No active system to stop.");
 	    }
 	}
 
@@ -661,7 +752,7 @@ export default class MonitorMessages {
 	 * @returns {Promise<void>}
 	 */
 	async CallTts(message, messages_queue_index = undefined) { 
-		console.log("CallTts: Starting TTS for message:", message);
+		DebugPrint("CallTts: Starting TTS for message:", message);
 
 		if (!message) {
 			//message.messageState.ttsHasRead = true;
@@ -705,7 +796,7 @@ export default class MonitorMessages {
 		}
 
 		if(messages_queue_index != undefined){
-			console.log("no messages_queue_index given, attempting to find message");
+			DebugPrint("no messages_queue_index given, attempting to find message");
 			for(let i = 0; i < this.#messages_queue.length; ++i){
 				if( //check auth, msg, and unixTime to verify that the message is very very likely the same message
 					message.authorId == this.#messages_queue[i].authorId
@@ -713,7 +804,7 @@ export default class MonitorMessages {
 					&& mesasge.unixTime == this.#messages_queue[i].unixTime
 				){
 					messages_queue_index = i;	
-					console.log("message found at index: " + i);
+					DebugPrint("message found at index: " + i);
 					break;
 				}
 			}
@@ -725,7 +816,7 @@ export default class MonitorMessages {
 		return new Promise((resolve, reject) => {
 			TTS.onend = () => {
 				let log = "CallTts: Speech completed successfully."; 
-				console.log(log);
+				DebugPrint(log);
 				resolve(log); 
 			};
 
@@ -735,7 +826,7 @@ export default class MonitorMessages {
 				messageState.ttsHasRead = 'ERROR'; 
 				reject(new Error(`TTS failed: ${e.error}`));
 			}
-			console.log("CallTts: Starting speech synthesis...");
+			DebugPrint("CallTts: Starting speech synthesis...");
 			window.speechSynthesis.cancel();
 			window.speechSynthesis.speak(TTS);
 		});
@@ -799,18 +890,19 @@ export default class MonitorMessages {
 	 * @param {Object} rawMessage A single raw message object from the YouTube API 'items' array.
 	 * @returns {void}
 	 */
-	async ParseAndAddYouTubeV3MessagesToUnprocessedQueue(rawMessage) {
-	    // Check if the input is a valid object
+	ParseAndAddYouTubeV3MessagesToUnprocessedQueue(rawMessage) {
+	// Check if the input is a valid object
+	    DebugPrint("attempt to add message to unprocessed_queue:", rawMessage);
 	    if (!rawMessage || typeof rawMessage !== 'object' || !rawMessage.snippet) {
-		console.warn("Invalid single raw message object provided. Skipping.");
-		return;
+	        console.warn("rawMessage is not an object, has no snippet, or undefined, skipping");
+	        return;
 	    }
 
 	    // Convert the ISO 8601 string to Unix time in milliseconds.
 	    const unixTimestampMs = new Date(rawMessage.snippet.publishedAt).getTime();
 
 	    // Create a new message object based on the class template
-	    const processedMessage = {
+	    let processedMessage = {
 		// Use a shallow copy of the template to avoid modifying the template itself
 		version : this.#unprocessed_message_template_v1.version,
 		apiVersion : 3, // WARN: do not change this, if this needs to be changed make a new function
@@ -821,7 +913,9 @@ export default class MonitorMessages {
 		failedProcessingAt : undefined, 
 	    };
 
-	    this.#unprocessed_queue.push(processedMessage);
+	    DebugPrint("Adding message to unprocessed_queue: ", processedMessage);
+	    this.#unprocessed_queue.push(processedMessage)
+	    return(processedMessage);
 	}
 
 			// PRIVATE FUNCTIONS
@@ -837,7 +931,7 @@ export default class MonitorMessages {
 			// PUBLIC (laid out by general flow)
 			async GetMessages(pageToken = undefined) {
 
-			  console.log(`Processing ${yt_messages.length} messages`);
+			  DebugPrint(`Processing ${yt_messages.length} messages`);
 
 			  const table = document.getElementById("messagesTable");
 			  if (!table)
@@ -852,12 +946,12 @@ export default class MonitorMessages {
 					`tr[data - author = "${esc(msg.author)}"]
 		[data - published = "${esc(msg.publishedAt)}"]` );
 			    if (existing) {
-			      console.log(`Skipping duplicate message from ${msg.author}
+			      DebugPrint(`Skipping duplicate message from ${msg.author}
 					  : "${msg.message}"`);
 			      continue;
 			    }
 
-			    console.log(`Adding NEW message from ${msg.author}
+			    DebugPrint(`Adding NEW message from ${msg.author}
 					: "${msg.message}"`);
 
 			    newMessagesCount++;
@@ -967,7 +1061,7 @@ export default class MonitorMessages {
 			    table.appendChild(tr);
 			  }
 
-			  console.log(`Added $ {
+			  DebugPrint(`Added $ {
 			    newMessagesCount
 			  } new messages to table`);
 			  return yt_messages;
@@ -1004,7 +1098,7 @@ export default class MonitorMessages {
 				}
 			      }
 			    }
-			    //console.log(`score CheckPunctuation() : ${score}`);
+			    DebugPrint(`score CheckPunctuation() : ${score}`);
 			    return score;
 			  };
 
@@ -1028,7 +1122,7 @@ export default class MonitorMessages {
 				}
 			      }
 
-			      //console.log(`score CheckTrigrams() : ${score}`);
+			      //DebugPrint(`score CheckTrigrams() : ${score}`);
 			      return score;
 			    } catch (err) {
 			      //console.error("Original error in CheckTrigrams:", err);
@@ -1046,7 +1140,7 @@ export default class MonitorMessages {
 				score -= 50;
 			      }
 			    }
-			    //console.log(`score CheckForRepeats() : ${score}`);
+			    DebugPrint(`score CheckForRepeats() : ${score}`);
 			    return score;
 			  };
 
@@ -1057,7 +1151,7 @@ export default class MonitorMessages {
 			    } else {
 			      score -= 10;
 			    }
-			    //console.log(`score CheckForCaps() : ${score}`);
+			    //DebugPrint(`score CheckForCaps() : ${score}`);
 			    return score;
 			  };
 
@@ -1080,7 +1174,7 @@ export default class MonitorMessages {
 			      score += 20;
 			    }
 
-			    ///console.log(`score CheckForSpaces() : ${score}`);
+			    DebugPrint(`score CheckForSpaces() : ${score}`);
 			    return score;
 			  };
 
@@ -1092,7 +1186,7 @@ export default class MonitorMessages {
 				score -= 20;
 			      }
 			    }
-			    //console.log(`score CheckForSpaceInChunk : ${score}`);
+			    DebugPrint(`score CheckForSpaceInChunk : ${score}`);
 			    return score;
 			  };
 
@@ -1121,7 +1215,7 @@ export default class MonitorMessages {
 			    score += funcScore;
 
 			    if (this.config.monitorMessages.debug == true) {
-			      //console.log(`score eval at function call : ${score}`);
+			      DebugPrint(`score eval at function call : ${score}`);
 			    }
 			  }
 
@@ -1305,7 +1399,7 @@ export default class MonitorMessages {
 			    funcButton.className = 'command-trigger-button';
 			    
 			    funcButton.onclick = async () => {
-				console.log(`Executing command: ${cmd.command} for message: ${msg.processedMessage}`);
+				DebugPrint(`Executing command: ${cmd.command} for message: ${msg.processedMessage}`);
 				try {
 				    // Call the bound function which already has the state reference
 				    await cmd.func(); 
@@ -1337,7 +1431,7 @@ export default class MonitorMessages {
 				     msg.state.ttsHasRead = e.target.checked;
 				     stateSpan.innerText = ` (Read: ${!!msg.state.ttsHasRead})`;
 				     stateSpan.style.color = msg.state.ttsHasRead ? '#7CFC00' : '#FFD700';
-				     console.log(`Manually set ttsHasRead for ${msg.authorName} to ${msg.state.ttsHasRead}`);
+				     DebugPrint(`Manually set ttsHasRead for ${msg.authorName} to ${msg.state.ttsHasRead}`);
 				 };
 				 cmdDiv.prepend(checkbox);
 			    }
@@ -1579,7 +1673,7 @@ export default class MonitorMessages {
 			    await commandDef.func.call(this, testMessage, currentParams, {});
 			    
 			    runButton.innerText = 'Success!';
-			    console.log(`Successfully executed !${commandName}:`, currentParams);
+			    DebugPrint(`Successfully executed !${commandName}:`, currentParams);
 			} catch (e) {
 			    runButton.innerText = 'Error!';
 			    console.error(`Error executing !${commandName}:`, e);

@@ -5,6 +5,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<script src="/client_management.js" type="module"></script>
 		<script type="module">
+			window.debug = true;
 			import MonitorMessages from './tib_stuff/monitorMessages.js';
 			let mm = new MonitorMessages()		
 			window.mm = mm;
@@ -399,7 +400,9 @@
 
 							InitManagers();
 
-							window.mm.MonitoringStart();
+							console.log("running MonitoringStart() to get messages");
+							//this is a test to make sure values are correct
+							await window.mm.MonitoringStart();
 					});
 					bs.appendChild(vi);
 					broadcastsContainer.appendChild(bs);
@@ -477,10 +480,36 @@
 		<!-- controls -->
 		<div style="background-color:#033; border-radius:1.4rem; height:20%; position:relative; bottom:0px; display:flex; flex-direction:row;">
 			<div style="height: 100%; width:16rem; padding:calc(var(--tib_padding)*4);">
-				<input type="button" value="save all inputs" 
+				<input type="button" 
+					value="save all inputs" 
 					style="background-color: #0ff; color:black; user-select:none;"
+					onclick="(() => {
+						let inputs = document.getElementsByTagName('input');
+						for (let x of inputs) {
+								// Only save if it has an ID and isn't a button
+								if (x.id && x.type != 'button') {
+										localStorage.setItem(x.id, x.value);
+								}
+						}					
+					})()"
 				/>				
-				<input type="button" value="load all inputs"style="background-color: #ff0; color:black; user-select:none;"/>			
+				<input type="button" 
+					value="load all inputs"
+					style="background-color: #ff0; color:black; user-select:none;"
+					onclick='(async () => {
+						let inputs = document.getElementsByTagName("input");
+						for (let x of inputs) {
+								if (x.id && x.type !== "button") {
+										let savedValue = localStorage.getItem(String(x.id));
+										if (savedValue !== null) {
+												x.value = savedValue;
+										}
+								}
+						}
+
+						await window.mm.yt.LoadValuesFromLocalStorage()
+					})()'	
+				/>			
 			</div>	
 			<div>
 				<div style="height: 100%; width:16rem; padding:calc(var(--tib_padding)*4);">
@@ -488,7 +517,10 @@
 						type="button" 
 						value="start monitoring messages" 
 						style="background-color: #0f0; color:black; user-select:none;"
-						onclick='(() => {window.mm.MonitoringStart();})()'
+						onclick='(async () => {
+							console.log("start monitoring clicked, starting now");
+							await window.mm.MonitoringStart();}
+						)()'
 					/>				
 					<input 
 						type="button" 
