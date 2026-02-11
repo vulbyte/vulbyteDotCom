@@ -17,6 +17,27 @@
 		<link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Geist+Mono:wght@100..900&family=Permanent+Marker&display=swap" rel="stylesheet">
 	</head>
 <body>
+	<style>
+		#checklist>li>input {max-width:3rem !important;}
+	</style>
+	<ul id="checklist">
+		<li><input type="checkbox" value="true">add drag n drop blacklist</li>
+		<li><input type="checkbox" value="true">test black-list</li>
+
+		<li><input type="checkbox" value="false">save state function</li>
+		<li><input type="checkbox" value="false">load state function</li>
+
+		<li><input type="checkbox" value="false">fix users being added to list</li>
+
+		<li><input type="checkbox" value="false">fix duplicate messages</li>
+
+		<li><input type="checkbox" value="false">verify tts works</li>
+
+		<li><input type="checkbox" value="false">auto update messages is working (update loop)</li>
+		
+		<li><input type="checkbox" value="false">if someone in chat says frozen, restart obs capture automagically</li>	
+	</ul>
+	<h6>YOU WERE LAST TRYING TO GET MESSAGES TO UPDATE TO THE NEWEST, THEN YOU NEED TO CHECK IF "ttsReadAt" HAS BEEN SET, THEN WE GOOD</h6>
 	<h1>TiB</h1>	
 	<style>
 		:root{
@@ -296,6 +317,11 @@
 		overflow-y: scroll; 
 		overflow-x:hidden;
 		">
+		<details><summary>blacklist input</summary>
+			<label>import your .json array of naughty words</label>
+			<input id="blacklist_input" type="file" accept=".json, .csv"/>
+			<output id="blacklist_output"></output>
+		</details>
 		<details 
 		style="
 		border: var(--tib_border); 
@@ -489,6 +515,7 @@
 								// Only save if it has an ID and isn't a button
 								if (x.id && x.type != 'button') {
 										localStorage.setItem(x.id, x.value);
+										
 								}
 						}					
 					})()"
@@ -497,14 +524,22 @@
 					value="load all inputs"
 					style="background-color: #ff0; color:black; user-select:none;"
 					onclick='(async () => {
+					console.log("load values saved")
 						let inputs = document.getElementsByTagName("input");
 						for (let x of inputs) {
-								if (x.id && x.type !== "button") {
-										let savedValue = localStorage.getItem(String(x.id));
-										if (savedValue !== null) {
-												x.value = savedValue;
-										}
+							console.log(`attempting to get value for ${x.id}`);
+							if (
+								x.id != undefined 
+								&& x.type != "button" 
+								&& x.type != "file"
+							) {
+								console.log(`id matches check, getting val`);
+								let savedValue = localStorage.getItem(String(x.id));
+								if (savedValue != null) {
+									console.log(`saved value is: ${savedValue}`);
+									x.value = savedValue;
 								}
+							}
 						}
 
 						await window.mm.yt.LoadValuesFromLocalStorage()

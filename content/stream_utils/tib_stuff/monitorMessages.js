@@ -1,7 +1,8 @@
 import YoutubeV3 from "./imports/youtubeV3ApiAccessor/youtube_state.js"
 import TTSManager from "./imports/webTTSManager/TTSManager.js";
-import {IntTimer} from "./intTimer.js";
+import {IntTimer} from "/lib/intTimer.mjs";
 import {DebugPrint} from "/lib/DebugPrint.mjs";
+import {TrieTree} from "/lib/trie_tree.mjs";
 
 // magic values
 const trigrams = await fetch('./tib_stuff/trigrams.json')
@@ -37,306 +38,130 @@ class testTemplate {
 };
 
 export default class MonitorMessages {
-	config = {
-		debugMode: true,
-	}
-	
-	yt = new YoutubeV3();
-  // testResults.passed for status
-  //
-	/*
-  testResults = function RunTests() {
-    passed = false;
-
-    /*
-    tests = [new testTemplate(),];
-    for(let i = 0; i < Object.keys(tests).length; ++i){} 
-    passed = true;
-    return passed;
-  */
-	
-	// tldr: this is largely ment to live as state, with functions used to monitor
-	// state
-	// VARS private messages should be treated as static.
-	#bannedAtTemplate = {
-	  datetime : "", unbannedAt : [], bannAppeals : [],
-	}
-	#channelTemplate = {
-	version : 1, platform : "", channelName : "", channelId : ""
-	}
-	#banAppealTemplate = {
-	version : 1, message : "",
-	}
-	#banTemplate = {
-	version : 1, iat : "", eat : "", reason : "", appeals : []
-	}
-	#users = [];
-	/**
-	 * @name usersTemplate
-	 * @description - a constant data that is used as a reference for data parsing
-	 * @param {number} version - version number of the template
-	 * @param {string} authorName - display name of the user
-	 * @param {Array<Object>} channels - channels made up of #channelTemplate's
-	 * @param {string} uuid - "identifier for the user"
-	 * @param {string} ttsBans - tts bans using the #banTemplate
-	 * @param {string} channelBans - channel bans using the #banTemplate
-	 * @param {string} firstSeen - unixtime date format
-	 * @param {number} points - points user has from channel activities
-	 */
-	#usersTemplate = {
-		version : 1, 
-		authorName : "",
-		channels : [],
-		uuid : "",
-		ttsBans : [],
-		channelBans : [],
-		firstSeen: "",
-		points : 0,
-	}
-
-	/**
-	 * @returns {JSON}
-	 */
-	async AddProcessedMessagesToQueue(input){
-		if(input == ''){
-			throw new Error("input is undefined, not doing anything");
-		}
-		//try convert to object if string
-		if(typeof(input) == 'string'){
-			try{
-				if(
-					input.includes(".json")
-				){
-					await fetch(input).then((res) => {
-						input = res.json();
-					})
-				}
-				else if(typeof(input) == "object"){
-					JSON.parse(input);
-				}
-				else {
-					throw new Error("input is no ta string or object, cannot parse");
-				}
-			}
-			catch(err){
-				console.error(err);
-			}
-		}	
-
-		function mergeSortedLists(listA, listB) {
-		    let mergedList = Array(listA.length + listB.length);
-		    let i = 0; // Pointer for listA
-		    let j = 0; // Pointer for listB
-
-		    // 1. Core Comparison Loop
-		    // Keep running as long as there are elements in both lists to compare
-		    while (i < listA.length && j < listB.length) {
-			
-			// Compare the elements
-			if (listA[i].unixTime <= listB[j].unixTime) {
-			    // listA item is older or equal (push A)
-			    mergedList.push(listA[i]);
-			    i++;
-			} else {
-			    // listB item is older (push B)
-			    mergedList.push(listB[j]);
-			    j++;
-			}
-		    }
-
-		    // 2. Append Remaining Elements
-		    // One of the loops above finished. Copy any remaining elements 
-		    // from the other list (only one of these will ever run)
-		    
-		    // Append remaining from listA
-		    if (i < listA.length) {
-			mergedList.push(...listA.slice(i));
-		    }
-		    
-		    // Append remaining from listB
-		    if (j < listB.length) {
-			mergedList.push(...listB.slice(j));
-		    }
-		    
-		    return mergedList;
-		}
-		this.#messages_queue = mergeSortedLists(this.#messages_queue, input);
-	}
-	#unprocessed_queue =[]; // messages returned from yt fetch
-	async GetUnprocessedQueue(){
-		return this.#unprocessed_queue;
-	}
-	/**
-	 * @name unpressed_queue
-	 * @description - template for messages that have not been processed
-	 * @param {number} version - version number of the unprocessed message template
-	 * used
-	 * @param {number} apiVersion - version of the api the message was got from
-	 * @param {number} data - the data of the individual message
-	 * @param {number} dateTime - the value of date.now of when the message was
-	 * received.
-	 * @param {string} platform - teh platform the message came from
-	 * @param {string} failedProcessingAt - undefined if not attempted, if attempted
-	 * will have a value from Date.now()
-	 * @return {Array<Object>}
-	 */
-	#unprocessed_message_template_v1 = {
-		version : 1,
-		apiVersion : 3, // youtube,
-		data : undefined,
-		dateTime : undefined,
-		platform : undefined,
-		failedProcessingAt : undefined,
-	}
-	#messages_queue = [];
-	async GetMessagesQueue(){
-		return this.#messages_queue;
-	}
-	/**
-	 * @name #flagsTemplate
-	 * @param {Array<string>} flag - the flag[s] to trigger the cmd, must be in an
-	 * array
-	 * @param {string} value - value for the flag
-	 * @param {string} valueType - type for the input value to modify params
-	 * @param {string} description - tldr of what the flag does to the cmd
-	 * @param {range} if number, min and max values
-	 */
-	#flagsTemplate = {
-		flag : undefined, 
-		value : undefined, 
-		description : undefined, 
-		range : {min:0.5, max : 3}
-	}
-	/**
-	 * @name #commandTemplate
-	 * @param {number} template_version - version of the command
-	 * @param {string} command - flag to trigger the command
-	 * @param {Array} flags - additional params to modify the command
-	 * @param {Function} function - what code snippit to trigger when cmd is called
-	 */
-	#commandTemplate = {
-		template_version : 1,
-		command : undefined,
-		flags : undefined,
-		func: undefined, // function to call when triggered
-		//will check the highest perm first, the first to return true will be assumed. if none true assumed to be public
-		AuthNeeded: { 
-			owner: true,
-			admin: false,
-			mod: false,
-			// trusted users are users who have a certain amount of lifetime score or time since first appearance.
-			trusted: false, 
-		}
-	}
-
-	#commands = [ // only add commands that are implimented
-		{
-			template_version: 1,
-			command: "rank",
-			flags: [
-				{
-					flag: ['d'],
-					value: 1,
-					description: "for people to add/update their rankings on a game",
-					range: { min: 0.1, max: 10 }
-				},
-			],
-			func: '', //function to call when triggered
+	templates = {
+		bannedAt: {
+			version: 1, datetime : "", unbannedAt : [], bannAppeals : [],
+		},
+		channel: {
+			version : 1, platform : "", channelName : "", channelId : ""
+		},
+		commendment: {
+			version: 1,
+			happenedAt: undefined,
+			byUser: undefined, // uuid
+			messageCommended: undefined, // messageCommended if any
+		},
+		commands: {
+			version : 1,
+			command : undefined,
+			flags : undefined,
+			func: undefined, // function to call when triggered
+			//will check the highest perm first, the first to return true will be assumed. if none true assumed to be public
 			AuthNeeded: { 
-				owner: false,
+				owner: true,
 				admin: false,
 				mod: false,
-				trused: false
+				// trusted users are users who have a certain amount of lifetime score or time since first appearance.
+				trusted: false, 
 			}
 		},
-		{
-			template_version: 1,
-			command: "clip",
-			flags: [
-				{
-					flag: ['d'],
-					value: 1,
-					description: "approximate duration of the clip in minutes",
-					range: { min: 0.1, max: 10 }
-				},
-				{
-					flag: ['m'],
-					value: 1,
-					description: "a message the user can include",
-					range: { min: 0.5, max: 3 }
-				},
-			],
-			func: '', //function to call when triggered
-			AuthNeeded: { 
-				owner: false,
-				admin: false,
-				mod: false,
-				trused: false
-			}
+		errored_queue: {
+		    version: 1,          	
+		    data: undefined,           	// raw data that errored
+		    hardware: undefined,       	// hardware info of the system that failed
+		    erroredAt: undefined,      	// unixTime of when the error happened
+		    errorMessage: undefined,   	// err.message for quick reference
+		    stackTrace: undefined,     	// err.stack: captures the full path of the failure
+		    processingStage: undefined,	// identifies which function/.valueblock was running
+		    retryCount: 0              	// increments if you attempt to re-process
 		},
-		{
-			template_version: 1,
-			command: "help",
-			flags: [],
-			func: '', //function to call when triggered
-			AuthNeeded: { 
-				owner: false,
-				admin: false,
-				mod: false,
-			}
+		flags: {
+			flag : undefined, 
+			value : undefined, 
+			description : undefined, 
+			range : {min:0.5, max : 3}
 		},
-		{
-			template_version: 1,
-			command: "tts",
-			flags: [
-				{
-					flag: ['p'],
-					value: 1,
-					description: "modifys the pitch of the tts",
-					range: { min: 0.5, max: 3 }
-				},
-				{
-					flag: ['r', 's'],
-					value: 1,
-					description: "modifys the speed [rate] of the tts message",
-					range: { min: 0.5, max: 3 }
-				},
-				{
-					flag: ['v'],
-					value: 1,
-					description: "modifys the voice of the tts message",
-					range: { min: 0, max: 180 }
-				},
-			],
-			AuthNeeded: { 
-				owner: false,
-				admin: false,
-				mod: false,
+		messages: {
+			version: 1,
+			authorName: "",
+			authorId: "",
+			streamOrigin: "", //what streamid via the platform the message came from
+			receivedAt: "",
+			commands: [],
+			processedMessage: "",
+			platform: "",
+			messageId: "",
+			rawMessage: "",
+			score: "",
+			state: {}
+		},
+		misconduct: {
+			version: 1,
+			happenedAt: undefined, // unixTimestamp	
+			byUser: undefined, //  uuid
+			messageMisconduct: undefined, // if null do not add
+		},
+		unprocessed_message_v1: {
+			version : 1,
+			apiVersion : 3, // youtube,
+			data : undefined,
+			dateTime : undefined,
+			platform : undefined,
+			failedProcessingAt : undefined,
+		},
+		users: {
+			version : 1, 
+			authorName : undefined,
+			channels : [],
+			uuid : undefined,
+			ttsBans : [], // times they've been restricted from using tts (ie non-english, spam, etc)
+			channelBans : [], // when banned and why
+			conduct_score: 0, // -5 is the worst, 5 is the best, calculated at init or when a commendment or misconduct is added. ranks are in the following order (worst to best): 
+			/*
+				opal		- 1.5x score multiplier
+				obsidian	- can send gifs
+				diamond 	- 1.2x score multiplier
+				platinum	- no more negative  -- here and above is trusted
+				gold		- 1.1x score multiplier
+				silver		- ...
+				bronze		- 0.85x
+				copper		- 0.75x score multiplier
+				concrete	- user now automatically hidden from chat (not dashboard tho)
+				dirt		- no chat customization perms
+				trash		- 0.5x score multiplier
+			*/
+			commendments: {
+				community: [], // welcoming, helpful, inclusivity, etc
+				engaugement: [], // hype, constructive feedback, good chatting, etc
+				support: [], //the only thing one can buy
 			},
-			func: this.CallTts, //function to call when triggered
-		},
-	]
+			misconduct: {
+				discrimination: [], // racism, sexism, etc
+				harassment: [], // bullying, hate speech, etc
+				spam: [], // self-promo, asdl;fknfrtn, links, etc
+				integrity: [], // language, spoilers, trolling/rage, bypassing filters
+			},
+			isSponser: false, // is a paying memeber/has payed money this stream
+			isChatModerator: false, // can remove messages or but users on timeout
+			isChatAdmin: false, // can manage blocked words, change chat modes, and some other things
+			firstSeen: undefined, //Date.now()
+			points : 0,
+		}
+	}
 
-	#message_template = {
-		template_version: 1,
-		authorName: "",
-		authorId: "",
-		streamOrigin: "", //what streamid via the platform the message came from
-		unixTime: "",
-		commands: [],
-		processedMessage: "",
-		platform: "",
-		rawMessage: "",
-		score: "",
-		state: {}
-	};
-
-	#clip_queue = [];
+	#state = {
+		bannedWords: new TrieTree(), // tree that's good for strings, basically all you need to worry about is: add(), remove(), ContainsString()
+		clip_queue: [],
 		// NOTE: Assuming this function is part of a class/module where
-		config = {
+		config: {
 		  monitorMessages : {
 		    debug : true,
 		    strictMode : false,
+		  },
+		  censoring: {
+			  censorType: "replace", //options: replace with a char, swap word, shadow-ban
+			  censorChar: "*",
+			  censorWords: ["tacos"],
 		  },
 		  flag : {
 		    description :
@@ -349,13 +174,206 @@ export default class MonitorMessages {
 		    ],
 		    positionSelected : "start", //
 		  },
-		}
+		},
+		commands: [ // only add commands that are implimented
+			{
+				version: 1,
+				command: "rank",
+				flags: [{ flag: ['d'], value: 1, description: "for people to add/update their rankings on a game", range: { min: 0.1, max: 10 } },
+				],
+				func: '', //function to call when triggered
+				AuthNeeded: { owner: false, admin: false, mod: false, trused: false }
+			},
+			{
+				version: 1,
+				command: "clip",
+				flags: [
+					{ flag: ['d'], value: 1, description: "approximate duration of the clip in minutes", range: { min: 0.1, max: 10 } },
+					{ flag: ['m'], value: 1, description: "a message the user can include", range: { min: 0.5, max: 3 } },
+				],
+				func: '', //function to call when triggered
+				AuthNeeded: { owner: false, admin: false, mod: false, trused: false
+				}
+			},
+			{
+				version: 1,
+				command: "help",
+				flags: [{ flag: ['h'], value: 1, description: "show commands and other stuff"},],
+				func: '', //function to call when triggered
+				AuthNeeded: { owner: false, admin: false, mod: false, }
+			},
+			{
+				version: 1,
+				command: "tts",
+				flags: [
+					{ flag: ['p'], value: 1, description: "modifys the pitch of the tts", range: { min: 0.5, max: 3 } },
+					{ flag: ['r', 's'], value: 1, description: "modifys the speed [rate] of the tts message", range: { min: 0.5, max: 3 } },
+					{ flag: ['v'], value: 1, description: "modifys the voice of the tts message", range: { min: 0, max: 180 } },
+				],
+				AuthNeeded: { owner: false, admin: false, mod: false, trused: false},
+				func: this.CallTts, //function to call when triggered
+			},
+		],
+		debug: true,
+		errored_queue: [], //queue for any/all messages that have errored for ANY reason
+		messages: [],
+		unprocessed_queue: [], // messages returned from yt fetch
+		users: [],
+	}
+	
+	yt = new YoutubeV3();
 
+	//SORTING FUNCTIONS
+	#mergeSortedLists(listA, listB) {
+	    let mergedList = Array(listA.length + listB.length);
+	    let i = 0; // Pointer for listA
+	    let j = 0; // Pointer for listB
+
+	    // 1. Core Comparison Loop
+	    // Keep running as long as there are elements in both lists to compare
+	    while (i < listA.length && j < listB.length) {
+		
+		// Compare the elements
+		if (listA[i].receivedAt <= listB[j].receivedAt) {
+		    // listA item is older or equal (push A)
+		    mergedList.push(listA[i]);
+		    i++;
+		} else {
+		    // listB item is older (push B)
+		    mergedList.push(listB[j]);
+		    j++;
+		}
+	    }
+
+	    // 2. Append Remaining Elements
+	    // One of the loops above finished. Copy any remaining elements 
+	    // from the other list (only one of these will ever run)
+	    
+	    // Append remaining from listA
+	    if (i < listA.length) {
+		mergedList.push(...listA.slice(i));
+	    }
+	    
+	    // Append remaining from listB
+	    if (j < listB.length) {
+		mergedList.push(...listB.slice(j));
+	    }
+	    
+	    return mergedList;
+	}
+
+	#BubbleSort(arr = undefined) {
+	    if (arr == undefined) { throw new Error("arr is undefined"); }
+	    let temp;
+
+	    for (let j = 0; j < arr.length - 1; j++) {
+		for (let i = j + 1; i < arr.length; i++) {
+		    if (arr[j].localeCompare(arr[i]) > 0) {
+			temp = arr[j];
+			arr[j] = arr[i];
+			arr[i] = temp;
+		    }
+		}
+	    }
+	    return arr;
+	}
+
+	//MATH ESC FUNTIONS
+	#Clamp(num, min, max){
+		return Math.min(Math.max(num, min), max);
+	};
+	#lerp(a = undefined, b = undefined, t = undefined){
+		if(a == undefined || b == undefined || t == undefined){throw new Error(`a (${a}), b (${b}), or t(${t}) is undefined`);}
+		return (a+b-a*t);
+	};
+
+	#calc_user_conduct_score(user = undefined){
+		unixTimes = {"month1": 2648400,"year1": 31536000,}
+		
+		let minDuration = unixTimes.month1;
+		let maxDuration = unixTimes.year1*2; 
+
+		if(user == undefined){throw new Error("could not calculate user conduct score, input is null")}
+		let conduct_score, misconduct_score = 0;	
+
+		const now = Date.now();
+		let eventTime; // = user.commendations[Object.keys(user.commendations)[i]][j].happenedAt;
+		let age; // = now - eventTime;
+
+		let commendment;
+		for(let i = 0; i < Object.keys(user.commendments.length); ++i){
+			for(let j = 0; j < user.commendments[i].length; ++j){
+				// conduct_score += Number(
+				// 	this.clamp(Object.keys(user.commendations)[i][j].happenedAt-(Date.now()-maxDuration), 0, 1)
+				// 	/ (maxDuration-minDuration)
+				// )
+				let timeWeight = (maxDuration - age) / (maxDuration - minDuration);
+				eventTime = user.commendations[Object.keys(user.commendations)[i]][j].happenedAt;
+				age = now - eventTime;
+				conduct_score += Number(this.#Clamp(timeWeight, 0, 1));
+			}
+		}
+	}
+	GetUsers(){
+		return this.#state.users;
+	}
+
+	async LoadBannedWords(event = undefined, method = "add") {
+	    DebugPrint("LoadBannedWords() called");
+	    if (!event) throw new Error("event is null");
+
+	    let file = event.target.files[0];
+	    if (!file) {
+		DebugPrint("No file detected");
+		return;
+	    }
+
+	    let fileType = file.name.split(".").pop().toLowerCase(); // force lowercase to simplify greatly
+	    let data = []; 
+
+	    const text = await file.text(); 
+
+	    if (fileType === "json") {
+		DebugPrint(".json found, attempting to parse");
+		data = JSON.parse(text);
+	    } else if (fileType === "csv") {
+		DebugPrint(".csv found, attempting to parse");
+		data = text.split(/[,\n\r]+/).map(w => w.trim()).filter(w => w !== "");
+	    }
+
+	    // Initialize the tree if it doesn't exist
+	    if (!this.#state.bannedWords || method === "replace") {
+		DebugPrint(method === "replace" ? "Replacing tree" : "Initializing new tree");
+		this.#state.bannedWords = new TrieTree();
+	    }
+
+	    DebugPrint(`Adding ${data.length} words to the Trie`);
+	    
+	    // Fill the tree with the new data
+	    for (const word of data) {
+		this.#state.bannedWords.Add(word);
+	    }
+
+	    DebugPrint("Banned words Trie updated.", this.#state.bannedWords.Print());
+	    
+
+	    return this.#state.bannedWords;
+	}
+
+	async GetUnprocessedQueue(){
+		return this.#state.unprocessed_queue;
+	}
+	async GetMessagesQueue(){
+		return this.#state.messages;
+	}
+	GetErroredQueue(){
+		return this.#state.errored_queue;
+	}
 
 	async ProcessUnprocessedMessagesQueue(maxAmount = 50) {
 	    let i = 0;
-	    while (this.#unprocessed_queue.length > 0 && i < maxAmount) {
-		const currentItem = this.#unprocessed_queue.shift();
+	    while (this.#state.unprocessed_queue.length > 0 && i < maxAmount) {
+		const currentItem = this.#state.unprocessed_queue.shift();
 
 		try {
 		    let processedResult = null;
@@ -382,7 +400,7 @@ export default class MonitorMessages {
 
 			    // Bind all commands with state
 			    processedResult.commands.forEach(cmd => {
-				const commandDefinition = this.#commands.find(
+				const commandDefinition = this.#state.commands.find(
 				    def => def.command === cmd.command
 				);
 				if (!commandDefinition || typeof commandDefinition.func !== 'function') return;
@@ -408,7 +426,6 @@ export default class MonitorMessages {
 				processedResult.state.ttsHasRead = false;
 			    }
 			}
-			this.#messages_queue.push(processedResult);
 		    }
 		} catch (error) {
 		    console.error("Error processing message:", error);
@@ -417,139 +434,226 @@ export default class MonitorMessages {
 	    }
 	}
 
-	GetMessagesTimer = new IntTimer();
+	GetMessagesTimer = new IntTimer({
+		name: "GetMessagesTimer",
+	});
+
 	async MonitoringStart() {
-		DebugPrint("running the loop once as a test");
-		try {
-			// assess	
-			// test
-			await this.#DaLoop();
-			//this.GetMessagesTimer.AddTimeoutListener(this.#DaLoop);
-	// Start polling loop
-			//this.GetMessagesTimer.Start();
-		}
-		catch (err) {
-			console.error("error with monitoring start\n", err);
-		}
+	    DebugPrint("running the loop once as a test");
+	    try {
+		await this.#DaLoop(); 
+
+		// Wrap it so 'this' remains correct when called by the timer
+		this.GetMessagesTimer.AddTimeoutListener(() => this.#DaLoop()); 
+		this.GetMessagesTimer.AddTimeoutListener(() => this._playOldestUnreadTts()); 
+		
+		this.GetMessagesTimer.Start();
+	    }
+	    catch (err) {
+		console.error("error with monitoring start\n", err);
+	    }
 	}
 
+		//convert to a tree struct for speed;
+	FindUserAndAddScore(processedMessage, score) {
+	    try {
+		const userId = processedMessage.authorId;
+		DebugPrint(`Attempting to add score (${score}) to user:`, userId);
 
-	async #DaLoop() {
+		// 1. Use .find() to see if any user has this userId in their channels array
+		let existingUser = this.#state.users.find(u => u.channels.includes(userId));
+
+		if (existingUser) {
+		    DebugPrint("Found user with matching ID, adding score.");
+		    DebugPrint("Score before: ", existingUser.points);
+		    
+		    existingUser.points += Number(score);
+		    
+		    DebugPrint("Score after: ", existingUser.points);
+		    return; // Exit function so we don't push a duplicate
+		}
+
+		// 2. If we got here, the user doesn't exist. Push them.
+		DebugPrint(`User ${userId} not found. Creating new entry.`);
+		
+		this.#state.users.push({
+		    version: 1,
+		    authorName: processedMessage.authorName,
+		    channels: [userId], // Stored as an array
+		    uuid: crypto.randomUUID(),
+		    ttsBans: [],
+		    channelBans: [],
+		    firstSeen: Math.floor(Date.now()),
+		    points: Number(score)
+		});
+
+		DebugPrint("User added. Total users in DB:", this.#state.users.length);
+
+	    } catch (err) {
+		DebugPrint(`Failed to add score to user.`, err);
+	    }
+	}
+
+		/**
+		 * High-performance duplicate check and chronological insertion.
+		 * Optimized for tens of thousands of messages.
+		 * @param {Object} p_msg - Processed message (must contain .messageId and .receivedAt)
+		 */
+	SafeAddToMessagesQueue(p_msg) {
+	    const queue = this.#state.messages; 
+	    const len = queue.length;
+	    const targetId = p_msg.messageId;
+	    const targetTime = p_msg.receivedAt;
+
+	    // 1. REVERSE SCAN FOR DUPLICATE ID
+	    for (let i = len - 1; i >= 0; i--) {
+	        // If we find the exact same ID, it's a duplicate.
+	        if (queue[i].messageId === targetId) {
+	            DebugPrint("Duplicate message found, ignoring");
+	            return false; // Actually ignore it
+	        }
+
+	        // If the message in the queue is older than the new one,
+	        // we've gone back far enough. No duplicate exists.
+	        if (queue[i].receivedAt < targetTime) {
+	            break; // STOP the loop, but CONTINUE the function
+	        }
+	    }
+
+	    // 2. BINARY SEARCH FOR INSERTION POINT
+	    // This code only runs if the loop above "broke" or finished naturally
+	    let low = 0;
+	    let high = len;
+
+	    while (low < high) {
+	        const mid = (low + high) >>> 1;
+	        if (queue[mid].receivedAt < targetTime) {
+	            low = mid + 1;
+	        } else {
+	            high = mid;
+	        }
+	    }
+
+	    // 3. ATOMIC INSERTION
+	    DebugPrint(`Adding message at index ${low}`);
+	    if (low === len) {
+		queue.push(p_msg);
+	    } else {
+		queue.splice(low, 0, p_msg);
+	    }
+
+	    return true;
+	}
+
+	/*async #DaLoop() {
 		DebugPrint("loop for messages started", "", "log", "background-color: #505");
-		try{ //yt get
-			DebugPrint("loop triggered, attempting to get messages");
-			let messages = await this.yt.getChatMessages().then(async (res)=>{
-				const messages = res;
-					
-				DebugPrint(`value from messages is: ${JSON.stringify(messages)}`);
-
-				if(
-					messages == null 
-					|| messages == undefined
-					|| messages == ""
-				){
-					DebugPrint("messages got from api is null, is there an issue?");
-					return;
+		DebugPrint("loop triggered, attempting to get messages");
+		let messages = await this.yt.getChatMessages().then(async (res)=>{
+			const messages = res;	
+			DebugPrint(`value from messages is: ${JSON.stringify(messages)}`);
+			if(
+				messages == null 
+				|| messages == undefined
+				|| messages == ""
+			){
+				DebugPrint("messages got from api is null, is there an issue?");
+				return;
+			}
+			else {
+				DebugPrint("mesages received, got:", JSON.stringify(messages));
+			}
+			DebugPrint("passing messages into quick parse", messages);
+			let message;
+			DebugPrint("about to process youtube messages from fetch responce", messages);
+			for(let i = 0; i < messages.items.length; ++i){
+				message = messages.items[i];
+				DebugPrint("message for processing:", message);
+				message = this.ParseAndAddYouTubeV3MessagesToUnprocessedQueue(message);
+				if(message == undefined){
+					DebugPrint("message after attempting to add to unprocessed_queue is undefined, skipping add");
+					continue;
 				}
-				else {
-					DebugPrint("mesages received, got:", JSON.stringify(messages));
-					// DebugPrint("due to nullness, callagin again with a clear'd page token");
-					// this.yt.config.nextPageToken = undefined;
-					// const tryagain = setTimeout(async ()=>{
-					// 	console.log("RETRY HAS BEEN CALLED");
-					// 	messages = await this.yt.getChatMessages();
-					// 	if(
-					// 		messages == null 
-					// 		|| messages == undefined
-					// 		|| messages == ""
-					// 	){
-					// 		DebugPrint("messages got from api is null, is there an issue?");
-					// 		return;
-					// 	}
-					// 	DebugPrint("messages from null'd call: ", messages);
-					// }, 2000);
-					// await tryagain;
-				}
+				DebugPrint("processed message: \n", message);
+			}
+			DebugPrint("unprocessed_queue: ", this.#state.unprocessed_queue, "log", "background-color:#505");
 
-				DebugPrint("passing messages into quick parse", messages);
-				// ERROR: PAST HERE, MESSAGES IS NULL'd AT SOME POINT
-				let message;
-				DebugPrint("about to process youtube messages from fetch responce", messages);
-				for(let i = 0; i < messages.items.length; ++i){
-					message = messages.items[i];
-					DebugPrint("message for processing:", message);
-					message = this.ParseAndAddYouTubeV3MessagesToUnprocessedQueue(message);
-					if(message == undefined){
-						DebugPrint("message after attempting to add to unprocessed_queue is undefined, skipping add");
-						continue;
-					}
-					DebugPrint("processed message: \n", message);
-					this.#unprocessed_queue.push(message);
-				}
-
-				DebugPrint("starting to process unprocessed_queue", this.#unprocessed_queue);
-				let u_msg, p_msg;
-				// TODO: YOUR NEXT DEBUGGINGS SESSION STARTS HERE CHUCKLE FUCK
-				for(let i = 0; i < this.#unprocessed_queue; ++i){
+			DebugPrint("starting to process unprocessed_queue", this.#state.unprocessed_queue);
+			DebugPrint(`STARTING BATCH: Queue length is `, this.#state.unprocessed_queue.length);
+				for(let i = 0; i < this.#state.unprocessed_queue.length; ++i){
 					try{
-						if(this.#unprocessed_queue[i].failedProcessingAt != undefined){
-							//if message has errored, skip because it needs to be tested
-							continue;
+						let p_msg = await this.ProcessYouTubeV3Message_v1(this.#state.unprocessed_queue[i]);
+						DebugPrint("current p_msg is: ", p_msg);
+						DebugPrint("checking lenght of this.#state.messages.length: ", this.#state.messages.length);
+						if(this.#state.messages.length > 0){ //check for duplicates
+							let p_msg = await this.ProcessYouTubeV3Message_v1(this.#state.unprocessed_queue[i]);
+
+							// This replaces your entire 'j' loop
+							const alreadyExists = this.#state.messages.some(m => 
+							    m.authorId === p_msg.authorId && 
+							    m.rawMessage === p_msg.rawMessage && 
+							    m.receivedAt === p_msg.receivedAt
+							);
+
+							if (!alreadyExists) {
+							    this.#state.messages.push(p_msg);
+							}
 						}
-						u_msg = this.unprocessed_queue[i];
-						DebugPrint("u_msg = ", u_msg);
-						p_msg = await this.ProcessYouTubeV3Message_v1(message);
-						DebugPrint("p_msg = ", p_msg);
-
-						this.#messages_queue.push(p_msg);
-						// score message and add to user total score
-
-						p_msg.score
-
-						let user;
-						//convert to a tree struct for speed
-						function findUserAndAddScore(){
-							for(let j = 0; j < this.#users.length; ++j){
-								user = this.users[j];
-								for(let k = 0; k < this.#users.channels; ++k){
-									if(user[k].id == p_msg.authorId){
-										DebugPrint("found user with matching id, adding score to user total");
-										this.users[j].points += Number(p_msg.score);
-										return;
-									}
-								};
-							}
-
-							this.#users += {
-							 	version : 1, 
-							 	authorName : p_msg.authorName,
-							 	channels : [
-									p_msg.authorId
-								],
-							 	uuid : crypto.randomUUID(),
-							 	ttsBans : [],
-							 	channelBans : [],
-							 	firstSeen: Date.now(),
-							 	points: p_msg.score,	
-							}
-						};
-
-						findUserAndAddScore(p_msg.channelId, p_msg.score);	
-					}	
-					catch(err){
-						DebugPrint(err.trace, '', "error");
+						else{ //add message because there's no reason to not
+							this.#state.messages.push(p_msg);
+						}
 					}
-				}
-				if(this.config.debugMode){
-					DebugPrint("here's the update messages_queue: \n", this.#messages_queue);	
-				}
+					catch(err){
+						DebugPrint(`[ERROR] Failed at ID ${JSON.stringify(this.#state.unprocessed_queue[i])}: `, err);
+						this.#state.errored_queue.push({
+						    ...this.templates.errored_queue,
+						    data: this.#state.unprocessed_queue[i],
+						    erroredAt: Date.now(),
+						    errorMessage: err.message,
+						    stackTrace: err.stack
+						});
+					}
+						
+			}
+			if(this.#state.config.debugMode){
+				DebugPrint("here's the update messages: \n", this.#state.messages);	
+			}
 
-			});
-			DebugPrint("COMPLETELY PROCESSED MESSAGES: \n", this.#messages_queue);
+		});
+		DebugPrint("COMPLETELY PROCESSED MESSAGES: \n", this.#state.messages);
+	}*/
+	async #DaLoop() {
+	    try {
+		DebugPrint("Step 1: Fetching...");
+		const data = await this.yt.getChatMessages();
+		
+		DebugPrint(`Step 2: Received ${data.items?.length || 0} items`);
+
+		if (!data.items || data.items.length === 0) return;
+
+		// Step 3: Parse items into the unprocessed queue
+		for (const item of data.items) {
+		    this.ParseAndAddYouTubeV3MessagesToUnprocessedQueue(item);
 		}
-		catch(err){
-			console.error("error processing youtube messages\n", err);
+
+		// Step 4: Process the queue and empty it
+		while (this.#state.unprocessed_queue.length > 0) {
+		    const raw = this.#state.unprocessed_queue.shift();
+		    const p_msg = await this.ProcessYouTubeV3Message_v1(raw);
+
+		    const exists = this.#state.messages.some(m => 
+			m.receivedAt === p_msg.receivedAt && m.authorId === p_msg.authorId
+		    );
+
+		    if (!exists) this.#state.messages.push(p_msg);
 		}
+		DebugPrint("Step 5: Loop Complete. Current History: " + this.#state.messages.length);
+
+		DebugPrint("calling tts");
+		await this.ProcessPendingTts();
+
+	    } catch (err) {
+		DebugPrint("LOOP CRASHED: " + err.message);
+	    }
 	}
 
 
@@ -558,121 +662,48 @@ export default class MonitorMessages {
 	  this.GetMessagesTimer.RemoveTimeoutListener(this.#DaLoop);
 	}
 
-	/**
-	* Specific processor for YouTube API v3 messages.
-	* Maps YouTube raw data to your standard #message_template.
-	*/
 	async ProcessYouTubeV3Message_v1(unprocessedMsg) {
 		const rmo = unprocessedMsg.data; // rawMessageObject
+		DebugPrint("rmo base object to get rata from:", rmo);
 
 		// 1. Initialize the new processed message object
-		const newMessage = this.#message_template; // Shallow copy template
-		newMessage.template_version = 1; // WARN: make new function if this needs to be changed
+		const newMessage = { ...this.templates.messages };
+		DebugPrint("parsing out information from object", unprocessedMsg);
+		newMessage.version = 1; // WARN: make new function if this needs to be changed
 		newMessage.authorName = rmo.authorDetails.displayName;
-		newMessage.authorId= rmo.authorDetails.channelId;
-		newMessage.streamOrigin= rmo.snippet.liveChatId; //what streamid via the platform the message came from
-		newMessage.unixTime= unprocessedMsg.dateTime; //use when received by server/app to help reduce dependancies
-		newMessage.platform= "youtube";
+		newMessage.authorId = rmo.authorDetails.channelId;
+		//newMessage.messageId = u_msg.data.id, // TODO: find messageId
+		newMessage.streamOrigin = rmo.snippet.liveChatId; //what streamid via the platform the message came from
+		newMessage.receivedAt = new Date(unprocessedMsg.data.snippet.publishedAt).getTime(); //use when received by server/app to help reduce dependancies
+		newMessage.platform = "youtube";
 
 		//sanitize string
-		message = rmo.snippet.textMessageDetails.messageText;
-		if(this.CheckMessageForBannedWords(message)){
-			// TODO: shadow ban user, and flag for review
-		};
+		let message = rmo.snippet.textMessageDetails.messageText;
+		DebugPrint("checking for banned words in message", message);
+		//if(this.CheckMessageForBannedWords(message)){
+		//	// TODO: shadow ban user, and flag for review
+		//};
+
+		newMessage.score = await this.ScoreMessage(message);
+
+		DebugPrint("continuing to parse information from message text", unprocessedMsg);
 		message = this.SanitizeString(message);
 		message = this.ParseCommandFromMessage(message);
 		newMessage.processedMessage = message.seperatedText;
-		newMessage.score= await this.ScoreMessage(message.seperatedMessage);
 		newMessage.commands = message.foundCommands;
 		newMessage.state = {};
-		if(mesasge.foundCommands.tts != undefined) {
+		if(message.foundCommands.tts != undefined) {
 			newMessage.state.ttsHasBeenRead = false;
 		}
 		newMessage.rawMessage= rmo.snippet.textMessageDetails.messageText;
 
+		DebugPrint("returning the raw message", newMessage);
 		return newMessage;
 	}
 
 
 
-	/**
-	 * Internal helper: Finds the oldest message with a TTS command that has not been read.
-	 * CRITICAL: This only processes messages that have BOTH a TTS command AND ttsHasRead === false
-	 * which is effectively the oldest if the queue is FIFO chronological. Most importantly,
-	 * it now awaits the execution before completing the function, preventing a new 
-	 * call of AutoTtsStart/loop from executing on a new message before the previous one is finished.
-	 */
-	async _playOldestUnreadTts() {
-		if (!this.#messages_queue || this.#messages_queue.length === 0) {
-			console.warn("Auto TTS: Message queue is empty.");
-			return;
-		}
-		DebugPrint(`Auto TTS: Checking ${this.#messages_queue.length} messages in queue...`);
-		//check msg has commands
-		let ttsIndex = -1;
-
-		let msg;
-		for(let i = 0; i < this.#messages_queue.length; ++i){
-			msg = this.#messages_queue[i];
-			// 1. Must have commands array
-			if (msg.commands.length === 0) {
-			    continue;
-			} 
-
-			//check cmd is a tts command
-			let ttsFound = false;
-			for(let j = 0; j < msg.commands.length; ++j){
-				if(msg.commands[j].command == "tts"){
-					ttsFound = true;
-					break;	
-				}
-			}
-			if(!ttsFound){
-				continue;	
-			}
-
-			//check message hasn't been read
-			if(!msg.state || msg.state.ttsHasRead == false){
-				DebugPrint(`Auto TTS: Found unread TTS message from ${msg.authorName}: "${msg.processedMessage}"`);
-				ttsIndex = i;
-				break;
-			}
-			if(i == this.#messages_queue.length-1){console.warn("erached end of mesasge queue without finding a match")}
-		};
-		if(ttsIndex == -1){
-			console.warn("no tts mesasges found in the queue");
-			return;
-		}
-
-		if(message == undefined){
-			console.warn("msg is empty" + "\n" + JSON.stringify(msg, null, 2));
-		}
-		
-	// ... (message selection logic above)
-
-	DebugPrint("attempting to execute command from tts message" + "\n" + JSON.stringify(msg, null, 2));
-	let cmdExecuteAttempted = false;
-	for(let i = 0; i < msg.commands.length; ++i){
-	    // ✅ CORRECTED: Access the command property of the array element at index i
-	    if(msg.commands[i].command != "tts"){ 
-		continue  
-	    }
-	    cmdExecuteAttempted = true;
-
-	    switch(msg.template_version){
-		case(1):
-		    await this.CallTts(msg);
-		    // After successful call, you might want to break the loop 
-		    // if you only want to execute the first TTS command.
-		    // break;
-		default:
-		    throw new Error("no compatable command version found" + "\n" + JSON.stringify(msg, null, 2));
-	    }
-	}
-	if(cmdExecuteAttempted == false){
-	    throw new Error("somehow message selected did not have a tts command attached" + "\n" + JSON.stringify(msg, null, 2));
-	}
-	}
+	async _playOldestUnreadTts() {}
 
 
 	/**
@@ -743,6 +774,39 @@ export default class MonitorMessages {
 	    }
 	}
 
+	async ProcessPendingTts() {
+	    DebugPrint("Scanning for pending TTS commands...");
+
+	    for (let i = 0; i < this.#state.messages.length; i++) {
+		const msg = this.#state.messages[i];
+
+		// 1. Corrected Check: Search the commands array for 'tts'
+		// We use .some() because it returns true as soon as it finds a match
+		const hasTtsCommand = Array.isArray(msg.commands) && 
+				      msg.commands.some(cmd => cmd.command === "tts");
+
+		const alreadyRead = msg.state?.ttsHasRead === true;
+
+		if (hasTtsCommand && !alreadyRead) {
+		    DebugPrint(`Found unread TTS: "${msg.rawMessage}"`);
+
+		    try {
+			if (!msg.state) msg.state = {};
+			msg.state.ttsHasRead = true;
+
+			// Ensure we handle the text correctly
+			const textToSpeak = msg.processedMessage 
+			    ? msg.processedMessage.replace(/!tts/gi, "").trim() 
+			    : "No message text";
+
+			await this.CallTts(msg, i); 
+		    } catch (err) {
+			console.error("Failed to play TTS for message:", i, err);
+			if (msg.state) msg.state.ttsHasRead = "ERROR";
+		    }
+		}
+	    }
+	}
 
 	/**
 	 * Executes the Text-to-Speech command using the message and flags.
@@ -751,7 +815,10 @@ export default class MonitorMessages {
 	 * @param {Object} messageState - Reference to the message.state object (messageObj.state)
 	 * @returns {Promise<void>}
 	 */
-	async CallTts(message, messages_queue_index = undefined) { 
+	async CallTts(
+		message, // message which contains tts params
+		messages_index= undefined
+	) { 
 		DebugPrint("CallTts: Starting TTS for message:", message);
 
 		if (!message) {
@@ -772,7 +839,8 @@ export default class MonitorMessages {
 		});
 
 		const voices = await getVoices();
-		const TTS = new SpeechSynthesisUtterance(message);
+		const textToSpeak = message.processedMessage ? message.processedMessage.replace("!tts", "").trim() : "No text";
+		const TTS = new SpeechSynthesisUtterance(textToSpeak);
 
 		let flags;
 		if(message.commands){
@@ -795,23 +863,25 @@ export default class MonitorMessages {
 			}
 		}
 
-		if(messages_queue_index != undefined){
-			DebugPrint("no messages_queue_index given, attempting to find message");
-			for(let i = 0; i < this.#messages_queue.length; ++i){
-				if( //check auth, msg, and unixTime to verify that the message is very very likely the same message
-					message.authorId == this.#messages_queue[i].authorId
-					&& message.rawMessage.data.displayMessage == this.#messages_queue[i].rawMessage.data.displayMessage 
-					&& mesasge.unixTime == this.#messages_queue[i].unixTime
+		/*
+		if(messages_index != undefined){
+			DebugPrint("no messages_index given, attempting to find message");
+			for(let i = 0; i < this.#state.messages.length; ++i){
+				if( //check auth, msg, and receivedAt to verify that the message is very very likely the same message
+					message.authorId == this.#state.messages[i].authorId
+					&& message.rawMessage.data.displayMessage == this.#state.messages[i].rawMessage.data.displayMessage 
+					&& message.receivedAt == this.#state.messages[i].receivedAt
 				){
-					messages_queue_index = i;	
+					messages_index= i;	
 					DebugPrint("message found at index: " + i);
 					break;
 				}
 			}
-			if(messages_queue_index){
+			if(messages_index){
 				console.warn("could not find matching message from queue, it is possible this is a text or something else, IF THIS IS UNINTENTIONAL YOU GOT SOME DEBUGGING TO DO");
 			}
 		};
+		*/
 
 		return new Promise((resolve, reject) => {
 			TTS.onend = () => {
@@ -842,18 +912,18 @@ export default class MonitorMessages {
 			    return null;
 			  }
 
-			  let command = this.#commandTemplate;
+			  let command = this.templates.commands;
 			  command.flags = {
-			    p : flagsIn.p || this.#GEBI("ttsPitch")
+			    p : flags.p || this.#GEBI("ttsPitch")
 			    ?.value || this.#LSGI("ttsPitch") || "1",
 			    r
-			    : flagsIn.r || this.#GEBI("ttsRate")
+			    : flags.r || this.#GEBI("ttsRate")
 			    ?.value || this.#LSGI("ttsRate") || "1",
 			    v
-			    : flagsIn.v || this.#GEBI("ttsVoice")
+			    : flags.v || this.#GEBI("ttsVoice")
 			    ?.value || this.#LSGI("ttsVoice") || 51, };
 			  command.command;
-			  command.template_version = 1;
+			  command.version = 1;
 			  command.func = this.CallTts(message);
 
 			  const argsStr = match[2];
@@ -904,17 +974,17 @@ export default class MonitorMessages {
 	    // Create a new message object based on the class template
 	    let processedMessage = {
 		// Use a shallow copy of the template to avoid modifying the template itself
-		version : this.#unprocessed_message_template_v1.version,
+		version : this.templates.unprocessed_message_v1.version,
 		apiVersion : 3, // WARN: do not change this, if this needs to be changed make a new function
 		platform : "YouTube",
 		// Set dynamic/specific fields
 		data : rawMessage, // Store the entire raw message object
-		dateTime : unixTimestampMs, // Unix time in milliseconds
+		receivedAt: unixTimestampMs, // Unix time in milliseconds
 		failedProcessingAt : undefined, 
 	    };
 
 	    DebugPrint("Adding message to unprocessed_queue: ", processedMessage);
-	    this.#unprocessed_queue.push(processedMessage)
+	    this.#state.unprocessed_queue.push(processedMessage)
 	    return(processedMessage);
 	}
 
@@ -925,8 +995,6 @@ export default class MonitorMessages {
 	#GEBI(id) {
 			return document.getElementById(id);
 			}
-
-	#messageDisbatch(message){}
 
 			// PUBLIC (laid out by general flow)
 			async GetMessages(pageToken = undefined) {
@@ -1070,6 +1138,7 @@ export default class MonitorMessages {
 			async ScoreMessage(message) { // TODO: MORSE CODE BREAKS THE SCORE: "..-. ..- -.-. -.- / -- --.- / .-.. .. ..-. ." == 440
 			  // 1. DEFINE ALL SCORING FUNCTIONS (using arrow functions for
 			  // 'this' context)
+			DebugPrint("attempting to score message:", message);
 			  const CheckPunctuation = (message) => {
 			    let score = 0;
 
@@ -1214,7 +1283,7 @@ export default class MonitorMessages {
 
 			    score += funcScore;
 
-			    if (this.config.monitorMessages.debug == true) {
+			    if (this.#state.config.debug == true) {
 			      DebugPrint(`score eval at function call : ${score}`);
 			    }
 			  }
@@ -1227,7 +1296,7 @@ export default class MonitorMessages {
 	/**
 	 * Renders the processed messages into a visual HTML table based on the provided
 	 * mock structure, styles, and pagination logic.
-	 * NOTE: This function relies on the existence of `this.#messages_queue` 
+	 * NOTE: This function relies on the existence of `this.#state.messages` 
 	 * (array of processed message objects).
 	 * @param {number} pageIndex - The current page of messages to display (0 is newest).
 	 * @param {number} itemsPerPage - Number of messages per page.
@@ -1320,7 +1389,7 @@ export default class MonitorMessages {
 	    const tbody = document.createElement('tbody');
 
 	    // 4. Calculate Pagination Data
-	    const sortedMessages = [...this.#messages_queue].reverse(); 
+	    const sortedMessages = [...this.#state.messages].reverse(); 
 	    const totalPages = Math.ceil(sortedMessages.length / itemsPerPage);
 	    
 	    pageIndex = Math.max(0, Math.min(pageIndex, totalPages > 0 ? totalPages - 1 : 0));
@@ -1588,7 +1657,7 @@ export default class MonitorMessages {
 	    container.appendChild(table);
 	    const tbody = document.getElementById('default_command_tbody');
 
-	    this.#commands.forEach(commandDef => {
+	    this.#state.commands.forEach(commandDef => {
 		const commandName = commandDef.command;
 		const flags = commandDef.flags || [];
 		const tr = document.createElement('tr');
@@ -1708,44 +1777,49 @@ export default class MonitorMessages {
 	    return null;
 	}
 
-                SanitizeString(strang) {
-                  if (typeof strang != 'string') {
-                    throw new Error(
-                        "strang is not a string, UNEXPECTED DATA TYPE");
-                  }
+	SanitizeString(strang) {
+	  // 1. Type Check
+	  if (typeof strang !== 'string') {
+	    throw new Error("strang is not a string, UNEXPECTED DATA TYPE");
+	  }
 
-                  const miniscules = [
-                    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i',
-                    'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
-                    's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
-                  ];
-                  const caps = [
-                    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I',
-                    'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
-                    'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
-                  ];
-                  const numbers =
-                      [ '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' ];
+	  // 2. Sanitize: Create a version with only letters/numbers for checking
+	  // We keep the original 'strang' to return if no match is found
+	  const cleanStr = strang.toLowerCase().replace(/[^a-z0-9]/g, '');
 
-const specials = [
-                    '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '[', ']',
-                    '?', '/', '|', '.', ',', ':', ';'
-                  ];
-                  const valid_chars = miniscules + caps + numbers + specials;
+	  let foundBannedWord = null;
 
-                  let matchFound = false;
-                  for (let i = 0; i < strang.length; ++i) {
-                    for (let j = 0; j < valid_chars.length; ++j) {
-                      if (strang[i] == valid_chars[j]) {
-                        matchFound = true; break;
-                      }
-                    }
-                    if (!matchFound) {
-                      strang[i] = ''; // remove invalid character
-                    }
-                  }
-                  return strang
-                }
+	  // 3. Sliding Window Approach
+	  // We check every possible substring against the Trie
+	  // i = start position, j = length of the window
+	  for (let i = 0; i < cleanStr.length; i++) {
+	    for (let len = 1; len <= cleanStr.length - i; len++) {
+	      const windowContent = cleanStr.substring(i, i + len);
+	      
+	      if (this.#state.bannedWords.ContainsString(windowContent)) {
+		foundBannedWord = windowContent;
+		break; // Found a match, exit inner loop
+	      }
+	    }
+	    if (foundBannedWord) break; // Exit outer loop
+	  }
+
+	  // 4. Conditional Logic
+	  if (foundBannedWord) {
+	    // If a banned word was found, pass to switch statement
+	    switch (foundBannedWord) {
+	      case "apple": // Example specific case
+		DebugPrint("Banned word 'apple' detected.");
+		return "REDACTED";
+	      default:
+		DebugPrint(`Banned word '${foundBannedWord}' detected.`);
+		return "****";
+	    }
+	  }
+
+	  // 5. If no match found, return the original string with spaces/special chars intact
+	  return strang;
+	}
 
 	ParseCommandFromMessage(rawText) {
 	    const result = {
@@ -1753,7 +1827,7 @@ const specials = [
 		    seperatedText : rawText
 	    };
 
-	    if (!rawText.startsWith('!')){
+	    if (!rawText.startsWith(this.#state.config.flag.token)){
 		    result.seperatedText = rawText
 		    return result;
 	    } 
@@ -1762,7 +1836,7 @@ const specials = [
 	    if (tokens.length == 0) return result;
 
 	    const potentialCommandName = tokens[0].substring(1).toLowerCase();
-	    const commandConfig = this.#commands.find(c => c.command == potentialCommandName);
+	    const commandConfig = this.#state.commands.find(c => c.command == potentialCommandName);
 
 	    if (commandConfig) {
 		const commandName = commandConfig.command;
@@ -1836,126 +1910,6 @@ const specials = [
 	    return result;
 	}
 
-	async CheckMessageForBannedWords(inMessage = undefined){ //TODO: optimize this a bunch
-		if(inMessage == undefined){
-			console.warn("in message is undefined, is this intentional?");
-			return false;
-		}
-		//import csv file
-		let bannedWordsString = imporFileAsString("./IMPORT_FILE_TEST.csv");
-		bannedWordsString.toLowerCase();
-		//parse to array
-		let bannedWordsArray, wordStartIndex = undefined;
-		for(let i = 0; i < bannedWordsString.length; ++i){
-			if(
-				bannedWordsString[i] == " " 
-				|| bannedWordsString[i] == "," 
-				|| i ==bannedWordsString.length-1
-			){
-				if(wordStartIndex != undefined){
-					continue;
-				} 
-
-				if(i == bannedWordsString.length-1 && wordStartIndex != undefined){ //handles end of file
-					bannedWordsArray += bannedWordsString.slice(wordStartIndex, i);
-				}
-				bannedWordsArray += bannedWordsString.slice(wordStartIndex, i);
-				wordStartIndex = undefined;
-			}
-			if(wordStartIndex == undefined){
-				wordStartIndex = i;
-			}
-		}
-		//TODO: make tree for bad words to optimize	
-
-		//check message without spaces or caps for bad word	
-		let formattedMessage = new Array(inMessage.length-1);
-		for(let i = 0; i < inMessage.length; ++i){
-			switch(inMessage[i]){
-				case("@"):
-				case("4"):
-					formattedMessage[i] = 'a';
-					break;
-				case("6"):
-				case("8"):
-					formattedMessage[i] = 'b';
-					break;
-				case("<"):
-				case("["):
-					formattedMessage[i] = 'c';
-				case("]"):
-					formattedMessage[i] = 'd';
-					break;
-				case("3"):
-					formattedMessage[i] = 'e';
-					break;
-					// formattedMessage[i] = 'f';
-				case("9"):
-					formattedMessage[i] = 'g';
-					break;
-				case("#"):
-					formattedMessage[i] = 'h';
-					break;
-				case("1"):
-				case("!"):
-					formattedMessage[i] = 'i';
-					break;
-					// formattedMessage[i] = 'j';
-					// formattedMessage[i] = 'k';
-				case("("):
-				case(")"):
-				case("\\"):
-				case("/"):
-				case("|"):
-					formattedMessage[i] = 'l';
-					break;
-					// formattedMessage[i] = 'm';
-					// formattedMessage[i] = 'n';
-					// formattedMessage[i] = 'o';
-					// formattedMessage[i] = 'p';
-					// formattedMessage[i] = 'q';
-					// formattedMessage[i] = 'r';
-				case("5"):
-				case("$"):
-					formattedMessage[i] = 's';
-					break;
-				case("7"):
-					formattedMessage[i] = 't';
-					break;
-					// formattedMessage[i] = 'u';
-					// formattedMessage[i] = 'v';
-					// formattedMessage[i] = 'w';
-					// formattedMessage[i] = 'x';
-					// formattedMessage[i] = 'y';
-				case(">"): UNKNOWN
-				case("%"):
-					formattedMessage[i] = 'z';
-					break;
-				default: 
-					console.warn("unaccounted case for input: ", inMessage[i]);
-					formattedMessage[i] = '';
-					break;
-			}
-		}
-		formattedMessage = String(formattedMessage).toLowerCase();
-		for(let i = 0; i < formattedMessage.length; ++i){ // BUG: THIS IS REALLY FUGGIN SLOW FIX IT YOU LAZY PIECE OF SHIZA
-			// TODO: replace this with a tree to be far faster
-			for(let j = 0; j < bannedWordsArray.length; ++j){
-				if(formattedMessage[i] == bannedWordsArray[j][0]){
-					for(let k = 0; k < bannedWordsArray[j].length; ++k){
-						if(formattedMessage[i+k] != bannedWordsArray[j][k]){
-							break;
-						}
-						if(k == bannedWordsArra[j].length-1){
-							return true;
-						}
-					}
-				}
-			}
-		}
-		return false;
-	}
-
 	async importFileAsString(url) {
 	  try {
 	    // Fetch the file from the specified URL
@@ -1973,10 +1927,115 @@ const specials = [
 
 	  } catch (error) {
 	    console.error('Error fetching file:', error);
+		  throw new Error("could not get file");
 	    // You might want to return a default value or re-throw the error
-	    return null;
 	  }
 	}
+
+	async CheckMessageForBannedWords(inMessage = undefined){ //TODO: optimize this a bunch
+		try{
+			if(inMessage == undefined){
+				console.warn("in message is undefined, is this intentional?");
+				return false;
+			}
+
+			//check message without spaces or caps for bad word	
+			let formattedMessage = new Array(inMessage.length-1);
+			for(let i = 0; i < inMessage.length; ++i){
+				switch(inMessage[i]){
+					case("@"):
+					case("4"):
+						formattedMessage[i] = 'a';
+						break;
+					case("6"):
+					case("8"):
+						formattedMessage[i] = 'b';
+						break;
+					case("<"):
+					case("["):
+						formattedMessage[i] = 'c';
+					case("]"):
+						formattedMessage[i] = 'd';
+						break;
+					case("3"):
+						formattedMessage[i] = 'e';
+						break;
+						// formattedMessage[i] = 'f';
+					case("9"):
+						formattedMessage[i] = 'g';
+						break;
+					case("#"):
+						formattedMessage[i] = 'h';
+						break;
+					case("1"):
+					case("!"):
+						formattedMessage[i] = 'i';
+						break;
+						// formattedMessage[i] = 'j';
+						// formattedMessage[i] = 'k';
+					case("("):
+					case(")"):
+					case("\\"):
+					case("/"):
+					case("|"):
+						formattedMessage[i] = 'l';
+						break;
+						// formattedMessage[i] = 'm';
+						// formattedMessage[i] = 'n';
+						// formattedMessage[i] = 'o';
+						// formattedMessage[i] = 'p';
+						// formattedMessage[i] = 'q';
+						// formattedMessage[i] = 'r';
+					case("5"):
+					case("$"):
+						formattedMessage[i] = 's';
+						break;
+					case("7"):
+						formattedMessage[i] = 't';
+						break;
+						// formattedMessage[i] = 'u';
+						// formattedMessage[i] = 'v';
+						// formattedMessage[i] = 'w';
+						// formattedMessage[i] = 'x';
+						// formattedMessage[i] = 'y';
+					case(">"): UNKNOWN
+					case("%"):
+						formattedMessage[i] = 'z';
+						break;
+					default: 
+						console.warn("unaccounted case for input: ", inMessage[i]);
+						formattedMessage[i] = '';
+						break;
+				}
+			}
+			formattedMessage = String(formattedMessage).toLowerCase();
+			for(let i = 0; i < formattedMessage.length; ++i){ 
+				// BUG: THIS IS REALLY FUGGIN SLOW FIX IT YOU LAZY PIECE OF SHIZA
+				// TODO: replace this with a tree to be far faster
+				
+
+				/*
+				for(let j = 0; j < bannedWordsArray.length; ++j){
+					if(formattedMessage[i] == bannedWordsArray[j][0]){
+						for(let k = 0; k < bannedWordsArray[j].length; ++k){
+							if(formattedMessage[i+k] != bannedWordsArray[j][k]){
+								break;
+							}
+							if(k == bannedWordsArra[j].length-1){
+								return true;
+							}
+						}
+					}
+				}
+				*/
+			}
+			return false;
+		}
+		catch(err){
+			console.log(err);
+		}
+	}
+
 
 
                 async dispatchCommand(raw,
@@ -1992,8 +2051,8 @@ const specials = [
                   }
                   let message = raw.slice(commandPrefix.length, raw.length);
 
-                  let ft = this.#flagsTemplate;
-                  const cmds = this.#commands;
+                  let ft = this.templates.flags; // Flag Template
+                  const cmds = this.#state.commands;
 
                   for (let i = 0; i < cmds.flags.length; ++i) {
                     if (message.startsWith(smds.flags.flag)) {
@@ -2047,7 +2106,7 @@ const specials = [
                     return null;
                   }
 
-                  let command = this.#commandTemplate;
+                  let command = this.templates.commands;
                   command.flags = {
                     p : flagsIn.p || this.#GEBI("ttsPitch")
                     ?.value || this.#LSGI("ttsPitch") || "1",
@@ -2058,7 +2117,7 @@ const specials = [
                     : flagsIn.v || this.#GEBI("ttsVoice")
                     ?.value || this.#LSGI("ttsVoice") || 51, };
 		  command.command;
-                  command.template_version = 1;
+                  command.verison = 1;
                   command.func = this.CallTts;
 
                   const argsStr = match[2];
@@ -2089,8 +2148,30 @@ const specials = [
                   return {flags, message : msgParts.join(" ")};
                 }
 
+	ExportState(event, type="json"){ //only supports json for now
+		const file = event.target.files[0];
+		
+
+		const blob = new Blob([data], {type:type});
+		const url = window.URL.createObjectURL(blob);
+		const link = document.createElement('a');
+		link.href = url;
+		link.download = filename;
+		link.click();
+		window.URL.revokeObjectURL(url);
+	}
+
+	ImportState(event){
+
+	}
+
 	constructor(args = {}){
 	  this.args = args;
 	  this.firstStart = true;
+
+		const fileInput = document.getElementById('blacklist_input');
+		fileInput.addEventListener('change', (event) => {
+		    this.LoadBannedWords(event);
+		});
 	}	
 }
