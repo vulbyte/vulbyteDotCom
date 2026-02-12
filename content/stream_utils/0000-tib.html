@@ -19,25 +19,40 @@
 <body>
 	<style>
 		#checklist>li>input {max-width:3rem !important;}
+		#checklist>li>ul>input {max-width:3rem !important;}
+		#checklist>li>ul>li>input {max-width:3rem !important;}
 	</style>
 	<ul id="checklist">
-		<li><input type="checkbox" value="true">add drag n drop blacklist</li>
-		<li><input type="checkbox" value="true">test black-list</li>
+		<li><input type="checkbox" value="false">decouple tts from getting messages</li>	
+		<li>
+		<ul><input type="checkbox" value="false">implement point spending (if not enough send message in chat)
+			<li><input type="checkbox" value="false">add ui to edit points values of commands</li>	
+			<li><input type="checkbox" value="false">if has points, add cmd, if not ignore</li>	
+			<li><input type="checkbox" value="false">remove points from user if add score</li>	
+		</ul>	
+		</li>
+		<li><input type="checkbox" value="false">give user points</li>	
+		<li><input type="checkbox" value="false">remove user points</li>	
+		<li><input type="checkbox" value="false">way to view users</li>	
+		<li><input type="checkbox" value="false">way to view banned words</li>	
 
-		<li><input type="checkbox" value="false">save state function</li>
-		<li><input type="checkbox" value="false">load state function</li>
-
-		<li><input type="checkbox" value="false">fix users being added to list</li>
-
-		<li><input type="checkbox" value="false">fix duplicate messages</li>
-
-		<li><input type="checkbox" value="false">verify tts works</li>
-
-		<li><input type="checkbox" value="false">auto update messages is working (update loop)</li>
-		
+		<li><input type="checkbox" value="false">!clip function</li>	
+		<li><input type="checkbox" value="false">!help function</li>	
+		<li><input type="checkbox" value="false">send messages in chat</li>	
+		<hr>
+		<li>
+			<ul><input type="checkbox" value="false">!prediction function (limited to mods) (makes pool, distributes based on points put in)
+				<li><input type="checkbox" value="false">ui element for viewers</li>	
+				<li><input type="checkbox" value="false">!prediction -p (p for prompt)</li>	
+				<li><input type="checkbox" value="false">!vote -y/n (yes/no) -p (points to vote with) for user (limit max to points user has)</li>	
+				<li><input type="checkbox" value="false">!prediction -r (r for refund incase something happens)</li>	
+				<li><input type="checkbox" value="false">!prediction -dd ([double down], reserve the points winnings for the next prediction, for 3x or nothing)</li>	
+				<li><input type="checkbox" value="false">!prediction -o y/n (to cash out)</li>	
+			</ul>	
+		</li>
+		<hr>
 		<li><input type="checkbox" value="false">if someone in chat says frozen, restart obs capture automagically</li>	
 	</ul>
-	<h6>YOU WERE LAST TRYING TO GET MESSAGES TO UPDATE TO THE NEWEST, THEN YOU NEED TO CHECK IF "ttsReadAt" HAS BEEN SET, THEN WE GOOD</h6>
 	<h1>TiB</h1>	
 	<style>
 		:root{
@@ -387,56 +402,67 @@
 				console.log("broadcasts:", broadcasts);
 				let broadcastsContainer = document.getElementById("broadcastsContainer");
 
-				for(let i = 0; i < broadcasts.length; ++i){
-					b = broadcasts[i];
+				for (let i = 0; i < broadcasts.length; ++i) {
+						let b = broadcasts[i]; // Use let/const for block scope
 
-					let bs = document.createElement("div"); //broadcastSelector
-					bs.style = `background-image:url(${b.snippet.thumbnails.default.url})`;
-					bs.classList.add("broadcastSelector");
+						let bs = document.createElement("div"); //broadcastSelector
+						bs.style = `background-image:url(${b.snippet.thumbnails.default.url})`;
+						bs.classList.add("broadcastSelector");
+
 						let vi = document.createElement("div"); //video info
 						vi.classList.add("video_info");
-							let t = document.createElement("div"); //title
-							t.innerText = b.snippet.title;
-							t.classList.add("title");	
-							vi.appendChild(t);
-							let vidId = document.createElement("div"); //video info
-							vidId.innerText = b.id.videoId;
-							vidId.classList.add("videoId");
+
+						let t = document.createElement("div"); //title
+						t.innerText = b.snippet.title;
+						t.classList.add("title");
+						vi.appendChild(t);
+
+						let vidId = document.createElement("div"); //video info
+						vidId.innerText = b.id.videoId;
+						vidId.classList.add("videoId");
 						vi.appendChild(vidId);
-					
-				  bs.addEventListener("click", async () => {
-							async function InitManagers(){
-								try { // loop for youtube
-									window.mm.yt.config.broadcastId = b.id.videoId;
 
-									document.getElementById("youtube-config-channelId").value = b.snippet.channelId;
-									document.getElementById("youtube-config-broadcastId").value = b.id.videoId;
+						bs.addEventListener("click", async () => {
+								// Use an arrow function or ensure context is correct
+								const InitManagers = async () => {
+										try {
+												window.mm.yt.config.broadcastId = b.id.videoId;
 
-									let lcid = await window.mm.yt.getLiveChatId();
-									console.log(lcid);
-									document.getElementById("youtube-config-liveChatId").value = lcid;
+												// Check if actualStartTime exists in the broadcast object
+												const startTimeStr = b.liveStreamingDetails?.actualStartTime;
+												if (startTimeStr) {
+														const unixStart = new Date(startTimeStr).getTime();
+														window.mm.yt.config.streamStartedAt = unixStart;
+														console.log(`Stream Start assigned: ${unixStart} (${startTimeStr})`);
+												} else {
+														console.warn("actualStartTime not found in broadcast object. Is it live?");
+														window.mm.yt.config.streamStartedAt = null;
+												}
 
-									let messages = await window.mm.yt.getChatMessages()
-									console.log("test get of messages to validate is working:\n", messages);	
-								} catch (err) {
-									console.error("[DaLoop ERROR] Cycle failed:", err);
-									// Dont throw - let the timer continue trying
-								}
-							}
+												document.getElementById("youtube-config-channelId").value = b.snippet.channelId;
+												document.getElementById("youtube-config-broadcastId").value = b.id.videoId;
 
-							InitManagers();
+												let lcid = await window.mm.yt.getLiveChatId();
+												console.log("Live Chat ID:", lcid);
+												document.getElementById("youtube-config-liveChatId").value = lcid;
 
-							console.log("running MonitoringStart() to get messages");
-							//this is a test to make sure values are correct
-							await window.mm.MonitoringStart();
-					});
-					bs.appendChild(vi);
-					broadcastsContainer.appendChild(bs);
+												let messages = await window.mm.yt.getChatMessages();
+												console.log("Validation fetch:", messages);
+
+										} catch (err) {
+												console.error("[InitManagers ERROR]:", err);
+										}
+								};
+
+								await InitManagers();
+
+								console.log("running MonitoringStart() to get messages");
+								await window.mm.MonitoringStart();
+						});
+
+						bs.appendChild(vi);
+						broadcastsContainer.appendChild(bs);
 				}
-			 /*
-				window.addEventListener("DOMContentLoaded", (event) => {
-				});
-			 */
 			}
 		 catch(err){
 			console.error("error with onclick: \n", err)
@@ -504,7 +530,7 @@
 		</details>
 		</div>
 		<!-- controls -->
-		<div style="background-color:#033; border-radius:1.4rem; height:20%; position:relative; bottom:0px; display:flex; flex-direction:row;">
+		<div style="background-color:#033; border-radius:1.4rem; height:auto; position:relative; bottom:0px; display:flex; flex-direction:row;">
 			<div style="height: 100%; width:16rem; padding:calc(var(--tib_padding)*4);">
 				<input type="button" 
 					value="save all inputs" 
@@ -564,6 +590,24 @@
 						onclick='(() => {window.mm.MonitoringStop();})()'
 					/>			
 				</div>	
+			</div>
+			<div>
+				<div style="height: 100%; width:16rem; padding:calc(var(--tib_padding)*4); display: flex; flex-direction: column; gap: 10px;">
+					<input 
+							type="button" 
+							value="Export Settings" 
+							style="background-color: #ff0; color:black; cursor: pointer;"
+							onclick="window.mm.ExportState();"
+					/>                
+					
+					<label style="color: white; font-size: 0.8rem;">Import settings from file</label>
+					<input 
+								 id="state_input"
+								 type="file" 
+								 value="import Settings" 
+								 style="background-color:#f0f;"
+								 />   
+				</div> 
 			</div>
 		</div>
 	</div>

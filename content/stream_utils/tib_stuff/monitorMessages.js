@@ -84,7 +84,7 @@ export default class MonitorMessages {
 		messages: {
 			version: 1,
 			authorName: "",
-			authorId: "",
+			userUuid: "",
 			streamOrigin: "", //what streamid via the platform the message came from
 			receivedAt: "",
 			commands: [],
@@ -109,7 +109,7 @@ export default class MonitorMessages {
 			platform : undefined,
 			failedProcessingAt : undefined,
 		},
-		users: {
+		user: {
 			version : 1, 
 			authorName : undefined,
 			channels : [],
@@ -141,15 +141,17 @@ export default class MonitorMessages {
 				spam: [], // self-promo, asdl;fknfrtn, links, etc
 				integrity: [], // language, spoilers, trolling/rage, bypassing filters
 			},
-			isSponser: false, // is a paying memeber/has payed money this stream
+			icon: undefined, //only allow icons from yt/twitch/etc
+			isSponser: false, // is a paying memeber/has payed money this stream 
 			isChatModerator: false, // can remove messages or but users on timeout
 			isChatAdmin: false, // can manage blocked words, change chat modes, and some other things
+			isVerified: false, // if they have been verified by the platform
 			firstSeen: undefined, //Date.now()
 			points : 0,
 		}
 	}
 
-	#state = {
+	#state = { // when saving and loading this is what will be saved/loaded
 		bannedWords: new TrieTree(), // tree that's good for strings, basically all you need to worry about is: add(), remove(), ContainsString()
 		clip_queue: [],
 		// NOTE: Assuming this function is part of a class/module where
@@ -160,7 +162,7 @@ export default class MonitorMessages {
 		  },
 		  censoring: {
 			  censorType: "replace", //options: replace with a char, swap word, shadow-ban
-			  censorChar: "*",
+			  censorChar: "•",
 			  censorWords: ["tacos"],
 		  },
 		  flag : {
@@ -220,7 +222,80 @@ export default class MonitorMessages {
 		unprocessed_queue: [], // messages returned from yt fetch
 		users: [],
 	}
-	
+	ExportState() {
+	    const jsonString = JSON.stringify(this.#state, (key, value) => {
+		// Convert Trie to Array
+		if (key === 'bannedWords' && value instanceof TrieTree) {
+		    return value.ToArray();
+		}
+
+		// Remove functions (JSON can't save code pointers)
+		if (typeof value === 'function') {
+		    return undefined;
+		}
+
+		return value;
+	    }, 4); 
+
+	    return jsonString;
+	}
+
+	async ImportState(input) {
+	    DebugPrint("ImportState: Determining input type...");
+	    let data;
+
+	    try {
+		// 1. Handle Event (from onchange or drag-and-drop)
+		if (input?.target?.files) {
+		    const file = input.target.files[0];
+		    if (!file) return;
+		    const text = await file.text();
+		    data = JSON.parse(text);
+		} 
+		// 2. Handle direct File object
+		else if (input instanceof File) {
+		    const text = await input.text();
+		    data = JSON.parse(text);
+		}
+		// 3. Handle raw JSON String
+		else if (typeof input === 'string') {
+		    data = JSON.parse(input);
+		}
+		// 4. Handle already-parsed Object
+		else if (typeof input === 'object' && input !== null) {
+		    data = input;
+		} 
+		else {
+		    throw new Error("Unsupported import type.");
+		}
+
+		// --- Re-hydration Logic ---
+		DebugPrint("Converting banned words to Trie structure");
+		const newTrie = new TrieTree();
+		if (Array.isArray(data.bannedWords)) {
+		    data.bannedWords.forEach(word => newTrie.Add(word));
+		}
+
+		DebugPrint("Assigning state to imported value");
+		// We merge with existing state to ensure any internal-only values aren't lost
+		this.#state = {
+		    ...this.#state,
+		    ...data,
+		    bannedWords: newTrie,
+		    // Re-bind commands
+		    commands: data.commands.map(cmd => {
+			if (cmd.command === "tts") cmd.func = this.CallTts.bind(this);
+			return cmd;
+		    })
+		};
+		
+		DebugPrint("Import successful!");
+
+	    } catch (err) {
+		console.error("ImportState failed:", err);
+	    }
+	}	
+
 	yt = new YoutubeV3();
 
 	//SORTING FUNCTIONS
@@ -408,20 +483,15 @@ export default class MonitorMessages {
 				const originalFuncRef = commandDefinition.func; 
 				const params = cmd.params;
 				
-				// ⭐️ CRITICAL: Initialize ttsHasRead if it's a TTS command
 				if (cmd.command === 'tts') {
 				    hasTtsCommand = true;
 				    // Initialize ttsHasRead only if it's a tts command
 				    processedResult.state.ttsHasRead = false;
 				}
 				
-				// BIND: Overwrite cmd.func, passing processedResult.state
-				// The bound function will call CallTts(messageText, params, processedResult.state)
 				cmd.func = () => originalFuncRef.call(this, messageText, params, processedResult.state); 
 			    });
 
-			    // ⭐️ NEW: Only add ttsHasRead if there was an actual TTS command found.
-			    // (This should be redundant due to the check inside the loop, but is a fail-safe)
 			    if (hasTtsCommand && processedResult.state.ttsHasRead === undefined) {
 				processedResult.state.ttsHasRead = false;
 			    }
@@ -436,6 +506,7 @@ export default class MonitorMessages {
 
 	GetMessagesTimer = new IntTimer({
 		name: "GetMessagesTimer",
+		timeoutDuration: 15,
 	});
 
 	async MonitoringStart() {
@@ -454,74 +525,102 @@ export default class MonitorMessages {
 	    }
 	}
 
-		//convert to a tree struct for speed;
-	FindUserAndAddScore(processedMessage, score) {
-	    try {
-		const userId = processedMessage.authorId;
-		DebugPrint(`Attempting to add score (${score}) to user:`, userId);
-
-		// 1. Use .find() to see if any user has this userId in their channels array
-		let existingUser = this.#state.users.find(u => u.channels.includes(userId));
-
-		if (existingUser) {
-		    DebugPrint("Found user with matching ID, adding score.");
-		    DebugPrint("Score before: ", existingUser.points);
-		    
-		    existingUser.points += Number(score);
-		    
-		    DebugPrint("Score after: ", existingUser.points);
-		    return; // Exit function so we don't push a duplicate
-		}
-
-		// 2. If we got here, the user doesn't exist. Push them.
-		DebugPrint(`User ${userId} not found. Creating new entry.`);
-		
-		this.#state.users.push({
-		    version: 1,
-		    authorName: processedMessage.authorName,
-		    channels: [userId], // Stored as an array
-		    uuid: crypto.randomUUID(),
-		    ttsBans: [],
-		    channelBans: [],
-		    firstSeen: Math.floor(Date.now()),
-		    points: Number(score)
-		});
-
-		DebugPrint("User added. Total users in DB:", this.#state.users.length);
-
-	    } catch (err) {
-		DebugPrint(`Failed to add score to user.`, err);
+	CreateUserFromFlags(args = {}) {
+	    if (!args.channelId) {
+		throw new Error("channelId CANNOT be null when creating a new user");
 	    }
+
+	    let existingUuid = this.FindUserFromChannelNameAndReturnUuid(args.channelId);
+	    if (existingUuid !== undefined) {
+		DebugPrint("User already exists. UUID:", existingUuid);
+		return existingUuid; 
+	    }
+
+	    let user = { ...this.templates.user };
+
+	    // 4. Assign values (Ensure we use channelId consistently)
+	    user.authorName      = args.authorName;
+	    user.icon            = args.icon;
+	    user.channels        = [args.channelId];
+	    user.isSponser       = args.isSponser || false;
+	    user.isChatModerator = args.isChatModerator || false;
+	    user.isChatAdmin     = args.isChatAdmin || false;
+	    user.uuid            = crypto.randomUUID();
+	    user.firstSeen       = args.firstSeen || Date.now();
+
+	    // 5. Add to private state
+	    this.#state.users.push(user);
+	    
+	    DebugPrint(`User created: ${user.authorName}. Total: ${this.#state.users.length}`);
+	    return user.uuid;
 	}
 
-		/**
-		 * High-performance duplicate check and chronological insertion.
-		 * Optimized for tens of thousands of messages.
-		 * @param {Object} p_msg - Processed message (must contain .messageId and .receivedAt)
-		 */
+	FindUserFromChannelNameAndReturnUuid(channelId = undefined){ // returns uuid of user, undefined if null
+		if(channelId == undefined){
+			throw new Error("CHANNEL ID IS UNDEFINED");
+		}
+		// To this:
+		let existingUser = this.#state.users.find(u => 
+		    u.channels.some(channel => (typeof channel === 'object' ? channel.id === channelId : channel === channelId))
+		);
+		if(existingUser == undefined){return undefined;}
+		return existingUser.uuid;
+	}
+
+	AddPointsToUserWithUuid(score, uuid) {
+	    if (!uuid) {
+		console.error("No UUID provided.");
+		return false;
+	    }
+	    // Note: score could be 0, so check if it's undefined or null specifically
+	    if (score === undefined || score === null) {
+		console.error("no score to give to user");
+		return false;
+	    }
+
+	    DebugPrint(`attempting to add score to user`, {score: score, user: uuid});
+
+	    // 1. Locate the user
+	    let user = this.#state.users.find(u => u.uuid === uuid);
+
+	    if (user) {
+		// 2. Consistent naming: Use .points everywhere
+		if (user.points === undefined || isNaN(user.points)) {
+		    user.points = 0;
+		}
+
+		// 3. Add the new points
+		user.points += score;
+
+		DebugPrint(`Points updated for ${user.authorName}: +${score} (Total: ${user.points})`);
+		return true;
+	    } else {
+		console.warn(`AddPointsToUser: User with UUID ${uuid} not found.`);
+		return false;
+	    }
+	}	
+	/**
+	 * High-performance duplicate check and chronological insertion.
+	 * Optimized for tens of thousands of messages.
+	 * @param {Object} p_msg - Processed message (must contain .messageId and .receivedAt)
+	 */
 	SafeAddToMessagesQueue(p_msg) {
 	    const queue = this.#state.messages; 
 	    const len = queue.length;
 	    const targetId = p_msg.messageId;
 	    const targetTime = p_msg.receivedAt;
 
-	    // 1. REVERSE SCAN FOR DUPLICATE ID
 	    for (let i = len - 1; i >= 0; i--) {
-	        // If we find the exact same ID, it's a duplicate.
 	        if (queue[i].messageId === targetId) {
 	            DebugPrint("Duplicate message found, ignoring");
-	            return false; // Actually ignore it
+	            return false;
 	        }
 
-	        // If the message in the queue is older than the new one,
-	        // we've gone back far enough. No duplicate exists.
 	        if (queue[i].receivedAt < targetTime) {
-	            break; // STOP the loop, but CONTINUE the function
+	            break;
 	        }
 	    }
 
-	    // 2. BINARY SEARCH FOR INSERTION POINT
-	    // This code only runs if the loop above "broke" or finished naturally
 	    let low = 0;
 	    let high = len;
 
@@ -534,7 +633,6 @@ export default class MonitorMessages {
 	        }
 	    }
 
-	    // 3. ATOMIC INSERTION
 	    DebugPrint(`Adding message at index ${low}`);
 	    if (low === len) {
 		queue.push(p_msg);
@@ -545,97 +643,21 @@ export default class MonitorMessages {
 	    return true;
 	}
 
-	/*async #DaLoop() {
-		DebugPrint("loop for messages started", "", "log", "background-color: #505");
-		DebugPrint("loop triggered, attempting to get messages");
-		let messages = await this.yt.getChatMessages().then(async (res)=>{
-			const messages = res;	
-			DebugPrint(`value from messages is: ${JSON.stringify(messages)}`);
-			if(
-				messages == null 
-				|| messages == undefined
-				|| messages == ""
-			){
-				DebugPrint("messages got from api is null, is there an issue?");
-				return;
-			}
-			else {
-				DebugPrint("mesages received, got:", JSON.stringify(messages));
-			}
-			DebugPrint("passing messages into quick parse", messages);
-			let message;
-			DebugPrint("about to process youtube messages from fetch responce", messages);
-			for(let i = 0; i < messages.items.length; ++i){
-				message = messages.items[i];
-				DebugPrint("message for processing:", message);
-				message = this.ParseAndAddYouTubeV3MessagesToUnprocessedQueue(message);
-				if(message == undefined){
-					DebugPrint("message after attempting to add to unprocessed_queue is undefined, skipping add");
-					continue;
-				}
-				DebugPrint("processed message: \n", message);
-			}
-			DebugPrint("unprocessed_queue: ", this.#state.unprocessed_queue, "log", "background-color:#505");
-
-			DebugPrint("starting to process unprocessed_queue", this.#state.unprocessed_queue);
-			DebugPrint(`STARTING BATCH: Queue length is `, this.#state.unprocessed_queue.length);
-				for(let i = 0; i < this.#state.unprocessed_queue.length; ++i){
-					try{
-						let p_msg = await this.ProcessYouTubeV3Message_v1(this.#state.unprocessed_queue[i]);
-						DebugPrint("current p_msg is: ", p_msg);
-						DebugPrint("checking lenght of this.#state.messages.length: ", this.#state.messages.length);
-						if(this.#state.messages.length > 0){ //check for duplicates
-							let p_msg = await this.ProcessYouTubeV3Message_v1(this.#state.unprocessed_queue[i]);
-
-							// This replaces your entire 'j' loop
-							const alreadyExists = this.#state.messages.some(m => 
-							    m.authorId === p_msg.authorId && 
-							    m.rawMessage === p_msg.rawMessage && 
-							    m.receivedAt === p_msg.receivedAt
-							);
-
-							if (!alreadyExists) {
-							    this.#state.messages.push(p_msg);
-							}
-						}
-						else{ //add message because there's no reason to not
-							this.#state.messages.push(p_msg);
-						}
-					}
-					catch(err){
-						DebugPrint(`[ERROR] Failed at ID ${JSON.stringify(this.#state.unprocessed_queue[i])}: `, err);
-						this.#state.errored_queue.push({
-						    ...this.templates.errored_queue,
-						    data: this.#state.unprocessed_queue[i],
-						    erroredAt: Date.now(),
-						    errorMessage: err.message,
-						    stackTrace: err.stack
-						});
-					}
-						
-			}
-			if(this.#state.config.debugMode){
-				DebugPrint("here's the update messages: \n", this.#state.messages);	
-			}
-
-		});
-		DebugPrint("COMPLETELY PROCESSED MESSAGES: \n", this.#state.messages);
-	}*/
 	async #DaLoop() {
 	    try {
-		DebugPrint("Step 1: Fetching...");
+		DebugPrint("Fetching messages from youtube");
 		const data = await this.yt.getChatMessages();
 		
-		DebugPrint(`Step 2: Received ${data.items?.length || 0} items`);
+		DebugPrint(`Received ${data.items?.length || 0} items`);
 
 		if (!data.items || data.items.length === 0) return;
 
-		// Step 3: Parse items into the unprocessed queue
+		DebugPrint("adding messages to unprocessed queue");
 		for (const item of data.items) {
 		    this.ParseAndAddYouTubeV3MessagesToUnprocessedQueue(item);
 		}
 
-		// Step 4: Process the queue and empty it
+		DebugPrint("processing unprocecssed_queue");
 		while (this.#state.unprocessed_queue.length > 0) {
 		    const raw = this.#state.unprocessed_queue.shift();
 		    const p_msg = await this.ProcessYouTubeV3Message_v1(raw);
@@ -646,13 +668,13 @@ export default class MonitorMessages {
 
 		    if (!exists) this.#state.messages.push(p_msg);
 		}
-		DebugPrint("Step 5: Loop Complete. Current History: " + this.#state.messages.length);
+		DebugPrint("Current messages: " + this.#state.messages);
 
 		DebugPrint("calling tts");
 		await this.ProcessPendingTts();
 
 	    } catch (err) {
-		DebugPrint("LOOP CRASHED: " + err.message);
+		DebugPrint("LOOP CRASHED: ", err);
 	    }
 	}
 
@@ -670,21 +692,34 @@ export default class MonitorMessages {
 		const newMessage = { ...this.templates.messages };
 		DebugPrint("parsing out information from object", unprocessedMsg);
 		newMessage.version = 1; // WARN: make new function if this needs to be changed
+
+		newMessage.userUuid = this.FindUserFromChannelNameAndReturnUuid(rmo.authorDetails.channelId);
+		if(newMessage.userUuid == undefined){
+			DebugPrint("no id found for user, attempting to add the user", rmo);
+			newMessage.userUuid = this.CreateUserFromFlags({
+				authorName: 		rmo.authorDetails.displayName,
+				channelId: 		rmo.authorDetails.channelId,
+				isChatModerator: 	rmo.authorDetails.isChatModerator, 
+				isChatAdmin: 		false, 
+				isSponser: 		rmo.authorDetails.isChatSponsor, 			
+				isVerfied: 		rmo.authorDetails.isVerfied,
+			});	
+		}
 		newMessage.authorName = rmo.authorDetails.displayName;
-		newMessage.authorId = rmo.authorDetails.channelId;
 		//newMessage.messageId = u_msg.data.id, // TODO: find messageId
 		newMessage.streamOrigin = rmo.snippet.liveChatId; //what streamid via the platform the message came from
 		newMessage.receivedAt = new Date(unprocessedMsg.data.snippet.publishedAt).getTime(); //use when received by server/app to help reduce dependancies
-		newMessage.platform = "youtube";
+		newMessage.platform = "youtube";	
 
 		//sanitize string
 		let message = rmo.snippet.textMessageDetails.messageText;
 		DebugPrint("checking for banned words in message", message);
-		//if(this.CheckMessageForBannedWords(message)){
-		//	// TODO: shadow ban user, and flag for review
-		//};
+		if(this.CheckMessageForBannedWords(message)){
+			// TODO: shadow ban user, and flag for review
+		};
 
 		newMessage.score = await this.ScoreMessage(message);
+		this.AddPointsToUserWithUuid(newMessage.score, newMessage.userUuid);
 
 		DebugPrint("continuing to parse information from message text", unprocessedMsg);
 		message = this.SanitizeString(message);
@@ -1266,7 +1301,7 @@ export default class MonitorMessages {
 			  const funcs = [
 			    CheckPunctuation,
 			    CheckTrigrams,
-			    CheckForRepeats,
+			    //CheckForRepeats,
 			    CheckForCaps,
 			    CheckForSpaces,
 			    CheckForSpaceInChunk,
@@ -2009,25 +2044,13 @@ export default class MonitorMessages {
 				}
 			}
 			formattedMessage = String(formattedMessage).toLowerCase();
-			for(let i = 0; i < formattedMessage.length; ++i){ 
-				// BUG: THIS IS REALLY FUGGIN SLOW FIX IT YOU LAZY PIECE OF SHIZA
-				// TODO: replace this with a tree to be far faster
-				
 
-				/*
-				for(let j = 0; j < bannedWordsArray.length; ++j){
-					if(formattedMessage[i] == bannedWordsArray[j][0]){
-						for(let k = 0; k < bannedWordsArray[j].length; ++k){
-							if(formattedMessage[i+k] != bannedWordsArray[j][k]){
-								break;
-							}
-							if(k == bannedWordsArra[j].length-1){
-								return true;
-							}
-						}
+			for(let i = 0; i < formattedMessage.length; ++i){
+				for(let j = formattedMessage.length-1; -1 < j; --j){
+					if(this.#state.bannedWords.ContainsString(formattedMessage.slice(i, j))){
+						return true
 					}
 				}
-				*/
 			}
 			return false;
 		}
@@ -2148,26 +2171,54 @@ export default class MonitorMessages {
                   return {flags, message : msgParts.join(" ")};
                 }
 
-	ExportState(event, type="json"){ //only supports json for now
-		const file = event.target.files[0];
+	ExportState() {
+	    // 1. Process this.#state into a JSON string
+	    // The 'replacer' function handles the Trie conversion and removes functions
+	    const data = JSON.stringify(this.#state, (key, value) => {
+		// Handle the TrieTree conversion
+		if (key === 'bannedWords' && value && typeof value.ToArray === 'function') {
+		    return value.ToArray();
+		}
 		
+		// Remove functions (CallTts, etc.) to prevent JSON errors
+		if (typeof value === 'function') {
+		    return undefined; 
+		}
 
-		const blob = new Blob([data], {type:type});
-		const url = window.URL.createObjectURL(blob);
-		const link = document.createElement('a');
-		link.href = url;
-		link.download = filename;
-		link.click();
-		window.URL.revokeObjectURL(url);
-	}
+		return value;
+	    }, 4); // 4 spaces for a pretty, readable JSON file
 
-	ImportState(event){
+	    // 2. Set up the file metadata
+	    const filename = `bot_settings_${new Date().toISOString().slice(0, 10)}.json`;
+	    const type = "application/json";
 
+	    // 3. Create the download trigger
+	    const blob = new Blob([data], { type: type });
+	    const url = window.URL.createObjectURL(blob);
+	    const link = document.createElement('a');
+	    
+	    link.href = url;
+	    link.download = filename;
+	    
+	    // Append to body is required for some browsers (like Firefox)
+	    document.body.appendChild(link);
+	    link.click();
+	    
+	    // Cleanup
+	    document.body.removeChild(link);
+	    window.URL.revokeObjectURL(url);
+	    
+	    DebugPrint("State exported successfully as: " + filename);
 	}
 
 	constructor(args = {}){
 	  this.args = args;
 	  this.firstStart = true;
+
+		const stateInput = document.getElementById('state_input');
+		stateInput.addEventListener('change', (event) => {
+		    this.ImportState(event);
+		});
 
 		const fileInput = document.getElementById('blacklist_input');
 		fileInput.addEventListener('change', (event) => {
