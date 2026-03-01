@@ -1,0 +1,1761 @@
+<html><head><style>
+        body { background: #0d1117; color: #c9d1d9; font-family: -apple-system, sans-serif; padding: 2rem; }
+        table { width: 100%; border-collapse: collapse; background: #161b22; border: 1px solid #30363d; border-radius: 6px; }
+        summary { padding: 12px; cursor: pointer; display: flex; align-items: center; border-bottom: 1px solid #30363d; }
+        .status-icon { width: 30px; font-weight: bold; }
+        .pass .status-icon { color: #3fb950; }
+        .fail .status-icon { color: #f85149; }
+        .test-name { flex-grow: 1; }
+        .meta { color: #8b949e; font-family: monospace; font-size: 11px; }
+        .details-content { padding: 20px; background: #0d1117; }
+        .comparison-grid { display: flex; gap: 20px; }
+        .column { flex: 1; min-width: 0; }
+        .code-block { background: #010409; padding: 10px; border: 1px solid #30363d; border-radius: 6px; font-family: monospace; font-size: 12px; overflow-x: auto; }
+        .diff-block { white-space: pre; }
+        .line-match { color: #6e7681; }
+        .line-mismatch { background: rgba(248, 81, 73, 0.15); color: #ff7b72; display: block; width: 100%; }
+        .line-expect { background: rgba(63, 185, 80, 0.15); color: #7ee787; display: block; width: 100%; }
+        .log-style { color: #c9d1d9; border-left: 3px solid #30363d; }
+        .label { font-size: 10px; font-weight: bold; color: #8b949e; margin-bottom: 6px; text-transform: uppercase; }
+    </style></head><body><h1>🦜 Cockatiel I/O Report</h1><p>Passed: <b>21/53</b></p><table>
+        <tr class="pass">
+            <td colspan="3">
+                <details >
+                    <summary>
+                        <span class="status-icon">✔</span>
+                        <span class="test-name"><b>AddLogToLogs</b></span>
+                        <span class="meta">Method: AddLogToLogs</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{
+    "message": "Test String",
+    "type": "log"
+}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-match">true</span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-match">true</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Method identified: AddLogToLogs</span>
+<span style="">🦜 [LOG] Test String</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="pass">
+            <td colspan="3">
+                <details >
+                    <summary>
+                        <span class="status-icon">✔</span>
+                        <span class="test-name"><b>Get Log</b></span>
+                        <span class="meta">Method: GetLogs</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-match">[</span>
+<span class="line-expect"> </span>
+<span class="line-match">]</span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-match">[</span>
+<span class="line-mismatch"> </span>
+<span class="line-match">]</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Method identified: GetLogs</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="pass">
+            <td colspan="3">
+                <details >
+                    <summary>
+                        <span class="status-icon">✔</span>
+                        <span class="test-name"><b>Basic Debug Labeling</b></span>
+                        <span class="meta">Method: DebugPrint</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{
+    "msg": "Test String"
+}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-match">{</span>
+<span class="line-match">    "message": "Test String",</span>
+<span class="line-match">    "type": "log"</span>
+<span class="line-match">}</span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-match">{</span>
+<span class="line-match">    "message": "Test String",</span>
+<span class="line-match">    "type": "log"</span>
+<span class="line-match">}</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Method identified: DebugPrint</span>
+<span style="">🦜 [LOG] Test String</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="pass">
+            <td colspan="3">
+                <details >
+                    <summary>
+                        <span class="status-icon">✔</span>
+                        <span class="test-name"><b>FormatTime 185 (3:05) from number</b></span>
+                        <span class="meta">Method: FormatTime</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">185</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-match">"3:05"</span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-match">"3:05"</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Method identified: FormatTime</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="pass">
+            <td colspan="3">
+                <details >
+                    <summary>
+                        <span class="status-icon">✔</span>
+                        <span class="test-name"><b>FormatTime 125 (2:05) from string</b></span>
+                        <span class="meta">Method: FormatTime</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">"125"</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-match">"2:05"</span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-match">"2:05"</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Method identified: FormatTime</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="pass">
+            <td colspan="3">
+                <details >
+                    <summary>
+                        <span class="status-icon">✔</span>
+                        <span class="test-name"><b>FormatTime 0 from string</b></span>
+                        <span class="meta">Method: FormatTime</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">"0"</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-match">"0:00"</span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-match">"0:00"</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Method identified: FormatTime</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="pass">
+            <td colspan="3">
+                <details >
+                    <summary>
+                        <span class="status-icon">✔</span>
+                        <span class="test-name"><b>FormatTime negative string</b></span>
+                        <span class="meta">Method: FormatTime</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">-1234</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-match">"0:00"</span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-match">"0:00"</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Method identified: FormatTime</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="fail">
+            <td colspan="3">
+                <details open>
+                    <summary>
+                        <span class="status-icon">✘</span>
+                        <span class="test-name"><b>FormatTime invalid string</b></span>
+                        <span class="meta">Method: FormatTime</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">"asdf"</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-expect">{}</span>
+<span class="line-expect"> </span>
+<span class="line-expect"> </span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-mismatch">{</span>
+<span class="line-mismatch">    "error": "Cannot convert undefined or null to object"</span>
+<span class="line-mismatch">}</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Method identified: FormatTime</span>
+<span style="">🧪 [RUNNER] [SYSTEM] Caught: Cannot convert undefined or null to object</span>
+<span style="">🦜 [LOG] cannot parse time from input</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="fail">
+            <td colspan="3">
+                <details open>
+                    <summary>
+                        <span class="status-icon">✘</span>
+                        <span class="test-name"><b>FormatTime undefined string</b></span>
+                        <span class="meta">Method: FormatTime</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-expect">{}</span>
+<span class="line-expect"> </span>
+<span class="line-expect"> </span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-mismatch">{</span>
+<span class="line-mismatch">    "error": "Cannot convert undefined or null to object"</span>
+<span class="line-mismatch">}</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Method identified: FormatTime</span>
+<span style="">🧪 [RUNNER] [SYSTEM] Caught: Cannot convert undefined or null to object</span>
+<span style="">🦜 [LOG] cannot parse time from input</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="fail">
+            <td colspan="3">
+                <details open>
+                    <summary>
+                        <span class="status-icon">✘</span>
+                        <span class="test-name"><b>FormatTime no input</b></span>
+                        <span class="meta">Method: FormatTime</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-expect">{}</span>
+<span class="line-expect"> </span>
+<span class="line-expect"> </span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-mismatch">{</span>
+<span class="line-mismatch">    "error": "Cannot convert undefined or null to object"</span>
+<span class="line-mismatch">}</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Method identified: FormatTime</span>
+<span style="">🧪 [RUNNER] [SYSTEM] Caught: Cannot convert undefined or null to object</span>
+<span style="">🦜 [LOG] cannot parse time from input</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="pass">
+            <td colspan="3">
+                <details >
+                    <summary>
+                        <span class="status-icon">✔</span>
+                        <span class="test-name"><b>Process valid yes vote command</b></span>
+                        <span class="meta">Method: ProcessVoteCommand</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{
+    "authorName": "test_user",
+    "commands": [],
+    "messageId": "",
+    "platform": "",
+    "processedMessage": "",
+    "rawMessage": "!vote -y",
+    "receivedAt": 1771559882698,
+    "score": "",
+    "state": {},
+    "streamOrigin": "youtube",
+    "userUuid": "f7a2da0c-b78a-43f0-ac89-ca54d4411d72",
+    "version": 1
+}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-match">{</span>
+<span class="line-match">    "command": {</span>
+<span class="line-match">        "executedAt": "type:number",</span>
+<span class="line-match">        "flags": {</span>
+<span class="line-match">            "dd": false,</span>
+<span class="line-match">            "n": false,</span>
+<span class="line-match">            "y": true</span>
+<span class="line-match">        },</span>
+<span class="line-match">        "string": "",</span>
+<span class="line-match">        "type": "vote"</span>
+<span class="line-match">    },</span>
+<span class="line-match">    "errInfo": {},</span>
+<span class="line-match">    "isValid": true,</span>
+<span class="line-match">    "spend": 0,</span>
+<span class="line-match">    "version": 1</span>
+<span class="line-match">}</span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-match">{</span>
+<span class="line-match">    "command": {</span>
+<span class="line-match">        "executedAt": "type:number",</span>
+<span class="line-match">        "flags": {</span>
+<span class="line-match">            "dd": false,</span>
+<span class="line-match">            "n": false,</span>
+<span class="line-match">            "y": true</span>
+<span class="line-match">        },</span>
+<span class="line-match">        "string": "",</span>
+<span class="line-match">        "type": "vote"</span>
+<span class="line-match">    },</span>
+<span class="line-match">    "errInfo": {},</span>
+<span class="line-match">    "isValid": true,</span>
+<span class="line-match">    "spend": 0,</span>
+<span class="line-match">    "version": 1</span>
+<span class="line-match">}</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Method identified: ProcessVoteCommand</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="pass">
+            <td colspan="3">
+                <details >
+                    <summary>
+                        <span class="status-icon">✔</span>
+                        <span class="test-name"><b>Process valid yes vote with double down command</b></span>
+                        <span class="meta">Method: ProcessVoteCommand</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{
+    "authorName": "test_user",
+    "commands": [],
+    "messageId": "",
+    "platform": "",
+    "processedMessage": "",
+    "rawMessage": "!vote -y -dd",
+    "receivedAt": 1771559882698,
+    "score": "",
+    "state": {},
+    "streamOrigin": "youtube",
+    "userUuid": "8d4a7c59-ae7d-4362-a6a0-d546d464c57f",
+    "version": 1
+}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-match">{</span>
+<span class="line-match">    "command": {</span>
+<span class="line-expect">        "executedAt": 1771559882698,</span>
+<span class="line-match">        "flags": {</span>
+<span class="line-match">            "dd": true,</span>
+<span class="line-match">            "n": false,</span>
+<span class="line-match">            "y": true</span>
+<span class="line-match">        },</span>
+<span class="line-match">        "string": "",</span>
+<span class="line-match">        "type": "vote"</span>
+<span class="line-match">    },</span>
+<span class="line-match">    "errInfo": {},</span>
+<span class="line-match">    "isValid": true,</span>
+<span class="line-match">    "spend": 0,</span>
+<span class="line-match">    "version": 1</span>
+<span class="line-match">}</span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-match">{</span>
+<span class="line-match">    "command": {</span>
+<span class="line-mismatch">        "executedAt": 1771559882720,</span>
+<span class="line-match">        "flags": {</span>
+<span class="line-match">            "dd": true,</span>
+<span class="line-match">            "n": false,</span>
+<span class="line-match">            "y": true</span>
+<span class="line-match">        },</span>
+<span class="line-match">        "string": "",</span>
+<span class="line-match">        "type": "vote"</span>
+<span class="line-match">    },</span>
+<span class="line-match">    "errInfo": {},</span>
+<span class="line-match">    "isValid": true,</span>
+<span class="line-match">    "spend": 0,</span>
+<span class="line-match">    "version": 1</span>
+<span class="line-match">}</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Method identified: ProcessVoteCommand</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="pass">
+            <td colspan="3">
+                <details >
+                    <summary>
+                        <span class="status-icon">✔</span>
+                        <span class="test-name"><b>Process valid no vote command</b></span>
+                        <span class="meta">Method: ProcessVoteCommand</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{
+    "authorName": "test_user",
+    "commands": [],
+    "messageId": "",
+    "platform": "",
+    "processedMessage": "",
+    "rawMessage": "!vote -n",
+    "receivedAt": 1771559882698,
+    "score": "",
+    "state": {},
+    "streamOrigin": "youtube",
+    "userUuid": "dc7151b8-73b1-4cba-a4fa-6aaba3aace91",
+    "version": 1
+}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-match">{</span>
+<span class="line-match">    "command": {</span>
+<span class="line-expect">        "executedAt": 1771559882698,</span>
+<span class="line-match">        "flags": {</span>
+<span class="line-match">            "dd": false,</span>
+<span class="line-match">            "n": true,</span>
+<span class="line-match">            "y": false</span>
+<span class="line-match">        },</span>
+<span class="line-match">        "string": "",</span>
+<span class="line-match">        "type": "vote"</span>
+<span class="line-match">    },</span>
+<span class="line-match">    "errInfo": {},</span>
+<span class="line-match">    "isValid": true,</span>
+<span class="line-match">    "spend": 0,</span>
+<span class="line-match">    "version": 1</span>
+<span class="line-match">}</span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-match">{</span>
+<span class="line-match">    "command": {</span>
+<span class="line-mismatch">        "executedAt": 1771559882720,</span>
+<span class="line-match">        "flags": {</span>
+<span class="line-match">            "dd": false,</span>
+<span class="line-match">            "n": true,</span>
+<span class="line-match">            "y": false</span>
+<span class="line-match">        },</span>
+<span class="line-match">        "string": "",</span>
+<span class="line-match">        "type": "vote"</span>
+<span class="line-match">    },</span>
+<span class="line-match">    "errInfo": {},</span>
+<span class="line-match">    "isValid": true,</span>
+<span class="line-match">    "spend": 0,</span>
+<span class="line-match">    "version": 1</span>
+<span class="line-match">}</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Method identified: ProcessVoteCommand</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="pass">
+            <td colspan="3">
+                <details >
+                    <summary>
+                        <span class="status-icon">✔</span>
+                        <span class="test-name"><b>Process valid no vote command with double down</b></span>
+                        <span class="meta">Method: ProcessVoteCommand</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{
+    "authorName": "test_user",
+    "commands": [],
+    "messageId": "",
+    "platform": "",
+    "processedMessage": "",
+    "rawMessage": "!vote -n -dd",
+    "receivedAt": 1771559882698,
+    "score": "",
+    "state": {},
+    "streamOrigin": "youtube",
+    "userUuid": "d2461c49-c3a0-417c-8d58-2059ea9db07b",
+    "version": 1
+}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-match">{</span>
+<span class="line-match">    "command": {</span>
+<span class="line-expect">        "executedAt": 1771559882698,</span>
+<span class="line-match">        "flags": {</span>
+<span class="line-match">            "dd": true,</span>
+<span class="line-match">            "n": true,</span>
+<span class="line-match">            "y": false</span>
+<span class="line-match">        },</span>
+<span class="line-match">        "string": "",</span>
+<span class="line-match">        "type": "vote"</span>
+<span class="line-match">    },</span>
+<span class="line-match">    "errInfo": {},</span>
+<span class="line-match">    "isValid": true,</span>
+<span class="line-match">    "spend": 0,</span>
+<span class="line-match">    "version": 1</span>
+<span class="line-match">}</span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-match">{</span>
+<span class="line-match">    "command": {</span>
+<span class="line-mismatch">        "executedAt": 1771559882722,</span>
+<span class="line-match">        "flags": {</span>
+<span class="line-match">            "dd": true,</span>
+<span class="line-match">            "n": true,</span>
+<span class="line-match">            "y": false</span>
+<span class="line-match">        },</span>
+<span class="line-match">        "string": "",</span>
+<span class="line-match">        "type": "vote"</span>
+<span class="line-match">    },</span>
+<span class="line-match">    "errInfo": {},</span>
+<span class="line-match">    "isValid": true,</span>
+<span class="line-match">    "spend": 0,</span>
+<span class="line-match">    "version": 1</span>
+<span class="line-match">}</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Method identified: ProcessVoteCommand</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="fail">
+            <td colspan="3">
+                <details open>
+                    <summary>
+                        <span class="status-icon">✘</span>
+                        <span class="test-name"><b>Process invalid vote command</b></span>
+                        <span class="meta">Method: ProcessVoteCommand</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{
+    "authorName": "test_user",
+    "commands": [],
+    "messageId": "",
+    "platform": "",
+    "processedMessage": "",
+    "rawMessage": "!vote asdf",
+    "receivedAt": 1771559882698,
+    "score": "",
+    "state": {},
+    "streamOrigin": "youtube",
+    "userUuid": "b526d94e-8ccd-42de-beee-4d3954784b15",
+    "version": 1
+}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-match">{</span>
+<span class="line-match">    "command": {</span>
+<span class="line-match">        "flags": {</span>
+<span class="line-match">            "dd": false,</span>
+<span class="line-match">            "n": false,</span>
+<span class="line-match">            "y": false</span>
+<span class="line-match">        },</span>
+<span class="line-match">        "string": "",</span>
+<span class="line-match">        "type": "vote"</span>
+<span class="line-match">    },</span>
+<span class="line-expect">    "errInfo": {},</span>
+<span class="line-expect">    "isValid": false,</span>
+<span class="line-expect">    "spend": 0,</span>
+<span class="line-expect">    "version": 1</span>
+<span class="line-expect">}</span>
+<span class="line-expect"> </span>
+<span class="line-expect"> </span>
+<span class="line-expect"> </span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-match">{</span>
+<span class="line-match">    "command": {</span>
+<span class="line-match">        "flags": {</span>
+<span class="line-match">            "dd": false,</span>
+<span class="line-match">            "n": false,</span>
+<span class="line-match">            "y": false</span>
+<span class="line-match">        },</span>
+<span class="line-match">        "string": "",</span>
+<span class="line-match">        "type": "vote"</span>
+<span class="line-match">    },</span>
+<span class="line-mismatch">    "errInfo": {</span>
+<span class="line-mismatch">        "err": "MISSING_CHOICE",</span>
+<span class="line-mismatch">        "erroredAt": 1771559882724</span>
+<span class="line-mismatch">    },</span>
+<span class="line-mismatch">    "isValid": false,</span>
+<span class="line-mismatch">    "spend": 0,</span>
+<span class="line-mismatch">    "version": 1</span>
+<span class="line-mismatch">}</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Method identified: ProcessVoteCommand</span>
+<span style="color: #ff7b72; font-weight: bold;">🧪 [RUNNER] [LOGIC] Mismatch at: root.errInfo (Expected empty object, but found keys: err, erroredAt)</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="fail">
+            <td colspan="3">
+                <details open>
+                    <summary>
+                        <span class="status-icon">✘</span>
+                        <span class="test-name"><b>⚠️handleVoteStateUpdate</b></span>
+                        <span class="meta">Method: ProcessVoteCommand</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{
+    "command": {
+        "executedAt": "type:number",
+        "flags": {
+            "dd": false,
+            "n": true,
+            "y": false
+        },
+        "string": "",
+        "type": "vote"
+    },
+    "errInfo": {},
+    "isValid": true,
+    "spend": 0,
+    "version": 1
+}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-expect">{}</span>
+<span class="line-expect"> </span>
+<span class="line-expect"> </span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-mismatch">{</span>
+<span class="line-mismatch">    "error": "Cannot read properties of undefined (reading 'startsWith')"</span>
+<span class="line-mismatch">}</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Method identified: ProcessVoteCommand</span>
+<span style="">🧪 [RUNNER] [SYSTEM] Caught: Cannot read properties of undefined (reading 'startsWith')</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="fail">
+            <td colspan="3">
+                <details open>
+                    <summary>
+                        <span class="status-icon">✘</span>
+                        <span class="test-name"><b>ProcessPrectionCommand: create prediction with l flag</b></span>
+                        <span class="meta">Method: CreateNewPrediction</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{
+    "authorName": "vulbyte",
+    "commands": [],
+    "messageId": "asdf1234qwer5678",
+    "platform": "youtube",
+    "processedMessage": "!prediction -p will this work? -l 45",
+    "rawMessage": "!prediction -p will this work? -l 45",
+    "receivedAt": 1771559882698,
+    "score": "0",
+    "state": {},
+    "streamOrigin": "youtube",
+    "userUuid": "10091ef9-35ee-4d19-9e41-e337c492162a",
+    "version": 1
+}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-expect">{}</span>
+<span class="line-expect"> </span>
+<span class="line-expect"> </span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-mismatch">{</span>
+<span class="line-mismatch">    "error": "Cannot read properties of undefined (reading 'find')"</span>
+<span class="line-mismatch">}</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Method identified: CreateNewPrediction</span>
+<span style="">🧪 [RUNNER] [SYSTEM] Caught: Cannot read properties of undefined (reading 'find')</span>
+<span style="">🦜 [LOG] creating new prediction event from commandObject: </span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="fail">
+            <td colspan="3">
+                <details open>
+                    <summary>
+                        <span class="status-icon">✘</span>
+                        <span class="test-name"><b>ProcessPrectionCommand: create prediction without prompt but with l flag</b></span>
+                        <span class="meta">Method: CreateNewPrediction</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{
+    "authorName": "vulbyte",
+    "commands": [],
+    "messageId": "asdf1234qwer5678",
+    "platform": "youtube",
+    "processedMessage": "!prediction -p will this work?",
+    "rawMessage": "!prediction -l 45",
+    "receivedAt": 1771559882698,
+    "score": "0",
+    "state": {},
+    "streamOrigin": "youtube",
+    "userUuid": "10091ef9-35ee-4d19-9e41-e337c492162a",
+    "version": 1
+}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-expect">{}</span>
+<span class="line-expect"> </span>
+<span class="line-expect"> </span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-mismatch">{</span>
+<span class="line-mismatch">    "error": "Cannot read properties of undefined (reading 'find')"</span>
+<span class="line-mismatch">}</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Method identified: CreateNewPrediction</span>
+<span style="">🧪 [RUNNER] [SYSTEM] Caught: Cannot read properties of undefined (reading 'find')</span>
+<span style="">🦜 [LOG] creating new prediction event from commandObject: </span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="fail">
+            <td colspan="3">
+                <details open>
+                    <summary>
+                        <span class="status-icon">✘</span>
+                        <span class="test-name"><b>ProcessPrectionCommand: create prediction with no info</b></span>
+                        <span class="meta">Method: CreateNewPrediction</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{
+    "authorName": "vulbyte",
+    "commands": [],
+    "messageId": "asdf1234qwer5678",
+    "platform": "youtube",
+    "processedMessage": "!prediction -p will this work?",
+    "rawMessage": "!prediction -l 45",
+    "receivedAt": 1771559882698,
+    "score": "0",
+    "state": {},
+    "streamOrigin": "youtube",
+    "userUuid": "10091ef9-35ee-4d19-9e41-e337c492162a",
+    "version": 1
+}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-expect">{}</span>
+<span class="line-expect"> </span>
+<span class="line-expect"> </span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-mismatch">{</span>
+<span class="line-mismatch">    "error": "Cannot read properties of undefined (reading 'find')"</span>
+<span class="line-mismatch">}</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Method identified: CreateNewPrediction</span>
+<span style="">🧪 [RUNNER] [SYSTEM] Caught: Cannot read properties of undefined (reading 'find')</span>
+<span style="">🦜 [LOG] creating new prediction event from commandObject: </span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="fail">
+            <td colspan="3">
+                <details open>
+                    <summary>
+                        <span class="status-icon">✘</span>
+                        <span class="test-name"><b>CHE TEST</b></span>
+                        <span class="meta">Method: CHE</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{
+    "type": "div"
+}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-match">{</span>
+<span class="line-match">    "error": "CHE, likely no document, cannot render. returning null"</span>
+<span class="line-match">}</span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-match">{</span>
+<span class="line-match">    "error": "CHE, likely no document, cannot render. returning null"</span>
+<span class="line-match">}</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Method identified: CHE</span>
+<span style="">🧪 [RUNNER] [SYSTEM] Caught: CHE, likely no document, cannot render. returning null</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="pass">
+            <td colspan="3">
+                <details >
+                    <summary>
+                        <span class="status-icon">✔</span>
+                        <span class="test-name"><b>Clamp test: value exceeds max</b></span>
+                        <span class="meta">Method: Clamp</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{
+    "max": 4,
+    "min": 1,
+    "val": 6
+}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-match">4</span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-match">4</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Method identified: Clamp</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="pass">
+            <td colspan="3">
+                <details >
+                    <summary>
+                        <span class="status-icon">✔</span>
+                        <span class="test-name"><b>Clamp test: value below min</b></span>
+                        <span class="meta">Method: Clamp</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{
+    "max": 6,
+    "min": 2,
+    "val": 1
+}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-match">2</span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-match">2</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Method identified: Clamp</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="pass">
+            <td colspan="3">
+                <details >
+                    <summary>
+                        <span class="status-icon">✔</span>
+                        <span class="test-name"><b>Clamp test: negative value within range</b></span>
+                        <span class="meta">Method: Clamp</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{
+    "max": -4,
+    "min": -3,
+    "val": -1
+}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-match">-3</span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-match">-3</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Method identified: Clamp</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="pass">
+            <td colspan="3">
+                <details >
+                    <summary>
+                        <span class="status-icon">✔</span>
+                        <span class="test-name"><b>Clamp test: negative value below min</b></span>
+                        <span class="meta">Method: Clamp</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{
+    "max": -6,
+    "min": -2,
+    "val": -8
+}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-match">-6</span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-match">-6</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Method identified: Clamp</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="pass">
+            <td colspan="3">
+                <details >
+                    <summary>
+                        <span class="status-icon">✔</span>
+                        <span class="test-name"><b>GetUsers</b></span>
+                        <span class="meta">Method: GetUsers</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-match">[</span>
+<span class="line-expect"> </span>
+<span class="line-match">]</span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-match">[</span>
+<span class="line-mismatch"> </span>
+<span class="line-match">]</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Method identified: GetUsers</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="pass">
+            <td colspan="3">
+                <details >
+                    <summary>
+                        <span class="status-icon">✔</span>
+                        <span class="test-name"><b>LoadBannedWords</b></span>
+                        <span class="meta">Method: GetUsers</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-match">[</span>
+<span class="line-expect"> </span>
+<span class="line-match">]</span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-match">[</span>
+<span class="line-mismatch"> </span>
+<span class="line-match">]</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Method identified: GetUsers</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="pass">
+            <td colspan="3">
+                <details >
+                    <summary>
+                        <span class="status-icon">✔</span>
+                        <span class="test-name"><b>GetUnprocessedQueue</b></span>
+                        <span class="meta">Method: GetUnprocessedQueue</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-match">[</span>
+<span class="line-expect"> </span>
+<span class="line-match">]</span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-match">[</span>
+<span class="line-mismatch"> </span>
+<span class="line-match">]</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Method identified: GetUnprocessedQueue</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="pass">
+            <td colspan="3">
+                <details >
+                    <summary>
+                        <span class="status-icon">✔</span>
+                        <span class="test-name"><b>GetMessagesQueue</b></span>
+                        <span class="meta">Method: GetMessagesQueue</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-match">[</span>
+<span class="line-expect"> </span>
+<span class="line-match">]</span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-match">[</span>
+<span class="line-mismatch"> </span>
+<span class="line-match">]</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Method identified: GetMessagesQueue</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="pass">
+            <td colspan="3">
+                <details >
+                    <summary>
+                        <span class="status-icon">✔</span>
+                        <span class="test-name"><b>GetErroredQueue</b></span>
+                        <span class="meta">Method: GetErroredQueue</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-match">[</span>
+<span class="line-expect"> </span>
+<span class="line-match">]</span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-match">[</span>
+<span class="line-mismatch"> </span>
+<span class="line-match">]</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Method identified: GetErroredQueue</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="pass">
+            <td colspan="3">
+                <details >
+                    <summary>
+                        <span class="status-icon">✔</span>
+                        <span class="test-name"><b>GetEvents</b></span>
+                        <span class="meta">Method: GetEvents</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-match">[</span>
+<span class="line-expect"> </span>
+<span class="line-match">]</span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-match">[</span>
+<span class="line-mismatch"> </span>
+<span class="line-match">]</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Method identified: GetEvents</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="fail">
+            <td colspan="3">
+                <details open>
+                    <summary>
+                        <span class="status-icon">✘</span>
+                        <span class="test-name"><b>GetSubWindows</b></span>
+                        <span class="meta">Method: GetSubWindows</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-expect">[</span>
+<span class="line-expect"> </span>
+<span class="line-expect">]</span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-mismatch">{}</span>
+<span class="line-mismatch"> </span>
+<span class="line-mismatch"> </span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Method identified: GetSubWindows</span>
+<span style="color: #ff7b72; font-weight: bold;">🧪 [RUNNER] [LOGIC] Mismatch at: root (Expected array, got object)</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="fail">
+            <td colspan="3">
+                <details open>
+                    <summary>
+                        <span class="status-icon">✘</span>
+                        <span class="test-name"><b>CreateUserFromFlags no channel id</b></span>
+                        <span class="meta">Method: CreateUserFromFlags</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-match">{</span>
+<span class="line-match">    "error": "channelId CANNOT be null when creating a new user"</span>
+<span class="line-match">}</span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-match">{</span>
+<span class="line-match">    "error": "channelId CANNOT be null when creating a new user"</span>
+<span class="line-match">}</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Method identified: CreateUserFromFlags</span>
+<span style="">🧪 [RUNNER] [SYSTEM] Caught: channelId CANNOT be null when creating a new user</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="fail">
+            <td colspan="3">
+                <details open>
+                    <summary>
+                        <span class="status-icon">✘</span>
+                        <span class="test-name"><b>CreateUserFromFlags with channel id</b></span>
+                        <span class="meta">Method: CreateUserFromFlags</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{
+    "channelId": "asdf1234qwer56789"
+}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-match">{</span>
+<span class="line-match">    "channelBans": [],</span>
+<span class="line-match">    "channels": [</span>
+<span class="line-match">        "asdf1234qwer56789"</span>
+<span class="line-match">    ],</span>
+<span class="line-match">    "commendments": {</span>
+<span class="line-match">        "community": [],</span>
+<span class="line-match">        "engagement": [],</span>
+<span class="line-match">        "support": []</span>
+<span class="line-match">    },</span>
+<span class="line-match">    "conduct_score": 0,</span>
+<span class="line-expect">    "firstSeen": 1771559882698,</span>
+<span class="line-match">    "isChatAdmin": false,</span>
+<span class="line-match">    "isChatModerator": false,</span>
+<span class="line-match">    "isSponser": false,</span>
+<span class="line-match">    "isVerified": false,</span>
+<span class="line-match">    "misconduct": {</span>
+<span class="line-match">        "discrimination": [],</span>
+<span class="line-match">        "harassment": [],</span>
+<span class="line-match">        "integrity": [],</span>
+<span class="line-match">        "spam": []</span>
+<span class="line-match">    },</span>
+<span class="line-match">    "points": 0,</span>
+<span class="line-match">    "ttsBans": [],</span>
+<span class="line-expect">    "uuid": "56c456e9-98d1-484f-9d58-93e9a0faa936",</span>
+<span class="line-match">    "version": 1</span>
+<span class="line-match">}</span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-match">{</span>
+<span class="line-match">    "channelBans": [],</span>
+<span class="line-match">    "channels": [</span>
+<span class="line-match">        "asdf1234qwer56789"</span>
+<span class="line-match">    ],</span>
+<span class="line-match">    "commendments": {</span>
+<span class="line-match">        "community": [],</span>
+<span class="line-match">        "engagement": [],</span>
+<span class="line-match">        "support": []</span>
+<span class="line-match">    },</span>
+<span class="line-match">    "conduct_score": 0,</span>
+<span class="line-mismatch">    "firstSeen": 1771559882769,</span>
+<span class="line-match">    "isChatAdmin": false,</span>
+<span class="line-match">    "isChatModerator": false,</span>
+<span class="line-match">    "isSponser": false,</span>
+<span class="line-match">    "isVerified": false,</span>
+<span class="line-match">    "misconduct": {</span>
+<span class="line-match">        "discrimination": [],</span>
+<span class="line-match">        "harassment": [],</span>
+<span class="line-match">        "integrity": [],</span>
+<span class="line-match">        "spam": []</span>
+<span class="line-match">    },</span>
+<span class="line-match">    "points": 0,</span>
+<span class="line-match">    "ttsBans": [],</span>
+<span class="line-mismatch">    "uuid": "a0091497-cd26-4ebf-b885-2992bc4a6fb6",</span>
+<span class="line-match">    "version": 1</span>
+<span class="line-match">}</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Method identified: CreateUserFromFlags</span>
+<span style="color: #ff7b72; font-weight: bold;">🧪 [RUNNER] [LOGIC] Mismatch at: root.uuid (Value mismatch)</span>
+<span style="">🦜 [LOG] could not add user to list, no document</span>
+<span style="">🦜 [LOG] User created: undefined. Total: 0</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="fail">
+            <td colspan="3">
+                <details open>
+                    <summary>
+                        <span class="status-icon">✘</span>
+                        <span class="test-name"><b>ProcessYoutubeV3Message_v1 with valid input</b></span>
+                        <span class="meta">Method: ProcessYoutubeV3Message_v1</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{
+    "apiVersion": 3,
+    "data": {
+        "authorDetails": {
+            "channelId": "UCKZigHbgpJG9ldxXMqmiZUg",
+            "channelUrl": "http://www.youtube.com/channel/UCKZigHbgpJG9ldxXMqmiZUg",
+            "displayName": "@vulbyte",
+            "isChatModerator": false,
+            "isChatOwner": true,
+            "isChatSponsor": false,
+            "isVerified": false,
+            "profileImageUrl": "https://yt3.ggpht.com/jrcU7ZjcLMBzCQbU6QMucPmC-cBiHOFrmTpDS9gDzUdH9FUTyzqgrkX9-rXzRh6Fac_HWWgNoEA=s88-c-k-c0x00ffffff-no-rj"
+        },
+        "etag": "ZH94DnsFG0i0w2nEiwn5-16VZ2w",
+        "id": "LCC.EhwKGkNNLVB2TkdCNVpJREZlZkJ3Z1FkNExJQzZR",
+        "kind": "youtube#liveChatMessage",
+        "snippet": {
+            "authorChannelId": "UCKZigHbgpJG9ldxXMqmiZUg",
+            "displayMessage": "HELLO SMALLSVILLE",
+            "hasDisplayContent": true,
+            "liveChatId": "Cg0KC3JHN3ZGN3BjVlBZKicKGFVDS1ppZ0hiZ3BKRzlsZHhYTXFtaVpVZxILckc3dkY3cGNWUFk",
+            "publishedAt": "2026-02-19T07:17:50.330172+00:00",
+            "textMessageDetails": {
+                "messageText": "HELLO SMALLSVILLE"
+            },
+            "type": "textMessageEvent"
+        }
+    },
+    "platform": "YouTube",
+    "receivedAt": 1771485470330,
+    "version": 1
+}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-match">{</span>
+<span class="line-match">    "authorName": "@vulbyte",</span>
+<span class="line-match">    "commands": [],</span>
+<span class="line-match">    "messageId": "",</span>
+<span class="line-match">    "platform": "youtube",</span>
+<span class="line-match">    "processedMessage": "HELLO SMALLSVILLE",</span>
+<span class="line-match">    "rawMessage": "HELLO SMALLSVILLE",</span>
+<span class="line-match">    "receivedAt": 1771485470330,</span>
+<span class="line-match">    "score": -100,</span>
+<span class="line-match">    "state": {},</span>
+<span class="line-match">    "streamOrigin": "Cg0KC3JHN3ZGN3BjVlBZKicKGFVDS1ppZ0hiZ3BKRzlsZHhYTXFtaVpVZxILckc3dkY3cGNWUFk",</span>
+<span class="line-match">    "userUuid": {</span>
+<span class="line-match">        "authorName": "@vulbyte",</span>
+<span class="line-match">        "channelBans": [],</span>
+<span class="line-match">        "channels": [</span>
+<span class="line-match">            "UCKZigHbgpJG9ldxXMqmiZUg"</span>
+<span class="line-match">        ],</span>
+<span class="line-match">        "commendments": {</span>
+<span class="line-match">            "community": [],</span>
+<span class="line-match">            "engagement": [],</span>
+<span class="line-match">            "support": []</span>
+<span class="line-match">        },</span>
+<span class="line-match">        "conduct_score": 0,</span>
+<span class="line-expect">        "firstSeen": 1771486502078,</span>
+<span class="line-match">        "icon": "",</span>
+<span class="line-match">        "isChatAdmin": false,</span>
+<span class="line-match">        "isChatModerator": false,</span>
+<span class="line-match">        "isSponser": false,</span>
+<span class="line-match">        "isVerified": false,</span>
+<span class="line-match">        "misconduct": {</span>
+<span class="line-match">            "discrimination": [],</span>
+<span class="line-match">            "harassment": [],</span>
+<span class="line-match">            "integrity": [],</span>
+<span class="line-match">            "spam": []</span>
+<span class="line-match">        },</span>
+<span class="line-match">        "points": 0,</span>
+<span class="line-match">        "ttsBans": [],</span>
+<span class="line-expect">        "uuid": "496bafea-2dd8-4f4a-8093-96dec9c8cead",</span>
+<span class="line-match">        "version": 1</span>
+<span class="line-match">    },</span>
+<span class="line-match">    "version": 1</span>
+<span class="line-match">}</span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-match">{</span>
+<span class="line-match">    "authorName": "@vulbyte",</span>
+<span class="line-match">    "commands": [],</span>
+<span class="line-match">    "messageId": "",</span>
+<span class="line-match">    "platform": "youtube",</span>
+<span class="line-match">    "processedMessage": "HELLO SMALLSVILLE",</span>
+<span class="line-match">    "rawMessage": "HELLO SMALLSVILLE",</span>
+<span class="line-match">    "receivedAt": 1771485470330,</span>
+<span class="line-match">    "score": -100,</span>
+<span class="line-match">    "state": {},</span>
+<span class="line-match">    "streamOrigin": "Cg0KC3JHN3ZGN3BjVlBZKicKGFVDS1ppZ0hiZ3BKRzlsZHhYTXFtaVpVZxILckc3dkY3cGNWUFk",</span>
+<span class="line-match">    "userUuid": {</span>
+<span class="line-match">        "authorName": "@vulbyte",</span>
+<span class="line-match">        "channelBans": [],</span>
+<span class="line-match">        "channels": [</span>
+<span class="line-match">            "UCKZigHbgpJG9ldxXMqmiZUg"</span>
+<span class="line-match">        ],</span>
+<span class="line-match">        "commendments": {</span>
+<span class="line-match">            "community": [],</span>
+<span class="line-match">            "engagement": [],</span>
+<span class="line-match">            "support": []</span>
+<span class="line-match">        },</span>
+<span class="line-match">        "conduct_score": 0,</span>
+<span class="line-mismatch">        "firstSeen": 1771559882805,</span>
+<span class="line-match">        "icon": "",</span>
+<span class="line-match">        "isChatAdmin": false,</span>
+<span class="line-match">        "isChatModerator": false,</span>
+<span class="line-match">        "isSponser": false,</span>
+<span class="line-match">        "isVerified": false,</span>
+<span class="line-match">        "misconduct": {</span>
+<span class="line-match">            "discrimination": [],</span>
+<span class="line-match">            "harassment": [],</span>
+<span class="line-match">            "integrity": [],</span>
+<span class="line-match">            "spam": []</span>
+<span class="line-match">        },</span>
+<span class="line-match">        "points": 0,</span>
+<span class="line-match">        "ttsBans": [],</span>
+<span class="line-mismatch">        "uuid": "0113ec85-28cf-4922-8471-0cf87f3428d2",</span>
+<span class="line-match">        "version": 1</span>
+<span class="line-match">    },</span>
+<span class="line-match">    "version": 1</span>
+<span class="line-match">}</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Method identified: ProcessYoutubeV3Message_v1</span>
+<span style="color: #ff7b72; font-weight: bold;">🧪 [RUNNER] [LOGIC] Mismatch at: root.userUuid.uuid (Value mismatch)</span>
+<span style="">🦜 [LOG] rmo base object to get rata from:</span>
+<span style="">🦜 [LOG] parsing out information from object</span>
+<span style="">🦜 [LOG] no id found for user, attempting to add the user</span>
+<span style="">🦜 [LOG] could not add user to list, no document</span>
+<span style="">🦜 [LOG] User created: @vulbyte. Total: 0</span>
+<span style="">🦜 [LOG] checking for banned words in message</span>
+<span style="">🦜 [WARN] unaccounted case for input: </span>
+<span style="">🦜 [LOG] attempting to score message:</span>
+<span style="">🦜 [LOG] score CheckPunctuation(}) : 0</span>
+<span style="">🦜 [LOG] score CheckForSpaces() : -20</span>
+<span style="">🦜 [LOG] score CheckForSpaceInChunk : 0</span>
+<span style="">🦜 [LOG] attempting to add score to user</span>
+<span style="">🦜 [LOG] continuing to parse information from message text</span>
+<span style="">🦜 [LOG] </span>
+<span style="">🦜 [LOG] returning the raw message</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="fail">
+            <td colspan="3">
+                <details open>
+                    <summary>
+                        <span class="status-icon">✘</span>
+                        <span class="test-name"><b>Process Pending Tts</b></span>
+                        <span class="meta">Method: FunctionName</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-expect">{}</span>
+<span class="line-expect"> </span>
+<span class="line-expect"> </span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-mismatch">{</span>
+<span class="line-mismatch">    "error": "Method FunctionName not found"</span>
+<span class="line-mismatch">}</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Caught: Method FunctionName not found</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="fail">
+            <td colspan="3">
+                <details open>
+                    <summary>
+                        <span class="status-icon">✘</span>
+                        <span class="test-name"><b>CallTts</b></span>
+                        <span class="meta">Method: FunctionName</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-expect">{}</span>
+<span class="line-expect"> </span>
+<span class="line-expect"> </span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-mismatch">{</span>
+<span class="line-mismatch">    "error": "Method FunctionName not found"</span>
+<span class="line-mismatch">}</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Caught: Method FunctionName not found</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="fail">
+            <td colspan="3">
+                <details open>
+                    <summary>
+                        <span class="status-icon">✘</span>
+                        <span class="test-name"><b>ParseAndAddYoutubeV3MessageToUnprocessedQueue</b></span>
+                        <span class="meta">Method: FunctionName</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-expect">{}</span>
+<span class="line-expect"> </span>
+<span class="line-expect"> </span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-mismatch">{</span>
+<span class="line-mismatch">    "error": "Method FunctionName not found"</span>
+<span class="line-mismatch">}</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Caught: Method FunctionName not found</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="fail">
+            <td colspan="3">
+                <details open>
+                    <summary>
+                        <span class="status-icon">✘</span>
+                        <span class="test-name"><b>ScoreMessage</b></span>
+                        <span class="meta">Method: FunctionName</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-expect">{}</span>
+<span class="line-expect"> </span>
+<span class="line-expect"> </span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-mismatch">{</span>
+<span class="line-mismatch">    "error": "Method FunctionName not found"</span>
+<span class="line-mismatch">}</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Caught: Method FunctionName not found</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="fail">
+            <td colspan="3">
+                <details open>
+                    <summary>
+                        <span class="status-icon">✘</span>
+                        <span class="test-name"><b>ScoreMessage</b></span>
+                        <span class="meta">Method: FunctionName</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-expect">{}</span>
+<span class="line-expect"> </span>
+<span class="line-expect"> </span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-mismatch">{</span>
+<span class="line-mismatch">    "error": "Method FunctionName not found"</span>
+<span class="line-mismatch">}</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Caught: Method FunctionName not found</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="fail">
+            <td colspan="3">
+                <details open>
+                    <summary>
+                        <span class="status-icon">✘</span>
+                        <span class="test-name"><b>SanitizeString</b></span>
+                        <span class="meta">Method: FunctionName</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-expect">{}</span>
+<span class="line-expect"> </span>
+<span class="line-expect"> </span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-mismatch">{</span>
+<span class="line-mismatch">    "error": "Method FunctionName not found"</span>
+<span class="line-mismatch">}</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Caught: Method FunctionName not found</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="fail">
+            <td colspan="3">
+                <details open>
+                    <summary>
+                        <span class="status-icon">✘</span>
+                        <span class="test-name"><b>ParseCommandFromMessage</b></span>
+                        <span class="meta">Method: FunctionName</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-expect">{}</span>
+<span class="line-expect"> </span>
+<span class="line-expect"> </span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-mismatch">{</span>
+<span class="line-mismatch">    "error": "Method FunctionName not found"</span>
+<span class="line-mismatch">}</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Caught: Method FunctionName not found</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="fail">
+            <td colspan="3">
+                <details open>
+                    <summary>
+                        <span class="status-icon">✘</span>
+                        <span class="test-name"><b>RenderDefaultCommandSettings</b></span>
+                        <span class="meta">Method: FunctionName</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-expect">{}</span>
+<span class="line-expect"> </span>
+<span class="line-expect"> </span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-mismatch">{</span>
+<span class="line-mismatch">    "error": "Method FunctionName not found"</span>
+<span class="line-mismatch">}</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Caught: Method FunctionName not found</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr></table></body></html>

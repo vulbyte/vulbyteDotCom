@@ -6,10 +6,13 @@
 		<script src="/client_management.js" type="module"></script>
 		<script type="module">
 			window.debug = true;
-			import MonitorMessages from './tib_stuff/monitorMessages.js';
+			import MonitorMessages from './tib_stuff/Cockatiel.mjs';
 			let mm = new MonitorMessages()		
 			window.mm = mm;
+			window.mm.Init();
 			console.log("mm added to window");
+			window.tibSleepingAnimation = await fetch("./tib_stuff/tib_sleeping.gif");
+			console.log("added the eepy them");
 		</script>
 		<title>tib 4</title>
 		<link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,20 +28,22 @@
 	<ul id="checklist">
 		<li><input type="checkbox" value="false">decouple tts from getting messages</li>	
 		<li>
-		<ul><input type="checkbox" value="false">implement point spending (if not enough send message in chat)
+			<ul><input type="checkbox" value="false"><span style="color:#555;">implement point spending (if not enough send message in chat)</span>
 			<li><input type="checkbox" value="false">add ui to edit points values of commands</li>	
-			<li><input type="checkbox" value="false">if has points, add cmd, if not ignore</li>	
-			<li><input type="checkbox" value="false">remove points from user if add score</li>	
+			<li style="color:#555"><input type="checkbox" value="false">if has points, add cmd, if not ignore</li>	
+			<li style="color:#555;"><input type="checkbox" value="false">remove points from user if add score</li>	
 		</ul>	
 		</li>
 		<li><input type="checkbox" value="false">give user points</li>	
 		<li><input type="checkbox" value="false">remove user points</li>	
 		<li><input type="checkbox" value="false">way to view users</li>	
 		<li><input type="checkbox" value="false">way to view banned words</li>	
-
+		<hr>
 		<li><input type="checkbox" value="false">!clip function</li>	
-		<li><input type="checkbox" value="false">!help function</li>	
-		<li><input type="checkbox" value="false">send messages in chat</li>	
+		<li style="color:#555"><input type="checkbox" value="false">!help function</li>	
+		<li style="color:#555"><input type="checkbox" value="false">send messages in chat</li>	
+		<hr>
+		<li style="color:#555"><input type="checkbox" value="false">badge system</li>	
 		<hr>
 		<li>
 			<ul><input type="checkbox" value="false">!prediction function (limited to mods) (makes pool, distributes based on points put in)
@@ -205,12 +210,6 @@
 				}
 
 			</style>
-			<div class="message_overlay animated_interactible" style="">
-				<div>🔗</div>
-				<div>❌</div>
-				<div>☑️</div>
-				<div>🦜</div>
-			</div>
 			<div style="aspect-ratio:1/1; width: 100%; height:4rem; display:flex; justify-content:space-between;">
 			<div class="chat_messasge-pfp_container" style="width:min-content; display:flex; flex-direction:row;">
 			<div style="
@@ -289,30 +288,30 @@
 			</div>
 			</div>
 			<p style="
-			animation: rocking2 4s;
-			animation-timing-function: ease-in-out;
-			animation-iteration-count: infinite;
-			animation-delay:500ms;
+				animation: rocking2 4s;
+				animation-timing-function: ease-in-out;
+				animation-iteration-count: infinite;
+				animation-delay:500ms;
 
-			background-color:#ddd;
-			color:black;
+				background-color:#ddd;
+				color:black;
 
-			border-top-right-radius:		calc(var(--tib_border-radius)*4);
-			border-bottom-left-radius:	calc(var(--tib_border-radius)*4);
-			border-bottom-right-radius:	calc(var(--tib_border-radius)*4);
+				border-top-right-radius:		calc(var(--tib_border-radius)*4);
+				border-bottom-left-radius:	calc(var(--tib_border-radius)*4);
+				border-bottom-right-radius:	calc(var(--tib_border-radius)*4);
 
-			padding:var(--tib_padding);
+				padding:var(--tib_padding);
 
 
-			transform-origin: top left;
-			transform:
-				translateX(0.4rem)
-				translateY(-1.7rem)
-				rotateZ(5deg);
+				transform-origin: top left;
+				transform:
+					translateX(0.4rem)
+					translateY(-1.7rem)
+					rotateZ(5deg);
 
-			width:90%;
-			position:relative;
-			z-index:999;
+				width:90%;
+				position:relative;
+				z-index:999;
 			">
 			Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate.</p>
 			</div>
@@ -322,294 +321,17 @@
 		<!-- main -->
 		<div 
 		style="
-		background-color:#303; 
-		height:100%; 
-		width:75%; 
-		overflow:hidden;
+			background-color:#303; 
+			height:100%; 
+			width:75%; 
+			overflow:hidden;
 		">
 		<div style="
-		height:80%; 
-		overflow-y: scroll; 
-		overflow-x:hidden;
-		">
-		<details><summary>blacklist input</summary>
-			<label>import your .json array of naughty words</label>
-			<input id="blacklist_input" type="file" accept=".json, .csv"/>
-			<output id="blacklist_output"></output>
-		</details>
-		<details 
-		style="
-		border: var(--tib_border); 
-		border-radius: var(--tib_border-radius); 
-		padding:0.5rem;
-		">
-		<style>
-			.youtube-config-input > label {
-				display:block;
-			}
-			.youtube-config-input > input {
-				display:inline; 
-				width:90%;
-			}
-			.youtube-config-input > span {
-				display:inline; 
-				width: 10%;
-				padding-left:1rem;
-			}
-		</style>
-		<summary>youtube config</summary>
-		<div class="youtube-config-input">
-			<label> channelName</label>
-		<div>
-			<div style="display:flex; flex-direction:row;">
-				<span style="
-				  font-size:2.4rem;
-					padding: var(--input-pad);
-					background: var(--color-surface);
-					border: 0.1rem solid var(--color-border);
-					border-top-left-radius: var(--border_radius_default);
-					border-bottom-left-radius: var(--border_radius_default);
-					color: var(--color-text);
-					font-size: var(--font-size-base);
-					transition:
-							background var(--transition),
-							border-color var(--transition),
-							opacity var(--transition),
-							transform var(--transition);
-					">@</span><input style="
-						display:inline-block;
-					border-top-left-radius:			0rem;
-					border-bottom-left-radius:	0rem;
-				" id="youtube-config-channelName" placeholder="vulbyte"></input>
-			</div>
-		</div>
-		<div class="youtube-config-input">
-		<label> apiKey</label>
-		<input type="password" id="youtube-config-apiKey"></input>
-		</div>
-		<input type="button" value="click to complete" onclick='(async ()=>{
-			 try{
-				async function GEBI(id){
-													 if(id=="undefined"){throw new Error("Error getting document by id");}
-													 return document.getElementById(id);
-				}
-				window.mm.yt.config.channelName = document.getElementById("youtube-config-channelName").value;	
-				window.mm.yt.config.apiKey = document.getElementById("youtube-config-apiKey").value;	
-
-				await window.mm.yt.getChannelId();
-
-				let broadcasts = await window.mm.yt.getLiveAndUpcoming();
-				console.log("broadcasts:", broadcasts);
-				let broadcastsContainer = document.getElementById("broadcastsContainer");
-
-				for (let i = 0; i < broadcasts.length; ++i) {
-						let b = broadcasts[i]; // Use let/const for block scope
-
-						let bs = document.createElement("div"); //broadcastSelector
-						bs.style = `background-image:url(${b.snippet.thumbnails.default.url})`;
-						bs.classList.add("broadcastSelector");
-
-						let vi = document.createElement("div"); //video info
-						vi.classList.add("video_info");
-
-						let t = document.createElement("div"); //title
-						t.innerText = b.snippet.title;
-						t.classList.add("title");
-						vi.appendChild(t);
-
-						let vidId = document.createElement("div"); //video info
-						vidId.innerText = b.id.videoId;
-						vidId.classList.add("videoId");
-						vi.appendChild(vidId);
-
-						bs.addEventListener("click", async () => {
-								// Use an arrow function or ensure context is correct
-								const InitManagers = async () => {
-										try {
-												window.mm.yt.config.broadcastId = b.id.videoId;
-
-												// Check if actualStartTime exists in the broadcast object
-												const startTimeStr = b.liveStreamingDetails?.actualStartTime;
-												if (startTimeStr) {
-														const unixStart = new Date(startTimeStr).getTime();
-														window.mm.yt.config.streamStartedAt = unixStart;
-														console.log(`Stream Start assigned: ${unixStart} (${startTimeStr})`);
-												} else {
-														console.warn("actualStartTime not found in broadcast object. Is it live?");
-														window.mm.yt.config.streamStartedAt = null;
-												}
-
-												document.getElementById("youtube-config-channelId").value = b.snippet.channelId;
-												document.getElementById("youtube-config-broadcastId").value = b.id.videoId;
-
-												let lcid = await window.mm.yt.getLiveChatId();
-												console.log("Live Chat ID:", lcid);
-												document.getElementById("youtube-config-liveChatId").value = lcid;
-
-												let messages = await window.mm.yt.getChatMessages();
-												console.log("Validation fetch:", messages);
-
-										} catch (err) {
-												console.error("[InitManagers ERROR]:", err);
-										}
-								};
-
-								await InitManagers();
-
-								console.log("running MonitoringStart() to get messages");
-								await window.mm.MonitoringStart();
-						});
-
-						bs.appendChild(vi);
-						broadcastsContainer.appendChild(bs);
-				}
-			}
-		 catch(err){
-			console.error("error with onclick: \n", err)
-		}
-			})()'/>
-		</div>
-		<style>
-			.broadcastSelector {
-				border-radius:1rem;
-				border: 0.2rem solid transparent;
-				position:relative;
-				height:7rem;
-				width: 14rem;
-				background-repeat:no-repeat;
-				background-size:cover;
-			}
-			.broadcastSelector:hover {
-				border: 0.2rem solid gray;
-				border-radius:1rem;
-			}
-			.broadcastSelector:active {
-				border: 0.2rem solid white;
-				border-radius:1rem;
-			}
-			.broadcastSelector > .video_info {
-				background-image:linear-gradient(
-						90deg,
-						#000000aa 0%, 
-						#000000dd 20%, 
-						#000000dd 80%, 
-						#000000aa 100%
-					);
-				border-radius:0.5rem;
-				position:absolute;
-				bottom:0px;
-				left:0px;
-				width:12rem;
-				height:4rem;
-
-				user-select:none;
-			}
-		</style>
-		<div id="broadcastsContainer" style="
-			background: var(--color-surface-hover);		
-			border: 0.1rem solid var(--color-border);
-			border-color: var(--color-border-light);
-			height: 10rem; 	
-			overflow-x:scroll;
-			width:90%; 	
+			height:80%; 
+			overflow-y: scroll; 
+			overflow-x:hidden;
 		">
 		</div>
-
-		<div class="youtube-config-input youtube-config-channelId">
-		<label> channelId</label>
-		<input id="youtube-config-channelId"></input><span style="inline">💤</span>
-		</div>
-		<div class="youtube-config-input youtube-config-broadcastId">
-		<label> broadcastId</label>
-		<input id="youtube-config-broadcastId"></input><span style="inline">💤</span>
-		</div>
-		<div class="youtube-config-input youtube-config-liveChatId">
-		<label> liveChatId</label>
-		<input id="youtube-config-liveChatId"></input><span style="inline">💤</span>
-		</div>
-		</details>
-		</div>
-		<!-- controls -->
-		<div style="background-color:#033; border-radius:1.4rem; height:auto; position:relative; bottom:0px; display:flex; flex-direction:row;">
-			<div style="height: 100%; width:16rem; padding:calc(var(--tib_padding)*4);">
-				<input type="button" 
-					value="save all inputs" 
-					style="background-color: #0ff; color:black; user-select:none;"
-					onclick="(() => {
-						let inputs = document.getElementsByTagName('input');
-						for (let x of inputs) {
-								// Only save if it has an ID and isn't a button
-								if (x.id && x.type != 'button') {
-										localStorage.setItem(x.id, x.value);
-										
-								}
-						}					
-					})()"
-				/>				
-				<input type="button" 
-					value="load all inputs"
-					style="background-color: #ff0; color:black; user-select:none;"
-					onclick='(async () => {
-					console.log("load values saved")
-						let inputs = document.getElementsByTagName("input");
-						for (let x of inputs) {
-							console.log(`attempting to get value for ${x.id}`);
-							if (
-								x.id != undefined 
-								&& x.type != "button" 
-								&& x.type != "file"
-							) {
-								console.log(`id matches check, getting val`);
-								let savedValue = localStorage.getItem(String(x.id));
-								if (savedValue != null) {
-									console.log(`saved value is: ${savedValue}`);
-									x.value = savedValue;
-								}
-							}
-						}
-
-						await window.mm.yt.LoadValuesFromLocalStorage()
-					})()'	
-				/>			
-			</div>	
-			<div>
-				<div style="height: 100%; width:16rem; padding:calc(var(--tib_padding)*4);">
-					<input 
-						type="button" 
-						value="start monitoring messages" 
-						style="background-color: #0f0; color:black; user-select:none;"
-						onclick='(async () => {
-							console.log("start monitoring clicked, starting now");
-							await window.mm.MonitoringStart();}
-						)()'
-					/>				
-					<input 
-						type="button" 
-						value="stop monitoring messages"
-						style="background-color: #f00; color:black; user-select:none;"
-						onclick='(() => {window.mm.MonitoringStop();})()'
-					/>			
-				</div>	
-			</div>
-			<div>
-				<div style="height: 100%; width:16rem; padding:calc(var(--tib_padding)*4); display: flex; flex-direction: column; gap: 10px;">
-					<input 
-							type="button" 
-							value="Export Settings" 
-							style="background-color: #ff0; color:black; cursor: pointer;"
-							onclick="window.mm.ExportState();"
-					/>                
-					
-					<label style="color: white; font-size: 0.8rem;">Import settings from file</label>
-					<input 
-								 id="state_input"
-								 type="file" 
-								 value="import Settings" 
-								 style="background-color:#f0f;"
-								 />   
-				</div> 
-			</div>
-		</div>
-	</div>
+	</div>	
 </body>
 </html>

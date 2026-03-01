@@ -1,0 +1,118 @@
+<html><head><style>
+        body { background: #0d1117; color: #c9d1d9; font-family: -apple-system, sans-serif; padding: 2rem; }
+        table { width: 100%; border-collapse: collapse; background: #161b22; border: 1px solid #30363d; border-radius: 6px; }
+        summary { padding: 12px; cursor: pointer; display: flex; align-items: center; border-bottom: 1px solid #30363d; }
+        .status-icon { width: 30px; font-weight: bold; }
+        .pass .status-icon { color: #3fb950; }
+        .fail .status-icon { color: #f85149; }
+        .test-name { flex-grow: 1; }
+        .meta { color: #8b949e; font-family: monospace; font-size: 11px; }
+        .details-content { padding: 20px; background: #0d1117; }
+        .comparison-grid { display: flex; gap: 20px; }
+        .column { flex: 1; min-width: 0; }
+        .code-block { background: #010409; padding: 10px; border: 1px solid #30363d; border-radius: 6px; font-family: monospace; font-size: 12px; overflow-x: auto; }
+        .diff-block { white-space: pre; }
+        .line-match { color: #6e7681; }
+        .line-mismatch { background: rgba(248, 81, 73, 0.15); color: #ff7b72; display: block; width: 100%; }
+        .line-expect { background: rgba(63, 185, 80, 0.15); color: #7ee787; display: block; width: 100%; }
+        .log-style { color: #c9d1d9; border-left: 3px solid #30363d; }
+        .label { font-size: 10px; font-weight: bold; color: #8b949e; margin-bottom: 6px; text-transform: uppercase; }
+    </style></head><body><h1>🦜 Cockatiel I/O Report</h1><p>Passed: <b>3/53</b></p><table>
+        <tr class="pass">
+            <td colspan="3">
+                <details >
+                    <summary>
+                        <span class="status-icon">✔</span>
+                        <span class="test-name"><b>AddLogToLogs</b></span>
+                        <span class="meta">Method: AddLogToLogs</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{
+    "message": "Test String",
+    "type": "log"
+}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-match">true</span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-match">true</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Method identified: AddLogToLogs</span>
+<span style="">🦜 [LOG] Test String</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="pass">
+            <td colspan="3">
+                <details >
+                    <summary>
+                        <span class="status-icon">✔</span>
+                        <span class="test-name"><b>Get Log</b></span>
+                        <span class="meta">Method: GetLogs</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-match">[</span>
+<span class="line-expect"> </span>
+<span class="line-match">]</span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-match">[</span>
+<span class="line-mismatch"> </span>
+<span class="line-match">]</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Method identified: GetLogs</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr>
+        <tr class="pass">
+            <td colspan="3">
+                <details >
+                    <summary>
+                        <span class="status-icon">✔</span>
+                        <span class="test-name"><b>Basic Debug Labeling</b></span>
+                        <span class="meta">Method: DebugPrint</span>
+                    </summary>
+                    <div class="details-content">
+                        <div class="full-width" style="margin-bottom: 20px;">
+                            <div class="label">INPUT:</div>
+                            <pre class="code-block" style="border-color: #23863655; color: #8b949e;">{
+    "msg": "Test String"
+}</pre>
+                        </div>
+                        <div class="comparison-grid">
+                            <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block"><span class="line-match">{</span>
+<span class="line-match">    "message": "Test String",</span>
+<span class="line-match">    "type": "log"</span>
+<span class="line-match">}</span>
+</pre></div>
+                            <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block"><span class="line-match">{</span>
+<span class="line-match">    "message": "Test String",</span>
+<span class="line-match">    "type": "log"</span>
+<span class="line-match">}</span>
+</pre></div>
+                        </div>
+                        <div class="full-width" style="margin-top: 20px;">
+                            <div class="label">TRACE & LOGS:</div>
+                            <pre class="code-block log-style"><span style="">🧪 [RUNNER] [SYSTEM] Method identified: DebugPrint</span>
+<span style="">🦜 [LOG] Test String</span></pre>
+                        </div>
+                    </div>
+                </details>
+            </td>
+        </tr></table></body></html>

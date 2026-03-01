@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>R6 Siege Ultimate Roulette</title>
+		<script src="/client_management.js" type="module"></script>
+<style>
+    :root {
+        --bg: #0b0e14;
+        --card: #1a1f29;
+        --accent-atk: #cc3d3d;
+        --accent-def: #3d7acc;
+        --gold: #f4b400;
+        --text: #ffffff;
+        --dim-text: #a0a0a0;
+    }
+
+    /* Reset body so it doesn't interfere with Header/Footer */
+    body {
+        font-family: 'Bahnschrift', 'Segoe UI', sans-serif;
+        color: var(--text);
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    /* New Wrapper to center the Roulette ONLY */
+    .roulette-container {
+        flex: 1; /* Pushes header up and footer down */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 40px 20px;
+				padding-top: 10rem;
+    }
+
+    #roulette {
+        width: 380px;
+        background: var(--card);
+        border: 2px solid #333;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    }
+
+    /* Keep your existing .side-toggle, .card, .att-item, etc. styles here */
+    .side-toggle { display: flex; gap: 8px; margin-bottom: 20px; }
+    .side-btn {
+        flex: 1; padding: 10px; border: none; cursor: pointer;
+        font-weight: 900; border-radius: 4px; background: #2a2f3a; color: #666;
+        transition: 0.2s ease;
+    }
+    .active-atk { background: var(--accent-atk) !important; color: white !important; }
+    .active-def { background: var(--accent-def) !important; color: white !important; }
+    .op-box { text-align: center; margin-bottom: 15px; border-bottom: 1px solid #333; padding-bottom: 15px; }
+    .op-icon { width: 90px; height: 90px; }
+    .op-name { font-size: 2rem; font-weight: 900; text-transform: uppercase; }
+    .card { background: rgba(0,0,0,0.3); border-radius: 6px; padding: 10px; margin-bottom: 10px; border-left: 3px solid var(--gold); }
+    .label { font-size: 0.7rem; color: var(--gold); font-weight: bold; text-transform: uppercase; }
+    .name-tag { font-size: 1.1rem; font-weight: bold; display: block; }
+    .attachment-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; }
+    .att-item { display: flex; flex-direction: column; align-items: center; text-align: center; }
+    .att-icon { width: 28px; height: 28px; filter: brightness(0) invert(1); }
+    .att-name { font-size: 0.6rem; color: var(--dim-text); }
+    #roll-btn {
+        width: 100%; padding: 16px; border: none; border-radius: 6px;
+        background: var(--gold); color: #000; font-weight: 900;
+        font-size: 1.2rem; cursor: pointer; text-transform: uppercase;
+    }
+</style>
+
+<body>
+    <div class="roulette-container">
+        <div id="roulette">
+            <div class="side-toggle">
+                <button id="btn-atk" class="side-btn active-atk" onclick="setSide('atk')">ATTACK</button>
+                <button id="btn-def" class="side-btn" onclick="setSide('def')">DEFENSE</button>
+            </div>
+
+            <div class="op-box">
+                <img id="op-img" class="op-icon" src="https://r6operators.marcopixel.eu/icons/png/recruit_blue.png">
+                <div id="op-name" class="op-name">READY?</div>
+            </div>
+
+            <div class="card">
+                <div class="label">Primary Weapon</div>
+                <span id="p-weapon" class="name-tag">---</span>
+                <div id="p-atts" class="attachment-row"></div>
+            </div>
+
+            <div class="card">
+                <div class="label">Secondary Weapon</div>
+                <span id="s-weapon" class="name-tag">---</span>
+                <div id="s-atts" class="attachment-row"></div>
+            </div>
+
+            <div class="card" style="border-left-color: #fff;">
+                <div class="label">Secondary Gadget</div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <img id="gadget-img" style="width: 35px; filter: invert(1);" src="">
+                    <span id="gadget-name" class="name-tag" style="margin:0;">---</span>
+                </div>
+            </div>
+
+            <button id="roll-btn" onclick="roll()">GENERATE LOADOUT</button>
+        </div>
+    </div>
+
+
+<script>
+    // 1. DATA DEFINITIONS
+    let currentSide = 'atk';
+
+    const operators = {
+        atk: [
+            { name: "Sledge", weapons: ["L85A2", "M590A1"], secondaries: ["P226 MK 25"], gadgets: ["Frag", "Stun"] },
+            { name: "Thatcher", weapons: ["AR33", "L85A2", "M590A1"], secondaries: ["P226 MK 25"], gadgets: ["Claymore", "Breach Charge"] },
+            { name: "Ash", weapons: ["R4-C", "G36C"], secondaries: ["5.7 USG", "M45 MEU"], gadgets: ["Breach Charge", "Claymore"] },
+            { name: "Thermite", weapons: ["556XI", "M1014"], secondaries: ["5.7 USG", "M45 MEU"], gadgets: ["Smoke", "Stun"] },
+            { name: "Twitch", weapons: ["F2", "417", "SG-CQB"], secondaries: ["P9", "LFP586"], gadgets: ["Smoke", "Claymore"] },
+            { name: "Montagne", weapons: ["Extendable Shield"], secondaries: ["P9", "LFP586"], gadgets: ["Smoke", "Hard Breach", "Impact EMP"] },
+            { name: "Glaz", weapons: ["OTs-03"], secondaries: ["PMM", "Gonne-6", "Bearing 9"], gadgets: ["Smoke", "Frag", "Claymore"] },
+            { name: "Fuze", weapons: ["AK-12", "6P41", "Ballistic Shield"], secondaries: ["PMM", "GSH-18"], gadgets: ["Breach Charge", "Hard Breach", "Smoke"] },
+            { name: "Blitz", weapons: ["G52-Tactical Shield"], secondaries: ["P12"], gadgets: ["Smoke", "Breach Charge"] },
+            { name: "IQ", weapons: ["AUG A2", "552 Commando", "G8A1"], secondaries: ["P12"], gadgets: ["Breach Charge", "Claymore"] },
+            { name: "Buck", weapons: ["C8-SFW", "CAMRS"], secondaries: ["MK1 9mm"], gadgets: ["Flashbang", "Claymore"] },
+            { name: "Blackbeard", weapons: ["MK17 CQB", "SR-25"], secondaries: ["D-50"], gadgets: ["Claymore", "Stun"] },
+            { name: "Capitao", weapons: ["PARA-308", "M249"], secondaries: ["PRB92"], gadgets: ["Claymore", "Hard Breach"] },
+            { name: "Hibana", weapons: ["TYPE-89", "SGCQB"], secondaries: ["P229", "Bearing 9"], gadgets: ["Stun", "Breach Charge"] },
+            { name: "Jackal", weapons: ["C7E", "PDW9", "ITA12L"], secondaries: ["USP40", "ITA12S"], gadgets: ["Claymore", "Smoke"] },
+            { name: "Ying", weapons: ["T-95 LSW", "SIX12"], secondaries: ["Q-929"], gadgets: ["Hard Breach", "Smoke"] },
+            { name: "Zofia", weapons: ["LMG-E", "M762"], secondaries: ["RG15"], gadgets: ["Breach Charge", "Claymore"] },
+            { name: "Dokkaebi", weapons: ["Mk 14 EBR", "BOSG.12.2"], secondaries: ["SMG-12", "C75 Auto", "Gonne-6"], gadgets: ["Smoke", "Stun", "Impact EMP"] },
+            { name: "Lion", weapons: ["V308", "417", "SG-CQB"], secondaries: ["P9", "LFP586", "Gonne-6"], gadgets: ["Claymore", "Stun", "Impact EMP"] },
+            { name: "Finka", weapons: ["Spear .308", "6P41", "SASG-12"], secondaries: ["PMM", "GSH-18", "Gonne-6"], gadgets: ["Smoke", "Stun", "Frag"] },
+            { name: "Maverick", weapons: ["M4", "AR-15.50"], secondaries: ["1911 TACOPS"], gadgets: ["Stun", "Claymore"] },
+            { name: "Nomad", weapons: ["AK-74M", "ARX200"], secondaries: [".44 Mag Semi-Auto"], gadgets: ["Breach Charge", "Stun"] },
+            { name: "Gridlock", weapons: ["F90", "M249 SAW"], secondaries: ["Super Shorty", "SDP 9mm"], gadgets: ["Smoke", "Breach Charge", "Impact EMP"] },
+            { name: "Nokk", weapons: ["FMG-9", "SIX12 SD"], secondaries: ["5.7 USG", "D-50"], gadgets: ["Frag", "Hard Breach", "Impact EMP"] },
+            { name: "Amaru", weapons: ["G8A1", "Supernova"], secondaries: ["ITA12S", "SMG-11", "Gonne-6"], gadgets: ["Stun", "Hard Breach"] },
+            { name: "Kali", weapons: ["CSRX 300"], secondaries: ["P226 MK 25", "C75 Auto", "SPSMG9"], gadgets: ["Claymore", "Breach Charge"] },
+            { name: "Iana", weapons: ["ARX200", "G36C"], secondaries: ["MK1 9mm", "Gonne-6"], gadgets: ["Frag", "Smoke"] },
+            { name: "Ace", weapons: ["AK-12", "M1014"], secondaries: ["P9"], gadgets: ["Breach Charge", "Claymore"] },
+            { name: "Zero", weapons: ["SC3000K", "MP7"], secondaries: ["5.7 USG", "Gonne-6"], gadgets: ["Hard Breach", "Claymore"] },
+            { name: "Flores", weapons: ["AR33", "SR-25"], secondaries: ["GSH-18"], gadgets: ["Claymore", "Stun"] },
+            { name: "Osa", weapons: ["556XI", "PDW9"], secondaries: ["PMM"], gadgets: ["Claymore", "Smoke", "Impact EMP"] },
+            { name: "Sens", weapons: ["POF-9", "417"], secondaries: ["SDP 9mm", "Gonne-6"], gadgets: ["Hard Breach", "Claymore"] },
+            { name: "Grim", weapons: ["552 Commando", "SG-CQB"], secondaries: ["P229", "Bailiff 410"], gadgets: ["Hard Breach", "Claymore", "Impact EMP"] },
+            { name: "Brava", weapons: ["PARA-308", "CAMRS"], secondaries: ["Super Shorty", "USP40"], gadgets: ["Claymore", "Smoke"] },
+            { name: "Ram", weapons: ["R4-C", "LMG-E"], secondaries: ["MK1 9mm", "ITA12S"], gadgets: ["Flashbang", "Smoke"] },
+            { name: "Deimos", weapons: ["AK-74M", "M590A1"], secondaries: [".44 Vendetta"], gadgets: ["Frag", "Hard Breach"] },
+            { name: "Striker", weapons: ["M4", "M249"], secondaries: ["5.7 USG", "ITA12S"], gadgets: ["All Atk Gadgets"] },
+        ],
+        def: [
+            { name: "Smoke", weapons: ["FMG-9", "M590A1"], secondaries: ["P226 MK 25", "SMG-11"], gadgets: ["Barbed Wire", "Deployable Shield"] },
+            { name: "Mute", weapons: ["MP5K", "M590A1"], secondaries: ["P226 MK 25", "SMG-11"], gadgets: ["Barbed Wire", "Nitro Cell"] },
+            { name: "Castle", weapons: ["UMP45", "M1014"], secondaries: ["5.7 USG", "Super Shorty"], gadgets: ["Bulletproof Cam", "Proximity Alarm"] },
+            { name: "Pulse", weapons: ["UMP45", "M1014"], secondaries: ["5.7 USG", "M45 MEU"], gadgets: ["Barbed Wire", "Nitro Cell"] },
+            { name: "Doc", weapons: ["MP5", "P90", "SG-CQB"], secondaries: ["P9", "LFP586"], gadgets: ["Bulletproof Cam", "Barbed Wire"] },
+            { name: "Rook", weapons: ["MP5", "P90", "SG-CQB"], secondaries: ["P9", "LFP586"], gadgets: ["Proximity Alarm", "Impact Grenade"] },
+            { name: "Kapkan", weapons: ["9X19VSN", "SASG-12"], secondaries: ["PMM", "GSH-18"], gadgets: ["Bulletproof Cam", "Impact Grenade"] },
+            { name: "Tachanka", weapons: ["DP27", "9X19VSN"], secondaries: ["PMM", "GSH-18", "Bearing 9"], gadgets: ["Barbed Wire", "Deployable Shield"] },
+            { name: "Jager", weapons: ["416-C Carbine", "M870"], secondaries: ["P12"], gadgets: ["Bulletproof Cam", "Barbed Wire"] },
+            { name: "Bandit", weapons: ["MP7", "M870"], secondaries: ["P12"], gadgets: ["Barbed Wire", "Nitro Cell"] },
+            { name: "Frost", weapons: ["9mm C1", "Super 90"], secondaries: ["MK1 9mm", "ITA12S"], gadgets: ["Deployable Shield", "Bulletproof Cam"] },
+            { name: "Valkyrie", weapons: ["MPX", "SPAS-12"], secondaries: ["D-50"], gadgets: ["Nitro Cell", "Impact Grenade"] },
+            { name: "Caveira", weapons: ["M12", "SPAS-15"], secondaries: ["Luison"], gadgets: ["Impact Grenade", "Proximity Alarm"] },
+            { name: "Echo", weapons: ["MP5SD", "Supernova"], secondaries: ["P229", "Bearing 9"], gadgets: ["Impact Grenade", "Deployable Shield"] },
+            { name: "Mira", weapons: ["Vector .45 ACP", "ITA12L"], secondaries: ["USP40", "ITA12S"], gadgets: ["Proximity Alarm", "Nitro Cell"] },
+            { name: "Lesion", weapons: ["T-5 SMG", "SIX12 SD"], secondaries: ["Q-929"], gadgets: ["Impact Grenade", "Bulletproof Cam"] },
+            { name: "Ela", weapons: ["Scorpion EVO 3 A1", "FO-12"], secondaries: ["RG15"], gadgets: ["Barbed Wire", "Impact Grenade"] },
+            { name: "Vigil", weapons: ["K1A", "BOSG.12.2"], secondaries: ["C75 Auto", "SMG-12"], gadgets: ["Impact Grenade", "Bulletproof Cam"] },
+            { name: "Maestro", weapons: ["ALDA 5.56", "ACS12"], secondaries: ["Keratos .357", "Bailiff 410"], gadgets: ["Barbed Wire", "Impact Grenade"] },
+            { name: "Alibi", weapons: ["Mx4 Storm", "ACS12"], secondaries: ["Keratos .357", "Bailiff 410"], gadgets: ["Proximity Alarm", "Impact Grenade"] },
+            { name: "Clash", weapons: ["CCE Shield"], secondaries: ["P-10C", "Super Shorty", "SPSMG9"], gadgets: ["Barbed Wire", "Impact Grenade"] },
+            { name: "Kaid", weapons: ["AUG A3", "TCSG12"], secondaries: [".44 Mag Semi-Auto", "LFP586"], gadgets: ["Barbed Wire", "Nitro Cell"] },
+            { name: "Mozzie", weapons: ["P10 Roni", "Commando 9"], secondaries: ["SDP 9mm"], gadgets: ["Barbed Wire", "Nitro Cell"] },
+            { name: "Warden", weapons: ["M590A1", "MPX"], secondaries: ["P226 MK 25", "SMG-12"], gadgets: ["Deployable Shield", "Nitro Cell"] },
+            { name: "Goyo", weapons: ["Vector .45 ACP", "TCSG12"], secondaries: ["P226 MK 25"], gadgets: ["Impact Grenade", "Bulletproof Cam", "Proximity Alarm"] },
+            { name: "Wamai", weapons: ["AUG A2", "MP5K"], secondaries: ["Keratos .357", "P12"], gadgets: ["Impact Grenade", "Proximity Alarm"] },
+            { name: "Oryx", weapons: ["T-5 SMG", "SPAS-12"], secondaries: ["Bailiff 410", "USP40"], gadgets: ["Barbed Wire", "Proximity Alarm"] },
+            { name: "Melusi", weapons: ["MP5", "Super 90"], secondaries: ["RG15"], gadgets: ["Impact Grenade", "Bulletproof Cam"] },
+            { name: "Aruni", weapons: ["P10 Roni", "MK 14 EBR"], secondaries: ["PRB92"], gadgets: ["Barbed Wire", "Bulletproof Cam"] },
+            { name: "Thunderbird", weapons: ["Spear .308", "SPAS-15"], secondaries: ["Bearing 9", "Q-929"], gadgets: ["Barbed Wire", "Bulletproof Cam"] },
+            { name: "Thorn", weapons: ["UZK50gi", "M1014"], secondaries: ["1911 TACOPS", "C75 Auto"], gadgets: ["Barbed Wire", "Deployable Shield"] },
+            { name: "Azami", weapons: ["9X19VSN", "ACS12"], secondaries: ["D-50"], gadgets: ["Impact Grenade", "Barbed Wire"] },
+            { name: "Solis", weapons: ["P90", "ITA12L"], secondaries: ["SMG-11"], gadgets: ["Impact Grenade", "Bulletproof Cam"] },
+            { name: "Fenrir", weapons: ["MP7", "SASG-12"], secondaries: ["5.7 USG"], gadgets: ["Barbed Wire", "Bulletproof Cam"] },
+            { name: "Tubarao", weapons: ["MPX", "AR-15.50"], secondaries: ["P226 MK 25"], gadgets: ["Nitro Cell", "Proximity Alarm"] },
+            { name: "Skopos", weapons: ["PCX-33"], secondaries: ["P226 MK 25"], gadgets: ["Impact Grenade", "Proximity Alarm"] },
+            { name: "Sentry", weapons: ["MP7", "M870"], secondaries: ["5.7 USG", "C75 Auto"], gadgets: ["All Def Gadgets"] }
+        ]
+    };
+
+    const atts = {
+        sights: ["Iron Sights", "Red Dot", "Holo", "Reflex", "Magnified"],
+        muzzles: ["Flash Hider", "Compensator", "Muzzle Brake", "Suppressor", "Extended Barrel", "None"],
+        grips: ["Vertical", "Angled", "Horizontal", "None"]
+    };
+
+    // 2. HELPER FUNCTIONS
+    const getAttIcon = (type) => {
+        const icons = {
+"Sight": "https://img.icons8.com/ios-glyphs/60/ffffff/visible--v1.png",
+
+            "Muzzle": "https://img.icons8.com/ios-filled/50/ffffff/bullet.png",
+            "Grip": "https://img.icons8.com/ios-filled/50/ffffff/hand.png",
+            "Laser": "https://img.icons8.com/ios-filled/50/ffffff/flash-on.png"
+        };
+        return icons[type] || "https://img.icons8.com/ios-filled/50/ffffff/settings.png";
+    };
+
+    // 3. UI CONTROLLER FUNCTIONS
+    function setSide(side) {
+        currentSide = side;
+        document.getElementById('btn-atk').className = side === 'atk' ? 'side-btn active-atk' : 'side-btn';
+        document.getElementById('btn-def').className = side === 'def' ? 'side-btn active-def' : 'side-btn';
+        document.getElementById('op-name').innerText = "READY?";
+    }
+
+    function roll() {
+        const pool = operators[currentSide];
+        const op = pool[Math.floor(Math.random() * pool.length)];
+        
+        // Update Op Text
+        document.getElementById('op-name').innerText = op.name;
+
+        // FIXED ICON LOGIC: Remove spaces and force lowercase for the API
+        const cleanNameForUrl = op.name.toLowerCase().replace(/\s+/g, '');
+        document.getElementById('op-img').src = `https://r6operators.marcopixel.eu/icons/png/${cleanNameForUrl}.png`;
+
+        // Update Weapons
+        document.getElementById('p-weapon').innerText = op.weapons[Math.floor(Math.random() * op.weapons.length)];
+        document.getElementById('s-weapon').innerText = op.secondaries[Math.floor(Math.random() * op.secondaries.length)];
+
+        // Update Gadget
+        const gad = op.gadgets[Math.floor(Math.random() * op.gadgets.length)];
+        document.getElementById('gadget-name').innerText = gad;
+        document.getElementById('gadget-img').src = "https://img.icons8.com/ios-filled/50/ffffff/briefcase.png";
+
+        // Generate Attachment UI for both slots
+        ['p-atts', 's-atts'].forEach(divId => {
+            const container = document.getElementById(divId);
+            container.innerHTML = '';
+            
+            const randomSet = [
+                { type: "Sight", val: atts.sights[Math.floor(Math.random() * atts.sights.length)] },
+                { type: "Muzzle", val: atts.muzzles[Math.floor(Math.random() * atts.muzzles.length)] },
+                { type: "Grip", val: atts.grips[Math.floor(Math.random() * atts.grips.length)] },
+                { type: "Laser", val: Math.random() > 0.5 ? "Laser ON" : "None" }
+            ];
+
+            randomSet.forEach(a => {
+                const item = document.createElement('div');
+                item.className = 'att-item';
+                const iconSrc = getAttIcon(a.type);
+                item.innerHTML = `<img class="att-icon" src="${iconSrc}"><span class="att-name">${a.val}</span>`;
+                container.appendChild(item);
+            });
+        });
+    }
+</script>
+
+</body>
+</html>

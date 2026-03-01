@@ -1,0 +1,2607 @@
+
+	    <html>
+	    <head>
+		<style>
+		    body { background: #0d1117; color: #c9d1d9; font-family: sans-serif; padding: 2rem; }
+		    table { width: 100%; border-collapse: collapse; background: #161b22; }
+		    summary { padding: 12px 20px; cursor: pointer; display: flex; align-items: center; border-bottom: 1px solid #30363d; }
+		    .status-icon { width: 25px; font-weight: bold; }
+		    .pass .status-icon { color: #3fb950; }
+		    .fail .status-icon { color: #f85149; }
+		    .meta { margin-left: auto; color: #8b949e; font-family: monospace; font-size: 0.8rem; }
+		    .details-content { padding: 20px; background: #0d1117; }
+		    .comparison-grid { display: flex; gap: 20px; }
+		    .column { flex: 1; min-width: 0; }
+		    .code-block { background: #010409; padding: 12px; border: 1px solid #30363d; border-radius: 6px; font-family: monospace; font-size: 0.85rem; overflow-x: auto; white-space: pre-wrap; }
+		    .log-style { color: #8b949e; border-left: 4px solid #30363d; }
+		    .label { font-size: 0.7rem; font-weight: bold; color: #8b949e; margin-bottom: 5px; }
+		    .err-text { color: #ff7b72 !important; }
+		</style>
+	    </head>
+	    <body>
+		<h1>🦜Cockatiel I/O Report🦜</h1>
+		<aside>if a function takes longer then 1 second to process it is considered an automatic failure</aside>
+		<p>Passed: <b>21/54</b></p>
+		<table><tbody>
+<tr class="pass">
+    <td colspan="3">
+        <details >
+            <summary>
+                <span class="status-icon">✔</span>
+                <span class="test-name"><b>AddLogToLogs</b></span>
+                <span class="meta">Method: AddLogToLogs</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">{
+    "type": "log",
+    "message": "Test String"
+}</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label ">EXPECTED:</div>
+                        <pre class="code-block ">true</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">true</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Target Method identified: AddLogToLogs
+🧪 [RUNNER] [SYSTEM] Executing fn.call(bot, inputClone)...
+🧪 [RUNNER] [SYSTEM] Execution complete.
+🧪 [RUNNER] [SYSTEM] Comparison results - Return Match: true, Mutation Match: false
+🦜 [LOG] Test String</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="pass">
+    <td colspan="3">
+        <details >
+            <summary>
+                <span class="status-icon">✔</span>
+                <span class="test-name"><b>Get Log</b></span>
+                <span class="meta">Method: GetLogs</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">undefined</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label ">EXPECTED:</div>
+                        <pre class="code-block ">[]</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">[]</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Target Method identified: GetLogs
+🧪 [RUNNER] [SYSTEM] Executing fn.call(bot, inputClone)...
+🧪 [RUNNER] [SYSTEM] Execution complete.
+🧪 [RUNNER] [SYSTEM] Comparison results - Return Match: true, Mutation Match: false</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="pass">
+    <td colspan="3">
+        <details >
+            <summary>
+                <span class="status-icon">✔</span>
+                <span class="test-name"><b>Basic Debug Labeling</b></span>
+                <span class="meta">Method: DebugPrint</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">{
+    "msg": "Test String"
+}</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label ">EXPECTED:</div>
+                        <pre class="code-block ">{
+    "type": "log",
+    "message": "Test String"
+}</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">{
+    "type": "log",
+    "message": "Test String"
+}</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Target Method identified: DebugPrint
+🧪 [RUNNER] [SYSTEM] Executing fn.call(bot, inputClone)...
+🧪 [RUNNER] [SYSTEM] Execution complete.
+🧪 [RUNNER] [SYSTEM] Comparison results - Return Match: true, Mutation Match: false
+🦜 [LOG] Test String</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="pass">
+    <td colspan="3">
+        <details >
+            <summary>
+                <span class="status-icon">✔</span>
+                <span class="test-name"><b>FormatTime 185 (3:05) from number</b></span>
+                <span class="meta">Method: FormatTime</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">185</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label ">EXPECTED:</div>
+                        <pre class="code-block ">"3:05"</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">"3:05"</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Target Method identified: FormatTime
+🧪 [RUNNER] [SYSTEM] Executing fn.call(bot, inputClone)...
+🧪 [RUNNER] [SYSTEM] Execution complete.
+🧪 [RUNNER] [SYSTEM] Comparison results - Return Match: true, Mutation Match: false</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="pass">
+    <td colspan="3">
+        <details >
+            <summary>
+                <span class="status-icon">✔</span>
+                <span class="test-name"><b>FormatTime 125 (2:05) from string</b></span>
+                <span class="meta">Method: FormatTime</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">"125"</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label ">EXPECTED:</div>
+                        <pre class="code-block ">"2:05"</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">"2:05"</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Target Method identified: FormatTime
+🧪 [RUNNER] [SYSTEM] Executing fn.call(bot, inputClone)...
+🧪 [RUNNER] [SYSTEM] Execution complete.
+🧪 [RUNNER] [SYSTEM] Comparison results - Return Match: true, Mutation Match: false</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="pass">
+    <td colspan="3">
+        <details >
+            <summary>
+                <span class="status-icon">✔</span>
+                <span class="test-name"><b>FormatTime 0 from string</b></span>
+                <span class="meta">Method: FormatTime</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">"0"</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label ">EXPECTED:</div>
+                        <pre class="code-block ">"0:00"</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">"0:00"</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Target Method identified: FormatTime
+🧪 [RUNNER] [SYSTEM] Executing fn.call(bot, inputClone)...
+🧪 [RUNNER] [SYSTEM] Execution complete.
+🧪 [RUNNER] [SYSTEM] Comparison results - Return Match: true, Mutation Match: false</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="pass">
+    <td colspan="3">
+        <details >
+            <summary>
+                <span class="status-icon">✔</span>
+                <span class="test-name"><b>FormatTime negative string</b></span>
+                <span class="meta">Method: FormatTime</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">-1234</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label ">EXPECTED:</div>
+                        <pre class="code-block ">"0:00"</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">"0:00"</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Target Method identified: FormatTime
+🧪 [RUNNER] [SYSTEM] Executing fn.call(bot, inputClone)...
+🧪 [RUNNER] [SYSTEM] Execution complete.
+🧪 [RUNNER] [SYSTEM] Comparison results - Return Match: true, Mutation Match: false</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="pass">
+    <td colspan="3">
+        <details >
+            <summary>
+                <span class="status-icon">✔</span>
+                <span class="test-name"><b>FormatTime invalid string</b></span>
+                <span class="meta">Method: FormatTime</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">"asdf"</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label ">EXPECTED:</div>
+                        <pre class="code-block ">undefined</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">"asdf"</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Target Method identified: FormatTime
+🧪 [RUNNER] [SYSTEM] Executing fn.call(bot, inputClone)...
+🧪 [RUNNER] [SYSTEM] Execution complete.
+🧪 [RUNNER] [SYSTEM] Comparison results - Return Match: true, Mutation Match: false
+🦜 [LOG] cannot parse time from input</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="pass">
+    <td colspan="3">
+        <details >
+            <summary>
+                <span class="status-icon">✔</span>
+                <span class="test-name"><b>FormatTime undefined string</b></span>
+                <span class="meta">Method: FormatTime</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">undefined</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label ">EXPECTED:</div>
+                        <pre class="code-block ">undefined</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">{}</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Target Method identified: FormatTime
+🧪 [RUNNER] [SYSTEM] Executing fn.call(bot, inputClone)...
+🧪 [RUNNER] [SYSTEM] Execution complete.
+🧪 [RUNNER] [SYSTEM] Comparison results - Return Match: true, Mutation Match: false
+🦜 [LOG] cannot parse time from input</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="pass">
+    <td colspan="3">
+        <details >
+            <summary>
+                <span class="status-icon">✔</span>
+                <span class="test-name"><b>FormatTime no input</b></span>
+                <span class="meta">Method: FormatTime</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">""</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label ">EXPECTED:</div>
+                        <pre class="code-block ">undefined</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">{}</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Target Method identified: FormatTime
+🧪 [RUNNER] [SYSTEM] Executing fn.call(bot, inputClone)...
+🧪 [RUNNER] [SYSTEM] Execution complete.
+🧪 [RUNNER] [SYSTEM] Comparison results - Return Match: true, Mutation Match: false
+🦜 [LOG] cannot parse time from input</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="fail">
+    <td colspan="3">
+        <details open>
+            <summary>
+                <span class="status-icon">✘</span>
+                <span class="test-name"><b>Process valid yes vote command</b></span>
+                <span class="meta">Method: ProcessVoteCommand</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">{
+    "version": 1,
+    "authorName": "test_user",
+    "userUuid": "22d43266-8e14-42ad-a66c-c59ec4d37a85",
+    "streamOrigin": "youtube",
+    "receivedAt": 1771553698575,
+    "commands": [],
+    "processedMessage": "",
+    "platform": "",
+    "rawMessage": "!vote -y",
+    "messageId": "",
+    "score": "",
+    "state": {}
+}</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label err-text">EXPECTED:</div>
+                        <pre class="code-block err-text">{
+    "isValid": true,
+    "command": {
+        "type": "vote",
+        "flags": {
+            "y": true,
+            "n": false,
+            "dd": false
+        },
+        "string": "",
+        "executedAt": 1771553698575
+    },
+    "spend": 0,
+    "version": 1,
+    "errInfo": {}
+}</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">{
+    "isValid": true,
+    "command": {
+        "flags": {
+            "y": true,
+            "n": false,
+            "dd": false
+        },
+        "type": "vote",
+        "string": "",
+        "executedAt": 1771553698583
+    },
+    "spend": 0,
+    "version": 1,
+    "errInfo": {}
+}</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Target Method identified: ProcessVoteCommand
+🧪 [RUNNER] [SYSTEM] Executing fn.call(bot, inputClone)...
+🧪 [RUNNER] [SYSTEM] Execution complete.
+🧪 [RUNNER] [SYSTEM] Comparison results - Return Match: false, Mutation Match: false</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="fail">
+    <td colspan="3">
+        <details open>
+            <summary>
+                <span class="status-icon">✘</span>
+                <span class="test-name"><b>Process valid yes vote with double down command</b></span>
+                <span class="meta">Method: ProcessVoteCommand</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">{
+    "version": 1,
+    "authorName": "test_user",
+    "userUuid": "c418b9b6-16da-4f95-a95d-bc8da016ffd9",
+    "streamOrigin": "youtube",
+    "receivedAt": 1771553698575,
+    "commands": [],
+    "processedMessage": "",
+    "platform": "",
+    "rawMessage": "!vote -y -dd",
+    "messageId": "",
+    "score": "",
+    "state": {}
+}</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label err-text">EXPECTED:</div>
+                        <pre class="code-block err-text">{
+    "isValid": true,
+    "command": {
+        "type": "vote",
+        "flags": {
+            "y": true,
+            "n": false,
+            "dd": true
+        },
+        "string": "",
+        "executedAt": 1771553698575
+    },
+    "spend": 0,
+    "version": 1,
+    "errInfo": {}
+}</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">{
+    "isValid": true,
+    "command": {
+        "flags": {
+            "y": true,
+            "n": false,
+            "dd": true
+        },
+        "type": "vote",
+        "string": "",
+        "executedAt": 1771553698583
+    },
+    "spend": 0,
+    "version": 1,
+    "errInfo": {}
+}</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Target Method identified: ProcessVoteCommand
+🧪 [RUNNER] [SYSTEM] Executing fn.call(bot, inputClone)...
+🧪 [RUNNER] [SYSTEM] Execution complete.
+🧪 [RUNNER] [SYSTEM] Comparison results - Return Match: false, Mutation Match: false</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="fail">
+    <td colspan="3">
+        <details open>
+            <summary>
+                <span class="status-icon">✘</span>
+                <span class="test-name"><b>Process valid no vote command</b></span>
+                <span class="meta">Method: ProcessVoteCommand</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">{
+    "version": 1,
+    "authorName": "test_user",
+    "userUuid": "b498c87e-666d-47f6-8fc2-9ab38592a78e",
+    "streamOrigin": "youtube",
+    "receivedAt": 1771553698575,
+    "commands": [],
+    "processedMessage": "",
+    "platform": "",
+    "rawMessage": "!vote -n",
+    "messageId": "",
+    "score": "",
+    "state": {}
+}</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label err-text">EXPECTED:</div>
+                        <pre class="code-block err-text">{
+    "isValid": true,
+    "command": {
+        "type": "vote",
+        "flags": {
+            "n": true,
+            "y": false,
+            "dd": false
+        },
+        "string": "",
+        "executedAt": 1771553698575
+    },
+    "spend": 0,
+    "version": 1,
+    "errInfo": {}
+}</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">{
+    "isValid": true,
+    "command": {
+        "flags": {
+            "y": false,
+            "n": true,
+            "dd": false
+        },
+        "type": "vote",
+        "string": "",
+        "executedAt": 1771553698583
+    },
+    "spend": 0,
+    "version": 1,
+    "errInfo": {}
+}</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Target Method identified: ProcessVoteCommand
+🧪 [RUNNER] [SYSTEM] Executing fn.call(bot, inputClone)...
+🧪 [RUNNER] [SYSTEM] Execution complete.
+🧪 [RUNNER] [SYSTEM] Comparison results - Return Match: false, Mutation Match: false</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="fail">
+    <td colspan="3">
+        <details open>
+            <summary>
+                <span class="status-icon">✘</span>
+                <span class="test-name"><b>Process valid no vote command with double down</b></span>
+                <span class="meta">Method: ProcessVoteCommand</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">{
+    "version": 1,
+    "authorName": "test_user",
+    "userUuid": "4157a68b-1410-43c3-916f-62a49f1e5610",
+    "streamOrigin": "youtube",
+    "receivedAt": 1771553698575,
+    "commands": [],
+    "processedMessage": "",
+    "platform": "",
+    "rawMessage": "!vote -n -dd",
+    "messageId": "",
+    "score": "",
+    "state": {}
+}</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label err-text">EXPECTED:</div>
+                        <pre class="code-block err-text">{
+    "isValid": true,
+    "command": {
+        "type": "vote",
+        "flags": {
+            "n": true,
+            "y": false,
+            "dd": true
+        },
+        "string": "",
+        "executedAt": 1771553698575
+    },
+    "spend": 0,
+    "version": 1,
+    "errInfo": {}
+}</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">{
+    "isValid": true,
+    "command": {
+        "flags": {
+            "y": false,
+            "n": true,
+            "dd": true
+        },
+        "type": "vote",
+        "string": "",
+        "executedAt": 1771553698583
+    },
+    "spend": 0,
+    "version": 1,
+    "errInfo": {}
+}</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Target Method identified: ProcessVoteCommand
+🧪 [RUNNER] [SYSTEM] Executing fn.call(bot, inputClone)...
+🧪 [RUNNER] [SYSTEM] Execution complete.
+🧪 [RUNNER] [SYSTEM] Comparison results - Return Match: false, Mutation Match: false</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="fail">
+    <td colspan="3">
+        <details open>
+            <summary>
+                <span class="status-icon">✘</span>
+                <span class="test-name"><b>Process invalid vote command</b></span>
+                <span class="meta">Method: ProcessVoteCommand</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">{
+    "version": 1,
+    "authorName": "test_user",
+    "userUuid": "c2ca2877-efb1-4b07-8ad4-ca53c140a2ef",
+    "streamOrigin": "youtube",
+    "receivedAt": 1771553698575,
+    "commands": [],
+    "processedMessage": "",
+    "platform": "",
+    "rawMessage": "!vote asdf",
+    "messageId": "",
+    "score": "",
+    "state": {}
+}</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label err-text">EXPECTED:</div>
+                        <pre class="code-block err-text">{
+    "isValid": false,
+    "command": {
+        "type": "vote",
+        "flags": {
+            "n": false,
+            "y": false,
+            "dd": false
+        },
+        "string": ""
+    },
+    "spend": 0,
+    "version": 1,
+    "errInfo": {}
+}</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">{
+    "isValid": false,
+    "command": {
+        "flags": {
+            "y": false,
+            "n": false,
+            "dd": false
+        },
+        "type": "vote",
+        "string": ""
+    },
+    "spend": 0,
+    "version": 1,
+    "errInfo": {
+        "err": "MISSING_CHOICE",
+        "erroredAt": 1771553698583
+    }
+}</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Target Method identified: ProcessVoteCommand
+🧪 [RUNNER] [SYSTEM] Executing fn.call(bot, inputClone)...
+🧪 [RUNNER] [SYSTEM] Execution complete.
+🧪 [RUNNER] [SYSTEM] Comparison results - Return Match: false, Mutation Match: false</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="fail">
+    <td colspan="3">
+        <details open>
+            <summary>
+                <span class="status-icon">✘</span>
+                <span class="test-name"><b>⚠️handleVoteStateUpdate IMPLIMENT PROPER TESTS HERE </b></span>
+                <span class="meta">Method: ProcessVoteCommand</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">{
+    "isValid": true,
+    "command": {
+        "type": "vote",
+        "flags": {
+            "n": true,
+            "y": false,
+            "dd": false
+        },
+        "string": "",
+        "executedAt": 1771401401261
+    },
+    "spend": 0,
+    "version": 1,
+    "errInfo": {}
+}</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label err-text">EXPECTED:</div>
+                        <pre class="code-block err-text">false</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">{
+    "error": "Cannot read properties of undefined (reading 'startsWith')"
+}</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Target Method identified: ProcessVoteCommand
+🧪 [RUNNER] [SYSTEM] Executing fn.call(bot, inputClone)...
+🧪 [RUNNER] [SYSTEM] Caught: Cannot read properties of undefined (reading 'startsWith')
+🧪 [RUNNER] [FATAL] Unexpected runtime error.</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="fail">
+    <td colspan="3">
+        <details open>
+            <summary>
+                <span class="status-icon">✘</span>
+                <span class="test-name"><b>ProcessPrectionCommand: create prediction with l flag</b></span>
+                <span class="meta">Method: CreateNewPrediction</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">{
+    "version": 1,
+    "authorName": "vulbyte",
+    "userUuid": "10091ef9-35ee-4d19-9e41-e337c492162a",
+    "streamOrigin": "youtube",
+    "receivedAt": 1771553698575,
+    "commands": [],
+    "processedMessage": "!prediction -p will this work? -l 45",
+    "rawMessage": "!prediction -p will this work? -l 45",
+    "platform": "youtube",
+    "messageId": "asdf1234qwer5678",
+    "score": "0",
+    "state": {}
+}</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label err-text">EXPECTED:</div>
+                        <pre class="code-block err-text">undefined</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">{
+    "error": "Cannot read properties of undefined (reading 'find')"
+}</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Target Method identified: CreateNewPrediction
+🧪 [RUNNER] [SYSTEM] Executing fn.call(bot, inputClone)...
+🧪 [RUNNER] [SYSTEM] Caught: Cannot read properties of undefined (reading 'find')
+🧪 [RUNNER] [FATAL] Unexpected runtime error.
+🦜 [LOG] creating new prediction event from commandObject: </pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="fail">
+    <td colspan="3">
+        <details open>
+            <summary>
+                <span class="status-icon">✘</span>
+                <span class="test-name"><b>ProcessPrectionCommand: create prediction without prompt but with l flag</b></span>
+                <span class="meta">Method: CreateNewPrediction</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">{
+    "version": 1,
+    "authorName": "vulbyte",
+    "userUuid": "10091ef9-35ee-4d19-9e41-e337c492162a",
+    "streamOrigin": "youtube",
+    "receivedAt": 1771553698575,
+    "commands": [],
+    "processedMessage": "!prediction -p will this work?",
+    "rawMessage": "!prediction -l 45",
+    "platform": "youtube",
+    "messageId": "asdf1234qwer5678",
+    "score": "0",
+    "state": {}
+}</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label err-text">EXPECTED:</div>
+                        <pre class="code-block err-text">undefined</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">{
+    "error": "Cannot read properties of undefined (reading 'find')"
+}</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Target Method identified: CreateNewPrediction
+🧪 [RUNNER] [SYSTEM] Executing fn.call(bot, inputClone)...
+🧪 [RUNNER] [SYSTEM] Caught: Cannot read properties of undefined (reading 'find')
+🧪 [RUNNER] [FATAL] Unexpected runtime error.
+🦜 [LOG] creating new prediction event from commandObject: </pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="fail">
+    <td colspan="3">
+        <details open>
+            <summary>
+                <span class="status-icon">✘</span>
+                <span class="test-name"><b>ProcessPrectionCommand: create prediction with no info</b></span>
+                <span class="meta">Method: CreateNewPrediction</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">{
+    "version": 1,
+    "authorName": "vulbyte",
+    "userUuid": "10091ef9-35ee-4d19-9e41-e337c492162a",
+    "streamOrigin": "youtube",
+    "receivedAt": 1771553698575,
+    "commands": [],
+    "processedMessage": "!prediction -p will this work?",
+    "rawMessage": "!prediction -l 45",
+    "platform": "youtube",
+    "messageId": "asdf1234qwer5678",
+    "score": "0",
+    "state": {}
+}</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label err-text">EXPECTED:</div>
+                        <pre class="code-block err-text">undefined</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">{
+    "error": "Cannot read properties of undefined (reading 'find')"
+}</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Target Method identified: CreateNewPrediction
+🧪 [RUNNER] [SYSTEM] Executing fn.call(bot, inputClone)...
+🧪 [RUNNER] [SYSTEM] Caught: Cannot read properties of undefined (reading 'find')
+🧪 [RUNNER] [FATAL] Unexpected runtime error.
+🦜 [LOG] creating new prediction event from commandObject: </pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="fail">
+    <td colspan="3">
+        <details open>
+            <summary>
+                <span class="status-icon">✘</span>
+                <span class="test-name"><b>CHE TEST</b></span>
+                <span class="meta">Method: CHE</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">{
+    "type": "div"
+}</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label err-text">EXPECTED:</div>
+                        <pre class="code-block err-text">"<div></div>"</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">{
+    "type": "div"
+}</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Target Method identified: CHE
+🧪 [RUNNER] [SYSTEM] Executing fn.call(bot, inputClone)...
+🧪 [RUNNER] [SYSTEM] Execution complete.
+🧪 [RUNNER] [SYSTEM] Comparison results - Return Match: false, Mutation Match: false
+🦜 [LOG] CHE, likely no document, cannot render. returning null</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="pass">
+    <td colspan="3">
+        <details >
+            <summary>
+                <span class="status-icon">✔</span>
+                <span class="test-name"><b>Clamp test: value exceeds max</b></span>
+                <span class="meta">Method: Clamp</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">{
+    "val": 6,
+    "min": 1,
+    "max": 4
+}</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label ">EXPECTED:</div>
+                        <pre class="code-block ">4</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">4</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Target Method identified: Clamp
+🧪 [RUNNER] [SYSTEM] Executing fn.call(bot, inputClone)...
+🧪 [RUNNER] [SYSTEM] Execution complete.
+🧪 [RUNNER] [SYSTEM] Comparison results - Return Match: true, Mutation Match: false</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="pass">
+    <td colspan="3">
+        <details >
+            <summary>
+                <span class="status-icon">✔</span>
+                <span class="test-name"><b>Clamp test: value below min</b></span>
+                <span class="meta">Method: Clamp</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">{
+    "val": 1,
+    "min": 2,
+    "max": 6
+}</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label ">EXPECTED:</div>
+                        <pre class="code-block ">2</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">2</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Target Method identified: Clamp
+🧪 [RUNNER] [SYSTEM] Executing fn.call(bot, inputClone)...
+🧪 [RUNNER] [SYSTEM] Execution complete.
+🧪 [RUNNER] [SYSTEM] Comparison results - Return Match: true, Mutation Match: false</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="pass">
+    <td colspan="3">
+        <details >
+            <summary>
+                <span class="status-icon">✔</span>
+                <span class="test-name"><b>Clamp test: negative value within range</b></span>
+                <span class="meta">Method: Clamp</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">{
+    "val": -1,
+    "min": -3,
+    "max": -4
+}</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label ">EXPECTED:</div>
+                        <pre class="code-block ">-3</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">-3</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Target Method identified: Clamp
+🧪 [RUNNER] [SYSTEM] Executing fn.call(bot, inputClone)...
+🧪 [RUNNER] [SYSTEM] Execution complete.
+🧪 [RUNNER] [SYSTEM] Comparison results - Return Match: true, Mutation Match: false</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="pass">
+    <td colspan="3">
+        <details >
+            <summary>
+                <span class="status-icon">✔</span>
+                <span class="test-name"><b>Clamp test: negative value below min</b></span>
+                <span class="meta">Method: Clamp</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">{
+    "val": -8,
+    "min": -2,
+    "max": -6
+}</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label ">EXPECTED:</div>
+                        <pre class="code-block ">-6</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">-6</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Target Method identified: Clamp
+🧪 [RUNNER] [SYSTEM] Executing fn.call(bot, inputClone)...
+🧪 [RUNNER] [SYSTEM] Execution complete.
+🧪 [RUNNER] [SYSTEM] Comparison results - Return Match: true, Mutation Match: false</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="pass">
+    <td colspan="3">
+        <details >
+            <summary>
+                <span class="status-icon">✔</span>
+                <span class="test-name"><b>GetUsers</b></span>
+                <span class="meta">Method: GetUsers</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">undefined</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label ">EXPECTED:</div>
+                        <pre class="code-block ">[]</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">[]</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Target Method identified: GetUsers
+🧪 [RUNNER] [SYSTEM] Executing fn.call(bot, inputClone)...
+🧪 [RUNNER] [SYSTEM] Execution complete.
+🧪 [RUNNER] [SYSTEM] Comparison results - Return Match: true, Mutation Match: false</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="pass">
+    <td colspan="3">
+        <details >
+            <summary>
+                <span class="status-icon">✔</span>
+                <span class="test-name"><b>LoadBannedWords</b></span>
+                <span class="meta">Method: GetUsers</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">undefined</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label ">EXPECTED:</div>
+                        <pre class="code-block ">[]</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">[]</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Target Method identified: GetUsers
+🧪 [RUNNER] [SYSTEM] Executing fn.call(bot, inputClone)...
+🧪 [RUNNER] [SYSTEM] Execution complete.
+🧪 [RUNNER] [SYSTEM] Comparison results - Return Match: true, Mutation Match: false</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="pass">
+    <td colspan="3">
+        <details >
+            <summary>
+                <span class="status-icon">✔</span>
+                <span class="test-name"><b>GetUnprocessedQueue</b></span>
+                <span class="meta">Method: GetUnprocessedQueue</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">undefined</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label ">EXPECTED:</div>
+                        <pre class="code-block ">[]</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">[]</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Target Method identified: GetUnprocessedQueue
+🧪 [RUNNER] [SYSTEM] Executing fn.call(bot, inputClone)...
+🧪 [RUNNER] [SYSTEM] Execution complete.
+🧪 [RUNNER] [SYSTEM] Comparison results - Return Match: true, Mutation Match: false</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="pass">
+    <td colspan="3">
+        <details >
+            <summary>
+                <span class="status-icon">✔</span>
+                <span class="test-name"><b>GetMessagesQueue</b></span>
+                <span class="meta">Method: GetMessagesQueue</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">undefined</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label ">EXPECTED:</div>
+                        <pre class="code-block ">[]</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">[]</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Target Method identified: GetMessagesQueue
+🧪 [RUNNER] [SYSTEM] Executing fn.call(bot, inputClone)...
+🧪 [RUNNER] [SYSTEM] Execution complete.
+🧪 [RUNNER] [SYSTEM] Comparison results - Return Match: true, Mutation Match: false</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="pass">
+    <td colspan="3">
+        <details >
+            <summary>
+                <span class="status-icon">✔</span>
+                <span class="test-name"><b>GetErroredQueue</b></span>
+                <span class="meta">Method: GetErroredQueue</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">undefined</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label ">EXPECTED:</div>
+                        <pre class="code-block ">[]</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">[]</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Target Method identified: GetErroredQueue
+🧪 [RUNNER] [SYSTEM] Executing fn.call(bot, inputClone)...
+🧪 [RUNNER] [SYSTEM] Execution complete.
+🧪 [RUNNER] [SYSTEM] Comparison results - Return Match: true, Mutation Match: false</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="pass">
+    <td colspan="3">
+        <details >
+            <summary>
+                <span class="status-icon">✔</span>
+                <span class="test-name"><b>GetEvents</b></span>
+                <span class="meta">Method: GetEvents</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">undefined</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label ">EXPECTED:</div>
+                        <pre class="code-block ">[]</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">[]</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Target Method identified: GetEvents
+🧪 [RUNNER] [SYSTEM] Executing fn.call(bot, inputClone)...
+🧪 [RUNNER] [SYSTEM] Execution complete.
+🧪 [RUNNER] [SYSTEM] Comparison results - Return Match: true, Mutation Match: false</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="fail">
+    <td colspan="3">
+        <details open>
+            <summary>
+                <span class="status-icon">✘</span>
+                <span class="test-name"><b>GetSubWindows</b></span>
+                <span class="meta">Method: GetSubWindows</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">undefined</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label err-text">EXPECTED:</div>
+                        <pre class="code-block err-text">[]</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">{}</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Target Method identified: GetSubWindows
+🧪 [RUNNER] [SYSTEM] Executing fn.call(bot, inputClone)...
+🧪 [RUNNER] [SYSTEM] Execution complete.
+🧪 [RUNNER] [SYSTEM] Comparison results - Return Match: false, Mutation Match: false</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="pass">
+    <td colspan="3">
+        <details >
+            <summary>
+                <span class="status-icon">✔</span>
+                <span class="test-name"><b>CreateUserFromFlags no channel id</b></span>
+                <span class="meta">Method: CreateUserFromFlags</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">undefined</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label ">EXPECTED:</div>
+                        <pre class="code-block ">{
+    "error": "channelId CANNOT be null when creating a new user"
+}</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">{
+    "error": "channelId CANNOT be null when creating a new user"
+}</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Target Method identified: CreateUserFromFlags
+🧪 [RUNNER] [SYSTEM] Executing fn.call(bot, inputClone)...
+🧪 [RUNNER] [SYSTEM] Caught: channelId CANNOT be null when creating a new user
+🧪 [RUNNER] [SYSTEM] Caught error matches expectedOutput.error: true</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="fail">
+    <td colspan="3">
+        <details open>
+            <summary>
+                <span class="status-icon">✘</span>
+                <span class="test-name"><b>CreateUserFromFlags with channel id</b></span>
+                <span class="meta">Method: CreateUserFromFlags</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">{
+    "channelId": "asdf1234qwer56789"
+}</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label err-text">EXPECTED:</div>
+                        <pre class="code-block err-text">{
+    "version": 1,
+    "channels": [
+        "asdf1234qwer56789"
+    ],
+    "uuid": "005359a8-a083-47a3-ad1c-32c6f46f37c7",
+    "ttsBans": [],
+    "channelBans": [],
+    "conduct_score": 0,
+    "commendments": {
+        "community": [],
+        "engagement": [],
+        "support": []
+    },
+    "misconduct": {
+        "discrimination": [],
+        "harassment": [],
+        "spam": [],
+        "integrity": []
+    },
+    "isSponser": false,
+    "isChatModerator": false,
+    "isChatAdmin": false,
+    "isVerified": false,
+    "firstSeen": 1771553698575,
+    "points": 0
+}</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">{
+    "version": 1,
+    "channels": [
+        "asdf1234qwer56789"
+    ],
+    "uuid": "806c74d4-f10b-402b-a091-e884bd84923d",
+    "ttsBans": [],
+    "channelBans": [],
+    "conduct_score": 0,
+    "commendments": {
+        "community": [],
+        "engagement": [],
+        "support": []
+    },
+    "misconduct": {
+        "discrimination": [],
+        "harassment": [],
+        "spam": [],
+        "integrity": []
+    },
+    "isSponser": false,
+    "isChatModerator": false,
+    "isChatAdmin": false,
+    "isVerified": false,
+    "firstSeen": 1771553698585,
+    "points": 0
+}</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Target Method identified: CreateUserFromFlags
+🧪 [RUNNER] [SYSTEM] Executing fn.call(bot, inputClone)...
+🧪 [RUNNER] [SYSTEM] Execution complete.
+🧪 [RUNNER] [SYSTEM] Comparison results - Return Match: false, Mutation Match: false
+🦜 [LOG] could not add user to list, no document
+🦜 [LOG] User created: undefined. Total: 0</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="fail">
+    <td colspan="3">
+        <details open>
+            <summary>
+                <span class="status-icon">✘</span>
+                <span class="test-name"><b>ProcessYoutubeV3Message_v1 with valid input</b></span>
+                <span class="meta">Method: ProcessYoutubeV3Message_v1</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">{
+    "version": 1,
+    "apiVersion": 3,
+    "platform": "YouTube",
+    "data": {
+        "kind": "youtube#liveChatMessage",
+        "etag": "ZH94DnsFG0i0w2nEiwn5-16VZ2w",
+        "id": "LCC.EhwKGkNNLVB2TkdCNVpJREZlZkJ3Z1FkNExJQzZR",
+        "snippet": {
+            "type": "textMessageEvent",
+            "liveChatId": "Cg0KC3JHN3ZGN3BjVlBZKicKGFVDS1ppZ0hiZ3BKRzlsZHhYTXFtaVpVZxILckc3dkY3cGNWUFk",
+            "authorChannelId": "UCKZigHbgpJG9ldxXMqmiZUg",
+            "publishedAt": "2026-02-19T07:17:50.330172+00:00",
+            "hasDisplayContent": true,
+            "displayMessage": "HELLO SMALLSVILLE",
+            "textMessageDetails": {
+                "messageText": "HELLO SMALLSVILLE"
+            }
+        },
+        "authorDetails": {
+            "channelId": "UCKZigHbgpJG9ldxXMqmiZUg",
+            "channelUrl": "http://www.youtube.com/channel/UCKZigHbgpJG9ldxXMqmiZUg",
+            "displayName": "@vulbyte",
+            "profileImageUrl": "https://yt3.ggpht.com/jrcU7ZjcLMBzCQbU6QMucPmC-cBiHOFrmTpDS9gDzUdH9FUTyzqgrkX9-rXzRh6Fac_HWWgNoEA=s88-c-k-c0x00ffffff-no-rj",
+            "isVerified": false,
+            "isChatOwner": true,
+            "isChatSponsor": false,
+            "isChatModerator": false
+        }
+    },
+    "receivedAt": 1771485470330
+}</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label err-text">EXPECTED:</div>
+                        <pre class="code-block err-text">{
+    "version": 1,
+    "authorName": "@vulbyte",
+    "userUuid": {
+        "version": 1,
+        "authorName": "@vulbyte",
+        "channels": [
+            "UCKZigHbgpJG9ldxXMqmiZUg"
+        ],
+        "uuid": "496bafea-2dd8-4f4a-8093-96dec9c8cead",
+        "ttsBans": [],
+        "channelBans": [],
+        "conduct_score": 0,
+        "commendments": {
+            "community": [],
+            "engagement": [],
+            "support": []
+        },
+        "misconduct": {
+            "discrimination": [],
+            "harassment": [],
+            "spam": [],
+            "integrity": []
+        },
+        "icon": "",
+        "isSponser": false,
+        "isChatModerator": false,
+        "isChatAdmin": false,
+        "isVerified": false,
+        "firstSeen": 1771486502078,
+        "points": 0
+    },
+    "streamOrigin": "Cg0KC3JHN3ZGN3BjVlBZKicKGFVDS1ppZ0hiZ3BKRzlsZHhYTXFtaVpVZxILckc3dkY3cGNWUFk",
+    "receivedAt": 1771485470330,
+    "commands": [],
+    "processedMessage": "HELLO SMALLSVILLE",
+    "platform": "youtube",
+    "messageId": "",
+    "rawMessage": "HELLO SMALLSVILLE",
+    "score": -100,
+    "state": {}
+}</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">{
+    "version": 1,
+    "authorName": "@vulbyte",
+    "userUuid": {
+        "version": 1,
+        "authorName": "@vulbyte",
+        "channels": [
+            "UCKZigHbgpJG9ldxXMqmiZUg"
+        ],
+        "uuid": "15016a9d-850f-4665-8743-048422149960",
+        "ttsBans": [],
+        "channelBans": [],
+        "conduct_score": 0,
+        "commendments": {
+            "community": [],
+            "engagement": [],
+            "support": []
+        },
+        "misconduct": {
+            "discrimination": [],
+            "harassment": [],
+            "spam": [],
+            "integrity": []
+        },
+        "icon": "",
+        "isSponser": false,
+        "isChatModerator": false,
+        "isChatAdmin": false,
+        "isVerified": false,
+        "firstSeen": 1771553698586,
+        "points": 0
+    },
+    "streamOrigin": "Cg0KC3JHN3ZGN3BjVlBZKicKGFVDS1ppZ0hiZ3BKRzlsZHhYTXFtaVpVZxILckc3dkY3cGNWUFk",
+    "receivedAt": 1771485470330,
+    "commands": [],
+    "processedMessage": "HELLO SMALLSVILLE",
+    "platform": "youtube",
+    "messageId": "",
+    "rawMessage": "HELLO SMALLSVILLE",
+    "score": -100,
+    "state": {}
+}</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Target Method identified: ProcessYoutubeV3Message_v1
+🧪 [RUNNER] [SYSTEM] Executing fn.call(bot, inputClone)...
+🧪 [RUNNER] [SYSTEM] Execution complete.
+🧪 [RUNNER] [SYSTEM] Comparison results - Return Match: false, Mutation Match: false
+🦜 [LOG] rmo base object to get rata from:
+🦜 [LOG] parsing out information from object
+🦜 [LOG] no id found for user, attempting to add the user
+🦜 [LOG] could not add user to list, no document
+🦜 [LOG] User created: @vulbyte. Total: 0
+🦜 [LOG] checking for banned words in message
+🦜 [WARN] unaccounted case for input: 
+🦜 [LOG] attempting to score message:
+🦜 [LOG] score CheckPunctuation(}) : 0
+🦜 [LOG] score CheckForSpaces() : -20
+🦜 [LOG] score CheckForSpaceInChunk : 0
+🦜 [LOG] attempting to add score to user
+🦜 [LOG] continuing to parse information from message text
+🦜 [LOG] undefined
+🦜 [LOG] returning the raw message</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="fail">
+    <td colspan="3">
+        <details open>
+            <summary>
+                <span class="status-icon">✘</span>
+                <span class="test-name"><b>Process Pending Tts</b></span>
+                <span class="meta">Method: FunctionName</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">{}</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label err-text">EXPECTED:</div>
+                        <pre class="code-block err-text">undefined</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">{
+    "error": "Method FunctionName not found on Cockatiel"
+}</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Caught: Method FunctionName not found on Cockatiel
+🧪 [RUNNER] [FATAL] Unexpected runtime error.</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="fail">
+    <td colspan="3">
+        <details open>
+            <summary>
+                <span class="status-icon">✘</span>
+                <span class="test-name"><b>CallTts</b></span>
+                <span class="meta">Method: FunctionName</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">{}</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label err-text">EXPECTED:</div>
+                        <pre class="code-block err-text">undefined</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">{
+    "error": "Method FunctionName not found on Cockatiel"
+}</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Caught: Method FunctionName not found on Cockatiel
+🧪 [RUNNER] [FATAL] Unexpected runtime error.</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="fail">
+    <td colspan="3">
+        <details open>
+            <summary>
+                <span class="status-icon">✘</span>
+                <span class="test-name"><b>ParseAndAddYoutubeV3MessageToUnprocessedQueue</b></span>
+                <span class="meta">Method: FunctionName</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">{}</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label err-text">EXPECTED:</div>
+                        <pre class="code-block err-text">undefined</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">{
+    "error": "Method FunctionName not found on Cockatiel"
+}</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Caught: Method FunctionName not found on Cockatiel
+🧪 [RUNNER] [FATAL] Unexpected runtime error.</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="fail">
+    <td colspan="3">
+        <details open>
+            <summary>
+                <span class="status-icon">✘</span>
+                <span class="test-name"><b>ScoreMessage</b></span>
+                <span class="meta">Method: FunctionName</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">{}</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label err-text">EXPECTED:</div>
+                        <pre class="code-block err-text">undefined</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">{
+    "error": "Method FunctionName not found on Cockatiel"
+}</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Caught: Method FunctionName not found on Cockatiel
+🧪 [RUNNER] [FATAL] Unexpected runtime error.</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="fail">
+    <td colspan="3">
+        <details open>
+            <summary>
+                <span class="status-icon">✘</span>
+                <span class="test-name"><b>ScoreMessage</b></span>
+                <span class="meta">Method: FunctionName</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">{}</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label err-text">EXPECTED:</div>
+                        <pre class="code-block err-text">undefined</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">{
+    "error": "Method FunctionName not found on Cockatiel"
+}</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Caught: Method FunctionName not found on Cockatiel
+🧪 [RUNNER] [FATAL] Unexpected runtime error.</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="fail">
+    <td colspan="3">
+        <details open>
+            <summary>
+                <span class="status-icon">✘</span>
+                <span class="test-name"><b>SanitizeString</b></span>
+                <span class="meta">Method: FunctionName</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">{}</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label err-text">EXPECTED:</div>
+                        <pre class="code-block err-text">undefined</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">{
+    "error": "Method FunctionName not found on Cockatiel"
+}</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Caught: Method FunctionName not found on Cockatiel
+🧪 [RUNNER] [FATAL] Unexpected runtime error.</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="fail">
+    <td colspan="3">
+        <details open>
+            <summary>
+                <span class="status-icon">✘</span>
+                <span class="test-name"><b>ParseCommandFromMessage</b></span>
+                <span class="meta">Method: FunctionName</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">{}</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label err-text">EXPECTED:</div>
+                        <pre class="code-block err-text">undefined</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">{
+    "error": "Method FunctionName not found on Cockatiel"
+}</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Caught: Method FunctionName not found on Cockatiel
+🧪 [RUNNER] [FATAL] Unexpected runtime error.</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="fail">
+    <td colspan="3">
+        <details open>
+            <summary>
+                <span class="status-icon">✘</span>
+                <span class="test-name"><b>RenderDefaultCommandSettings</b></span>
+                <span class="meta">Method: FunctionName</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">{}</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label err-text">EXPECTED:</div>
+                        <pre class="code-block err-text">undefined</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">{
+    "error": "Method FunctionName not found on Cockatiel"
+}</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Caught: Method FunctionName not found on Cockatiel
+🧪 [RUNNER] [FATAL] Unexpected runtime error.</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="fail">
+    <td colspan="3">
+        <details open>
+            <summary>
+                <span class="status-icon">✘</span>
+                <span class="test-name"><b>CheckMessageForBannedWords</b></span>
+                <span class="meta">Method: FunctionName</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">{}</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label err-text">EXPECTED:</div>
+                        <pre class="code-block err-text">undefined</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">{
+    "error": "Method FunctionName not found on Cockatiel"
+}</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Caught: Method FunctionName not found on Cockatiel
+🧪 [RUNNER] [FATAL] Unexpected runtime error.</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="fail">
+    <td colspan="3">
+        <details open>
+            <summary>
+                <span class="status-icon">✘</span>
+                <span class="test-name"><b>dispatchCommand</b></span>
+                <span class="meta">Method: FunctionName</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">{}</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label err-text">EXPECTED:</div>
+                        <pre class="code-block err-text">undefined</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">{
+    "error": "Method FunctionName not found on Cockatiel"
+}</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Caught: Method FunctionName not found on Cockatiel
+🧪 [RUNNER] [FATAL] Unexpected runtime error.</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="fail">
+    <td colspan="3">
+        <details open>
+            <summary>
+                <span class="status-icon">✘</span>
+                <span class="test-name"><b>dispatchCommand</b></span>
+                <span class="meta">Method: FunctionName</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">{}</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label err-text">EXPECTED:</div>
+                        <pre class="code-block err-text">undefined</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">{
+    "error": "Method FunctionName not found on Cockatiel"
+}</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Caught: Method FunctionName not found on Cockatiel
+🧪 [RUNNER] [FATAL] Unexpected runtime error.</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="fail">
+    <td colspan="3">
+        <details open>
+            <summary>
+                <span class="status-icon">✘</span>
+                <span class="test-name"><b>ProcessClipCommand</b></span>
+                <span class="meta">Method: FunctionName</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">{}</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label err-text">EXPECTED:</div>
+                        <pre class="code-block err-text">undefined</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">{
+    "error": "Method FunctionName not found on Cockatiel"
+}</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Caught: Method FunctionName not found on Cockatiel
+🧪 [RUNNER] [FATAL] Unexpected runtime error.</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="fail">
+    <td colspan="3">
+        <details open>
+            <summary>
+                <span class="status-icon">✘</span>
+                <span class="test-name"><b>ProcessTtsCommand</b></span>
+                <span class="meta">Method: FunctionName</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">{}</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label err-text">EXPECTED:</div>
+                        <pre class="code-block err-text">undefined</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">{
+    "error": "Method FunctionName not found on Cockatiel"
+}</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Caught: Method FunctionName not found on Cockatiel
+🧪 [RUNNER] [FATAL] Unexpected runtime error.</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="fail">
+    <td colspan="3">
+        <details open>
+            <summary>
+                <span class="status-icon">✘</span>
+                <span class="test-name"><b>GenerateBannedWordsConfig</b></span>
+                <span class="meta">Method: FunctionName</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">{}</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label err-text">EXPECTED:</div>
+                        <pre class="code-block err-text">undefined</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">{
+    "error": "Method FunctionName not found on Cockatiel"
+}</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Caught: Method FunctionName not found on Cockatiel
+🧪 [RUNNER] [FATAL] Unexpected runtime error.</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="fail">
+    <td colspan="3">
+        <details open>
+            <summary>
+                <span class="status-icon">✘</span>
+                <span class="test-name"><b>UpdateBannedWordsList</b></span>
+                <span class="meta">Method: FunctionName</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">{}</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label err-text">EXPECTED:</div>
+                        <pre class="code-block err-text">undefined</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">{
+    "error": "Method FunctionName not found on Cockatiel"
+}</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Caught: Method FunctionName not found on Cockatiel
+🧪 [RUNNER] [FATAL] Unexpected runtime error.</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="fail">
+    <td colspan="3">
+        <details open>
+            <summary>
+                <span class="status-icon">✘</span>
+                <span class="test-name"><b>GenerateControlBarUI</b></span>
+                <span class="meta">Method: FunctionName</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">{}</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label err-text">EXPECTED:</div>
+                        <pre class="code-block err-text">undefined</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">{
+    "error": "Method FunctionName not found on Cockatiel"
+}</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Caught: Method FunctionName not found on Cockatiel
+🧪 [RUNNER] [FATAL] Unexpected runtime error.</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="fail">
+    <td colspan="3">
+        <details open>
+            <summary>
+                <span class="status-icon">✘</span>
+                <span class="test-name"><b>ModifyUserPoints</b></span>
+                <span class="meta">Method: FunctionName</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">{}</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label err-text">EXPECTED:</div>
+                        <pre class="code-block err-text">undefined</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">{
+    "error": "Method FunctionName not found on Cockatiel"
+}</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Caught: Method FunctionName not found on Cockatiel
+🧪 [RUNNER] [FATAL] Unexpected runtime error.</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="fail">
+    <td colspan="3">
+        <details open>
+            <summary>
+                <span class="status-icon">✘</span>
+                <span class="test-name"><b>GetTrigramsFromFile</b></span>
+                <span class="meta">Method: FunctionName</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">{}</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label err-text">EXPECTED:</div>
+                        <pre class="code-block err-text">undefined</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">{
+    "error": "Method FunctionName not found on Cockatiel"
+}</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Caught: Method FunctionName not found on Cockatiel
+🧪 [RUNNER] [FATAL] Unexpected runtime error.</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="fail">
+    <td colspan="3">
+        <details open>
+            <summary>
+                <span class="status-icon">✘</span>
+                <span class="test-name"><b>UpdateUserDisplay</b></span>
+                <span class="meta">Method: FunctionName</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">{}</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label err-text">EXPECTED:</div>
+                        <pre class="code-block err-text">undefined</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">{
+    "error": "Method FunctionName not found on Cockatiel"
+}</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Caught: Method FunctionName not found on Cockatiel
+🧪 [RUNNER] [FATAL] Unexpected runtime error.</pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr>
+<tr class="fail">
+    <td colspan="3">
+        <details open>
+            <summary>
+                <span class="status-icon">✘</span>
+                <span class="test-name"><b>TTS Command Parsing</b></span>
+                <span class="meta">Method: CreateNewPrediction</span>
+            </summary>
+            
+            <div class="details-content">
+                <div class="full-width">
+                    <div class="label">INPUT PASSED IN:</div>
+                    <pre class="code-block">{
+    "rawMessage": "!tts hello world",
+    "commands": []
+}</pre>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="column">
+                        <div class="label err-text">EXPECTED:</div>
+                        <pre class="code-block err-text">{
+    "version": 1,
+    "command": "tts",
+    "flags": {
+        "p": "1",
+        "r": "1",
+        "v": 51
+    },
+    "AuthNeeded": {
+        "owner": false,
+        "admin": false,
+        "mod": false,
+        "trusted": false
+    },
+    "cost": 0,
+    "message": "hello world"
+}</pre>
+                    </div>
+                    
+                    <div class="column">
+                        <div class="label">ACTUAL:</div>
+                        <pre class="code-block">{
+    "error": "Cannot read properties of undefined (reading 'find')"
+}</pre>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <div class="label">EXECUTION TRACE & STATE LOGS:</div>
+                    <pre class="code-block log-style">🧪 [RUNNER] [SYSTEM] Target Method identified: CreateNewPrediction
+🧪 [RUNNER] [SYSTEM] Executing fn.call(bot, inputClone)...
+🧪 [RUNNER] [SYSTEM] Caught: Cannot read properties of undefined (reading 'find')
+🧪 [RUNNER] [FATAL] Unexpected runtime error.
+🦜 [LOG] creating new prediction event from commandObject: </pre>
+                </div>
+            </div>
+        </details>
+    </td>
+</tr></tbody></table>
+	    </body>
+	    </html>

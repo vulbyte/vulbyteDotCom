@@ -3,374 +3,279 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resume Builder</title>
-		<script src="/client_management.js" type="module"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <title>Pro-Density Resume Builder</title>
     <style>
-        /* 1. SCREEN-ONLY UI LAYOUT */
-        .main-container { display: flex; gap: 20px; padding: 20px; height: 100vh; box-sizing: border-box; }
-        .editor-side { flex: 1; max-width: 40%; overflow-y: auto; padding-right: 10px; }
-
-        .preview-side {
-            flex: 1;
-            background: #f5f5f5;
-            padding: 40px;
-            overflow-y: auto;
+        :root {
+            --sidebar-bg: #1a1a1a;
+            --card-bg: #262626;
+            --input-bg: #000;
+            --text-main: #e0e0e0;
+            --accent: #3a86ff;
+            --danger: #ff4d4d;
+            --border: #333;
         }
 
-        #resume-paper {
-            background: white;
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 40px;
-            min-height: 100%;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            border-radius: 4px;
-            transition: all 0.2s ease;
+        * { box-sizing: border-box; }
+        body { margin: 0; display: flex; height: 100vh; font-family: 'Inter', sans-serif; background: #3c3f41; color: var(--text-main); overflow: hidden; }
+
+        /* --- SIDEBAR UI --- */
+        #sidebar { width: 330px; background: var(--sidebar-bg); border-right: 1px solid #000; display: flex; flex-direction: column; z-index: 100; }
+        .sidebar-header { padding: 12px; background: #111; border-bottom: 1px solid var(--border); }
+        .toolbar { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: 8px; }
+        
+        button, select { background: #444; color: white; border: 1px solid var(--border); padding: 4px; font-size: 11px; cursor: pointer; border-radius: 2px; }
+        button:hover { background: var(--accent); }
+        .btn-del { background: transparent; color: #666; border: none; font-size: 14px; cursor: pointer; }
+        .btn-del:hover { color: var(--danger); }
+
+        #element-list { flex-grow: 1; overflow-y: auto; padding: 8px; display: flex; flex-direction: column; gap: 8px; }
+        .config-card { background: var(--card-bg); border: 1px solid var(--border); padding: 6px; cursor: grab; position: relative; }
+        .config-card.dragging { opacity: 0.4; border: 1px dashed var(--accent); }
+        
+        .card-header { display: flex; justify-content: space-between; align-items: center; font-size: 9px; text-transform: uppercase; font-weight: bold; color: #888; margin-bottom: 4px; pointer-events: none; }
+        .card-header div { pointer-events: auto; } /* Let buttons be clickable */
+        
+        .input-group { display: flex; flex-direction: column; gap: 3px; }
+        input, textarea { background: var(--input-bg); border: 1px solid var(--border); color: #fff; padding: 3px 5px; font-size: 11px; outline: none; width: 100%; }
+        textarea { resize: vertical; min-height: 45px; }
+
+        /* --- PREVIEW UI --- */
+        #preview-pane { flex-grow: 1; overflow-y: auto; display: block; text-align: center; padding-bottom: 100px; }
+        
+        .paper { 
+            display: inline-block;
+            text-align: left;
+            width: 8.5in; 
+            min-height: 11in; 
+            height: auto; 
+            background: white; 
+            margin: 40px auto; 
+            padding: 0.75in; 
+            color: #333; 
+            box-shadow: 0 0 20px rgba(0,0,0,0.4);
         }
 
-        .resume-header { text-align: center; margin-bottom: 15px; }
-        .resume-header h1 { margin: 0; font-size: 2.2em; text-transform: uppercase; }
-        .contact-line { font-size: 0.9em; margin-top: 5px; border-bottom: 1.5px solid; padding-bottom: 8px; }
-        .section-title { border-bottom: 1px solid; text-transform: uppercase; font-weight: bold; font-size: 1.1em; margin: 18px 0 8px 0; }
-        .entry { margin-bottom: 10px; page-break-inside: avoid; }
-        .entry-header { display: flex; justify-content: space-between; font-weight: bold; }
-        .pill-container { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; }
-        .pill { border: 1px solid; padding: 1px 6px; font-size: 0.85em; border-radius: 3px; }
+        /* --- RESUME CONTENT --- */
+        .res-header-block { text-align: center; margin-bottom: 18px; }
+        .res-name { color: #000; font-size: 24pt; font-weight: bold; line-height: 1; margin: 0; }
+        .res-contact { color: #333; font-size: 9.5pt; margin-top: 6px; }
+        .res-divider { border: 0; border-top: 2.5px solid #000; margin: 15px 0; opacity: 1; }
+        .res-item { margin-bottom: 14px; page-break-inside: avoid; }
+        .res-section-head { margin-bottom: 4px; border-bottom: 1px solid #eee; }
+        .res-title { font-size: 11.5pt; font-weight: bold; text-transform: uppercase; color: #333; display: block; }
+        .res-meta { font-size: 9pt; font-style: italic; color: #666; display: block; margin-top: 1px; }
+        .res-content { font-size: 10pt; white-space: pre-wrap; line-height: 1.4; color: #333; }
+        .res-ref-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 8px; align-items: start; }
+        .ref-box { font-size: 9pt; border-left: 2px solid #eee; padding-left: 8px; color: #333; page-break-inside: avoid; margin-bottom: 8px; }
+        .ref-name { font-weight: bold; color: #333; margin-bottom: 1px; display: block; }
 
-        /* 3. EDITOR UI */
-        .draggable-section { border: 1px solid #ddd; padding: 12px; margin-bottom: 15px; border-radius: 4px; position: relative; }
-        .section-header { display: flex; align-items: center; gap: 10px; cursor: pointer; border-bottom: 1px solid #eee; padding-bottom: 8px; }
-        .drag-handle { cursor: grab; color: #999; font-size: 1.2em; }
-        .collapse-content { display: none; margin-top: 10px; }
-        .collapse-content.show { display: block; }
-        
-        .item-box { border: 1px solid #eee; padding: 8px; margin-top: 8px; border-radius: 4px; }
-        .item-header { display: flex; justify-content: space-between; align-items: center; font-size: 0.85em; color: #555; cursor: pointer; padding: 4px; margin-bottom: 5px; }
-        
-        .field-row { width: 100%; margin-bottom: 6px; box-sizing: border-box; display: block; border: 1px solid #ccc; padding: 6px; border-radius: 2px; font-family: sans-serif; }
-        .theme-editor { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; padding: 15px; border: 1px solid #ddd; border-radius: 4px; }
-        
-        button { cursor: pointer; padding: 4px 8px; border: 1px solid #ccc; border-radius: 3px; font-size: 0.85em; }
-        .btn-add { font-weight: bold; }
-        .btn-delete { color: #cc0000; border: none; background: transparent; }
-        .btn-toggle { padding: 2px 6px; font-size: 0.75em; background: #f0f0f0; margin-left: 5px; }
-        .btn-toggle.hidden { background: #ffebee; }
+        /* --- PRINT CONFIG --- */
+        @page { size: letter; margin: 0 !important; }
 
-        /* 4. PRINT LOGIC */
         @media print {
-            @page { margin: 0; margin-bottom:1in; margin-top:1in;}
-            body * { visibility: hidden; }
-            .print, .print * { visibility: visible; }
-            .print { position: absolute; left: 0; top: 0; width: 100% !important; box-shadow: none !important; padding: 0.5in !important; margin: 0 !important; }
-            body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            body { background: white !important; overflow: visible !important; }
+            #sidebar { display: none !important; }
+            #preview-pane { overflow: visible !important; display: block !important; margin: 0 !important; padding: 0 !important; }
+            .paper { 
+                box-shadow: none !important; 
+                margin: 0 !important; 
+                width: 8.5in !important; 
+                padding: 0.65in 0.75in !important; 
+                display: block !important;
+            }
         }
     </style>
 </head>
 <body>
 
-<div class="main-container">
-    <div class="editor-side">
-        <h3 style="margin-top:0">Resume Builder</h3>
-        
-        <div class="theme-editor">
-            <div><label>Font</label><select id="th-font" class="field-row" onchange="updateTheme()"><option value="'Georgia', serif">Serif</option><option value="'Arial', sans-serif">Sans</option><option value="'Courier New', monospace">Mono</option></select></div>
-            <div><label>Size</label><input type="number" id="th-size" class="field-row" value="14" oninput="updateTheme()"></div>
-            <div><label>Paper</label><input type="color" id="th-bg" class="field-row" value="#ffffff" oninput="updateTheme()"></div>
-            <div><label>Text</label><input type="color" id="th-text" class="field-row" value="#111111" oninput="updateTheme()"></div>
+<aside id="sidebar">
+    <div class="sidebar-header">
+        <div style="font-size: 11px; font-weight: bold; color: var(--accent); margin-bottom: 10px;">RESUME CONFIGURATOR</div>
+        <select id="type-selector" style="width: 100%; margin-top: 5px;">
+            <option value="header">Header Block</option>
+            <option value="section">Experience / Education</option>
+            <option value="reference">Reference</option>
+            <option value="divider">Horizontal Divider</option>
+        </select>
+        <div class="toolbar">
+            <button onclick="addItem()">+ Add Item</button>
+            <button onclick="document.getElementById('import-file').click()">Load JSON</button>
+            <button onclick="downloadJSON()">Export JSON</button>
+            <button onclick="window.print()" style="background: var(--accent);">Print PDF</button>
         </div>
-
-        <div style="margin-bottom: 20px; display: flex; gap: 8px;">
-            <button onclick="downloadJSON()">💾 Save Data</button>
-            <button onclick="document.getElementById('importFile').click()">📂 Load Data</button>
-            <input type="file" id="importFile" onchange="importJSON(event)" style="display:none">
-            <button onclick="window.print()" style="background:#2ecc71; color:white; border:none; font-weight:bold;">📄 Save PDF</button>
-        </div>
-
-        <div class="draggable-section">
-            <div class="section-header" onclick="toggleCollapse('personal-info')">
-                <strong>👤 Personal Details</strong>
-            </div>
-            <div id="personal-info" class="collapse-content show">
-                <input type="text" id="in-name" class="field-row" placeholder="Full Name" oninput="updatePersonal()">
-                <input type="text" id="in-email" class="field-row" placeholder="Email" oninput="updatePersonal()">
-                <input type="text" id="in-phone" class="field-row" placeholder="Phone" oninput="updatePersonal()">
-                <input type="text" id="in-loc" class="field-row" placeholder="Location" oninput="updatePersonal()">
-                <input type="text" id="in-link" class="field-row" placeholder="Portfolio/LinkedIn" oninput="updatePersonal()">
-                <textarea id="in-sum" class="field-row" placeholder="Summary" oninput="updatePersonal()" style="height:60px"></textarea>
-            </div>
-        </div>
-
-        <div id="drag-container"></div>
+        <input type="file" id="import-file" style="display:none" accept=".json" onchange="importJSON(event)">
     </div>
+    <div id="element-list"></div>
+</aside>
 
-    <div class="preview-side">
-        <div id="resume-paper" class="print">
-            <div class="resume-header">
-                <h1 id="out-name">NAME</h1>
-                <div id="out-contact" class="contact-line"></div>
-            </div>
-            <div id="out-summary" style="margin-top: 10px;"></div>
-            <div id="out-sections"></div>
-        </div>
-    </div>
-</div>
+<main id="preview-pane">
+    <div class="paper" id="paper-content"></div>
+</main>
 
 <script>
-let resumeData = {
-    name: "", email: "", phone: "", location: "", summary: "", link: "",
-    theme: { font: "'Georgia', serif", size: 14, bg: "#ffffff", text: "#111111" },
-    order: [
-        { id: 'jobs', label: 'Experience', items: [], type: 'list', collapsed: false },
-        { id: 'edu', label: 'Education', items: [], type: 'list', collapsed: false },
-        { id: 'certs', label: 'Certifications', items: [], type: 'list', collapsed: false },
-        { id: 'skills', label: 'Skills', items: [], type: 'pills', collapsed: false }
-    ]
-};
+    let resumeData = [
+        { "id": "1", "type": "header", "fields": { "name": "REINE YURKOWSKI", "contact": "Victoria, BC V8V 1T5 | +1 250 216 2556 | reineyurkowski@gmail.com" }, "whitelisted": true, "visible": true },
+        { "id": "d1", "type": "divider", "fields": {}, "whitelisted": true, "visible": true },
+        { "id": "4", "type": "section", "fields": { "title": "Roofing Supervisor & Foreman", "meta": "All-Pro Roofing | May 2020 – Feb 2026", "content": "• Maintaining and managing crews, customer relations, and various managerial tasks.\n• Handling roofing-related duties and ensuring WorkSafeBC standards are met." }, "whitelisted": true, "visible": true },
+        { "id": "5", "type": "section", "fields": { "title": "Yard Technician & JOSH Member", "meta": "Cermaq Canada | Feb 2020 – Aug 2020", "content": "• Operated Class 4 forklift; handled hazardous materials and shipping/receiving.\n• Maintained health and safety standards as an active JOSH member." }, "whitelisted": true, "visible": true },
+        { "id": "10", "type": "section", "fields": { "title": "Education", "meta": "College of New Caledonia | Apr 2022 – Apr 2023", "content": "Web and Graphic Design (College Certificate). Focus on HTML, CSS, JS, React, Art History, and Typography." }, "whitelisted": true, "visible": true },
+        { "id": "r1", "type": "reference", "fields": { "name": "Rob Leaty", "title": "Land Lord", "phone": "1-(604)-836-0652", "email": "" }, "whitelisted": true, "visible": true },
+        { "id": "r3", "type": "reference", "fields": { "name": "Graham Pearce", "title": "Instructor, UT English at CNC", "phone": "", "email": "pearceg@cnc.bc.ca" }, "whitelisted": true, "visible": true }
+    ];
 
-function toggleCollapse(id) {
-    document.getElementById(id).classList.toggle('show');
-}
+    const listContainer = document.getElementById('element-list');
+    const paper = document.getElementById('paper-content');
 
-function toggleSection(sIdx) {
-    resumeData.order[sIdx].collapsed = !resumeData.order[sIdx].collapsed;
-    render();
-}
-
-function toggleItem(sIdx, iIdx) {
-    const item = resumeData.order[sIdx].items[iIdx];
-    item.collapsed = !item.collapsed;
-    render();
-}
-
-function toggleSectionVisibility(sIdx) {
-    resumeData.order[sIdx].hidden = !resumeData.order[sIdx].hidden;
-    render();
-}
-
-function toggleItemVisibility(sIdx, iIdx) {
-    const item = resumeData.order[sIdx].items[iIdx];
-    item.hidden = !item.hidden;
-    render();
-}
-
-function updatePersonal() {
-    ['name', 'email', 'phone', 'location', 'link', 'summary'].forEach(k => {
-        const el = document.getElementById('in-' + (k==='summary'?'sum':k));
-        if(el) resumeData[k] = el.value;
-    });
-    renderPreview();
-}
-
-function updateTheme() {
-    resumeData.theme.font = document.getElementById('th-font').value;
-    resumeData.theme.size = document.getElementById('th-size').value;
-    resumeData.theme.bg = document.getElementById('th-bg').value;
-    resumeData.theme.text = document.getElementById('th-text').value;
-    renderPreview();
-}
-
-function addItem(sId) {
-    const s = resumeData.order.find(x => x.id === sId);
-    let newItem;
-    
-    if (s.type === 'pills') {
-        newItem = { val: "Skill" };
-    } else if (sId === 'certs') {
-        newItem = { Title: "", Issuer: "", DateCompleted: "", Expiry: "", Desc: "" };
-    } else if (sId === 'edu') {
-        newItem = { Degree: "", School: "", Date: "" };
-    } else {
-        newItem = { Role: "", Company: "", Start: "", End: "", Desc: "" };
+    // 1. Core Logic
+    function render() {
+        renderSidebar();
+        renderPaper();
     }
-    
-    s.items.push({...newItem, collapsed: false, hidden: false});
-    s.collapsed = false; 
+
+    function addItem() {
+        const type = document.getElementById('type-selector').value;
+        const schemas = { header: { name: '', contact: '' }, section: { title: '', meta: '', content: '' }, reference: { name: '', title: '', phone: '', email: '' }, divider: {} };
+        resumeData.push({ id: Date.now().toString(), type, fields: schemas[type], whitelisted: true, visible: true });
+        render();
+    }
+
+    function removeItem(id) {
+        resumeData = resumeData.filter(d => d.id !== id);
+        render();
+    }
+
+    function updateField(id, key, value) {
+        const item = resumeData.find(d => d.id === id);
+        if (item) {
+            item.fields[key] = value;
+            renderPaper();
+        }
+    }
+
+    function toggleVisible(id) {
+        const item = resumeData.find(d => d.id === id);
+        if (item) {
+            item.visible = !item.visible;
+            render();
+        }
+    }
+
+    // 2. Sidebar Rendering with Drag & Drop
+    function renderSidebar() {
+        listContainer.innerHTML = '';
+        resumeData.forEach((item) => {
+            const card = document.createElement('div');
+            card.className = 'config-card';
+            card.draggable = true;
+            card.dataset.id = item.id;
+
+            let inputs = Object.entries(item.fields).map(([k, v]) => 
+                k === 'content' 
+                ? `<textarea oninput="updateField('${item.id}', '${k}', this.value)">${v}</textarea>` 
+                : `<input type="text" value="${v}" oninput="updateField('${item.id}', '${k}', this.value)">`
+            ).join('');
+
+            card.innerHTML = `
+                <div class="card-header">
+                    <span>${item.type}</span>
+                    <div>
+                        <input type="checkbox" ${item.visible ? 'checked' : ''} onchange="toggleVisible('${item.id}')">
+                        <button class="btn-del" onclick="removeItem('${item.id}')">×</button>
+                    </div>
+                </div>
+                <div class="input-group">${inputs || 'Divider Line'}</div>
+            `;
+
+            // Drag Events
+            card.addEventListener('dragstart', () => card.classList.add('dragging'));
+            card.addEventListener('dragend', () => {
+                card.classList.remove('dragging');
+                syncOrder();
+            });
+
+            listContainer.appendChild(card);
+        });
+    }
+
+    // 3. Reordering Logic
+    listContainer.addEventListener('dragover', e => {
+        e.preventDefault();
+        const dragging = document.querySelector('.dragging');
+        if (!dragging) return;
+        
+        const afterElement = getDragAfterElement(listContainer, e.clientY);
+        if (afterElement == null) {
+            listContainer.appendChild(dragging);
+        } else {
+            listContainer.insertBefore(dragging, afterElement);
+        }
+    });
+
+    function getDragAfterElement(container, y) {
+        const draggableElements = [...container.querySelectorAll('.config-card:not(.dragging)')];
+        return draggableElements.reduce((closest, child) => {
+            const box = child.getBoundingClientRect();
+            const offset = y - box.top - box.height / 2;
+            if (offset < 0 && offset > closest.offset) {
+                return { offset: offset, element: child };
+            } else {
+                return closest;
+            }
+        }, { offset: Number.NEGATIVE_INFINITY }).element;
+    }
+
+    function syncOrder() {
+        const ids = [...listContainer.querySelectorAll('.config-card')].map(el => el.dataset.id);
+        resumeData = ids.map(id => resumeData.find(d => d.id === id));
+        renderPaper();
+    }
+
+    // 4. Paper Rendering
+    function renderPaper() {
+        paper.innerHTML = '';
+        let htmlBuffer = "";
+        let inRefGrid = false;
+        
+        resumeData.filter(item => item.whitelisted && item.visible).forEach((item) => {
+            if (item.type === 'reference') {
+                if (!inRefGrid) { htmlBuffer += `<div class="res-ref-grid">`; inRefGrid = true; }
+                htmlBuffer += `<div class="ref-box"><span class="ref-name">${item.fields.name || ''}</span><div>${item.fields.title || ''}</div><div>${item.fields.phone || ''} ${item.fields.email || ''}</div></div>`;
+            } else {
+                if (inRefGrid) { htmlBuffer += `</div>`; inRefGrid = false; }
+                if (item.type === 'header') {
+                    htmlBuffer += `<div class="res-header-block"><h1 class="res-name">${item.fields.name || ''}</h1><div class="res-contact">${item.fields.contact || ''}</div></div>`;
+                } else if (item.type === 'section') {
+                    htmlBuffer += `<div class="res-item"><div class="res-section-head"><span class="res-title">${item.fields.title || ''}</span><span class="res-meta">${item.fields.meta || ''}</span></div><div class="res-content">${item.fields.content || ''}</div></div>`;
+                } else if (item.type === 'divider') {
+                    htmlBuffer += `<hr class="res-divider">`;
+                }
+            }
+        });
+        if (inRefGrid) htmlBuffer += `</div>`;
+        paper.innerHTML = htmlBuffer;
+    }
+
+    // 5. Data persistence
+    function downloadJSON() {
+        const blob = new Blob([JSON.stringify(resumeData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a'); a.href = url; a.download = 'resume.json'; a.click();
+    }
+
+    function importJSON(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const imported = JSON.parse(e.target.result);
+                if (Array.isArray(imported)) { resumeData = imported; render(); }
+            } catch (err) { alert("Invalid JSON"); }
+        };
+        reader.readAsText(file);
+    }
+
     render();
-}
-
-function render() {
-    const container = document.getElementById('drag-container');
-    container.innerHTML = '';
-    
-    resumeData.order.forEach((s, sIdx) => {
-        const div = document.createElement('div');
-        div.className = 'draggable-section';
-        div.setAttribute('data-id', s.id);
-        div.innerHTML = `
-            <div class="section-header">
-                <span class="drag-handle">☰</span>
-                <strong style="flex:1" onclick="toggleSection(${sIdx})">${s.label} (${s.items.length})</strong>
-                <button class="btn-toggle ${s.hidden ? 'hidden' : ''}" onclick="event.stopPropagation(); toggleSectionVisibility(${sIdx})">${s.hidden ? 'Show' : 'Hide'}</button>
-                <button class="btn-add" onclick="addItem('${s.id}')">+</button>
-            </div>
-            <div class="collapse-content ${s.collapsed ? '' : 'show'}">
-                ${s.items.map((it, iIdx) => `
-                    <div class="item-box">
-                        <div class="item-header" onclick="toggleItem(${sIdx}, ${iIdx})">
-                            <span>${it.Role || it.Degree || it.Certificate || it.Title || it.val || 'New Item'}</span>
-                            <div>
-                                <button class="btn-toggle ${it.hidden ? 'hidden' : ''}" onclick="event.stopPropagation(); toggleItemVisibility(${sIdx}, ${iIdx})">${it.hidden ? 'Show' : 'Hide'}</button>
-                                <button class="btn-delete" onclick="event.stopPropagation(); resumeData.order[${sIdx}].items.splice(${iIdx},1); render();">✕</button>
-                            </div>
-                        </div>
-                        <div class="collapse-content ${it.collapsed ? '' : 'show'}">
-                            ${Object.keys(it).filter(k => k !== 'collapsed' && k !== 'hidden').map(k => `
-                                <label style="font-size:9px; color:#888;">${k.toUpperCase()}</label>
-                                ${k === 'Desc' ? 
-                                    `<textarea class="field-row" oninput="resumeData.order[${sIdx}].items[${iIdx}].${k}=this.value;renderPreview()">${it[k]}</textarea>` :
-                                    `<input class="field-row" value="${it[k]}" oninput="resumeData.order[${sIdx}].items[${iIdx}].${k}=this.value;renderPreview()">`
-                                }
-                            `).join('')}
-                        </div>
-                    </div>
-                `).join('')}
-            </div>`;
-        container.appendChild(div);
-    });
-
-    new Sortable(container, {
-        handle: '.drag-handle',
-        animation: 150,
-        onEnd: (evt) => {
-            const movedItem = resumeData.order.splice(evt.oldIndex, 1)[0];
-            resumeData.order.splice(evt.newIndex, 0, movedItem);
-            renderPreview();
-        }
-    });
-    renderPreview();
-}
-
-function renderPreview() {
-    const t = resumeData.theme;
-    const paper = document.getElementById('resume-paper');
-    paper.style.backgroundColor = t.bg;
-    paper.style.color = t.text;
-    paper.style.fontFamily = t.font;
-    paper.style.fontSize = t.size + "px";
-    
-    document.getElementById('out-name').innerText = resumeData.name || "YOUR NAME";
-    const contact = document.getElementById('out-contact');
-    const details = [resumeData.email, resumeData.phone, resumeData.location, resumeData.link].filter(x=>x).join(' • ');
-    contact.innerText = details;
-    contact.style.display = details ? "block" : "none";
-    contact.style.borderColor = t.text;
-
-    document.getElementById('out-summary').innerText = resumeData.summary;
-
-    const out = document.getElementById('out-sections');
-    out.innerHTML = '';
-    resumeData.order.forEach(s => {
-        // Skip hidden sections
-        if (s.hidden) return;
-        
-        // Filter out hidden items
-        const visibleItems = s.items.filter(item => !item.hidden);
-        if (!visibleItems.length) return;
-        
-        let html = `<div class="section-title" style="border-color:${t.text}">${s.label}</div>`;
-        
-        if (s.type === 'pills') {
-            html += `<div class="pill-container">${visibleItems.map(it => `<span class="pill" style="border-color:${t.text}">${it.val}</span>`).join('')}</div>`;
-        } else {
-            html += visibleItems.map(it => {
-                let dateLine = "";
-                if (s.id === 'certs') {
-                    const parts = [];
-                    if (it.DateCompleted) parts.push(it.DateCompleted);
-                    if (it.Expiry) parts.push(`Expires: ${it.Expiry}`);
-                    dateLine = parts.join(' — ');
-                } else {
-                    dateLine = it.Date || (it.Start ? (it.Start + (it.End ? " - " + it.End : "")) : "");
-                }
-
-                return `
-                <div class="entry">
-                    <div class="entry-header">
-                        <strong>${it.Title || it.Role || it.Certificate || it.Degree || ''}</strong>
-                        <span>${dateLine}</span>
-                    </div>
-                    <div style="font-style:italic;">${it.Company || it.Issuer || it.School || ''}</div>
-                    ${it.Desc ? `<div style="white-space: pre-line; font-size: 0.95em; margin-top:4px;">${it.Desc}</div>` : ''}
-                </div>`}).join('');
-        }
-        out.innerHTML += html;
-    });
-}
-
-function downloadJSON() {
-    const blob = new Blob([JSON.stringify(resumeData)], {type: "application/json"});
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = "resume.json"; a.click();
-}
-
-function importJSON(e) {
-    const reader = new FileReader();
-    reader.onload = (ev) => { 
-        const importedData = JSON.parse(ev.target.result);
-        
-        // Define default categories that must ALWAYS exist
-        const defaultCategories = [
-            { id: 'jobs', label: 'Experience', items: [], type: 'list', collapsed: false },
-            { id: 'edu', label: 'Education', items: [], type: 'list', collapsed: false },
-            { id: 'certs', label: 'Certifications', items: [], type: 'list', collapsed: false },
-            { id: 'skills', label: 'Skills', items: [], type: 'pills', collapsed: false }
-        ];
-        
-        // Update personal data
-        resumeData.name = importedData.name || "";
-        resumeData.email = importedData.email || "";
-        resumeData.phone = importedData.phone || "";
-        resumeData.location = importedData.location || "";
-        resumeData.link = importedData.link || "";
-        resumeData.summary = importedData.summary || "";
-        
-        // Update theme
-        if (importedData.theme) {
-            resumeData.theme = importedData.theme;
-            document.getElementById('th-font').value = resumeData.theme.font;
-            document.getElementById('th-size').value = resumeData.theme.size;
-            document.getElementById('th-bg').value = resumeData.theme.bg;
-            document.getElementById('th-text').value = resumeData.theme.text;
-        }
-        
-        // Merge imported categories with defaults - NEVER lose categories
-        if (importedData.order && Array.isArray(importedData.order)) {
-            // Start with default categories
-            const mergedOrder = defaultCategories.map(defaultCat => {
-                // Find matching category in imported data
-                const importedCat = importedData.order.find(cat => cat.id === defaultCat.id);
-                // Use imported data if exists, otherwise use default
-                return importedCat ? {...defaultCat, ...importedCat} : defaultCat;
-            });
-            
-            // Add any extra categories from import that aren't in defaults
-            importedData.order.forEach(importedCat => {
-                if (!defaultCategories.find(cat => cat.id === importedCat.id)) {
-                    mergedOrder.push(importedCat);
-                }
-            });
-            
-            resumeData.order = mergedOrder;
-        } else {
-            // If no order in imported data, keep defaults
-            resumeData.order = defaultCategories;
-        }
-        
-        // Update input fields
-        document.getElementById('in-name').value = resumeData.name;
-        document.getElementById('in-email').value = resumeData.email;
-        document.getElementById('in-phone').value = resumeData.phone;
-        document.getElementById('in-loc').value = resumeData.location;
-        document.getElementById('in-link').value = resumeData.link;
-        document.getElementById('in-sum').value = resumeData.summary;
-        
-        render(); 
-    };
-    reader.readAsText(e.target.files[0]);
-}
-
-window.onload = render;
 </script>
 </body>
 </html>

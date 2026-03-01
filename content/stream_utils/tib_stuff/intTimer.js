@@ -125,6 +125,40 @@ export class IntTimer {
 
 	}
 
+	AddTickListener(func = undefined) {
+		if (func == undefined) { throw new Error("arguement function is undefined"); }
+
+		let matchFound = false;
+		if(this.tickListeners != undefined){
+			for (let i = 0; i < this.tickListeners.length; ++i) {
+				if (this.tickListeners[i] == func) {
+					console.warn('match to attempted add found, not adding the functions due to duplication concerns');
+				}
+			}
+		}
+		else{
+			console.warn("this.tickListeners is undefined for some reason:\n this.tickListeners = ", this.tickListeners)
+		}
+		if (matchFound == false) {
+			this.timeoutListeners += func;
+		}
+		return;
+	}
+	RemoveTickListener(func = undefined) { // WARN: YOU'RE RENAMING TIMEOUT TO TICK HERE <<<<<<<<<<
+		if (func == undefined) { throw new Error("arguement function is undefined"); }
+
+		let matchFound = false;
+		for (let i = 0; i < this.tickListeners.length; ++i) {
+			if (this.tickListeners[i] == func) {
+				console.warn('match to attempted add found, not adding the functions due to duplication concerns');
+				this.tickListeners.pop(i);
+			}
+		}
+		if (matchFound == false) {
+			console.warn("function passed has not been matched to another in the function array, is there an error in the logic somewhere?");
+		}
+		return;
+	}
 	async Tick() { //called when this.time%this.incr == 0
 		if (this.debugMode) {
 			if (this.printNormalizedTick) {
@@ -159,7 +193,8 @@ export class IntTimer {
 			this.timeoutListeners += func;
 		}
 		return;
-	}
+}
+
 	RemoveTimeoutListener(func = undefined) {
 		if (func == undefined) { throw new Error("arguement function is undefined"); }
 
