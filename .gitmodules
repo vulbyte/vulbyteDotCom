@@ -4,3 +4,6 @@
 [submodule "content/stream_utils/tib_stuff/imports/youtubeV3ApiAccessor"]
 	path = content/stream_utils/tib_stuff/imports/youtubeV3ApiAccessor
 	url = https://github.com/vulbyte/youtubeV3ApiAccessor
+[submodule "lib/imports/intTimer"]
+	path = lib/imports/intTimer
+	url = https://github.com/vulbyte/intTimer
