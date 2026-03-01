@@ -1,3 +1,6 @@
 [submodule "content/stream_utils/tib_stuff/imports/webTTSManager"]
 	path = content/stream_utils/tib_stuff/imports/webTTSManager
 	url = https://github.com/vulbyte/webTTSManager
+[submodule "content/stream_utils/tib_stuff/imports/youtubeV3ApiAccessor"]
+	path = content/stream_utils/tib_stuff/imports/youtubeV3ApiAccessor
+	url = https://github.com/vulbyte/youtubeV3ApiAccessor
