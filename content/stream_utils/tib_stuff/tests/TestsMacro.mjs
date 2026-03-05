@@ -435,3 +435,66 @@
 	
 
 
+	{ /* this is a macro command because it relys on the state of the state to get the timestamp */
+		name: "ProcessClipCommand",
+		input: {
+		    "authorName": "vulbyte",
+		    "commands": {
+			"tts": {
+			    "errInfo": {},
+			    "flags": {
+				"p": "1.2",
+				"r": "1.9",
+				"v": "51"
+			    },
+			    "isValid": true,
+			    "message": "yo was good",
+			    "spend": 10000,
+			    "version": 1
+			}
+		    },
+		    "messageId": "LCC.EhwKGkNNLVB2TkdCNVpJREZlZkJ3Z1FkNExJQzZR",
+		    "platform": "youtube",
+		    "processedMessage": "yo was good",
+		    "rawMessage": "!tts -v 51 -r 1.9 -p 1.2 yo was good",
+		    "receivedAt": 1771485470330,
+		    "score": -170,
+		    "state": {},
+		    "streamOrigin": "Cg0KC3JHN3ZGN3BjVlBZKicKGFVDS1ppZ0hiZ3BKRzlsZHhYTXFtaVpVZxILckc3dkY3cGNWUFk",
+		    "userUuid": "bfd32d55-458b-4ba8-9568-f4e226f77949",
+		    "version": 1
+		},
+		targetMethod: "ProcessClipCommand",
+		expectedOutput: undefined,
+	},
+
+
+
+	{
+		name: "GenerateBannedWordsConfig",
+		input: {},
+		targetMethod: "GenerateBannedWordsConfig",
+		expectedOutput: undefined,
+	},
+
+	{
+		name: "UpdateBannedWordsList",
+		input: {},
+		targetMethod: "UpdateBannedWordsList",
+		expectedOutput: undefined,
+	},
+
+	{
+		name: "GetTrigramsFromFile",
+		input: {},
+		targetMethod: "FunctionName",
+		expectedOutput: undefined,
+	},
+
+
+	{
+		name: "CheckMessageForBannedWords",
+		input: undefined,
+		targetMethod: "CheckMessageForBannedWords",
+		expectedOutput: false,
+	},

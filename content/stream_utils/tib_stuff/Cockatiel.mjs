@@ -20,15 +20,15 @@ export default class Cockatiel {
 		},
 		commendment: {
 			version: 1,
-			happenedAt: undefined,
-			byUser: undefined, // uuid
-			messageCommended: undefined, // messageCommended if any
+			happenedAt: null,
+			byUser: null, // uuid
+			messageCommended: null, // messageCommended if any
 		},
 		commands: {
 			version : 1,
-			command : undefined,
-			flags : undefined,
-			func: undefined, // function to call when triggered
+			commandType: null,
+			flags : {}, // ie: e: {value, type, description,}
+			func: null, // function to call when triggered
 			//will check the highest perm first, the first to return true will be assumed. if none true assumed to be public
 			AuthNeeded: { 
 				owner: false,
@@ -40,22 +40,22 @@ export default class Cockatiel {
 			cost: 0
 		},
 		events: {
-			id: undefined,
+			id: null,
 			type: "prediction",
-			startedAt: undefined,
-			completedAt: undefined,
-			expiresAt: undefined,
+			startedAt: null,
+			completedAt: null,
+			expiresAt: null,
 			state: {
 			    prompt: "",
 			    votes: [],
 			}
 		},
 		event_prediction: {
-			id: undefined,
+			id: null,
 			type: "prediction",
-			startedAt: undefined,
-			completedAt: undefined,
-			expiresAt: undefined,
+			startedAt: null,
+			completedAt: null,
+			expiresAt: null,
 			state: {
 			    prompt: "",
 			    votes: [],
@@ -72,25 +72,25 @@ export default class Cockatiel {
 		},
 		errored_queue: {
 		    version: 1,          	
-		    data: undefined,           	// raw data that errored
-		    hardware: undefined,       	// hardware info of the system that failed
-		    erroredAt: undefined,      	// unixTime of when the error happened
-		    errorMessage: undefined,   	// err.message for quick reference
-		    stackTrace: undefined,     	// err.stack: captures the full path of the failure
-		    processingStage: undefined,	// identifies which function/.valueblock was running
+		    data: null,           	// raw data that errored
+		    hardware: null,       	// hardware info of the system that failed
+		    erroredAt: null,      	// unixTime of when the error happened
+		    errorMessage: null,   	// err.message for quick reference
+		    stackTrace: null,     	// err.stack: captures the full path of the failure
+		    processingStage: null,	// identifies which function/.valueblock was running
 		    retryCount: 0              	// increments if you attempt to re-process
 		},
 		flags: {
-			flag : undefined, 
-			value : undefined, 
-			description : undefined, 
+			flag : null, 
+			value : null, 
+			description : null, 
 			range : {min:0.5, max : 3}
 		},
 		log: {
-			type: undefined, // options: modAction, log, warn, err, 
-			message: undefined, // str only
-			data: undefined, // data passed into the message
-			error: undefined, // error info
+			type: null, // options: modAction, log, warn, err, 
+			message: null, // str only
+			data: null, // data passed into the message
+			error: null, // error info
 		},
 		messages: {
 			version: 1,
@@ -108,36 +108,38 @@ export default class Cockatiel {
 		},
 		messageCommand: {
 			isValid: false, // if everything passes, then true, if not (ie not enough credits, not the right perms, etc, then false
-			name: undefined,
+			commandType: null,
 			flags: {}, // flags will be a key value, such as: {-y: true}
-			message: undefined,
-			executedAt: undefined,
-			spend: 0, // amount spent on the command, 			
+			message: null,
+			executedAt: null,
+			pointsOffer: 0, // amount spent on the command,	
+			message: null,
 			version: 1, // version to check
 			errInfo: {
-				err: undefined,
-				erroredAt: undefined,
+				err: null,
+				erroredAt: null,
 			},
+			state: {},
 		},
 		misconduct: {
 			version: 1,
-			happenedAt: undefined, // unixTimestamp	
-			byUser: undefined, //  uuid
-			messageMisconduct: undefined, // if null do not add
+			happenedAt: null, // unixTimestamp	
+			byUser: null, //  uuid
+			messageMisconduct: null, // if null do not add
 		},
 		unprocessed_message_v1: {
 			version : 1,
 			apiVersion : 3, // youtube,
-			data : undefined,
-			dateTime : undefined,
-			platform : undefined,
-			failedProcessingAt : undefined,
+			data : null,
+			dateTime : null,
+			platform : null,
+			failedProcessingAt : null,
 		},
 		user: {
 			version : 1, 
-			authorName : undefined,
+			authorName : null,
 			channels : [],
-			uuid : undefined,
+			uuid : null,
 			ttsBans : [], // times they've been restricted from using tts (ie non-english, spam, etc)
 			channelBans : [], // when banned and why
 			conduct_score: 0, // -5 is the worst, 5 is the best, calculated at init or when a commendment or misconduct is added. ranks are in the following order (worst to best): 
@@ -163,12 +165,12 @@ export default class Cockatiel {
 				spam: [], // self-promo, asdl;fknfrtn, links, etc
 				integrity: [], // language, spoilers, trolling/rage, bypassing filters
 			},
-			icon: undefined, //only allow icons from yt/twitch/etc
+			icon: null, //only allow icons from yt/twitch/etc
 			isSponser: false, // is a paying memeber/has payed money this stream 
 			isChatModerator: false, // can remove messages or but users on timeout
 			isChatAdmin: false, // can manage blocked words, change chat modes, and some other things
 			isVerified: false, // if they have been verified by the platform
-			firstSeen: undefined, //Date.now()
+			firstSeen: null, //Date.now()
 			points : 0,
 		}
 	};	
@@ -204,7 +206,7 @@ export default class Cockatiel {
 		      "end",
 		      "anything_after",
 		    ],
-		    positionSelected : "start", //
+		    positionSelected : "start",
 		  },
 		},
 		commands: { // only add commands that are implimented
@@ -212,13 +214,14 @@ export default class Cockatiel {
 				version: 1,
 				command: "clip",
 				flags: [
-					{ flag: ['d'], value: 1, description: "approximate duration of the clip in minutes", range: { min: 0.1, max: 10 } },
-					{ flag: ['m'], value: 1, description: "a message the user can include", range: { min: 0.5, max: 3 } },
+					{ flag: ['l'], value: 1, description: "approximate duration of the clip in minutes", range: { min: 0.1, max: 10 } },
 				],
 				func: '', //function to call when triggered
 				AuthNeeded: { owner: false, admin: false, mod: false, trused: false
 				},
-				cost: 0
+				cost: 0,
+				state: {},
+				errInfo: {err: null, errMsg: null},
 			},
 			/* not implimented
 			{
@@ -232,38 +235,43 @@ export default class Cockatiel {
 			tts: {
 				version: 1,
 				command: "tts",
-				flags: [
-					{ flag: ['p'], value: 1, description: "modifys the pitch of the tts", range: { min: 0.5, max: 3 } },
-					{ flag: ['r', 's'], value: 1, description: "modifys the speed [rate] of the tts message", range: { min: 0.5, max: 3 } },
-					{ flag: ['v'], value: 1, description: "modifys the voice of the tts message", range: { min: 0, max: 180 } },
-				],
+				flags: {
+					p: {value: 1, type:"number", description: "modifys the pitch of the tts", range: { min: 0.5, max: 3 } },
+					/* below is an alias for speed*/
+					r: {value: 1, type:"number", description: "modifys the speed [rate] of the tts message", range: { min: 0.5, max: 3 } },
+					v: {value: 1, type:"number", description: "modifys the voice of the tts message", range: { min: 0, max: 180 } },
+				},
 				AuthNeeded: { owner: false, admin: false, mod: false, trused: false},
 				func: this.CallTts, //function to call when triggered
-				cost: 0
+				cost: 10000,
+				state: {readAt: null},
+				errInfo: {err: null, errMsg: null},
 			},
 			prediction: {
 				version : 1,
 				command : "predition",
-				flags : [
-					{ flag: ['p'], value: "", description: "prompt to be shown to the users"},
-					{ flag: ['r'], value: "", description: "refunds the points"},
-					{ flag: ['e'], value: "", description: "ends the current prediction and rewards based on distribution"},
-				],
+				flags : {
+					p: {value: "", type: "string", description: "prompt to be shown to the users"},
+					r: {value: "", type: "string", description: "refunds the points, value if for reason"},
+					e: {value: "", type: "string", description: "ends the current prediction and rewards based on distribution, value is for reason"},
+				},
 				AuthNeeded: { owner: false, admin: false, mod: true, },
 				func: this.ProcessPredictionCommand, // function to call when triggered
 				//will check the highest perm first, the first to return true will be assumed. if none true assumed to be public
-				cost: 0
+				cost: 0,
+				state: {},
+				errInfo: {err: null, errMsg: null},
 			},
 			vote: {
 				version : 1,
 				command : "vote",
-				flags : [
-					{ flag: ['a'], value: "", description: "amount to wager"},
-					{ flag: ['dd'], value: "", description: "triggers double down, (no payout, but next payout will be double)"},
-					{ flag: ['y'], value: "", description: "makes vote for yes"},
-					{ flag: ['n'], value: "", description: "makes a vote for no"},
+				flags : {
+					a: {type: "number", value: "", description: "amount to wager", range: {min: 100, max: 1000000}},
+					dd: { type: "number", value: "", description: "triggers double down, (no payout, but next payout will be double)"},
+					y: {type: "boolean", value: "", description: "makes vote for yes"},
+					n: {type: "boolean", value: "", description: "makes a vote for no"},
 
-				],
+				},
 				func: this.ProcessVoteCommand, // function to call when triggered
 				//will check the highest perm first, the first to return true will be assumed. if none true assumed to be public
 				AuthNeeded: { 
@@ -273,13 +281,15 @@ export default class Cockatiel {
 					// trusted users are users who have a certain amount of lifetime score or time since first appearance.
 					trusted: false, 
 				},
-				cost: 0
+				cost: 0,
+				state: {},
+				errInfo: {err: null, errMsg: null},
 			}
 			/* not implimented
 			{
 				version: 1,
 				command: "rank",
-				flags: [{ flag: ['d'], value: 1, description: "for people to add/update their rankings on a game", range: { min: 0.1, max: 10 } },
+				flags: { d: { flag: ['d'], value: 1, description: "for people to add/update their rankings on a game", range: { min: 0.1, max: 10 } },
 				],
 				func: '', //function to call when triggered
 				AuthNeeded: { owner: false, admin: false, mod: false, trused: false }
@@ -298,6 +308,35 @@ export default class Cockatiel {
 		users: [],
 	}
 
+	GetState(){
+		return (this.#state);
+	}
+
+	CastValueToType(value, type){
+		switch(type){			
+			case("string"):
+				value = String(value);
+				break;
+			case("number"):
+				value = Number(value);
+				break;
+			case("boolean"):
+				value = Boolean(value);
+				break;
+			case("symbol"):
+				value = Symbol(value);
+				break;
+			case("bigint"):
+				value = BigInt(value);
+				break;
+			default:
+				this.DebugPrint({msg:"value not found for primitive", type: "throw"});
+			case("null"):
+			case("undefined"):
+				break;
+		}
+		return value;
+	}
 	AddLogToLogs(logObj){
 		this.#state.logs.push(logObj);
 		return true;
@@ -312,37 +351,52 @@ export default class Cockatiel {
 	    type: "log", 
 	    style: "background-color:#550; color: #fff; padding: 2px 5px;",
 	    error: undefined,
+	    err: undefined,
+	    silent: false, // for when you don't want a thing to be printed but still logged
 	}){
 	    // 1. Functional Logic (The Switch)
 	    switch(args.type){
 		case("throw"):
 		case("t"):
-		    throw new Error(args.msg, args.val);
+		    throw new Error(
+			    args.msg, 
+			    args.val || args.value || undefined, 
+			    args.error || args.err || undefined
+		    );
 		    break;
 		
 		case("error"):
 		case("err"):
 		case("e"):
-		    console.error(`%c${args.msg}`, args.style);
-		    this._printExtraData(args.val, args.error);
+		    if(args.silent){
+		    console.error(`%c${
+			    args.msg, 
+			args.val || args.value || undefined, 
+			JSON.stringify(
+				args.error || args.err || undefined, null,4
+			)}`, args.style);
+		    }
 		    break;
 
 		case("warning"):
 		case("warn"):
 		case("war"):
 		case("w"):
-		    console.warn(`%c${args.msg}`, args.style);
-		    this._printExtraData(args.val, args.error);
+		    if(args.silent){
+			    console.warn(`%c${args.msg, args.val || args.value || undefined, JSON.stringify(args.error || args.err || undefined, null,4)}`, args.style);
+		    }
 		    break;
 
 		case("log"):
-		    console.log(`%c${args.msg}`, args.style);
-		    this._printExtraData(args.val, args.error);
+		    if(args.silent){
+			    console.log(`%c${args.msg, args.val || args.value || undefined, JSON.stringify(args.error || args.err || undefined, null,4)}`, args.style);
+		    }
 		    break;
 
 		default:
-		    console.log(`%c[DebugPrint fallback] ${args.msg}`, args.style);
-		    this._printExtraData(args.val, args.error);
+		    if(args.silent){
+			    console.log(`%c[DebugPrint fallback] ${args.msg, args.value || args.val || undefined, args.err || args.error || undefined}`, args.style);
+		    }
 		    break;
 	    }
 
@@ -482,51 +536,217 @@ export default class Cockatiel {
 	}	
 
 	ProcessVoteCommand(processedMsg) {
-		// Use optional chaining to prevent crashes if state or msg is missing
-		const token = this.#state.config.flag.token;
-		const flag = "vote";
-		const prefix = token + flag;
+		let ret = this.templates.messageCommand;	
+		ret.isValid = null; // false until turned true
+		/* reference as of: 2026_03_03
+		messageCommand: {
+			isValid: false, // if everything passes, then true, if not (ie not enough credits, not the right perms, etc, then false
+			type: undefined,
+			flags: {}, // flags will be a key value, such as: {-y: true}
+			message: undefined,
+			executedAt: undefined,
+			spend: 0, // amount spent on the command, 			
+			version: 1, // version to check
+			errInfo: {
+				err: undefined,
+				erroredAt: undefined,
+			},
+		},
+		*/
+		ret.commandType = "vote";
 
-		// Defensive check: if msg is malformed or doesn't start with !vote, exit
-		if (!processedMsg.rawMessage.toLowerCase().startsWith(prefix)) {
-		    return undefined;
+		let flagPlusToken = String(this.#state.config.flag.token + this.#state.commands.vote.command);
+		if (processedMsg.rawMessage.slice(0, flagPlusToken.length) !=  flagPlusToken){
+			this.DebugPrint({msg: "token found is not detected to be a vote token, aborting processing"});
 		}
 
-		const response = JSON.parse(JSON.stringify(this.templates.messageCommand));
-		const tokens = processedMsg.rawMessage.toLowerCase().split(/\s+/);
+		this.DebugPrint({msg: "token found is a vote token, processing"});
 
-	    const hasY = tokens.includes("-y");
-	    const hasN = tokens.includes("-n");
-	    const hasDD = tokens.includes("-dd");
+		//find all flags that come after and start with a "-"
+		let msg = processedMsg.rawMessage;
+		msg = msg.split(" "); // breaks into array based on space ie: ["hello", "world"]
+		//find all flags and parse
+		for(let k = 1; k < msg.length; k = ++k){ // start at 1 to skip flag, skip every other flag because key value pairs
+			let flag, value;
+			if(msg[k][0] == "-"){
+				if (msg[k].length < 2){this.DebugPrint({msg: "cannot complete command, flag is improper", type: "t"})};	
+				flag = msg[k].slice(1, msg[k].length);
+				if(
+					flag.toLowerCase() == "y" 
+					|| flag.toLowerCase() == "n"
+					|| flag.toLowerCase() == "dd"
+				){
+					ret.flags[flag] = true;
+					continue;
+				}
+	
+				if(msg.length > k+1){
+					value = msg[k+1];
+					ret.flags[flag] = value;
+					++k;
+				}
+				else if(k == msg.length-1){
+					this.DebugPrint({msg: "last items doesn't have a value, is likely message:", val: msg[k]});	
+					msg = msg[k];
+					break;
+				}
+			}
+			else{
+				/*
+				this.DebugPrint({msg: "command not found, skipping to verify flags"});
+				let total = k; //to account for spaces
+				for(let l = k; l > -1; --l){
+					total += msg[l].length;
+				}
+				msg = processedMsg.rawMessage.slice(total, processedMsg.rawMessage.length);
+				this.DebugPrint({msg: "assign msg value to:", val: msg});
+				ret.message = msg;
+				*/
 
-	    response.command.type = "vote";
-	    response.command.string = ""; 
-	    response.command.flags = { y: hasY, n: hasN, dd: hasDD };
+				
+				this.DebugPrint({msg: "assigning message value if any"});
+				let message = "";
+				for(let l = k; l < msg.length; ++l){
+					message += String(msg[l] + " ");
+				}
+				message = message.trim(); // to clean space often left at end
 
-	    const hasValidChoice = (hasY || hasN) && !(hasY && hasN);
+				this.DebugPrint({msg: "assign msg value to:", val: message});
+				ret.message = message;
+				
 
-	    if (hasValidChoice) {
-		response.isValid = true;
-		response.command.executedAt = Date.now();
-		
-		// Point Calculation
-		let amount = 1000;
-		const aIndex = tokens.indexOf("-a");
-		if (aIndex !== -1 && tokens[aIndex + 1]) {
-		    const parsed = parseInt(tokens[aIndex + 1]);
-		    if (!isNaN(parsed)) amount = Math.floor(parsed);
+				break;
+			}
+		}	
+
+		//helper to ensure valid state
+		if(ret.string == undefined || ret.string == ""){
+			ret.string = null;
 		}
 
-		const user = this.#state.users.find(u => u.uuid === processedMsg.userUuid);
-		const userPoints = user ? (user.points || 0) : 0;
-		response.spend = Math.min(amount, userPoints);
-	    } else {
-		response.isValid = false;
-		response.errInfo.err = !hasY && !hasN ? "MISSING_CHOICE" : "AMBIGUOUS_CHOICE";
-		response.errInfo.erroredAt = Date.now();
-	    }
+		let flags = this.#state.commands.vote.flags;
+		/* as of: 2026_03_03
+		flags : {
+			a: {type: "number", value: "", description: "amount to wager", range: {min: 100, max: 10000}},
+				dd: {type: "number", value: "", description: "triggers double down, (no payout, but next payout will be double)"},
+				y: {type: "boolean", value: "", description: "makes vote for yes"},
+				n: {type: "boolean", value: "", description: "makes a vote for no"},
 
-	    return response; // Return the parsed object
+		},
+		*/
+		this.DebugPrint({msg: "flags parsed, verifying flags are valid", val: ret.flags, type:"logs"});
+		for(let k = 0; k < Object.keys(flags).length; ++k){	
+			let key, value, castValue, currentFlag;
+
+			key = Object.keys(flags)[k];
+			value = ret.flags[key];
+			currentFlag = flags[key];
+			castValue = this.CastValueToType(value, currentFlag.type);
+
+			currentFlag = flags[key];
+			/*
+			if(ret.flags[key] == undefined){
+				this.DebugPrint({
+					msg: "currentFlag is null, did a user try use an invalid flag? skipping checks for this flag.", 
+					val: {key: value}, 
+					type: 'w'
+				});
+			}
+			*/
+
+			if(value == undefined){
+				switch(key){
+					case('y'):
+					case('n'):
+						this.DebugPrint({msg: `check for key ${key} is undefined, assigning bool value of false`});
+						ret.flags[key] = false;
+						break;
+					case('dd'):
+						this.DebugPrint({msg: `check for key ${key} is undefined, assigning bool value of false`});
+						ret.flags[key] = false;
+						break;
+					case('a'):
+						this.DebugPrint({msg: `check for key '${key}' is undefined, giving value of null`});
+						ret.flags[key] = null;
+						this.DebugPrint({msg: `key '${key}' is now the value of ${ret.flags[key]}`});
+						value = ret.flags[key];
+						break;
+					default:
+						this.DebugPrint({msg: "no key for current flag, adding as as undefined", val: key, type: "w"});
+						ret.flags[key] = undefined;
+						break;
+				}
+			}
+
+			
+			//check type
+			if(typeof castValue != currentFlag.type){
+				this.DebugPrint({
+					msg: "cast value is not equal to the expected type", 
+					val: {exp: currentFlag.type || undefined, actual: value, cast: castValue}, 
+					type: 'w'
+				});
+				ret.errInfo = {
+					err: `cast value is not expected type. expected: ${currentFlag.type}, got: ${value}, on flag: ${key}`,
+					erroredAt: Date.now(),
+				}
+				this.DebugPrint({msg: "because cast value != currentFlag.type, setting isValid to false"});
+				ret.isValid = false;
+				continue;
+			};
+			//check range
+			if(
+				currentFlag.range != undefined
+			){
+				let min = currentFlag.range.min;
+				let max = currentFlag.range.max;
+				this.DebugPrint({msg: `clamping value for flag ${key}:`, val: {value: String(value), min: min, max: max}});
+				ret.flags[key] = this.Clamp({
+					val: value,
+					min: min,
+					max: max,
+				});
+
+				this.DebugPrint({msg: `key '${key}' has been clamped to a new value of:`, val: ret.flags[key]});
+			}
+		}
+
+
+		ret = this.SortMap(ret);
+		ret.executedAt = null;
+
+		if (ret.flags.y == ret.flags.n){
+			this.DebugPrint({msg: "ret.flags.y == ret.flags.n, impossible to determine outcome"});
+				ret.errInfo = {
+					err: `missing valid y/n choice`,
+					erroredAt: Date.now(),
+				}	
+				ret.isValid = false;
+		}
+
+		if(this.#state.events.length > 0){
+			if(HandleVoteStateUpdate(ret) == true){
+				ret.executedAt = Date.now();
+			}
+			else if(HandleVoteStateUpdate(ret) == false){
+				ret.errInfo = {
+					err: `could not process vote.`,
+					erroredAt: Date.now(),
+				}
+				ret.isValid == false;
+			}
+		}
+
+		if(
+			ret.isValid == null 
+			&& ret.errInfo.err == undefined
+			&& ret.errInfo.erroredAt == undefined
+		){
+			this.DebugPrint({msg: "because cast value == null, setting isValid to true"});
+			ret.isValid = true;
+		}
+
+		return ret;
 	}
 /**
 	 * Processes a validated vote command into the state.
@@ -584,7 +804,7 @@ export default class Cockatiel {
 	    }
 
 	    // 6. Final UI/State Trigger
-	    this.EventDisplayManager?.();
+	    this.EventDisplayManager();
 	    return true;
 	}
 
@@ -916,26 +1136,28 @@ export default class Cockatiel {
 	}
 
 EventDisplayManager() {
+	let silent;
 	try{
 		if(document){this.DebugPrint({msg: "document found, updating display"});}
 	}
 	catch(err){
-	    this.DebugPrint({msg: "no document found, skipping update", error:err});		
+	    this.DebugPrint({msg: "no document found, skipping update", error:err, silent: silent});		
 		return;
 	}
-    	this.DebugPrint({msg: "Event Display Manager called"});
+
+    	this.DebugPrint({msg: "Event Display Manager called", scilent: true});
 
 	let targetDoc; 
     	const eventsWin = this.#state.subWindows["events"];
 	try{
 	    if (!eventsWin || !eventsWin.document) {
-		this.DebugPrint({msg: "Manager Error: Sub-window or document missing.", type: "err"});
+		this.DebugPrint({msg: "Manager Error: Sub-window or document missing.", type: "err", silent: silent});
 		targetDoc = eventsWin.document;
 		return;
 	    }
 	}	
 	catch(err){
-		this.DebugPrint({msg: "document not found, skipping append", error: err})
+		this.DebugPrint({msg: "document not found, skipping append", error: err, silent: silent})
 		return;
 	}
 
@@ -967,24 +1189,24 @@ EventDisplayManager() {
 		targetDoc.getElementById(targetId);
 	}
 	catch(err){
-		this.DebugPrint({msg: `targetDoc does not contain element with id ${targetId}`, type: "err"});
+		this.DebugPrint({msg: `targetDoc does not contain element with id ${targetId}`, type: "err", silent: silent});
 		return;
 	}
 
     if (!existingElement) {
-        this.DebugPrint({msg: `Rendering New Content: [${targetId}]`});
+        this.DebugPrint({msg: `Rendering New Content: [${targetId}]`, silent: silent});
         
         // We do not "Clear" separately. 
         // We perform an "Atomic Write" to the body.
         if (targetHtml && targetHtml.trim() !== "") {
             targetDoc.body.innerHTML = targetHtml;
         } else {
-            this.DebugPrint({msg: "Warning: targetHtml was empty. Rendering standby instead."});
+            this.DebugPrint({msg: "Warning: targetHtml was empty. Rendering standby instead.", silent: silent});
             targetDoc.body.innerHTML = this.RenderStandbyHTML();
         }
     } else {
         // ID exists, so we do nothing and let the TickListeners handle updates
-        this.DebugPrint({msg: `ID [${targetId}] already exists. Skipping update.`});
+        this.DebugPrint({msg: `ID [${targetId}] already exists. Skipping update.`, silent: silent});
     }
 
     // 3. Queue Rotation
@@ -1138,27 +1360,70 @@ EventDisplayManager() {
 			this.DebugPrint({msg: "CHE, likely no document, cannot render. returning null", val:"YOU DUMB FUCK", error: err, type: "throw"})
 		}
 	};
-	//MATH ESC FUNTIONS
-	Clamp({ val, min, max } = {}) {
-	    // 1. Force conversion to numbers
-	    const n = Number(val);
-	    const low = Number(min);
-	    const high = Number(max);
 
-	    // 2. Strict Validation: Throw if any input is invalid
-	    if (isNaN(n) || isNaN(low) || isNaN(high)) {
-		const errorMsg = `Clamp received invalid numbers: val=${val}, min=${min}, max=${max}`;
-		this.DebugPrint({ msg: errorMsg });
-		throw new TypeError(errorMsg); 
+	/**
+	 * Recursively alphabetizes keys in objects and elements in arrays.
+	 */
+	SortMap(input) {
+	    // 1. Handle non-object types (null, strings, numbers, etc.)
+	    if (input === null || typeof input !== 'object') {
+		return input;
 	    }
 
-	    // 3. Logic Safety: Ensure low is actually lower than high
-	    // This prevents Math.min(Math.max()) from returning unexpected results
-	    const actualMin = Math.min(low, high);
-	    const actualMax = Math.max(low, high);
+	    // 2. Handle Arrays: Sort their contents recursively
+	    if (Array.isArray(input)) {
+		return input.map(this.SortMap);
+	    }
+
+	    // 3. Handle Objects/Classes: Get keys, sort them, and rebuild
+	    return Object.keys(input)
+		.sort()
+		.reduce((acc, key) => {
+		    const value = input[key];
+		    // Recursively sort the value if it's an object/array
+		    acc[key] = this.SortMap(value);
+		    return acc;
+		}, {});
+	}
+
+	//MATH ESC FUNTIONS
+	Clamp(args = { val, min, max }) {
+	    // 1. Force conversion to numbers
+	    let val = Number(args.val);
+	    let min = Number(args.min);
+	    let max = Number(args.max);
+
+	    if(min > max){
+		max = [min, min = max][0];
+	    }
+
+	    this.DebugPrint({ msg: `attempting to clamp ${val} between ${min} and ${max}`});
+
+	    if (val == undefined){
+	    	this.DebugPrint({ msg: ("value is undefined" + console.trace()), type: "t", val: args,});
+	    }
+
+	    if(min == undefined || max == undefined){
+	    	this.DebugPrint({ msg: "either min or max is undefined and that's not expected", type: "t", val: {min: min, max: max}});
+	    }
+	    if(
+		    val > max 
+		    && max != undefined
+	    ){
+	    	this.DebugPrint({msg: "value clamped, returning:", val: max});
+		return max;
+    	    }
+	    else if(
+		    val< min 
+		    && max != undefined
+	    ){
+	    	this.DebugPrint({msg: "value clamped, returning:", val: min});
+	    	return min;
+	    }
 
 	    // 4. Return the clamped value
-	    return Math.min(Math.max(n, actualMin), actualMax);
+	    this.DebugPrint({msg: "value clamped, returning:", val: val});
+	    return val;
 	}
 
 	CalcUserConductScore(user = undefined){
@@ -1241,7 +1506,7 @@ EventDisplayManager() {
 	GetUnprocessedQueue(){
 		return this.#state.unprocessed_queue;
 	}
-	GetMessagesQueue(){
+	GetMessages(){
 		return this.#state.messages;
 	}
 	GetErroredQueue(){
@@ -1583,20 +1848,34 @@ EventDisplayManager() {
 
 		// commands_commands_commands_commands_commands_commands_commands_commands_commands_commands_commands_commands_
 		let commandObject = this.ParseCommandFromMessage(newMessage);
-		this.DebugPrint({msg: "got commands ", val: commandObject});
-		newMessage.commands = commandObject || [];
-		try{
-			this.DebugPrint({msg: "checking value to determine command:", val: newMessage.commands});
-			for(let i = 0; i < newMessage.commands.length; ++i){
-				if(newMessage.commands[i].type == "tts"){
-					this.DebugPrint({msg: "tts command found, reassigning processedMessage", error: err});
-					newMessage.processedMessage = newMessage.commands[0].message;
+		this.DebugPrint({msg: `got commands ${JSON.stringify(commandObject, null, 2)}`, val: commandObject});
+		
+			try{
+				this.DebugPrint({msg: "checking value to determine command:", val: newMessage.commands});
+				for(let i = 0; i < Object.keys(commandObject).length; ++i){
+					try{
+						let val = commandObject[Object.keys(commandObject)[0]].message;
+						this.DebugPrint({
+							msg: `attempting to assign to val "${val}" to newMessage.processedMessage from commandObject:`, 
+							val: commandObject,
+						});
+						// processedMessage_processedMessage_processedMessage_processedMessage_processedMessage_
+						newMessage["processedMessage"] = val;
+					}
+					catch(err){
+						this.DebugPrint({msg: "tts command found, reassigning processedMessage", error: err});
+					}
+
+					if(newMessage.commands[i].type == "tts"){
+						this.DebugPrint({msg: "tts command found, reassigning processedMessage", error: err});
+						newMessage.processedMessage = newMessage.commands[0].message;
+					}
 				}
 			}
-		}
-		catch(err){
-			this.DebugPrint({msg: "there's no command on this message so skipping", error: err});
-		}
+			catch(err){
+				this.DebugPrint({msg: "there's no command on this message so skipping", error: err});
+			}
+		newMessage.commands = commandObject || {};
 		this.DebugPrint({msg: "current message object is:", val: newMessage});
 
 		// score_score_score_score_score_score_score_score_score_score_score_score_score_score_score_score_score_score_
@@ -1664,7 +1943,10 @@ EventDisplayManager() {
 
 		if (!message) {
 			//message.messageState.ttsHasRead = true;
-			throw new Error("TTS message is empty.");
+			this.DebugPrint({msg: "TTS message is empty.", type: "t"});
+		}
+		if (!message_index){
+			this.DebugPrint({msg: "TTS index is empty, this means the message would be read forever so ignoring", type: "t"});
 		}
 
 		const getVoices = () => new Promise((resolve) => {
@@ -2480,12 +2762,12 @@ EventDisplayManager() {
 
 	    // 2. Quick Exit: If it doesn't start with the command token
 	    if (!rawText.startsWith(token)) {
-		return null; 
+		return {}; 
 	    }
 
 	    // 3. Tokenize
 	    const tokens = rawText.trim().split(/\s+/);
-	    if (tokens.length === 0) return null;
+	    if (tokens.length === 0) return {};
 
 	    // Extract command name (strip the token)
 	    const commandName = tokens[0].substring(token.length).toLowerCase();
@@ -2496,25 +2778,25 @@ EventDisplayManager() {
 	    switch (commandName) {
 		case 'tts':
 			this.DebugPrint("tts command found");
-		    return this.ProcessTtsCommand(processedMessage);
+		    return {tts: this.ProcessTtsCommand(processedMessage)};
 		case 'prediction':
 		case 'predict':
 			this.DebugPrint("prediction command found");
 		    // Ensure this function exists to handle !predict logic
-		    return this.ProcessPredictionCommand(processedMessage);
+		    return {prediction: this.ProcessPredictionCommand(processedMessage)};
 
 		case 'vote':
 			this.DebugPrint("vote command found");
-		    return this.ProcessVoteCommand(processedMessage);
+		    return {vote: this.ProcessVoteCommand(processedMessage)};
 
 		case 'clip':
 			this.DebugPrint("clip command found");
 		    // Ensure this function exists to handle clipping logic
-		    return this.ProcessClipCommand(processedMessage);
+		    return {clip: this.ProcessClipCommand(processedMessage)};
 
 		default:
 		    this.DebugPrint(`Unknown command: ${commandName}`);
-		    return null;
+		    return {};
 	    }
 	}
 
@@ -2648,7 +2930,7 @@ EventDisplayManager() {
 						break;
 				}
 			}
-			formattedMessage = String(formattedMessage).toLowerCase();
+				formattedMessage = String(formattedMessage).toLowerCase();
 
 			for(let i = 0; i < formattedMessage.length; ++i){
 				for(let j = formattedMessage.length-1; -1 < j; --j){
@@ -2665,77 +2947,161 @@ EventDisplayManager() {
 	}
 
 	ProcessClipCommand(processedMsg){
-		DebugPrint("process clip command not implimented yet, but has been detected");
-		return;
+		let token = this.#state.config.flag.token;
+		if(processedMsg.rawMessage.slice(0, String(token+"clip").length) != String(token + "clip")){
+			this.DebugPrint({msg:"cannot process clip, tag at start is not valid trigger", type: 't'});	
+		}
+		let cmd;
+
+		try{
+			cmd = this.templates.messageCommand;
+		}
+		catch(err){
+			this.DebugPrint({msg:"cannot process clip, could not get templates.messageCommand", val: {in: processedMsg, state: cmd}, type: 'e', err: err});		
+			isValid == false;
+		}
+		cmd.isValid = null;
+		cmd.version = 1;
+
+		cmd.commandType = "clip";
+		cmd.flags = {}; // no flags
+		try{
+			cmd.message = String(processedMsg.rawMessage.slice(String(token+"clip").length, processedMsg.rawMessage.length)).trim();
+		}
+		catch(err){
+			this.DebugPrint({msg:"cannot process clip, could not set message slice", val: {in: processedMsg, state: cmd}, type: 'e', err: err});		
+			isValid == false;
+		}
+		cmd.executedAt = null;
+		cmd.pointsOffer = 0;		
+		cmd.errInfo = {
+			err: null,
+			erroredAt: null,
+		},
+		cmd.state = {};
+
+		if(cmd.isValid == null){cmd.isValid = true;}
+		
+		return cmd;
 	}
 	
-	ProcessTtsCommand(processedMsg) {
-	    // 1. Initial validation - check if it's a command
-	    const raw = processedMsg.rawMessage;
-	    if (!raw.startsWith(this.#state.config.flag.token)) return null;
+ProcessTtsCommand(processedMsg) {
+	this.DebugPrint({msg: "processing tts command from message", val: processedMsg});
+	let cmd = this.templates.messageCommand;
+	cmd.isValid = null;
 
-	    // 2. Tokenize the message
-	    const tokens = raw.trim().split(/\s+/);
-	    const commandName = tokens[0].substring(1).toLowerCase(); // e.g., "tts"
-	    const args = tokens.slice(1);
+	let msg = processedMsg.rawMessage;
+	msg = msg.split(" "); // breaks into array based on space ie: ["hello", "world"]
 
-	    // 3. Setup the base command object from templates
-	    let command = { ...this.templates.messageCommand };
-	    command.name = commandName;
-	    command.version = 1;
- 
-	    // We bind CallTts so it can be executed later via command.func()
-	    command.func = this.CallTts;
-
-	    // 4. Initialize Flags with Fallbacks (UI -> Storage -> Hardcoded)
-	    command.flags = {
-		p: this.#GEBI("ttsPitch")?.value || this.#LSGI("ttsPitch") || "1",
-		r: this.#GEBI("ttsRate")?.value || this.#LSGI("ttsRate") || "1",
-		v: this.#GEBI("ttsVoice")?.value || this.#LSGI("ttsVoice") || 51
-	    };
-
-	    // 5. Parse Tokens for Overrides (-p, -r, -v) and the spoken message
-	    let msgParts = [];
-	    for (let i = 0; i < args.length; i++) {
-		const token = args[i];
-		const nextValue = args[i + 1];
-
-		if (token === "-p" && nextValue) {
-		    command.flags.p = nextValue;
-		    i++; // skip value token
-		} else if (token === "-r" && nextValue) {
-		    command.flags.r = nextValue;
-		    i++;
-		} else if (token === "-v" && nextValue) {
-		    command.flags.v = nextValue;
-		    i++;
-		} else {
-		    // Everything else is part of the TTS message
-		    msgParts.push(token);
-		}
-	    }
-
-	    // 6. Attach the cleaned message and metadata
-	    command.message = msgParts.join(" ");
-
-	    command.isValid = false;
-	    let c_user;
-	    for(let i = 0; i < this.#state.users; ++i){
-		    c_user = this.#state.users[i];
-		    if(c_user.userUuid != processedMsg.userUuid){
-			    continue;
-		    }
-		    //user found
-		    if(this.#state.users[i].points < this.#state.commands.tts.cost){command.isValid = false;}
-		    //remove points
-		    this.#state.users[i].points = this.#state.users[i].points - this.#state.commands.tts.cost;
-
-		    command.isValid = true;
-		    break;
-	    }
-
-	    return command;
+	if(msg[0] != String(this.#state.config.flag.token + "tts")){
+		this.DebugPrint({msg: "processing tts command from message", val: processedMsg, type: "t"});	
 	}
+	cmd.commandType = "tts";
+
+		//find all flags and parse
+		for(let k = 1; k < msg.length; k = ++k){ // start at 1 to skip flag, skip every other flag because key value pairs
+			let flag, value;
+			if(msg[k][0] == "-"){
+				if (msg[k].length < 2){this.DebugPrint({msg: "cannot complete command, flag is improper", type: "t"})};	
+				flag = msg[k].slice(1, msg[k].length);
+
+				if(
+					flag.toLowerCase() == "s"
+				){
+					if(flag.toLowerCase() == "s"){
+					this.DebugPrint({msg: "s flag found, converting to r (rate) to align with the web voice std"});	
+						flag = "r";
+						cmd.flags[flag] = true;
+					}
+					cmd.flags[flag] = true;
+				}
+				
+				if(msg.length > k+1){
+					value = msg[k+1];
+					cmd.flags[flag] = value;
+					++k;
+				}
+				else if(k == msg.length-1){
+					this.DebugPrint({msg: "last items doesn't have a value, is likely message:", val: msg[k]});	
+					msg = msg[k];
+					break;
+				}
+			}
+			else{
+				this.DebugPrint({msg: "command not found, skipping to verify flags"});
+				let message = "";
+				for(let l = k; l < msg.length; ++l){
+					message += String(msg[l] + " ");
+				}
+				message = message.trim(); // to clean space often left at end
+
+				this.DebugPrint({msg: "assign msg value to:", val: message});
+				cmd.message = message;
+				break;
+			}
+		}	
+
+	// ensure flags are present
+	const manditoryFlags = Object.keys(this.#state.commands.tts.flags);
+	for(let i = 0; i < manditoryFlags.length; ++i){
+		let flag = manditoryFlags[i];
+		if(
+			cmd.flags[flag] == undefined 
+		){
+			cmd.flags[flag] = null;			
+		}
+
+		if(cmd.flags[flag] == null){
+			switch(flag.toLowerCase()){
+				case('p'):
+				case('r'):
+				case('v'):
+					cmd.flags[flag] = this.#state.commands.tts.flags[flag].value;
+					break;
+			}
+		}
+	}
+
+	// cast values to proper types
+	this.DebugPrint({msg: "checking casts of cmd.flag", val: cmd.flags});
+	for(let i = 0; i < Object.keys(cmd.flags).length; ++i){
+		try{
+		let key = Object.keys(cmd.flags)[i];
+		let type = this.#state.commands.tts.flags[key].type;
+		let newVal = this.CastValueToType(cmd.flags[key], type);
+		this.DebugPrint({msg: "checking cast of key:", val: {key: key, type: type, newVal: newVal}});
+
+		if(typeof newVal != type){
+			this.DebugPrint({
+				msg: `value ${cmd.flags[flag]} after casting ${newVal} does not match expected type ${type}`, 
+				type: 'w'
+			});
+			cmd.errInfo = {
+				err: `value '${cmd.flags[key]}' after casting ${newVal} does not match expected type '${newVal}'`,
+				erroredAt: Date.now(),
+			}
+			cmd.isValid;
+		}		
+
+		this.DebugPrint({msg: `updating key '${key} to new value`, val: newVal})
+		cmd.flags[key] = newVal;
+		}
+		catch(err){
+			this.DebugPrint({
+				msg: `error checking cast value at loop itr`, 
+				val: i,
+				err: err,
+			});
+		}
+	}
+
+	cmd.state["readAt"] = null;
+
+	if (cmd.isValid == null){cmd.isValid = true;}
+	
+
+    return cmd;
+}
 
 	ExportState() {
 	// Track seen objects to detect cycles
@@ -3053,11 +3419,11 @@ EventDisplayManager() {
 		    const channelName = document.getElementById("youtube-config-channelName").value;
 		    const apiKey = document.getElementById("youtube-config-apiKey").value;
 
-		    window.mm.yt.config.channelName = channelName;
-		    window.mm.yt.config.apiKey = apiKey;
+		    window.Cockatiel.yt.config.channelName = channelName;
+		    window.Cockatiel.yt.config.apiKey = apiKey;
 
-		    await window.mm.yt.getChannelId();
-		    const broadcasts = await window.mm.yt.getLiveAndUpcoming();
+		    await window.Cockatiel.yt.getChannelId();
+		    const broadcasts = await window.Cockatiel.yt.getLiveAndUpcoming();
 		    
 		    broadcastsContainer.innerHTML = ""; // Clear existing
 
@@ -3079,17 +3445,17 @@ EventDisplayManager() {
 			bs.appendChild(vi);
 
 			bs.onclick = async () => {
-			    window.mm.yt.config.broadcastId = b.id.videoId;
+			    window.Cockatiel.yt.config.broadcastId = b.id.videoId;
 			    const startTimeStr = b.liveStreamingDetails?.actualStartTime;
-			    window.mm.yt.config.streamStartedAt = startTimeStr ? new Date(startTimeStr).getTime() : null;
+			    window.Cockatiel.yt.config.streamStartedAt = startTimeStr ? new Date(startTimeStr).getTime() : null;
 
 			    document.getElementById("youtube-config-channelId").value = b.snippet.channelId;
 			    document.getElementById("youtube-config-broadcastId").value = b.id.videoId;
 
-			    const lcid = await window.mm.yt.getLiveChatId();
+			    const lcid = await window.Cockatiel.yt.getLiveChatId();
 			    document.getElementById("youtube-config-liveChatId").value = lcid;
 
-			    await window.mm.MonitoringStart();
+			    await window.Cockatiel.MonitoringStart();
 			};
 
 			broadcastsContainer.appendChild(bs);
@@ -3173,8 +3539,8 @@ EventDisplayManager() {
 			}
 		    }
 		}
-		if (window.mm && window.mm.yt) {
-		    await window.mm.yt.LoadValuesFromLocalStorage();
+		if (window.Cockatiel && window.Cockatiel.yt) {
+		    await window.Cockatiel.yt.LoadValuesFromLocalStorage();
 		}
 	    });
 
@@ -3185,11 +3551,11 @@ EventDisplayManager() {
 
 	    const startBtn = createBtn("start monitoring messages", "#0f0", async () => {
 		console.log("Start monitoring clicked...");
-		await window.mm.MonitoringStart();
+		await window.Cockatiel.MonitoringStart();
 	    });
 
 	    const stopBtn = createBtn("stop monitoring messages", "#f00", () => {
-		window.mm.MonitoringStop();
+		window.Cockatiel.MonitoringStop();
 	    });
 
 	    col2.append(startBtn, stopBtn);
@@ -3198,7 +3564,20 @@ EventDisplayManager() {
 	    const col3 = createColumn();
 
 	    const exportBtn = createBtn("Export Settings", "#ff0", () => {
-		window.mm.ExportState();
+		window.Cockatiel.ExportState();
+	    });
+
+	    const col4 = createColumn();
+	    const callTtsBtn = createBtn("Call next TTs Message", "#88f", async () => {
+		    let messages = window.Cockatiel.GetChatMessages().GetMessages();
+		    let msg;
+		    for(let k = 0; k < state.messages.length; ++k){
+			    msg = messages[k]; 
+			    if(msg.commands.tts == undefined){
+				    continue;
+			    }
+		    }
+		    await window.Cockatiel.CallTts();
 	    });
 
 	    const importLabel = document.createElement('label');

@@ -7,10 +7,10 @@
 		<script type="module">
 			window.debug = true;
 			import MonitorMessages from './tib_stuff/Cockatiel.mjs';
-			let mm = new MonitorMessages()		
-			window.mm = mm;
-			window.mm.Init();
-			console.log("mm added to window");
+			let Cockatiel = new MonitorMessages()		
+			window.Cockatiel = Cockatiel;
+			window.Cockatiel.Init();
+			console.log("Cockatiel added to window");
 			window.tibSleepingAnimation = await fetch("./tib_stuff/tib_sleeping.gif");
 			console.log("added the eepy them");
 		</script>
