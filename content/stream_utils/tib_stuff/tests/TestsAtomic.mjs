@@ -88,7 +88,7 @@ const testManifest = [
 		name: "Process valid yes vote command",
 		input: {
 			version: 1,
-			authorName: "test_user",
+			username: "test_user",
 			userUuid: crypto.randomUUID(),
 			streamOrigin: "youtube", //what streamid via the platform the message came from
 			receivedAt: Date.now(),
@@ -124,7 +124,7 @@ const testManifest = [
 		name: "Process valid yes vote with double down command",
 		input: {
 			version: 1,
-			authorName: "test_user",
+			username: "test_user",
 			userUuid: crypto.randomUUID(),
 			streamOrigin: "youtube", //what streamid via the platform the message came from
 			receivedAt: Date.now(),
@@ -160,7 +160,7 @@ const testManifest = [
 		name: "Process valid no vote command",
 		input: {
 			version: 1,
-			authorName: "test_user",
+			username: "test_user",
 			userUuid: crypto.randomUUID(),
 			streamOrigin: "youtube", //what streamid via the platform the message came from
 			receivedAt: Date.now(),
@@ -196,7 +196,7 @@ const testManifest = [
 		name: "Process valid no vote command with double down",
 		input: {
 			version: 1,
-			authorName: "test_user",
+			username: "test_user",
 			userUuid: crypto.randomUUID(),
 			streamOrigin: "youtube", //what streamid via the platform the message came from
 			receivedAt: Date.now(),
@@ -232,7 +232,7 @@ const testManifest = [
 		name: "Process invalid vote command",
 		input: {
 			version: 1,
-			authorName: "test_user",
+			username: "test_user",
 			userUuid: crypto.randomUUID(),
 			streamOrigin: "youtube", //what streamid via the platform the message came from
 			receivedAt: Date.now(),
@@ -292,7 +292,7 @@ const testManifest = [
 		name: "ProcessPrectionCommand: create standard prediction",
 		input: {
 			version: 1,
-			authorName: "vulbyte",
+			username: "vulbyte",
 			userUuid: "10091ef9-35ee-4d19-9e41-e337c492162a",
 			streamOrigin: "youtube", //what streamid via the platform the message came from
 			receivedAt: Date.now(),
@@ -324,7 +324,7 @@ const testManifest = [
 		name: "ProcessPrectionCommand: create prediction with no 'p' flag",
 		input: {
 			version: 1,
-			authorName: "vulbyte",
+			username: "vulbyte",
 			userUuid: "10091ef9-35ee-4d19-9e41-e337c492162a",
 			streamOrigin: "youtube", //what streamid via the platform the message came from
 			receivedAt: Date.now(),
@@ -345,7 +345,7 @@ const testManifest = [
 		name: "ProcessPrectionCommand: create prediction with no 'l' flag",
 		input: {
 			version: 1,
-			authorName: "vulbyte",
+			username: "vulbyte",
 			userUuid: "10091ef9-35ee-4d19-9e41-e337c492162a",
 			streamOrigin: "youtube", //what streamid via the platform the message came from
 			receivedAt: Date.now(),
@@ -375,7 +375,7 @@ const testManifest = [
 		name: "ProcessPrectionCommand: create prediction without prompt but with l flag",
 		input: {
 			version: 1,
-			authorName: "vulbyte",
+			username: "vulbyte",
 			userUuid: "10091ef9-35ee-4d19-9e41-e337c492162a",
 			streamOrigin: "youtube", //what streamid via the platform the message came from
 			receivedAt: Date.now(),
@@ -394,7 +394,7 @@ const testManifest = [
 		name: "ProcessPrectionCommand: create prediction with no info",
 		input: {
 			version: 1,
-			authorName: "vulbyte",
+			username: "vulbyte",
 			userUuid: "10091ef9-35ee-4d19-9e41-e337c492162a",
 			streamOrigin: "youtube", //what streamid via the platform the message came from
 			receivedAt: Date.now(),
@@ -449,17 +449,8 @@ const testManifest = [
 		name: "GetUsers",
 		input: undefined,
 		targetMethod: "GetUsers",
-		expectedOutput: [],
+		expectedOutput: {},
 	},
-
-	{
-		name: "LoadBannedWords",
-		input: undefined,
-		targetMethod: "GetUsers",
-		expectedOutput: [],
-	},
-
-
 	{
 		name: "GetUnprocessedQueue",
 		input: undefined,
@@ -506,7 +497,7 @@ const testManifest = [
 		targetMethod: "CreateUserFromFlags",
 		expectedOutput: {
 			version : 1, 
-			authorName : undefined,
+			username: undefined,
 			channels : ["asdf1234qwer56789"],
 			uuid : "type:string",
 			ttsBans : [],
@@ -536,7 +527,7 @@ const testManifest = [
 	{
 		name: "ProcessTtsCommand",
 		input: {
-		    "authorName": "@vulbyte",
+		    "username": "@vulbyte",
 		    "commands": [],
 		    "messageId": "",
 		    "platform": "youtube",
@@ -571,7 +562,7 @@ const testManifest = [
 	{
 		name: "ProcessTtsCommand with no flags",
 		input: {
-		    "authorName": "@vulbyte",
+		    "username": "@vulbyte",
 		    "commands": [],
 		    "messageId": "",
 		    "platform": "youtube",
@@ -605,7 +596,7 @@ const testManifest = [
 	{
 		name: "ParseCommandFromMessage - no command",
 		input: {
-		    "authorName": "@vulbyte",
+		    "username": "@vulbyte",
 		    "commands": [],
 		    "messageId": "",
 		    "platform": "youtube",
@@ -615,7 +606,7 @@ const testManifest = [
 		    "state": {},
 		    "streamOrigin": "Cg0KC3JHN3ZGN3BjVlBZKicKGFVDS1ppZ0hiZ3BKRzlsZHhYTXFtaVpVZxILckc3dkY3cGNWUFk",
 		    "userUuid": {
-			"authorName": "@vulbyte",
+			"username": "@vulbyte",
 			"channelBans": [],
 			"channels": [
 			    "UCKZigHbgpJG9ldxXMqmiZUg"
@@ -653,7 +644,7 @@ const testManifest = [
 	{
 		name: "ParseCommandFromMessage - tts",
 		input: {
-		    "authorName": "@vulbyte",
+		    "username": "@vulbyte",
 		    "commands": [],
 		    "messageId": "",
 		    "platform": "youtube",
@@ -663,7 +654,7 @@ const testManifest = [
 		    "state": {},
 		    "streamOrigin": "Cg0KC3JHN3ZGN3BjVlBZKicKGFVDS1ppZ0hiZ3BKRzlsZHhYTXFtaVpVZxILckc3dkY3cGNWUFk",
 		    "userUuid": {
-			"authorName": "@vulbyte",
+			"username": "@vulbyte",
 			"channelBans": [],
 			"channels": [
 			    "UCKZigHbgpJG9ldxXMqmiZUg"
@@ -719,7 +710,7 @@ const testManifest = [
 	{
 		name: "ParseCommandFromMessage - clip",
 		input: {
-		    "authorName": "@vulbyte",
+		    "username": "@vulbyte",
 		    "commands": [],
 		    "messageId": "",
 		    "platform": "youtube",
@@ -729,7 +720,7 @@ const testManifest = [
 		    "state": {},
 		    "streamOrigin": "Cg0KC3JHN3ZGN3BjVlBZKicKGFVDS1ppZ0hiZ3BKRzlsZHhYTXFtaVpVZxILckc3dkY3cGNWUFk",
 		    "userUuid": {
-			"authorName": "@vulbyte",
+			"username": "@vulbyte",
 			"channelBans": [],
 			"channels": [
 			    "UCKZigHbgpJG9ldxXMqmiZUg"
@@ -782,7 +773,7 @@ const testManifest = [
 	{
 		name: "ParseCommandFromMessage - vote",
 		input: {
-		    "authorName": "@vulbyte",
+		    "username": "@vulbyte",
 		    "commands": [],
 		    "messageId": "",
 		    "platform": "youtube",
@@ -792,7 +783,7 @@ const testManifest = [
 		    "state": {},
 		    "streamOrigin": "Cg0KC3JHN3ZGN3BjVlBZKicKGFVDS1ppZ0hiZ3BKRzlsZHhYTXFtaVpVZxILckc3dkY3cGNWUFk",
 		    "userUuid": {
-			"authorName": "@vulbyte",
+			"username": "@vulbyte",
 			"channelBans": [],
 			"channels": [
 			    "UCKZigHbgpJG9ldxXMqmiZUg"
@@ -882,8 +873,9 @@ const testManifest = [
 			},
 		targetMethod: "ProcessYoutubeV3Message_v1",
 		expectedOutput: {
+			channelId: "UCKZigHbgpJG9ldxXMqmiZUg",
 			version: 1,
-			authorName: "vulbyte",
+			username: "vulbyte",
 			userUuid: "type:string",
 			streamOrigin: "type:string", //what streamid via the platform the message came from
 			receivedAt: 1771485470330,
@@ -932,7 +924,8 @@ const testManifest = [
 			},
 		targetMethod: "ProcessYoutubeV3Message_v1",
 		expectedOutput: {
-		"authorName": "vulbyte",
+		channelId: "UCKZigHbgpJG9ldxXMqmiZUg",
+		"username": "vulbyte",
 		"commands": {
 			"tts": {
 				commandType: "tts",
@@ -1001,7 +994,8 @@ const testManifest = [
 			},
 		targetMethod: "ProcessYoutubeV3Message_v1",
 		expectedOutput: {
-		    "authorName": "vulbyte",
+			channelId: "UCKZigHbgpJG9ldxXMqmiZUg",
+		    "username": "vulbyte",
 		    "commands": {
 			"clip": {
 			    "commandType": "clip",
@@ -1066,7 +1060,8 @@ const testManifest = [
 			},
 		targetMethod: "ProcessYoutubeV3Message_v1",
 		expectedOutput: {
-		    "authorName": "vulbyte",
+			channelId: "UCKZigHbgpJG9ldxXMqmiZUg",
+		    "username": "vulbyte",
 		    "commands": {
 			"vote": {
 			    "commandType": "vote",

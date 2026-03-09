@@ -94,7 +94,7 @@ export default class Cockatiel {
 		},
 		messages: {
 			version: 1,
-			authorName: "",
+			username: "",
 			userUuid: "",
 			streamOrigin: "", //what streamid via the platform the message came from
 			receivedAt: "",
@@ -137,8 +137,8 @@ export default class Cockatiel {
 		},
 		user: {
 			version : 1, 
-			authorName : null,
-			channels : [],
+			username: null,
+			channels : [], 
 			uuid : null,
 			ttsBans : [], // times they've been restricted from using tts (ie non-english, spam, etc)
 			channelBans : [], // when banned and why
@@ -158,6 +158,7 @@ export default class Cockatiel {
 				community: [], // welcoming, helpful, inclusivity, etc
 				engagement: [], // hype, constructive feedback, good chatting, etc
 				support: [], //the only thing one can buy
+				rep: [], // low support, no real value on scoring but can be fun for chat
 			},
 			misconduct: {
 				discrimination: [], // racism, sexism, etc
@@ -178,12 +179,6 @@ export default class Cockatiel {
 	#state = { // when saving and loading this is what will be saved/loaded
 		bannedWordsArray: [], //do not add manually, use the AddBannedWord/RemoveBannedWordFunctions
 		bannedWordsTrie: new TrieTree(), // tree that's good for strings, basically all you need to worry about is: add(), remove(), ContainsString()
-		chatWindow: {
-			width: 400,
-			height: 800,
-			color: "#000000",
-			background: "#00ff00",
-		},
 		clip_queue: [],
 		// NOTE: Assuming this function is part of a class/module where
 		config: {
@@ -305,7 +300,24 @@ export default class Cockatiel {
 		subWindows: {},
 		timers: {/*declared at the start of the constructor*/},
 		unprocessed_queue: [], // messages returned from yt fetch
-		users: [],
+		users: {},
+		windows: {
+			chat: {
+				key: "chatDisplay",
+				height: 800,
+				width: 400, 
+				background: "#0f0",
+				color: undefined,
+				messageDisplayDuration: 15,
+			},
+			events: {
+				key: "eventDisplay",
+				height: 300,
+				width: 400, 
+				background: "#000",
+				color: undefined,	
+			}
+		}
 	}
 
 	GetState(){
@@ -354,27 +366,50 @@ export default class Cockatiel {
 	    err: undefined,
 	    silent: false, // for when you don't want a thing to be printed but still logged
 	}){
+		
 	    // 1. Functional Logic (The Switch)
 	    switch(args.type){
 		case("throw"):
 		case("t"):
+			try{
+			   if(err == undefined || args.error == undefined || args.e == undefined){
+
+			   }	
+			}
+			catch(err){
+				console.log("could not get value from args.err, setting to empty string");
+				args.err = "";
+			}
 		    throw new Error(
 			    args.msg, 
 			    args.val || args.value || undefined, 
-			    args.error || args.err || undefined
+			    args.err
 		    );
 		    break;
 		
 		case("error"):
 		case("err"):
 		case("e"):
-		    if(args.silent){
-		    console.error(`%c${
-			    args.msg, 
-			args.val || args.value || undefined, 
-			JSON.stringify(
-				args.error || args.err || undefined, null,4
-			)}`, args.style);
+			try{
+			   if(err == undefined || args.error == undefined || args.e == undefined){
+
+			   }	
+			}
+			catch(err){
+				console.log("could not get value from args.err, setting to empty string");
+				args.err = "";
+			}
+		    if(!args.silent){
+			    console.error(
+				args.msg, 
+				args.val || args.value || undefined, 
+				JSON.stringify(
+					args.err, 
+					null,
+					4,
+				),
+				(args.err.stack) ? args.err.stack : ""
+			    );
 		    }
 		    break;
 
@@ -382,30 +417,39 @@ export default class Cockatiel {
 		case("warn"):
 		case("war"):
 		case("w"):
-		    if(args.silent){
-			    console.warn(`%c${args.msg, args.val || args.value || undefined, JSON.stringify(args.error || args.err || undefined, null,4)}`, args.style);
+			try{
+			   if(err == undefined || args.error == undefined || args.e == undefined){
+
+			   }	
+			}
+			catch(err){
+				console.log("could not get value from args.err, setting to empty string");
+				args.err = "";
+			}
+		    if(!args.silent){
+			    console.warn(`%c${args.msg, args.val || args.value || undefined, JSON.stringify(args.err, null,4)}`, args.style);
 		    }
 		    break;
 
 		case("log"):
-		    if(args.silent){
-			    console.log(`%c${args.msg, args.val || args.value || undefined, JSON.stringify(args.error || args.err || undefined, null,4)}`, args.style);
+		    if(!args.silent){
+			    console.log(`%c${args.msg, args.val || args.value || undefined, JSON.stringify(args.err, null,4)}`, args.style);
 		    }
 		    break;
 
 		default:
-		    if(args.silent){
-			    console.log(`%c[DebugPrint fallback] ${args.msg, args.value || args.val || undefined, args.err || args.error || undefined}`, args.style);
+		    if(!args.silent){
+			    console.error(`DebugPrint fallback ${JSON.stringify(args, null, 4)}`);
 		    }
 		    break;
 	    }
 
 	    // 2. Internal Log Tracking (Functionality maintained)
 	    let log = {
-		type: args.type || "log",
-		message: args.msg || undefined,
-		val: args.val || undefined,
-		error: args.error || undefined,
+		type: args.type || "unspecified log",
+		message: args.msg || null,
+		val: args.val || null,
+		error: args.err || null,
 	    };
 	    this.AddLogToLogs(log);
 
@@ -1106,7 +1150,7 @@ export default class Cockatiel {
 		if (user) {
 		    this.DebugPrint({msg: `giving points to user for winning prediction:`, val: {user, finalPayout}})
 		    user.points = (user.points || 0) + finalPayout;
-		    this.DebugPrint({msg: `Paid ${finalPayout} to ${user.authorName || user.uuid}`});
+		    this.DebugPrint({msg: `Paid ${finalPayout} to ${user.username || user.uuid}`});
 		}
 
 		return {
@@ -1324,42 +1368,37 @@ EventDisplayManager() {
 	}
 	yt = new YoutubeV3();
 
-	CHE(args = { //returns HTML element
-		"class": undefined,
-		"id": undefined,
-		"innerHTML": undefined,
-		"innerText": undefined,
-		"style": undefined,
-		"type": undefined,
-		"onClick": undefined,
-		"inputType": undefined,
-	}) {
-		try {
-			if (args.type == undefined) args.type == "div";
-			let elem = document.createElement(args.type);
+	CHE(args = {}) {
+	    try {
+		if (!args.type) args.type = "div";
 
-			if(args.type == "input" && args.inputType){
-				elem.type = args.inputType;
-			}
+		let elem = document.createElement(args.type);
 
-			if (args.class != undefined) elem.className = args.class;
-			if (args.id != undefined) elem.id = args.id;
-			if (args.innerHTML != undefined) elem.innerHTML = args.innerHTML;
-			if (args.innerText != undefined) elem.innerText = args.innerText;
-			if (args.style != undefined) elem.style = args.style;
-			if (args.onClick != undefined) {
-				elem.addEventListener(
-					"click",
-					args.onClick
-				)
-			}
+		if(args.inputType) elem.type = args.inputType;
 
-			return (elem);
+		if (args.class) elem.className = args.class;
+		if (args.id) elem.id = args.id;
+		if (args.innerHTML) elem.innerHTML = args.innerHTML;
+		if (args.innerText) elem.innerText = args.innerText;
+		if (args.style) elem.style = args.style;
+
+		if (args.attributes) {
+		    for (const [key, value] of Object.entries(args.attributes)) {
+			elem.setAttribute(key, value);
+		    }
 		}
-		catch (err) {
-			this.DebugPrint({msg: "CHE, likely no document, cannot render. returning null", val:"YOU DUMB FUCK", error: err, type: "throw"})
+
+		if (args.onClick) {
+		    elem.addEventListener("click", args.onClick);
 		}
-	};
+
+		return elem;
+	    }
+	    catch (err) {
+		console.error("CHE failed", err);
+		return null;
+	    }
+	}
 
 	/**
 	 * Recursively alphabetizes keys in objects and elements in arrays.
@@ -1601,8 +1640,8 @@ EventDisplayManager() {
 		throw new Error("channelId CANNOT be null when creating a new user");
 	    }
 
-	    let existingUuid = this.FindUserFromChannelNameAndReturnUuid(args.channelId);
-	    if (existingUuid !== undefined) {
+	    let existingUuid = this.FindUserFromChannelIdAndReturnUuid(args.channelId);
+	    if (existingUuid != undefined || existingUuid != null) {
 		this.DebugPrint({msg: "User already exists. UUID:", val: existingUuid});
 		return existingUuid; 
 	    }
@@ -1610,7 +1649,7 @@ EventDisplayManager() {
 	    let user = { ...this.templates.user };
 
 	    // 4. Assign values (Ensure we use channelId consistently)
-	    user.authorName      = args.authorName;
+	    user.username 	 = args.username;
 	    user.icon            = args.icon;
 	    user.channels        = [args.channelId];
 	    user.isSponser       = args.isSponser || false;
@@ -1619,8 +1658,6 @@ EventDisplayManager() {
 	    user.uuid            = args.uuid || crypto.randomUUID();
 	    user.firstSeen       = args.firstSeen || Date.now();
 
-	    // 5. Add to private state
-	    //this.#state.users.push(user);
 	try{
 		this.AddUserToUsers(user);
 	}
@@ -1629,21 +1666,51 @@ EventDisplayManager() {
 	}
 	 
 	    
-	    this.DebugPrint({msg: `User created: ${user.authorName}. Total: ${this.#state.users.length}`});
+	    this.DebugPrint({msg: `User created: ${user.username}. Total: ${this.#state.users.length}`});
 	    return user;
 	}
 
-	FindUserFromChannelNameAndReturnUuid(channelId = undefined){ // returns uuid of user, undefined if null
-		if(channelId == undefined){
-			throw new Error("CHANNEL ID IS UNDEFINED");
+	GetUserFromUuid(uuid){
+		let users;
+		try{
+			users = this.#state.users || window.Cockatiel.GetUsers();
 		}
-		// To this:
-		let existingUser = this.#state.users.find(u => 
-		    u.channels.some(channel => (typeof channel === 'object' ? channel.id === channelId : channel === channelId))
-		);
-		if(existingUser == undefined){return undefined;}
-		return existingUser.uuid;
+		catch(err){
+			this.DebugPrint({msg: "could not get users", type: "t", err: err});
+		}
+
+		let user = users[uuid];
+		if(user == undefined){
+			return null;
+		}
+
+		return user;
 	}
+
+	FindUserFromChannelIdAndReturnUuid(channelId = undefined){ // returns uuid of user, undefined if null
+		if(this.#state.users < 1){
+			return null;
+		}
+		const users = this.#state.users;
+		/*
+		users.channels[i].channelId
+		channel: {
+			version : 1, platform : "", channelName : "", channelId : ""
+		},
+		*/
+		let key;
+		for(let i = 0; i < Object.keys(users).length; ++i){
+			key = Object.keys(users)[i]; //uuid of user
+			for(let j = 0; j < users[key].channels.length; ++j){
+				if(channelId == users[key].channels[j].channelId){
+					return key;
+				}
+			}
+		}
+
+		return null;
+	}
+
 
 	AddPointsToUserWithUuid(score, uuid) {
 	    if (!uuid) {
@@ -1659,7 +1726,11 @@ EventDisplayManager() {
 	    this.DebugPrint({msg: `attempting to add score to user`, val: {score: score, user: uuid}});
 
 	    // 1. Locate the user
-	    let user = this.#state.users.find(u => u.uuid === uuid);
+	    let user = this.#state.users[uuid];
+	
+	    if(!user){
+		this.DebugPrint({msg: `user is not found, cannot add points to user.`, val: {uuid: uuid}});    
+	    }
 
 	    if (user) {
 		// 2. Consistent naming: Use .points everywhere
@@ -1670,17 +1741,103 @@ EventDisplayManager() {
 		// 3. Add the new points
 		user.points += score;
 
-		this.DebugPrint({msg: `Points updated for ${user.authorName}: +${score} (Total: ${user.points}})`});
+		this.DebugPrint({msg: `Points updated for ${user.username}: +${score} (Total: ${user.points}})`});
 		return true;
 	    } else {
-		console.warn(`AddPointsToUser: User with UUID ${uuid} not found.`);
+		this.DebugPrint({msg: `AddPointsToUser: User with UUID ${uuid} not found.`, type:"error"});
 		return false;
 	    }
 	}	
 
-	AddUserToUsers(user){	
-		this.UpdateUserDisplay();
+	AddUserToUsers(user){ // true on added, false on not, throw on error
+		this.DebugPrint({msg: "attempting to add user to users", val: user});
+		let userGet = this.GetUserFromUuid(user);
+		if(userGet != null){
+			this.DebugPrint({msg: "user already in db, not adding.", type:"warn", val: {user:user, gotUser: userGet}});
+			return;
+		}
+
+		this.#state.users[userUuid || crypto.randomUUID()] = user;
+
+		this.UpdateUserDisplay();	
 	}
+
+	RemoveUserProfileFromUuid(userUuid){ //true on success, false on fail
+		try{
+			if(!this.#state.users[userUuid]){			
+				this.DebugPrint({msg: "cannot remove user, user does not exist", type: "t"});
+			}
+			this.#state.users.delete(userUuid);
+			this.UpdateUserDisplay();
+		}
+		catch(err){
+			this.DebugPrint({msg: "cannot remove user", err:err});
+		}
+		return;
+	}
+
+	MergeUserProfiles(user1, user2){ // will merge the 1st into the 2nd, true on success, false on fail
+		try{
+			if(
+				user1.version == 1 
+				&& user2.version == 1
+			){
+				let newUserProfile = this.templates.user;
+				newUserProfile.version = 1;
+				newUserProfile.username = user2.username;
+				newUserProfile.channels = [...user1.channels, ...user2.channels];
+				newUserProfile.uuid = user2.uuid;
+				newUserProfile.ttsBans = [...user1.ttsBans, ...user2.ttsBans];
+				newUserProfile.channelBans = [...user1.channelBans, ...user2.channelBans];
+				newUserProfile.conduct_score = Number((user1.conduct_score+user2.conduct_score)/2);
+				newUserProfile.commendments = {	
+					community: [...user1.commendments.community, ...user2.commendments.community ], // welcoming, helpful, inclusivity, etc
+					engagement: [...user1.commendments.engagement, ...user2.commendments.engagement], // hype, constructive feedback, good chatting, etc
+					support: [...user1.commendments.support, ...user2.commendments.support], //the only thing one can buy
+				}
+				newUserProfile.misconduct = {
+					discrimination: [...user1.misconduct.discrimination, ...user2.misconduct.discrimination], // racism, sexism, etc
+					harassment: [...user1.misconduct.harassment, ...user2.misconduct.harassment], // bullying, hate speech, etc
+					spam: [...user1.misconduct.spam, ...user2.misconduct.spam], // self-promo, asdl;fknfrtn, links, etc
+					integrity: [...user1.misconduct.integrity, ...user2.misconduct.integrity], // language, spoilers, trolling/rage, bypassing filters
+				};
+				newUserProfile.icon = user2.icon;
+				(user1.isSponser || user2.isSponser) ? newUserProfile.isSponser = true : newUserProfile.isSponser = false;
+				(user1.isChatModerator || user2.isChatModerator) ? newUserProfile.isChatModerator = true : newUserProfile.isChatModerator = false;
+				(user1.isChatAdmin || user2.isChatAdmin) ? newUserProfile.isChatAdmin = true : newUserProfile.isChatAdmin = false;
+				(user1.isVerified || user2.isVerified) ? newUserProfile.isVerified = true : newUserProfile.isVerified = false;
+				
+				//prioritize older
+				if(user1.firstSeen < user2.firstSeen){
+					newUserProfile.firstSeen = user1.firstSeen;
+				}
+				else{
+					newUserProfile.firstSeen = user2.firstSeen;
+				}
+
+				//combine points
+				newUserProfile = user1.points + user2.points;
+				this.DebugPrint({msg: "user profiles merged successfully!"});
+
+				//merge done, add new user to users
+				this.AddUserToUsers(newUserProfile);
+				this.DebugPrint({msg: "new user profile added to users"});
+				this.RemoveUserProfileFromUuid(user1.uuid);
+				this.DebugPrint({msg: "removed user 1 from list, goodbye:", val: user1});
+				this.RemoveUserProfileFromUuid(user2.uuid);
+				this.DebugPrint({msg: "removed user 2 from list, goodbye:", val: user2});
+				return true;
+			}
+			else{
+				this.DebugPrint({msg: "cannot merge users, both are not version 1, which is the only one that has support"});
+			}
+		}
+		catch(err){
+			this.DebugPrint({msg: "cannot merge users due to error", err:err});
+			return false;
+		}
+	}
+
 
 	/**
 	 * High-performance duplicate check and chronological insertion.
@@ -1707,6 +1864,7 @@ EventDisplayManager() {
 	    let low = 0;
 	    let high = len;
 
+	    //sort
 	    while (low < high) {
 	        const mid = (low + high) >>> 1;
 	        if (queue[mid].receivedAt < targetTime) {
@@ -1717,6 +1875,7 @@ EventDisplayManager() {
 	    }
 
 	    this.DebugPrint({msg: `Adding message at index ${low}`});
+
 	    if (low === len) {
 		queue.push(p_msg);
 	    } else {
@@ -1740,6 +1899,16 @@ EventDisplayManager() {
 		    this.ParseAndAddYouTubeV3MessagesToUnprocessedQueue(item);
 		}
 
+		// dLive 
+		// facebook here
+		// instagram
+		// kick here
+		// picarto here
+		// tiktok here
+		// trovo
+		// twitch here
+		// twitter here
+
 		this.DebugPrint({msg: "processing unprocecssed_queue"});
 		while (this.#state.unprocessed_queue.length > 0) {
 		    const raw = this.#state.unprocessed_queue.shift();
@@ -1749,13 +1918,9 @@ EventDisplayManager() {
 			m.receivedAt === p_msg.receivedAt && m.authorId === p_msg.authorId
 		    );
 
-		    if (!exists) this.#state.messages.push(p_msg);
+		    if (!exists) this.SafeAddToMessagesQueue(p_msg);
 		}
 		this.DebugPrint({msg: ("Current messages: " + this.#state.messages)});
-
-		this.DebugPrint({msg: "calling tts"});
-		await this.ProcessPendingTts();
-
 	    } catch (err) {
 		this.DebugPrint({msg: "LOOP CRASHED: ", error: err});
 	    }
@@ -1778,7 +1943,7 @@ EventDisplayManager() {
 		/*
 		messages: {
 			version: 1,
-			authorName: "",
+			username: "",
 			userUuid: "",
 			streamOrigin: "", //what streamid via the platform the message came from
 			receivedAt: "",
@@ -1798,14 +1963,14 @@ EventDisplayManager() {
 		newMessage.version = 1; // WARN: make new function if this needs to be changed.
 		this.DebugPrint({msg: "current message object is:", val: newMessage});
 
-		// authorName_authorName_authorName_authorName_authorName_authorName_authorName_authorName_authorName_authorName
+		// username_username_username_username_username_username_username_username_username_username_username_username_username_
 		let name = rmo.authorDetails.displayName;
 		if(name[0] == "@"){name = name.slice(1, name.length);}
-		newMessage.authorName = name;
+		newMessage.username = name;
 		this.DebugPrint({msg: "current message object is:", val: newMessage});
 
 		// userUuid_userUuid_userUuid_userUuid_userUuid_userUuid_userUuid_userUuid_userUuid_userUuid_userUuid_userUuid_
-		newMessage.userUuid = this.FindUserFromChannelNameAndReturnUuid(rmo.authorDetails.channelId);
+		newMessage.userUuid = this.FindUserFromChannelIdAndReturnUuid(rmo.authorDetails.channelId);
 		if(newMessage.userUuid == undefined){
 			this.DebugPrint({msg: "no uuid found for user, attempting to add the user", rmo});
 			let cId = rmo.authorDetails.channelId;
@@ -2459,7 +2624,7 @@ EventDisplayManager() {
 				     msg.state.ttsHasRead = e.target.checked;
 				     stateSpan.innerText = ` (Read: ${!!msg.state.ttsHasRead})`;
 				     stateSpan.style.color = msg.state.ttsHasRead ? '#7CFC00' : '#FFD700';
-				     this.DebugPrint(`Manually set ttsHasRead for ${msg.authorName} to ${msg.state.ttsHasRead}`);
+				     this.DebugPrint(`Manually set ttsHasRead for ${msg.username} to ${msg.state.ttsHasRead}`);
 				 };
 				 cmdDiv.prepend(checkbox);
 			    }
@@ -2497,7 +2662,7 @@ EventDisplayManager() {
 				</div>
 				<div style="max-width:10rem; max-height:5rem; overflow: hidden; display:flex; flex-direction:column; justify-content:center;">
 				    <span style="font-size:1rem; font-weight:bold; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color: white; text-shadow: 1px 1px 2px black;">
-					${msg.authorName || authorDetails?.displayName || 'Unknown'}
+					${msg.username || authorDetails?.displayName || 'Unknown'}
 				    </span>
 				    <span style="font-size:0.8rem; color: #eee; text-shadow: 1px 1px 2px black;">
 					${timeString}
@@ -3613,7 +3778,7 @@ ProcessTtsCommand(processedMsg) {
 		    // 3. Update the points (defaulting to 0 if the property is missing)
 		    user.points = (user.points || 0) + amount;
 		    
-		    this.DebugPrint(`Adjusted @${user.authorName} by ${amount}. New total: ${user.points}`);
+		    this.DebugPrint(`Adjusted @${user.username} by ${amount}. New total: ${user.points}`);
 		    userFound = true;
 		    break; // Stop looping once found
 		}
@@ -3630,10 +3795,13 @@ ProcessTtsCommand(processedMsg) {
 		if(document == undefined){this.DebugPrint({msg:"cannot generate user management because there's no document"}); return}
 
 	    let listElement = document.getElementById(parentId);
-	    if (!listElement){
-		this.DebugPrint("no user management with id found, creating custom");
-		listElement = this.CHE({type:'div', id: parentId});
-	    };
+	    if (listElement){
+		    this.DebugPrint("user management element found, updating");
+	    }
+	    else{
+		    this.DebugPrint("no user management with id found, creating custom");
+		    listElement = this.CHE({type:'div', id: parentId});
+	    }
 
 	    // Clear existing list
 	    listElement.innerHTML = "";
@@ -3643,7 +3811,7 @@ ProcessTtsCommand(processedMsg) {
 	    // Safety check
 	    if (!users || !Array.isArray(users)) {
 		this.DebugPrint("User list is empty or not an array");
-		return;
+		return listElement;
 	    }
 	    return listElement;
 	}
@@ -3657,7 +3825,7 @@ ProcessTtsCommand(processedMsg) {
 
 	    // 1. Sort Alphabetically
 	    let users = [...this.#state.users].sort((a, b) => 
-		(a.authorName || "").localeCompare(b.authorName || "", undefined, { sensitivity: 'base' })
+		(a.username || "").localeCompare(b.username || "", undefined, { sensitivity: 'base' })
 	    );
 
 	    for (let u of users) {
@@ -3695,7 +3863,7 @@ ProcessTtsCommand(processedMsg) {
 		    { cond: u.isVerified, col: '#ff0', char: 'V', desc: 'Verified' }
 		].map(f => f.cond ? `<span title="${f.desc}" style="color:${f.col}; font-weight:bold; cursor:help;">${f.char}</span>` : '').join(' ');
 
-		identity.innerHTML = `<span>${u.icon || "👤"}</span><div style="overflow:hidden;"><div style="font-weight:bold; color:#fff;">${u.authorName || "???"}</div><div style="font-size:0.6rem;">${flags}</div></div>`;
+		identity.innerHTML = `<span>${u.icon || "👤"}</span><div style="overflow:hidden;"><div style="font-weight:bold; color:#fff;">${u.username || "???"}</div><div style="font-size:0.6rem;">${flags}</div></div>`;
 
 		// Standing Block
 		const standing = this.CHE({ type: 'div', style: "display: flex; gap: 8px; width: 220px; flex-shrink: 0; border-left: 1px solid #444; padding-left: 8px;" });
@@ -3758,7 +3926,7 @@ ProcessTtsCommand(processedMsg) {
 	    }
 	}
 
-	PushToSubWindow(window_key, htmlString) {
+	/*PushToSubWindow(window_key, htmlString) {
 	    if(document == undefined){this.DebugPrint({msg: "cannot push to sub window, no document"}); return;}
 	    const targetWin = this.#state.subWindows[window_key];
 	    if (!targetWin || targetWin.closed) return;
@@ -3771,22 +3939,28 @@ ProcessTtsCommand(processedMsg) {
 
 	    // Keep it scrolled to the bottom
 	    viewport.scrollTop = viewport.scrollHeight;
-	}
+	}*/
 
 	CreateSubWindow(args = {
-		key: undefined,
-		height: undefined,
-		width: undefined, 
-		background: undefined,
-		color: undefined,
+	    key: undefined,
+	    height: undefined,
+	    width: undefined,
+	    html: undefined,
+	    background: "black",
+	    color: "white",
+	    script: undefined,
+	    style: undefined,
 	}) {
-		try{
-		if(document == undefined){this.DebugPrint({msg: "no document, cannot create sub windows"}); return;}
+	    try {
+		if (typeof document === 'undefined') {
+		    this.DebugPrint({ msg: "no document, cannot create sub windows" });
+		    return;
 		}
-		catch(err){
-			this.DebugPrint({msg: "document not found", error: err});
-			return;
-		}
+	    } catch (err) {
+		this.DebugPrint({ msg: "document not found", error: err });
+		return;
+	    }
+
 	    const existingWin = this.#state.subWindows[args.key];
 	    if (existingWin && !existingWin.closed) {
 		existingWin.focus();
@@ -3794,12 +3968,13 @@ ProcessTtsCommand(processedMsg) {
 	    }
 
 	    const features = `width=${args.width},height=${args.height},popup=yes`;
-	    this.#state.subWindows[args.key] = window.open("", `win_${args.key}`, features);
+	    const newWin = window.open("", `win_${args.key}`, features);
+	    this.#state.subWindows[args.key] = newWin;
 
-	    const doc = this.#state.subWindows[args.key].document;
+	    const doc = newWin.document;
 	    doc.title = `${args.key}`;
-	    
-	    // Set up a clean, black viewport that handles its own scrolling
+
+	    // 1. Setup Styles
 	    doc.body.style.cssText = `
 		background:${args.background}; 
 		color:${args.color}; 
@@ -3808,6 +3983,16 @@ ProcessTtsCommand(processedMsg) {
 		overflow:hidden; 
 		padding:0; 
 	    `;
+
+	    // override append style sheet
+	    if (args.style) {
+		const styleTag = doc.createElement('style');
+		styleTag.id = `style-${args.key}`;
+		styleTag.textContent = args.style;
+		doc.head.appendChild(styleTag);
+	    }
+
+	    // 2. Setup HTML Structure
 	    doc.body.innerHTML = `
 		<div id="${args.key}-viewport" style="
 		    width: 100%; 
@@ -3821,6 +4006,22 @@ ProcessTtsCommand(processedMsg) {
 		    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 		"></div>
 	    `;
+
+	    // 3. Inject the Script
+	    if (args.script) {
+		const scriptEl = doc.createElement("script");
+		scriptEl.type = "text/javascript";
+		
+		// We wrap the script to ensure it has access to the viewport immediately
+		scriptEl.textContent = `
+		    (function() {
+			console.log("Sub-window '${args.key}' initialized.");
+			${args.script}
+		    })();
+		`;
+		
+		doc.body.appendChild(scriptEl);
+	    }
 	}
 
 	async GetTrigramsFromFile() {
@@ -3838,11 +4039,153 @@ ProcessTtsCommand(processedMsg) {
 		return ["hel"];
 	}
 
+	CreateMessageHtml(p_msg, messageId){
+		let users = this.#state.users || window.Cockatiel.GetUsers().users;
+		let user = this.GetUserFromUuid(p_msg.uuid);
+
+		let icon;
+		try{
+			icon = user.icon || undefined;
+		}
+		catch(err){
+			this.DebugPrint({msg: "could not get icon for user:", user});
+			icon = "asdf";
+		}
+
+		let username;
+		try{
+			username = user.username;
+		}
+		catch(err){
+			this.DebugPrint({msg: "could not get username for user:", user});
+			username = "FAILED TO GET UN";
+		}
+
+		let commendments = {
+			community: 1,
+			engagement: 2,
+			support: 3,
+			rep: 4,
+		}
+		try{
+		}
+		catch(err){
+			this.DebugPrint({msg: "could not get username for user:", user});
+		}
+		try{
+		}
+		catch(err){
+			this.DebugPrint({msg: "could not get username for user:", user});
+		}
+		try{
+		}
+		catch(err){
+			this.DebugPrint({msg: "could not get username for user:", user});
+		}
+		try{
+		}
+		catch(err){
+			this.DebugPrint({msg: "could not get username for user:", user});
+		}
+
+		let command;
+		try{
+			command = JSON.stringify(p_msg.commands);
+		}
+		catch(err){
+			this.DebugPrint({msg: "could not get command from user message:", p_msg});
+		}
+
+		let message;
+		try{
+			message = Object.keys(p_msg.commands)[0].message || p_msg.rawMessage;
+		}
+		catch(err){
+			this.DebugPrint({msg: "could not get usermesage from user message:", p_msg});
+		}
+
+
+		/* get user settings here */
+
+		`
+		<div class="chatMessageContainer">
+			<div class="chatUserBubble">
+				<div class="chatBubbleTailContainer">
+					<div class="chatBubbleTailContainer"><img class="chatBubbleTail" alt="" src="/content/stream_utils/tib_stuff/whispy_tail.png"></div>
+				</div>
+				<div class="chatUserInfo">
+					<div class="chatUserImageContainer"><img class="chatUserImage" alt="chatUserImage" src="${icon}"></div>		
+					<div class="chatUserStats">
+						<div class="chatUsername">${username}</div>		
+						<div class="chatUserCommendations">
+							community: ${commendments.community || "FAILED TO GET DOOTS1"}, 
+							engagement: ${commendments.engagement  || "FAILED TO GET DOOTS2"}, 
+							support: ${commendments.support || "FAILED TO GET DOOTS3"}, 
+							rep: ${commendments.rep || "FAILED TO GET DOOTS4"}
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="chatMessageBubble">
+				<div class="chatCommandContainer">
+					<div class="chatCommand">${command || "command null?"}</div>
+				</div>
+				<div class="chatMessage">${message}</div>
+			</div>
+		</div>`;
+	}
+
+	PushMessageToChat(processedMsg){
+		if(processedMsg == undefined){
+			this.DebugPrint({
+				msg:"processedMsg is undefined, cannot process", 
+				type: "t", 
+			});
+		}
+
+		let d;	
+		// verify subwindow exists
+		try{
+			d = this.#state.subWindows[this.#state.windows.chat.key];
+		}			
+		catch(err){
+			this.DebugPrint({
+				msg:"could not get subwindow from chat, ", 
+				type: "t", 
+				err: err,
+			});
+		}
+
+		let messageId = processedMsg.messageId;
+		let msgHTML = this.CreateMessageHtml(processedMsg, messageId);
+		let state = this.#state;
+
+		//this.#state.config.windows.chat.key;
+
+		// create create manager
+		class MessageManager {
+			timer = new IntTimer({
+				timeoutDuration: state.subWindows[state.windows.chat.key].messageDisplayDuration,
+				killOnTimeout: true,
+				timeoutListeners: [(()=>{
+					console.log("removing message from chat");
+					d.getElementById(messageId).remove();
+				}),],
+			});
+			constructor(){
+				
+			}
+		}
+		let mm = new MessageManager();
+	}
 
 	Init(){
+
+		/*
 		this.DebugPrint({msg:"getting trigrams"});
 		this.trigrams  = this.GetTrigramsFromFile();
 		this.DebugPrint({msg:"getting trigrams"});
+		*/
 
 // Then in your render function
 	
@@ -3885,7 +4228,7 @@ ProcessTtsCommand(processedMsg) {
 		    const ttsCommand = unreadTtsMessage.commands.find(cmd => cmd.command === 'tts');
 
 		    if (ttsCommand) {
-			this.DebugPrint({msg:`Playing TTS for: ${unreadTtsMessage.authorName}`});
+			this.DebugPrint({msg:`Playing TTS for: ${unreadTtsMessage.username}`});
 			
 			// 4. Call the TTS function with its specific arguments
 			// Using the flags and message we parsed earlier
@@ -3897,57 +4240,231 @@ ProcessTtsCommand(processedMsg) {
 		    }		
 		}))
 
+		this.DebugPrint({msg: "generating ui for the first time"});
+		let settingsContainer;
 		try{
-			this.DebugPrint({msg: "generating ui for the first time"});
-			let settingsContainer;
-				try{
-					settingsContainer = document.getElementById(args.settingsContainerId);
-					if(settingsContainer == null || settingsContainer == undefined){throw new Error("no container");}
-				}
-				catch(err){
-					this.DebugPrint({msg: "err tryiing to get parent, likely lack of element so creating then continuing", error: err});
-				settingsContainer = this.CHE({type: 'div'});
-				}// Ensure all subwindows are closed if the main app is closed or refreshed
-				let bannedWordsList = this.GenerateBannedWordsConfig();
-				settingsContainer.appendChild(bannedWordsList);	
-				this.UpdateBannedWordsList();
-				let controlBar = this.GenerateControlBarUI()
-				settingsContainer.appendChild(controlBar);
-				let ytConfig = this.GenerateYoutubeConfig();
-				settingsContainer.appendChild(ytConfig);
-				let userManagement = this.GenerateUserManagement();
-				settingsContainer.appendChild(userManagement);
+			settingsContainer = document.getElementById("cockatiel_settings_container");
+			if(
+				settingsContainer == null 
+				|| settingsContainer == undefined){
+				this.DebugPrint({msg: "no container"});
+				settingsContainer = this.CHE({type: 'div', id: "cockatiel_settings_container"});
+			}
+			// else: container already got, no need to change anything
+		}
+		catch(err){
+			this.DebugPrint({
+				msg: "err tryiing to get parent, likely lack of element so creating then continuing", 
+				error: err
+			});
+			settingsContainer = this.CHE({type: 'div', id: "cockatiel_settings_container"});
+		}// Ensure all subwindows are closed if the main app is closed or refreshed
+
+
+		try{
+			let bannedWordsList = this.GenerateBannedWordsConfig();
+			console.log("bannedWordsList:", bannedWordsList);
+			settingsContainer.appendChild(bannedWordsList);
+			this.UpdateBannedWordsList();
+		}
+		catch(err){
+		    console.error("cannot GenerateBannedWordsConfig", err, err?.stack);
+		}
+
+		try{
+			if(!settingsContainer){
+				this.DebugPrint({msg: "no settings container, cannot create items", type:'t'});
+			}
+			let controlBar = this.GenerateControlBarUI()
+			settingsContainer.appendChild(controlBar);
+		}
+		catch(err){
+			this.DebugPrint({msg: "cannot cannot GenerateControlBarUI", type:'e', err: err});
+		}
+
+		try{
+			if(!settingsContainer){
+				this.DebugPrint({msg: "no settings container, cannot create items", type:'t'});
+			}
+			let ytConfig = this.GenerateYoutubeConfig();
+			settingsContainer.appendChild(ytConfig);
+		}
+		catch(err){
+			this.DebugPrint({msg: "cannot cannot GenerateControlBarUI", type:'e', err: err});
+		}
+
+		try{
+			if(!settingsContainer){
+				this.DebugPrint({msg: "no settings container, cannot create items", type:'t'});
+			}
+			let userManagement = this.GenerateUserManagement();
+			settingsContainer.appendChild(userManagement);
+		}
+		catch(err){
+			this.DebugPrint({msg: "cannot cannot GenerateUserManagement", type:'e', err: err});
+		}
+
+		try{
+			if(!settingsContainer){
+				this.DebugPrint({msg: "no settings container, cannot create items", type:'t'});
+			}
 			document.body.appendChild(settingsContainer);
 		}
 		catch(err){
-			this.DebugPrint({msg: "cannot create the ui, likely because there's no document", error: err});
+			this.DebugPrint({msg: "cannot append settings container to document", err: err, type: "err"});
 		}
 
-		/* NOT IMPLIMENTED YET
-	 	this.CreateSubWindow({
-			key: "chatMonitor",
-			height: 800,
-			width: 400, 
-			background: undefined,
-			color: undefined,
-		});
-		*/
+		try{
+			const chatSettings = this.#state.windows.chat;
+			const chatStyle = `
+				* {
+					font-family:monospac;
+				}
+			    .chatMessageContainer {
+				position: relative;
+				max-width: 100%;
+				padding-bottom: 2rem;
+			    }
+			    .chatUserInfo {
+				background-color: #ff8;
+				border-radius: 3rem;
+				color: black;
+				padding: 0.2rem;
+				display: flex;
+			    }
+			    /* Add the rest of your CSS here without escaping anything! */
+			`;
 
-		//this.PushToSubWindow("chatMonitor", this.RenderStandbyHTML());
-		this.CreateSubWindow({
-			key: "events",
-			height: 300,
-			width: 400, 
-			background: undefined,
-			color: undefined,
-		});
+			this.CreateSubWindow({
+			    ...chatSettings,
+			    style: chatStyle, // Pass the CSS here
+			    script: `
+				window.addEventListener('message', (event) => {
+				    const { type, payload } = event.data;
+				    if (type === 'new_chat_msg') {
+					const view = document.getElementById("${chatSettings.key}-viewport");
+					if(view) {
+					    // No more <style> tags inside the innerHTML!
+					    view.innerHTML += "<div><b>System:</b> " + payload.text + "</div>";
+					}
+				    }
+				});
+			    `
+			});	
+		}
+		catch(err){
+			this.DebugPrint({msg: "could not create chat window", type: "err"});
+		}
 
-		this.#state.timers.EventDisplayTimer.AddTickListener((()=>{console.log("tick from event display manager")}));
-		this.#state.timers.EventDisplayTimer.AddTimeoutListener((()=>{console.log("time'd out eventdisplaytimer")}));
-		this.#state.timers.EventDisplayTimer.AddTimeoutListener((()=>{this.EventDisplayManager()}));
-		this.EventDisplayManager()
-		this.#state.timers.EventDisplayTimer.Start();
-		//this.PushToSubWindow("events", this.RenderStandbyHTML());
+		// ABOVE RUNS
+		// CODE PAST HERE DOES NOT RUN
+
+		try{
+		this.DebugPrint({msg:"adding testUser"});
+			const test_message = {
+				    "channelId": "asdf1234zxcv5689",
+				    "commands": {},
+				    "messageId": "LCC.EhwKGkNNLVB2TkdCNVpJREZlZkJ3Z1FkNExJQzZR",
+				    "platform": "youtube",
+				    "processedMessage": "HELLO SMALLSVILLE",
+				    "rawMessage": "HELLO SMALLSVILLE",
+				    "receivedAt": 1771485470330,
+				    "score": -100,
+				    "state": {},
+				    "streamOrigin": "Cg0KC3JHN3ZGN3BjVlBZKicKGFVDS1ppZ0hiZ3BKRzlsZHhYTXFtaVpVZxILckc3dkY3cGNWUFk",
+				    "userUuid": "88d515ca-531b-45fc-a24b-a65eeb76996d",
+				    "username": "testUser",
+				    "version": 1,
+			}
+			this.CreateUserFromFlags(test_message);
+		}
+		catch(err){
+			this.DebugPrint({msg: "could not add user to users", type: "err"});
+		}
+
+		try{
+			const chatSettings = this.#state.windows.chat;
+			// TEST: Send a message 500ms later to give the window time to load
+			setTimeout(() => {
+			    const win = this.#state.subWindows[chatSettings.key];
+			    if (win) {
+				win.postMessage({ 
+				    type: 'new_chat_msg', 
+				    payload: { text: "Chat window connected successfully!" } 
+				}, "*");
+			    }
+			}, 500);	
+
+			setTimeout(() => {
+				const message = {
+				    "commands": {
+					"tts": {
+					    "commandType": "tts",
+					    "errInfo": {
+						"err": null,
+						"erroredAt": null
+					    },
+					    "executedAt": null,
+					    "flags": {
+						"p": 1.2,
+						"r": 1.9,
+						"v": 51
+					    },
+					    "isValid": true,
+					    "message": "yo was good",
+					    "pointsOffer": 0,
+					    "state": {
+						"readAt": null
+					    },
+					    "version": 1
+					}
+				    },
+				    "messageId": "LCC.EhwKGkNNLVB2TkdCNVpJREZlZkJ3Z1FkNExJQzZR",
+				    "platform": "youtube",
+				    "processedMessage": "yo was good",
+				    "rawMessage": "!tts -v 51 -r 1.9 -p 1.2 yo was good",
+				    "receivedAt": 1771485470330,
+				    "score": -170,
+				    "state": {},
+				    "streamOrigin": "Cg0KC3JHN3ZGN3BjVlBZKicKGFVDS1ppZ0hiZ3BKRzlsZHhYTXFtaVpVZxILckc3dkY3cGNWUFk",
+				    "userUuid": "88d515ca-531b-45fc-a24b-a65eeb76996d",
+				    "username": "testUser",
+				    "version": 1
+				};
+
+				this.PushMessageToChat(message);
+			}, 1000);	
+		}
+		catch(err){
+			this.DebugPrint({msg: "could not add test messages", type: "err", err: err});
+		}
+
+		try{
+			//this.PushToSubWindow("chatMonitor", this.RenderStandbyHTML());
+			let eventWindowSettings = this.#state.windows.events;
+			this.CreateSubWindow({
+				...eventWindowSettings,
+				script: `
+					console.log("print from events window");
+				`,
+			});
+
+			this.#state.timers.EventDisplayTimer.AddTickListener((()=>{console.log("tick from event display manager")}));
+			this.#state.timers.EventDisplayTimer.AddTimeoutListener((()=>{console.log("time'd out eventdisplaytimer")}));
+			this.#state.timers.EventDisplayTimer.AddTimeoutListener((()=>{this.EventDisplayManager()}));
+		}
+		catch(err){
+			this.DebugPrint({msg: "could not add test messages", type: "err", err: err});
+		}
+
+		try{
+			this.EventDisplayManager();
+			this.#state.timers.EventDisplayTimer.Start();
+			//this.PushToSubWindow("events", this.RenderStandbyHTML());	
+		}
+		catch(err){
+			this.DebugPrint({msg: "could not start EventDisplayManager()", type: "err", err: err});
+		}
 
 		try{
 			// Ensure all subwindows are closed if the main app is closed or refreshed
@@ -3965,5 +4482,50 @@ ProcessTtsCommand(processedMsg) {
 			this.DebugPrint({msg:"no window to append listerners", error:err})
 		}
 	}
+
+	/*
+	 * WE CANNOT DELETE THIS AS SOME MADLAD (@Cunningstuntsinc) dropped a 50 banger (thankies ily)*
+                                                        .=.@@                   
+                                             .@..      .@@.@#@                  
+                                             @@.@.     .@@.@@@.                 
+                                             @@.-..   @.*@..@@.                 
+                                             @@#...  ....@.+@@@+                
+                                            @@.@.@#@@.@.@@.*@@@..               
+                                            .@.@.@=..@@@@@..@@@..               
+                                            @@..@@--+*..@..@@@@@.               
+                                       ......@@...@@....-@@..#...@@.            
+                             @.#.....-@@@@@=.@@..@.@@@@.@%@.-..@@.@@@.          
+                             ..:.@@@@......@@@....@@%.........@.@@@=@@@         
+                              .........@@..@#@.++........=@@.@@@@#%%#+@.        
+                                   ............=======.@@#..@%+##%%%%#@@.       
+                                       ....+==========..#.@@%%@@@@@@@@@@.       
+                                          .....======..@.@+*#%@@@........       
+                                           .@@..====..*@.@#@@@@.@.@@@@@..       
+                                           .%.@......@@@@@@@.@@@@@.@@@@@@.      
+                            .@.=@@@@.    .....@@@@@@@.@%%%@.@@@@.@@@@@@@@@@.    
+ ...@.@@.                    .........@@..@@@@@@.....@@%%+@@@@.@@@@@@@@@@@@.    
+  ........@@@.                  .:.*=....@@.@-@.@@@@@@%@@@@@@.@.@%%#@@@@@%@.    
+      .......@@@                 ..++*++..@@@@@@@@@.@@%@.@+@@@@@@@@%%%%%%%@.    
+         .+%...@@@                 ...*++..@@@.@@@.@@%@@@@.@@@@@.@@%%%%%@@@@    
+          .=%+...@@.                 ...*+.@@@@@@.@@@@@.@.@@#@...@%@@@@@@@@@    
+            ..*+..@@@                @@.+@=...@%@@@@....@@@@%@@.@@@@@@#%@@@.    
+             ...--.@%%#@@           ..@@.......@@@@@@@@@@.@%%@@@@@@@@@@#%@@.    
+                ...@@@@@.@#@.       @@@@@@@@@@@@@@%.@@@@@@@%%@.@..@@@@@@@@..    
+                   .@..@@@@@@@%#@. .@@@@@...@..........@@@@@@@@@@@@.@@@@@@..    
+                      ....@@@@@%@@@@@@@#@.:...@.@....==...@@@@@@@@@@@@@#@@.     
+                        .....@@@@@@@%#@%@@.%...@.@.@@..@@=.....@@@@@@@@@@.@     
+                           .....@@@@@%%%@@..@.........=...%=@#............      
+                              ......@@@@@@.  .@@=.@@@@.@@.@..-@@@@%+++%:.       
+                                  ........   ........:....@.@=....@@:...        
+                                             ..@.@@.@:@@.......@@....           
+                                            +@@@@@...@..@@..@..@@@@@@.          
+                                           .@.@%@@@@@@@@...@@.........          
+                                           @@@@@@.@@@.@@.@@....@.@.@:@.         
+                                          .@...@@@@.@@.@@@@@@@.@.@@...@         
+                                         @@@@@@@.@@@.@@@@....@.@......@.        
+                                         .@@@..@@@.@@.@@@.@.@@..@@.@@@@..       
+
+	 */
+
 	constructor(){/* DO NOT ADD STUFF HERE, IT WILL CORRUPT TESTING STATE */}
 }

@@ -6,13 +6,23 @@
 		<script src="/client_management.js" type="module"></script>
 		<script type="module">
 			window.debug = true;
-			import MonitorMessages from './tib_stuff/Cockatiel.mjs';
-			let Cockatiel = new MonitorMessages()		
-			window.Cockatiel = Cockatiel;
-			window.Cockatiel.Init();
+			import Cockatiel from './tib_stuff/Cockatiel.mjs';
+			window.Cockatiel = new Cockatiel();
+			document.addEventListener("DOMContentLoaded", (event) => {
+				console.log("initing Cockatiel");
+				try{
+					window.Cockatiel.Init();
+					console.log("init success");
+				}
+				catch(err){
+					console.error("init fail", err, err.stack);
+				}
+			});
 			console.log("Cockatiel added to window");
+			/*
 			window.tibSleepingAnimation = await fetch("./tib_stuff/tib_sleeping.gif");
 			console.log("added the eepy them");
+			*/
 		</script>
 		<title>tib 4</title>
 		<link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,6 +30,157 @@
 		<link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Geist+Mono:wght@100..900&family=Permanent+Marker&display=swap" rel="stylesheet">
 	</head>
 <body>
+	<style>	
+		.chatMessageContainer {
+			display:relative;
+			max-width:100%;
+			max-height: 100%;
+			overflow: hidden;
+			padding-bottom:2rem;
+
+			.chatUserBubble {	
+				display:flex;
+				flex-direction: row;
+				height:3.2em;
+
+				.chatBubbleTailContainer{
+					display:flex;
+					flex-direction:column-reverse;
+					height:100%;
+
+					.chatBubbleTailContainer {
+						position:relative;
+						bottom:0px;
+						width:1.3rem;
+						height:1.3rem;
+
+						.chatBubbleTail {
+
+						}
+					}
+				}
+				.chatUserInfo {
+					background-color: #ff8;
+					border-radius: 3rem;
+					border-bottom-left-radius: 0px;
+					color: black;
+					display:flex;
+					flex-direction: row;
+					font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+					padding:0.2rem;
+
+					.chatUserImageContainer{
+						background-color: #000;
+						border-radius:100%;
+						height:3rem;
+						width:3rem;
+						transform:translateY(-0.1rem);
+
+						.chatUserImage{
+							height:3.2rem;
+							width:3.2rem;
+							padding:0.2rem;
+						}
+					}
+					.chatUserStats{
+						.chatUsername{
+							width:18rem;
+							font-weight:bolder;
+							overflow:hidden;
+							text-overflow: ellipsis;
+						}
+						.chatUserCommendations{
+							font-size:0.7rem;
+						}
+					}
+				}
+			}
+			.chatMessageBubble {
+				background-color:#111;
+				border-radius:1.3rem;
+				border-top-left-radius: 0rem;
+				border-top-right-radius: 0rem;
+				color: white;
+				padding:1rem;
+				margin-left: 1.3rem;
+				width: 20rem;
+
+				.chatCommandContainer{
+					height:1rem;
+					padding-bottom:1rem;
+
+					.chatCommand	{
+						background-color: #222;
+						border-radius:1rem;
+						color: cyan;
+						font-size: 0.5rem;
+						padding:0.2rem;
+						padding-left: 0.7rem;
+						height:min-content;
+						width: auto;
+					}
+				}
+
+				.chatMessage {
+					padding-top:0.2rem;
+				}
+			}
+		}
+	</style>
+
+	<br>
+	<br>
+
+	<!-- DO NOT DELETE, is template for chat messages -->
+	<div style="width:400px; height:800px; background-color: #030;">
+		<div class="chatMessageContainer">
+			<div class="chatUserBubble">
+				<div class="chatBubbleTailContainer">
+					<div class="chatBubbleTailContainer"><img class="chatBubbleTail" alt="" src="/content/stream_utils/tib_stuff/whispy_tail.png"></div>
+				</div>
+				<div class="chatUserInfo">
+					<div class="chatUserImageContainer"><img class="chatUserImage" alt="chatUserImage" src="/assets/headshot_doodle.png"></div>		
+					<div class="chatUserStats">
+						<div class="chatUsername">@usernameUSERNAMEusernameUSERNAME</div>		
+						<div class="chatUserCommendations">community: 1, engagement: 5, support: 2, rep: 8</div>
+					</div>
+				</div>
+			</div>
+			<div class="chatMessageBubble">
+				<div class="chatCommandContainer">
+					<div class="chatCommand">!tts -v 69 -p 1.9 -r 0.8 </div>
+				</div>
+				<div class="chatMessage">
+				Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate.
+				</div>
+			</div>
+		</div>
+
+		<div class="chatMessageContainer">
+			<div class="chatUserBubble">
+				<div class="chatBubbleTailContainer">
+					<div class="chatBubbleTailContainer"><img class="chatBubbleTail" alt="" src="/content/stream_utils/tib_stuff/whispy_tail.png"></div>
+				</div>
+				<div class="chatUserInfo">
+					<div class="chatUserImageContainer"><img class="chatUserImage" alt="chatUserImage" src="/assets/headshot_doodle.png"></div>		
+					<div class="chatUserStats">
+						<div class="chatUsername">@usernameUSERNAMEusernameUSERNAME</div>		
+						<div class="chatUserCommendations">community: 1, engagement: 5, support: 2, rep: 8</div>
+					</div>
+				</div>
+			</div>
+			<div class="chatMessageBubble">
+				<div class="chatCommandContainer">
+					<div class="chatCommand">!tts -v 69 -p 1.9 -r 0.8 </div>
+				</div>
+				<div class="chatMessage">
+				Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate.
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- -->
+
 	<style>
 		#checklist>li>input {max-width:3rem !important;}
 		#checklist>li>ul>input {max-width:3rem !important;}
@@ -59,279 +220,5 @@
 		<li><input type="checkbox" value="false">if someone in chat says frozen, restart obs capture automagically</li>	
 	</ul>
 	<h1>TiB</h1>	
-	<style>
-		:root{
-			--tib_padding: 0.4rem;
-			--tib_border: 0.1rem solid white;
-			--tib_border-radius: calc(var(--tib_padding))
-		}
-
-		#tib_controls>* {
-			border-radius: 1em;	
-			padding: 1.4rem;
-		}
-	</style>
-	<div 
-	id="tib_controls" 
-	style="
-	height:90vh; 
-	width:90vw; 
-	display:flex;
-	">
-			<!-- chat -->
-		<div 
-		style="
-		border: var(--tib_border);
-		border-color:#330; 
-		width: 20rem; 
-		min-width:18rem;
-
-		padding:calc(var(--tib_padding)*4);
-
-		/*transform:rotate3d(-1, 0, 0, 45deg);*/
-		">
-			<style>
-				@font-face {
-					font-family: GeistMono-Black;
-					src: url(/assets/GeistMono-Black.otf)
-				}
-
-			.chat_message {
-			background-color: #300;
-			width:16rem;
-			display:flex;
-			flex-direction:column;
-			}
-
-			.chat_message-pfp>img{}
-
-			</style>
-			<div class="chat_message" style="
-			background-color: transparent;
-			width:16rem;
-			display:flex;
-			flex-direction:column;
-			padding-left:var(--tib_padding);
-			">
-			<div style="width:16rem;" style="display:flex; flex-direction:column;">
-			<div style="background-color:transparent">
-			<style>
-				@keyframes background_scroll{
-					from{
-						background-position-x:0rem;
-						background-position-y:0rem;
-					}
-					to{
-						background-position-x:2rem;
-						background-position-y:-1rem;
-					}
-				}
-
-				@keyframes rocking {
-					0%{transform:rotateZ(-5deg);}
-					50%{ transform:rotateZ(2deg); }
-					100%{ transform:rotateZ(-5deg); }
-				}
-
-				@keyframes rocking2 {
-					0%{transform:translateX(0.4rem)translateY(-1.7rem)rotateZ(-5deg); }
-					50%{transform:translateX(0.4rem)translateY(-1.7rem)rotateZ(2deg); }
-					100%{transform:translateX(0.4rem)translateY(-1.7rem)rotateZ(-5deg); }
-				}
-
-
-			transform:translateX(0.4rem)translateY(-1.7rem)rotateZ(5deg);
-			</style>
-			<div class="user_info animated_interactible" style="
-			animation: background_scroll 3s, rocking 4s;
-			animation-timing-function:linear, ease-in-out;
-			animation-iteration-count: infinite, infinite;
-
-			background: #880000;
-			background-image: radial-gradient(circle at center, #a44 0%, #a44 25%, transparent 25%); 
-			background-repeat:repeat;
-			background-size:1rem 1rem;
-
-			border-top-left-radius: calc(var(--tib_border-radius)*4);
-			border-top-right-radius:calc(var(--tib_border-radius)*4);
-			border-bottom-right-radius:calc(var(--tib_border-radius)*4);
-
-			padding:var(--tib_padding);
-
-			/*overflow:hidden;*/
-
-			position:relative;
-			display:flex;
-			flex-direction:row;
-			justify-content:space-between;
-			width:100%;
-
-			transform-origin: bottom left;
-			transform:
-				rotateZ(-5deg);
-
-			font-family: GeistMono-Black;
-			font-weight:bolder;
-
-
-			z-index:1000;
-			">
-			<div style="width:2rem; height:2rem; position:absolute; left:-1.8rem; bottom:0rem; border-radius:0rem;">
-				<img src="./tib_stuff/exciting_tail.png" style="border-radius:0rem; filter:brightness(0.5);">
-			</div>
-			<style>
-				.message_overlay{
-							border-top-left-radius:calc(var(--tib_border-radius)*4);
-							border-top-right-radius:calc(var(--tib_border-radius)*4);
-							border-bottom-right-radius:calc(var(--tib_border-radius)*4);
-							display:flex;
-							flex-direction:row;
-							justify-content:space-around;
-							width:100%; 
-							height:100%; 
-							position:absolute; 
-							/*padding:var(--tib_padding);*/
-							left:0rem;
-							top:0rem;
-							transition-duration: 100ms; color:transparent;background-color:transparent;
-							z-index:1003;
-				}
-				.message_overlay>*{
-					font-size:2.3rem;
-				}
-
-				.message_overlay:hover{		
-							background-color: #000000cc; 
-							color:white;
-				}
-
-				.animated_interactible{
-							animation-play-state:paused;
-				}
-
-			</style>
-			<div style="aspect-ratio:1/1; width: 100%; height:4rem; display:flex; justify-content:space-between;">
-			<div class="chat_messasge-pfp_container" style="width:min-content; display:flex; flex-direction:row;">
-			<div style="
-			height:4rem !important; 
-			width:4rem !important;
-			background-image: 
-			linear-gradient(45deg, #03f, transparent, transparent), /*mod*/
-			linear-gradient(100deg, #0f0, transparent), /*spon*/
-			linear-gradient(225deg, #f00, transparent), /*verf*/
-			linear-gradient(315deg, #ff0, transparent); /*own*/
-			border-radius:100%;
-
-			display:flex;
-			flex-direction:row;
-			justify-content: center;
-
-			position:relative;
-			">
-			<picture class="chat_message-pfp" style="
-			display:flex;
-			flex-direction:column;
-			justify-content:center;
-
-			width:90%;
-			">
-			<source src="/assets/headshot_doodle.png" type="image/png">
-			<img src="/assets/worble.png" style="
-			border-radius:100%; height:90%;
-			"/>
-			</picture>
-			<div style="
-			position:absolute; 
-			right:0px; 
-			bottom:0px; 
-			width:1.2rem; 
-			height:1.2rem;
-			">
-			<picture>
-			<img src="/assets/icon.png">
-			</picture>
-			</div>
-			</div>
-			</div>
-			<span>@</span>
-			<span class="username_container" style="overflow:hidden; width:calc(100%-1.2rem); text-overflow:ellipsis; height:1.5rem;"> 
-			usernameUSERNAMEusernameUSERNAME
-			</span>
-			</div>
-			<style>
-				@keyframes badge_spin{
-					from{transform:rotateZ(0deg);}
-					to{transform:rotateZ(35deg);}
-				}
-			</style>
-			<div class="chat_ranking" style="
-				width:2rem;
-				height:2rem; 
-				position:absolute; 
-				right:-0.7rem; 
-				bottom: -0.7rem;
-			">
-				<img src="./tib_stuff/top_chatter_badge.svg" style="
-					animation: badge_spin 2s;
-					animation-timing-function: linear;
-					animation-iteration-count: infinite;
-					position:absolute;
-					left:0rem;
-					top:0rem;
-				">
-				<span style="
-					font-size:1.5rem;
-					position:absolute;
-					left:0.1rem;
-					top:-0.2rem;
-				">#1</span>
-			</div>
-			</div>
-			<p style="
-				animation: rocking2 4s;
-				animation-timing-function: ease-in-out;
-				animation-iteration-count: infinite;
-				animation-delay:500ms;
-
-				background-color:#ddd;
-				color:black;
-
-				border-top-right-radius:		calc(var(--tib_border-radius)*4);
-				border-bottom-left-radius:	calc(var(--tib_border-radius)*4);
-				border-bottom-right-radius:	calc(var(--tib_border-radius)*4);
-
-				padding:var(--tib_padding);
-
-
-				transform-origin: top left;
-				transform:
-					translateX(0.4rem)
-					translateY(-1.7rem)
-					rotateZ(5deg);
-
-				width:90%;
-				position:relative;
-				z-index:999;
-			">
-			Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate.</p>
-			</div>
-			</div>
-			</div>
-		</div>
-		<!-- main -->
-		<div 
-		style="
-			background-color:#303; 
-			height:100%; 
-			width:75%; 
-			overflow:hidden;
-		">
-		<div style="
-			height:80%; 
-			overflow-y: scroll; 
-			overflow-x:hidden;
-		">
-		</div>
-	</div>	
 </body>
 </html>
