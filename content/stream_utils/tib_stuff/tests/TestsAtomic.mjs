@@ -3,7 +3,7 @@ import Cockatiel from '../Cockatiel.mjs';
 
 const ReferenceBot = new Cockatiel();
 
-const testManifest = [
+const tests = [
 	/* for copy paste:
 	{
 		name: "⚠️",
@@ -35,10 +35,10 @@ const testManifest = [
 		targetMethod: "DebugPrint",
 		expectedOutput: 
 		{
-		    type: "log",
+		    type: null, 
 		    message: "Test String",
-		    data: undefined,
-		    error: undefined,
+		    val: null,
+		    error: null,
 		}
 	},
 	{
@@ -1122,7 +1122,7 @@ const testManifest = [
 	},
 ];
 
-const getRuntime = () => {
+const Runtime = () => {
     if (typeof Deno !== 'undefined') return 'deno';
     if (typeof Bun !== 'undefined') return 'bun';
     if (typeof process !== 'undefined' && process.versions?.node) return 'node';
@@ -1135,7 +1135,7 @@ const getRuntime = () => {
  * Saves reports to ./test_results/ and opens them.
  */
 async function saveAndOpen(filename, content) {
-    const runtime = getRuntime();
+    const runtime = Runtime();
     const isWin = (typeof process !== 'undefined' ? process.platform : Deno.build.os).startsWith('win');
     const startCmd = isWin ? 'start' : 'open';
     
@@ -1175,310 +1175,104 @@ async function saveAndOpen(filename, content) {
 
 async function runTestSuite() {
     // 1. SETUP
-    const runtime = getRuntime();
     console.log(`🧪 Running Pure I/O Tests [${runtime}]...`);
-    
-    let rows = ""; 
-    let passedCount = 0;
-    let lastMismatch = "";
-
-    const toPlain = (obj) => (obj === undefined) ? undefined : JSON.parse(JSON.stringify(obj));
-
-    /**
-     * UTILITY: A custom stringifier that sorts object keys alphabetically.
-     */
-    const stableStringify = (obj) => {
-        if (obj === undefined) return "undefined";
-        if (obj === null || typeof obj !== 'object') return JSON.stringify(obj, null, 4);
-        if (Array.isArray(obj)) {
-            return "[\n" + obj.map(item => stableStringify(item).split('\n').map(l => "    " + l).join('\n').trimStart()).join(",\n") + "\n]";
-        }
-        const sortedObj = {};
-        Object.keys(obj).sort().forEach(key => {
-            const val = obj[key];
-            // Recursively ensure nested objects are also stable
-            sortedObj[key] = (val !== null && typeof val === 'object') ? JSON.parse(stableStringify(val)) : val;
-        });
-        return JSON.stringify(sortedObj, null, 4);
-    };
-
-    /**
-     * CORE LOGIC: Deep comparison.
-     * Checks "type:" directives BEFORE strict equality.
-     */
-    const isMatchFuzzy = (actual, expected, path = "root") => {
-        if (typeof expected === 'string' && expected.startsWith('type:')) {
-            const requiredType = expected.split(':')[1];
-            let match = false;
-            switch (requiredType) {
-                case 'number': match = (typeof actual === 'number'); break;
-                case 'string': match = (typeof actual === 'string'); break;
-                case 'array':  match = Array.isArray(actual); break;
-                case 'null':   match = (actual === null); break;
-                case 'class':  
-                    match = (actual !== null && typeof actual === 'object' && actual.constructor !== Object); 
-                    break;
-                default: match = (typeof actual === requiredType);
-            }
-            if (!match) {
-                const got = (actual !== null && typeof actual === 'object') ? actual.constructor.name : typeof actual;
-                lastMismatch = `${path} (Expected type:${requiredType}, got ${got})`;
-            }
-            return match;
-        }
-
-        if (actual === expected) return true;
-
-        if (expected === null || actual === null || typeof expected !== 'object') {
-            lastMismatch = `${path} (Value mismatch)`;
-            return false;
-        }
-
-        if (Array.isArray(expected)) {
-            if (!Array.isArray(actual) || actual.length !== expected.length) {
-                lastMismatch = `${path} (Array length mismatch)`;
-                return false;
-            }
-            return expected.every((val, i) => isMatchFuzzy(actual[i], val, `${path}[${i}]`));
-        }
-
-        const eKeys = Object.keys(expected);
-        for (const key of eKeys) {
-            if (!(key in actual)) {
-                lastMismatch = `${path} (Missing key: "${key}")`;
-                return false;
-            }
-            if (!isMatchFuzzy(actual[key], expected[key], `${path}.${key}`)) return false;
-        }
-        return true;
-    };
-
-    /**
-     * UI HELPER: Masks actual data to match expected keys for the report.
-     */
-    const getMaskedActual = (actual, expected) => {
-        if (typeof expected === 'string' && expected.startsWith('type:')) return actual; 
-        if (actual !== null && typeof actual === 'object' && expected !== null && typeof expected === 'object') {
-            const masked = Array.isArray(actual) ? [] : {};
-            for (const key in actual) {
-                masked[key] = (expected && key in expected) 
-                    ? getMaskedActual(actual[key], expected[key]) 
-                    : actual[key];
-            }
-            return masked;
-        }
-        return actual;
-    };
-
-    // 2. EXECUTION LOOP
-    const localManifest = JSON.parse(JSON.stringify(testManifest));
-
-    for (const test of localManifest) {
-        let bot = new Cockatiel(); 
-        let caughtError = null;
-        let passed = false;
-        let rawActual = null; 
-        let executionTrace = [];
-        lastMismatch = "";
-
-        const trace = (msg) => {
-            const stackLine = new Error().stack.split('\n')[2] || "";
-            let location = "";
-            const match = stackLine.match(/([^\\\/]+):(\d+):(\d+)\)?$/);
-            if (match) location = `${match[1]}:${match[2]}`;
-            executionTrace.push({ message: msg, stack: location });
-        };
-
-        const currentInput = test.input; 
-        const currentExpected = test.expectedOutput;
-
-        try {
-            const fn = await bot[test.targetMethod];
-            if (typeof fn !== 'function') throw new Error(`Method ${test.targetMethod} not found`);
-
-            const inputForCall = (currentInput === undefined) ? undefined : JSON.parse(JSON.stringify(currentInput));
-            
-            // EXECUTE: Get raw result (preserved classes)
-            const result = await fn.call(bot, inputForCall);
-            rawActual = result; 
-
-            // COMPARE: Check rawActual vs currentExpected
-            passed = isMatchFuzzy(rawActual, currentExpected);
-            if (!passed) trace(`[LOGIC] Mismatch at: ${lastMismatch}`);
-
-	} catch (e) {
-	    caughtError = e.message || String(e);
-	    rawActual = { error: caughtError };
-	    
-	    // 1. Check if we expected a specific error string (shorthand)
-	    if (test.expectedError) {
-		passed = caughtError.toLowerCase().includes(test.expectedError.toLowerCase());
-	    } 
-	    // 2. If expectedOutput is an object containing "error", compare it fuzzily
-	    else if (currentExpected && typeof currentExpected === 'object' && 'error' in currentExpected) {
-		passed = isMatchFuzzy(rawActual, currentExpected);
-	    } 
-	    else {
-		passed = false;
-		trace(`[LOGIC] Unexpected throw encountered: ${caughtError}`);
-	    }
-	    
-	    trace(`[SYSTEM] Caught: ${caughtError}`);
+	let logs
+	function ATL(msg){ // Add Trace Log
+		let err = new Error();
+		let trace = JSON.stringify(err.stack, null, 4);
+		logs.push(String(msg, " ", trace));
 	}
-        if (passed) passedCount++;
 
-        // 3. DIFF GENERATION
-        const plainActual = toPlain(rawActual);
-        const actualToShow = (passed && !caughtError) ? getMaskedActual(plainActual, currentExpected) : plainActual;
-        const expectedToShow = test.expectedError ? { error: test.expectedError } : currentExpected;
+   let bot, currentTest, testFunction, expectedOutput, actualOutput;
+   for(let i = 0; i < tests.length; ++i){
+	   logs = [];
 
-        const expectedLines = stableStringify(expectedToShow).split('\n');
-        const actualLines = stableStringify(actualToShow).split('\n');
-        const maxLines = Math.max(expectedLines.length, actualLines.length);
+	   // run test
+	   try{
+		   //init test
+		   ATL("initing bot for test");
+		   bot = new Cockatiel();
+		   ATL("getting current test");
+		   currentTest = tests[i];	
+		   ATL("getting expectedOutput");
+		   expectedOutput = currentTest.expectedOutput;
+		   ATL("getting testFunction");
+		   testFunction = currentTest.targetMethod;
+		   //run test
+		   
+		   ATL(`runnig test on func: "${testFunction}"`);
+		   actualOutput = await bot[testFunction];
 
-        let diffedExpected = "", diffedActual = "";
-        for (let i = 0; i < maxLines; i++) {
-            const eLine = expectedLines[i] ?? "";
-            const aLine = actualLines[i] ?? "";
-            const isLineMatch = (eLine.trim() === aLine.trim()) && (eLine !== "" || aLine !== "");
-            const isFuzzyPass = (passed && eLine.includes('"type:'));
-
-            diffedExpected += `<span class="${(isLineMatch || isFuzzyPass) ? 'line-match' : 'line-expect'}">${eLine || ' '}</span>\n`;
-            diffedActual += `<span class="${(isLineMatch || isFuzzyPass) ? 'line-match' : 'line-mismatch'}">${aLine || ' '}</span>\n`;
-        }
-
-        let botLogs = (typeof bot.GetLogs === 'function') ? bot.GetLogs() : [];
-        const combinedLogs = [...executionTrace.map(m => ({ type: 'runner', ...m })), ...botLogs];
-
-        // Append the HTML for this specific test row
-        rows += `
-        <tr class="${passed ? 'pass' : 'fail'}">
-            <td colspan="3">
-                <details>
-                    <summary>
-                        <span class="status-icon">${passed ? '✔' : '✘'}</span>
-                        <span class="test-name"><b>${test.name}</b></span>
-                        <span class="meta">Method: ${test.targetMethod}</span>
-                    </summary>
-                    <div class="details-content">
-   <div class="full-width" style="margin-bottom: 20px;">
-
-                    <div class="label">INPUT:</div>
-
-                    <pre class="code-block" style="border-color: #23863655; color: #8b949e;">${stableStringify(currentInput)}</pre>
-
-                </div>
+		   //compile total key list of both objects
 
 
-                <div class="comparison-grid">
+		   //compare the test
+		   ATL(`comparing test results`);
+		   //set to the lesser value for compare
 
-                    <div class="column"><div class="label">EXPECTED:</div><pre class="code-block diff-block">${diffedExpected}</pre></div>
+		   // func?
+		   if(Object.keys(expectedOutput).length < Object.keys(actualoutput).length){
+			lesserKeys = expectedOutput;
+		   }
+		   else{
+			lesserKeys = actualOutput;
+		   }
 
-                    <div class="column"><div class="label">ACTUAL:</div><pre class="code-block diff-block">${diffedActual}</pre></div>
+		   for(let j = 0; j < lesserKeys.length; ++j){
+			if(typeof(actualOutput) == "object"){
 
-                </div>
-
-
-                <div class="full-width" style="margin-top: 20px;">
-
-                    <div class="label">TRACE & LOGS:</div>
-
-                </div>
-
-            <pre class="code-block log-style">${combinedLogs.map(l => {
-
-                    const type = String(l?.type || "unknown").toUpperCase();
-
-                    const msg = String(l?.message || "");
-
-                    const stack = l.stack || "";
-
-                    let dataStr = "";
-
-                    if (l.val != undefined) {
-
-                        try { 
-				dataStr = " " 
-				+ (typeof l.val === 'object' 
-					? JSON.stringify(l.val, null, 4) 
-					: String(l.val)
-				); 
-			} 
-			catch(e) { 
-				dataStr = " [Unserializable]"; 
 			}
-                    }
+		   }
+	   }
+	   catch(err){
+		console.err("error running tests: ", err);
+	   }
+	   
+	   // compare results
+	   try{
 
-                    let prefix = type === 'RUNNER' ? '🧪' : (type === 'THROW' ? '💥' : '🦜');
+	   }
+	   catch(err){
+		console.err("error comparing results: ", err);
+	   }
 
-                    let style = msg.includes('[LOGIC]') ? 'color: #ff7b72; font-weight: bold;' : '';
+	   // build row
+	   try{
 
-                    return `<div style="${style} border-bottom: 1px solid #ffffff05; padding: 2px 0;">${prefix} [${type}] ${msg}${dataStr} <span style="opacity:0.4; font-size: 10px; margin-left: 10px;">at ${stack}</span></div>`;
-
-                }).join('')}</pre>
-
-            </div>
-                </details>
-            </td>
-        </tr>`;    
-
-	if(passed == false){
-		console.log("[EXIT] ERROR, FAILURE FOUND");
-		//break;
-	}
-    }
-
-    // 4. FINAL REPORT: Calculate stats and build the full HTML file
-    const passRate = localManifest.length > 0 ? ((passedCount / localManifest.length) * 100).toFixed(1) : 0;
+	   }
+	   catch(err){
+		console.err("error building rows: ", err);
+	   }
+   }
+    
     const reportHtml = `
     <html>
         <head><style>body { 
-
             background: #0d1117; color: #c9d1d9; font-family: -apple-system, sans-serif; padding: 2rem; 
-
             max-width: 1200px; margin: 0 auto; line-height: 1.5;
-
         }
-
         table { width: 100%; border-collapse: collapse; background: #161b22; border: 1px solid #30363d; border-radius: 6px; margin-top: 20px; table-layout: fixed; }
-
         summary { padding: 12px; cursor: pointer; display: flex; align-items: center; border-bottom: 1px solid #30363d; }
-
         .status-icon { width: 30px; font-weight: bold; flex-shrink: 0; }
-
         .test-name { flex-grow: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
         .meta { color: #8b949e; font-family: monospace; font-size: 11px; }
-
         .details-content { padding: 20px; background: #0d1117; }
-
         .comparison-grid { display: flex; gap: 20px; flex-wrap: wrap; }
-
         .column { flex: 1; min-width: 300px; }
-
         .code-block { background: #010409; padding: 10px; border: 1px solid #30363d; border-radius: 6px; font-family: monospace; font-size: 12px; overflow-x: auto; }
-
         .diff-block { white-space: pre; }
-
         .line-match { color: #6e7681; }
-
         .line-mismatch { background: rgba(248, 81, 73, 0.15); color: #ff7b72; display: block; width: 100%; }
-
         .line-expect { background: rgba(63, 185, 80, 0.15); color: #7ee787; display: block; width: 100%; }
-
         .log-style { color: #c9d1d9; border-left: 3px solid #30363d; }
-
         .label { font-size: 10px; font-weight: bold; color: #8b949e; margin-bottom: 6px; text-transform: uppercase; }
-
         .percentage { font-size: 0.8em; color: #8b949e; margin-left: 10px; font-weight: normal; }
-
         .pass .status-icon { color: #3fb950; } .fail .status-icon { color: #f85149; }
 
     </style></head>
         <body>
             <h1>🦜 Cockatiel I/O Report</h1>
             <p>Passed: <b>${passedCount}/${localManifest.length}</b> (${passRate}%)</p>
-            <table>${rows}</table>
         </body>
     </html>`;
 

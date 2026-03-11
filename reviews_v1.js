@@ -795,7 +795,7 @@ const reviews_v1 =
 						graphics: 10,
 						audio: 9,
 						story: 6.25,
-						uniqueness: 9,
+						uniqueness: 8,
 				},
 				links: {steam: "https://store.steampowered.com/app/379720/DOOM/"},
 				review: '(⚠️ read the caps at the end ⚠️:) the only soundtrack from a game where i put the album on as a whole for the listening experience ("mick gordon at his peak" - rory). the game is fun, however i think the gunplay is rather slow, and the glory kill system has some rather notable flaws. monsters feel a bit too generic and the only variety i feel is who to shoot first not how to eleminate them. glory kills are a neat mechanical idea however i really feel like theyre over used and about 1/2 way through the game they really loose their luster. ⚠️PLAY THIS GAME ON A LOW DIFFICULTY AND ENJOY THE SITES. IT IS NOT WORTH TRYING TO PLAY ON HIGH DIFFICULTIES'

@@ -305,10 +305,12 @@ export default class Cockatiel {
 			chat: {
 				key: "chatDisplay",
 				height: 800,
-				width: 400, 
+				width: 420,  // this was an accident lol
 				background: "#0f0",
 				color: undefined,
-				messageDisplayDuration: 15,
+				messageDisplayDuration: 30,
+				defaultStylesheet: "http://127.0.0.1:8080/content/stream_utils/tib_stuff/stylesheets/chatMessage-modernMinimal.css", 
+				//"./stylesheets/chatMessage-modernMinimal.css",
 			},
 			events: {
 				key: "eventDisplay",
@@ -316,8 +318,18 @@ export default class Cockatiel {
 				width: 400, 
 				background: "#000",
 				color: undefined,	
+				defaultStylesheet: "",
 			}
 		}
+	}
+
+	// for functions that listen for an event to trigger before executing.
+	eventListeners = {
+		unprocessedAdded: [],
+		messageAdded: [],
+		ttsAdded: [],
+		voteAdded: [],
+		commandAdded: [],
 	}
 
 	GetState(){
@@ -357,99 +369,52 @@ export default class Cockatiel {
 		return this.#state.logs;
 	}
 
-	DebugPrint(args = {
-	    msg: undefined, 
-	    val: undefined, 
-	    type: "log", 
-	    style: "background-color:#550; color: #fff; padding: 2px 5px;",
-	    error: undefined,
-	    err: undefined,
-	    silent: false, // for when you don't want a thing to be printed but still logged
-	}){
-		
-	    // 1. Functional Logic (The Switch)
-	    switch(args.type){
-		case("throw"):
-		case("t"):
-			try{
-			   if(err == undefined || args.error == undefined || args.e == undefined){
+	DebugPrint(args = {}) {
+	    // 1. Improved Error handling: Extract message and stack if it's an Error object
+	    const formatError = (e) => {
+		if (e instanceof Error) {
+		    return `[${e.name}] ${e.message}\nStack: ${e.stack}`;
+		}
+		return JSON.stringify(e, null, 4) || "";
+	    };
 
-			   }	
-			}
-			catch(err){
-				console.log("could not get value from args.err, setting to empty string");
-				args.err = "";
-			}
-		    throw new Error(
-			    args.msg, 
-			    args.val || args.value || undefined, 
-			    args.err
-		    );
+	    let errorMessage = formatError(args.err || args.error);
+	    
+	    // Fixed: You were checking args.value, but your default object uses args.val
+	    let value = JSON.stringify(args.val, null, 4) || ""; 
+	    let msg = args.msg || "";
+
+	    let statement = `msg: ${msg} \nval: ${value} \nerr: ${errorMessage}`;
+	    
+	    // 2. Fix the "throw" logic
+	    // Your previous code didn't actually throw; it just created a new Error object.
+	    const type = args.type?.toLowerCase();
+
+	    switch(type) {
+		case "throw":
+		case "t":
+		    throw new Error(statement); // Use 'throw' to actually stop execution
+		case "error":
+		case "err":
+		case "e":
+		    console.error(statement);
 		    break;
-		
-		case("error"):
-		case("err"):
-		case("e"):
-			try{
-			   if(err == undefined || args.error == undefined || args.e == undefined){
-
-			   }	
-			}
-			catch(err){
-				console.log("could not get value from args.err, setting to empty string");
-				args.err = "";
-			}
-		    if(!args.silent){
-			    console.error(
-				args.msg, 
-				args.val || args.value || undefined, 
-				JSON.stringify(
-					args.err, 
-					null,
-					4,
-				),
-				(args.err.stack) ? args.err.stack : ""
-			    );
-		    }
+		case "warning":
+		case "warn":
+		case "w":
+		    console.warn(statement);
 		    break;
-
-		case("warning"):
-		case("warn"):
-		case("war"):
-		case("w"):
-			try{
-			   if(err == undefined || args.error == undefined || args.e == undefined){
-
-			   }	
-			}
-			catch(err){
-				console.log("could not get value from args.err, setting to empty string");
-				args.err = "";
-			}
-		    if(!args.silent){
-			    console.warn(`%c${args.msg, args.val || args.value || undefined, JSON.stringify(args.err, null,4)}`, args.style);
-		    }
-		    break;
-
-		case("log"):
-		    if(!args.silent){
-			    console.log(`%c${args.msg, args.val || args.value || undefined, JSON.stringify(args.err, null,4)}`, args.style);
-		    }
-		    break;
-
 		default:
-		    if(!args.silent){
-			    console.error(`DebugPrint fallback ${JSON.stringify(args, null, 4)}`);
-		    }
+		    console.log(statement);
 		    break;
 	    }
 
-	    // 2. Internal Log Tracking (Functionality maintained)
+	    // 3. Internal Log Tracking
 	    let log = {
-		type: args.type || "unspecified log",
-		message: args.msg || null,
-		val: args.val || null,
-		error: args.err || null,
+		type: args.type || "log",
+		message: msg,
+		val: args.val,
+		error: errorMessage, // Save the string version for readability
 	    };
 	    this.AddLogToLogs(log);
 
@@ -1192,7 +1157,7 @@ EventDisplayManager() {
     	this.DebugPrint({msg: "Event Display Manager called", scilent: true});
 
 	let targetDoc; 
-    	const eventsWin = this.#state.subWindows["events"];
+    	const eventsWin = this.#state.subWindows["events"].key;
 	try{
 	    if (!eventsWin || !eventsWin.document) {
 		this.DebugPrint({msg: "Manager Error: Sub-window or document missing.", type: "err", silent: silent});
@@ -1635,39 +1600,59 @@ EventDisplayManager() {
 	    }
 	}
 
-	CreateUserFromFlags(args = {}) {
-	    if (!args.channelId) {
-		throw new Error("channelId CANNOT be null when creating a new user");
+	CreateUserFromFlags(p_msg) {
+	    // 1. Validation check
+	    if (!p_msg.channelId) {
+		this.DebugPrint({ msg: "channelId CANNOT be null", type: "w" });
+		return null; // Stop here if we don't have an ID
 	    }
 
-	    let existingUuid = this.FindUserFromChannelIdAndReturnUuid(args.channelId);
-	    if (existingUuid != undefined || existingUuid != null) {
-		this.DebugPrint({msg: "User already exists. UUID:", val: existingUuid});
-		return existingUuid; 
+	    // 2. Check for existing user (Fixed the variable name casing)
+	    let existingUuid; 
+	    try {
+		existingUuid = this.FindUserFromChannelIdAndReturnUuid(p_msg.channelId);
+		
+		// Simplified check: if it's truthy, return it
+		if (existingUuid) {
+		    this.DebugPrint({ msg: "User already exists. UUID:", val: existingUuid });
+		    return existingUuid; 
+		}
+	    } catch (err) {
+		this.DebugPrint({
+		    msg: "Error checking for existing UUID", 
+		    val: p_msg,
+		    type: "w", 
+		    err: err
+		});
+		// Decide if you want to continue or return here
 	    }
 
-	    let user = { ...this.templates.user };
+	    // 3. Create new user object
+	    // Note: p_msg uses .userUuid, but you access .uuid below. 
+	    // I've updated this to check p_msg.userUuid first.
+	    let user = { 
+		...this.templates.user,
+		username: p_msg.username,
+		icon: p_msg.icon,
+		channels: [p_msg.channelId],
+		isSponser: p_msg.isSponser || false,
+		isChatModerator: p_msg.isChatModerator || false,
+		isChatAdmin: p_msg.isChatAdmin || false,
+		uuid: p_msg.userUuid || p_msg.uuid || crypto.randomUUID(), 
+		firstSeen: p_msg.firstSeen || Date.now()
+	    };
 
-	    // 4. Assign values (Ensure we use channelId consistently)
-	    user.username 	 = args.username;
-	    user.icon            = args.icon;
-	    user.channels        = [args.channelId];
-	    user.isSponser       = args.isSponser || false;
-	    user.isChatModerator = args.isChatModerator || false;
-	    user.isChatAdmin     = args.isChatAdmin || false;
-	    user.uuid            = args.uuid || crypto.randomUUID();
-	    user.firstSeen       = args.firstSeen || Date.now();
-
-	try{
-		this.AddUserToUsers(user);
-	}
-	catch(err){
-		this.DebugPrint({msg: "could not add user to list, no document",error: err});
-	}
-	 
-	    
-	    this.DebugPrint({msg: `User created: ${user.username}. Total: ${this.#state.users.length}`});
-	    return user;
+	    // 4. Add and return
+	    try {
+		if(this.AddUserToUsers(user) == false){
+			throw new Error("user could not be added to users");
+		}
+		this.DebugPrint({ msg: `User created: ${user.username}.` });
+		return user;
+	    } catch (err) {
+		this.DebugPrint({ msg: "Failed to add user to state", err: err, type: "e" });
+		return null;
+	    }
 	}
 
 	GetUserFromUuid(uuid){
@@ -1698,16 +1683,17 @@ EventDisplayManager() {
 			version : 1, platform : "", channelName : "", channelId : ""
 		},
 		*/
-		let key;
-		for(let i = 0; i < Object.keys(users).length; ++i){
-			key = Object.keys(users)[i]; //uuid of user
-			for(let j = 0; j < users[key].channels.length; ++j){
-				if(channelId == users[key].channels[j].channelId){
-					return key;
+		if(this.#state.users.length > 0){
+			let key;
+			for(let i = 0; i < Object.keys(users).length; ++i){
+				key = Object.keys(users)[i]; //uuid of user
+				for(let j = 0; j < users[key].channels.length; ++j){
+					if(channelId == users[key].channels[j].channelId){
+						return key;
+					}
 				}
 			}
 		}
-
 		return null;
 	}
 
@@ -1749,17 +1735,33 @@ EventDisplayManager() {
 	    }
 	}	
 
-	AddUserToUsers(user){ // true on added, false on not, throw on error
-		this.DebugPrint({msg: "attempting to add user to users", val: user});
-		let userGet = this.GetUserFromUuid(user);
-		if(userGet != null){
-			this.DebugPrint({msg: "user already in db, not adding.", type:"warn", val: {user:user, gotUser: userGet}});
-			return;
-		}
+	AddUserToUsers(user) {
+	    this.DebugPrint({ msg: "attempting to add user to users", val: user });
 
-		this.#state.users[userUuid || crypto.randomUUID()] = user;
+	    // 1. Check if user already exists
+	    let userGet = this.GetUserFromUuid(user.uuid); // Pass the UUID property specifically
+	    if (userGet != null) {
+		this.DebugPrint({ 
+		    msg: "user already in db, not adding.", 
+		    type: "warn", 
+		    val: { user: user, gotUser: userGet } 
+		});
+		return false;
+	    }
 
-		this.UpdateUserDisplay();	
+	    // 2. Fix the ReferenceError: Use the ID from the user object
+	    const targetId = user.uuid || crypto.randomUUID();
+
+	    // 3. Add to state 
+	    // If #state.users is an Object/Map:
+	    this.#state.users[targetId] = user;
+	    
+	    // If #state.users is an Array, use this instead:
+	    // this.#state.users.push(user);
+
+	    // 4. Update UI
+	    this.UpdateUserDisplay(); 
+	    return true;
 	}
 
 	RemoveUserProfileFromUuid(userUuid){ //true on success, false on fail
@@ -3335,7 +3337,7 @@ ProcessTtsCommand(processedMsg) {
 	}
 
 	GenerateBannedWordsConfig() {
-		this.DebugPrint("GENERATING BLACKLIST UI");
+		this.DebugPrint({msg: "GENERATING BLACKLIST UI"});
 		
 		let container = this.CHE({
 		    type: 'div', 
@@ -3565,10 +3567,9 @@ ProcessTtsCommand(processedMsg) {
 		height: 10rem;     
 		overflow-x: auto;
 		display: flex;
-		gap: 10px;
-		padding: 10px;
+		gap: 5%;
 		width: 90%;
-		margin: 10px 0;
+		margin: 5% 0;
 	    `;
 	    details.appendChild(broadcastsContainer);
 
@@ -3817,112 +3818,117 @@ ProcessTtsCommand(processedMsg) {
 	}
 	
 	UpdateUserDisplay() {
-		if(document == undefined){this.DebugPrint({msg: "no document, cannot update user display"}); return;}
+	    if(document == undefined){this.DebugPrint({msg: "no document, cannot update user display", type:"log"}); return;}
+
 	    let listElement = document.getElementById("user-display-list");
 	    if (!listElement) return;
 
 	    listElement.innerHTML = "";
 
 	    // 1. Sort Alphabetically
-	    let users = [...this.#state.users].sort((a, b) => 
-		(a.username || "").localeCompare(b.username || "", undefined, { sensitivity: 'base' })
-	    );
+	    if(this.#state.users > 1){
+		    let users = [...this.#state.users].sort((a, b) => 
+			(a.username || "").localeCompare(b.username || "", undefined, { sensitivity: 'base' })
+		    );
+	    }
 
-	    for (let u of users) {
-		// --- PRE-CALCULATIONS ---
-		let cs = u.conduct_score || 0;
-		let csColor = "#fff";
-		if (cs < 0) {
-		    csColor = `rgb(255, ${Math.max(0, 255 + (cs * 51))}, ${Math.max(0, 255 + (cs * 51))})`;
-		    if (cs <= -5) csColor = "#f00";
-		} else if (cs > 0) {
-		    csColor = `rgb(${Math.max(0, 255 - (cs * 51))}, 255, ${Math.max(0, 255 - (cs * 51))})`;
-		    if (cs >= 5) csColor = "#0f0";
-		}
-
-		// --- ROOT CONTAINER (Details) ---
-		const details = this.CHE({
-		    type: 'details',
-		    style: "border-bottom: 1px solid #333; font-family: monospace; font-size: 0.75rem; color: #ccc;"
-		});
-
-		// --- SUMMARY (Visible Info) ---
-		const summary = this.CHE({
-		    type: 'summary',
-		    style: "display: flex; align-items: center; padding: 6px; cursor: pointer; gap: 8px; outline: none;"
-		});
-		// Note: We remove the default triangle with CSS later or just let it be.
-		summary.style.listStyle = "none"; 
-
-		// Identity Block
-		const identity = this.CHE({ type: 'div', style: "display: flex; gap: 5px; width: 160px; align-items: center; flex-shrink: 0;" });
-		const flags = [
-		    { cond: u.isChatAdmin, col: '#f44', char: 'A', desc: 'Admin' },
-		    { cond: u.isChatModerator, col: '#5b5', char: 'M', desc: 'Moderator' },
-		    { cond: u.isSponser, col: '#0af', char: 'S', desc: 'Sponsor' },
-		    { cond: u.isVerified, col: '#ff0', char: 'V', desc: 'Verified' }
-		].map(f => f.cond ? `<span title="${f.desc}" style="color:${f.col}; font-weight:bold; cursor:help;">${f.char}</span>` : '').join(' ');
-
-		identity.innerHTML = `<span>${u.icon || "👤"}</span><div style="overflow:hidden;"><div style="font-weight:bold; color:#fff;">${u.username || "???"}</div><div style="font-size:0.6rem;">${flags}</div></div>`;
-
-		// Standing Block
-		const standing = this.CHE({ type: 'div', style: "display: flex; gap: 8px; width: 220px; flex-shrink: 0; border-left: 1px solid #444; padding-left: 8px;" });
-		standing.innerHTML = `
-		    <span title="Points">PTS:<b style="color:#0ff;">${u.points}</b></span>
-		    <span title="Conduct Score">CS:<b style="color:${csColor};">${cs}</b></span>
-		    <span title="TTS/Channel Bans" style="color:#f44;">B:<b>${u.ttsBans.length}/${u.channelBans.length}</b></span>
-		`;
-
-		// Metrics Block
-		const metrics = this.CHE({ type: 'div', style: "display: flex; gap: 10px; flex-grow: 1; border-left: 1px solid #444; padding-left: 8px;" });
-		const c = u.commendments;
-		const m = u.misconduct;
-		metrics.innerHTML = `
-		    <span style="color:#5f5;" title="Commendments (C/E/S)">C:${c.community.length}/${c.engagement.length}/${c.support.length}</span> | 
-		    <span style="color:#f55;" title="Misconduct (D/H/S/I)">M:${m.discrimination.length}/${m.harassment.length}/${m.spam.length}/${m.integrity.length}</span>
-		`;
-
-		summary.append(identity, standing, metrics);
-
-		// --- ACTIONS PANEL (The Hidden Part) ---
-		const actions = this.CHE({
-		    type: 'div',
-		    style: "display: flex; gap: 10px; align-items: center; padding: 10px; background: #1a1a1a; border-top: 1px solid #444; justify-content: flex-end;"
-		});
-
-		const timeoutBtn = this.CHE({ type: 'div', innerText: 'TIMEOUT USER', style: "background:#f80; color:#000; padding: 5px 10px; cursor:pointer; font-weight:bold;" });
-		const banBtn = this.CHE({ type: 'div', innerText: 'BAN USER', style: "background:#f44; color:#fff; padding: 5px 10px; cursor:pointer; font-weight:bold;" });
-
-		const ptsIn = this.CHE({ 
-		    type: 'input', 
-		    attributes: { type: 'number', value: '100' }, 
-		    style: "width: 5rem; background: #000; color: #0f0; border: 1px solid #555; padding: 4px; font-weight: bold;" 
-		});
-		
-		// Color Logic for Input
-		ptsIn.addEventListener("input", (e) => {
-		    const val = Number(e.target.value);
-		    e.target.style.color = val < 0 ? "#f00" : (val > 0 ? "#0f0" : "#fff");
-		});
-
-		const giveBtn = this.CHE({ 
-		    type: 'div', 
-		    innerText: 'GIVE POINTS', 
-		    style: "background:#ff0; color:black; padding: 5px 10px; cursor:pointer; font-weight:bold;",
-		    onClick: () => {
-			const amount = parseInt(ptsIn.value);
-			if (!isNaN(amount)) { 
-			    this.ModifyUserPoints(u.uuid, amount); 
-			    this.UpdateUserDisplay(); 
+	    if(this.#state.users > 0){
+		    for (let u of this.#state.users) {
+			// --- PRE-CALCULATIONS ---
+			let cs = u.conduct_score || 0;
+			let csColor = "#fff";
+			if (cs < 0) {
+			    csColor = `rgb(255, ${Math.max(0, 255 + (cs * 51))}, ${Math.max(0, 255 + (cs * 51))})`;
+			    if (cs <= -5) csColor = "#f00";
+			} else if (cs > 0) {
+			    csColor = `rgb(${Math.max(0, 255 - (cs * 51))}, 255, ${Math.max(0, 255 - (cs * 51))})`;
+			    if (cs >= 5) csColor = "#0f0";
 			}
+
+			// --- ROOT CONTAINER (Details) ---
+			const details = this.CHE({
+			    type: 'details',
+			    style: "border-bottom: 1px solid #333; font-family: monospace; font-size: 0.75rem; color: #ccc;"
+			});
+
+			// --- SUMMARY (Visible Info) ---
+			const summary = this.CHE({
+			    type: 'summary',
+			    style: "display: flex; align-items: center; padding: 6px; cursor: pointer; gap: 8px; outline: none;"
+			});
+			// Note: We remove the default triangle with CSS later or just let it be.
+			summary.style.listStyle = "none"; 
+
+			// Identity Block
+			const identity = this.CHE({ type: 'div', style: "display: flex; gap: 5px; width: 160px; align-items: center; flex-shrink: 0;" });
+			const flags = [
+			    { cond: u.isChatAdmin, col: '#f44', char: 'A', desc: 'Admin' },
+			    { cond: u.isChatModerator, col: '#5b5', char: 'M', desc: 'Moderator' },
+			    { cond: u.isSponser, col: '#0af', char: 'S', desc: 'Sponsor' },
+			    { cond: u.isVerified, col: '#ff0', char: 'V', desc: 'Verified' }
+			].map(f => f.cond ? `<span title="${f.desc}" style="color:${f.col}; font-weight:bold; cursor:help;">${f.char}</span>` : '').join(' ');
+
+			identity.innerHTML = `<span>${u.icon || "👤"}</span><div style="overflow:hidden;"><div style="font-weight:bold; color:#fff;">${u.username || "???"}</div><div style="font-size:0.6rem;">${flags}</div></div>`;
+
+			// Standing Block
+			const standing = this.CHE({ type: 'div', style: "display: flex; gap: 8px; width: 220px; flex-shrink: 0; border-left: 1px solid #444; padding-left: 8px;" });
+			standing.innerHTML = `
+			    <span title="Points">PTS:<b style="color:#0ff;">${u.points}</b></span>
+			    <span title="Conduct Score">CS:<b style="color:${csColor};">${cs}</b></span>
+			    <span title="TTS/Channel Bans" style="color:#f44;">B:<b>${u.ttsBans.length}/${u.channelBans.length}</b></span>
+			`;
+
+			// Metrics Block
+			const metrics = this.CHE({ type: 'div', style: "display: flex; gap: 10px; flex-grow: 1; border-left: 1px solid #444; padding-left: 8px;" });
+			const c = u.commendments;
+			const m = u.misconduct;
+			metrics.innerHTML = `
+			    <span style="color:#5f5;" title="Commendments (C/E/S)">C:${c.community.length}/${c.engagement.length}/${c.support.length}</span> | 
+			    <span style="color:#f55;" title="Misconduct (D/H/S/I)">M:${m.discrimination.length}/${m.harassment.length}/${m.spam.length}/${m.integrity.length}</span>
+			`;
+
+			summary.append(identity, standing, metrics);
+
+			// --- ACTIONS PANEL (The Hidden Part) ---
+			const actions = this.CHE({
+			    type: 'div',
+			    style: "display: flex; gap: 10px; align-items: center; padding: 10px; background: #1a1a1a; border-top: 1px solid #444; justify-content: flex-end;"
+			});
+
+			const timeoutBtn = this.CHE({ type: 'div', innerText: 'TIMEOUT USER', style: "background:#f80; color:#000; padding: 5px 10px; cursor:pointer; font-weight:bold;" });
+			const banBtn = this.CHE({ type: 'div', innerText: 'BAN USER', style: "background:#f44; color:#fff; padding: 5px 10px; cursor:pointer; font-weight:bold;" });
+
+			const ptsIn = this.CHE({ 
+			    type: 'input', 
+			    attributes: { type: 'number', value: '100' }, 
+			    style: "width: 5rem; background: #000; color: #0f0; border: 1px solid #555; padding: 4px; font-weight: bold;" 
+			});
+			
+			// Color Logic for Input
+			ptsIn.addEventListener("input", (e) => {
+			    const val = Number(e.target.value);
+			    e.target.style.color = val < 0 ? "#f00" : (val > 0 ? "#0f0" : "#fff");
+			});
+
+			const giveBtn = this.CHE({ 
+			    type: 'div', 
+			    innerText: 'GIVE POINTS', 
+			    style: "background:#ff0; color:black; padding: 5px 10px; cursor:pointer; font-weight:bold;",
+			    onClick: () => {
+				const amount = parseInt(ptsIn.value);
+				if (!isNaN(amount)) { 
+				    this.ModifyUserPoints(u.uuid, amount); 
+				    this.UpdateUserDisplay(); 
+				}
+			    }
+			});
+
+			actions.append(timeoutBtn, banBtn, ptsIn, giveBtn);
+
+			// Assemble
+			details.append(summary, actions);
+			listElement.appendChild(details);
 		    }
-		});
-
-		actions.append(timeoutBtn, banBtn, ptsIn, giveBtn);
-
-		// Assemble
-		details.append(summary, actions);
-		listElement.appendChild(details);
 	    }
 	}
 
@@ -3950,6 +3956,7 @@ ProcessTtsCommand(processedMsg) {
 	    color: "white",
 	    script: undefined,
 	    style: undefined,
+	    stylesheet: undefined,
 	}) {
 	    try {
 		if (typeof document === 'undefined') {
@@ -3992,20 +3999,37 @@ ProcessTtsCommand(processedMsg) {
 		doc.head.appendChild(styleTag);
 	    }
 
-	    // 2. Setup HTML Structure
-	    doc.body.innerHTML = `
-		<div id="${args.key}-viewport" style="
-		    width: 100%; 
-		    height: 100%; 
-		    overflow-y: auto; 
-		    padding: 15px; 
-		    box-sizing: border-box; 
-		    display: flex; 
-		    flex-direction: column; 
-		    gap: 12px;
-		    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-		"></div>
-	    `;
+		let linkTag; 
+		if (args.stylesheet) {
+		    // Fix 1: Use the variable directly, not as a string "args.stylesheet"
+		    // Fix 2: Assign to the existing let variable instead of redeclaring const
+		    linkTag = doc.createElement('link');
+		    linkTag.rel = 'stylesheet';
+		    linkTag.type = 'text/css';
+		    linkTag.href = args.stylesheet; 
+
+		    doc.head.appendChild(linkTag);
+		    this.DebugPrint({ msg: `External stylesheet linked: ${args.stylesheet}` });
+		}
+
+	// 2. Setup HTML Structure
+	doc.body.innerHTML = `
+	<div id="${args.key}-viewport" style="
+	    width: 100%; 
+	    height: 100vh; 
+	    overflow-x: hidden; 
+	    overflow-y: auto; 
+	    padding: 1rem; 
+	    box-sizing: border-box; 
+	    display: flex; 
+	    /* This anchors new items to the bottom */
+	    flex-direction: column-reverse; 
+	    /* Important: 'justify-content: flex-start' in reverse mode means 'start at the bottom' */
+	    justify-content: flex-start; 
+	    gap: 12px;
+	    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+	"></div>
+	`;
 
 	    // 3. Inject the Script
 	    if (args.script) {
@@ -4039,156 +4063,84 @@ ProcessTtsCommand(processedMsg) {
 		return ["hel"];
 	}
 
-	CreateMessageHtml(p_msg, messageId){
-		let users = this.#state.users || window.Cockatiel.GetUsers().users;
-		let user = this.GetUserFromUuid(p_msg.uuid);
+	CreateMessageHtml(p_msg, messageId) {
+	    // 1. Get User (Fixed property name to userUuid)
+	    let user = this.GetUserFromUuid(p_msg.userUuid || p_msg.uuid);
 
-		let icon;
-		try{
-			icon = user.icon || undefined;
-		}
-		catch(err){
-			this.DebugPrint({msg: "could not get icon for user:", user});
-			icon = "asdf";
-		}
+	    // 2. Safely extract user info
+	    let icon = user?.icon || "/content/stream_utils/tib_stuff/default_icon.png";
+	    let username = user?.username || "Unknown User";
 
-		let username;
-		try{
-			username = user.username;
-		}
-		catch(err){
-			this.DebugPrint({msg: "could not get username for user:", user});
-			username = "FAILED TO GET UN";
-		}
+	    let commendments = {
+		community: user?.stats?.community || 0,
+		engagement: user?.stats?.engagement || 0,
+		support: user?.stats?.support || 0,
+		rep: user?.stats?.rep || 0,
+	    };
 
-		let commendments = {
-			community: 1,
-			engagement: 2,
-			support: 3,
-			rep: 4,
-		}
-		try{
-		}
-		catch(err){
-			this.DebugPrint({msg: "could not get username for user:", user});
-		}
-		try{
-		}
-		catch(err){
-			this.DebugPrint({msg: "could not get username for user:", user});
-		}
-		try{
-		}
-		catch(err){
-			this.DebugPrint({msg: "could not get username for user:", user});
-		}
-		try{
-		}
-		catch(err){
-			this.DebugPrint({msg: "could not get username for user:", user});
-		}
+	    // 3. Extract Command and Message
+	    let commandStr = "No Command";
+	    let displayMessage = p_msg.rawMessage || "";
 
-		let command;
-		try{
-			command = JSON.stringify(p_msg.commands);
+	    try {
+		const commandKeys = Object.keys(p_msg.commands);
+		if (commandKeys.length > 0) {
+		    const firstKey = commandKeys[0];
+		    commandStr = firstKey; // e.g., "tts" or "vote"
+		    displayMessage = p_msg.commands[firstKey].message || p_msg.processedMessage || p_msg.rawMessage;
 		}
-		catch(err){
-			this.DebugPrint({msg: "could not get command from user message:", p_msg});
-		}
+	    } catch (err) {
+		this.DebugPrint({ msg: "Error parsing commands", val: p_msg, err: err });
+	    }
 
-		let message;
-		try{
-			message = Object.keys(p_msg.commands)[0].message || p_msg.rawMessage;
-		}
-		catch(err){
-			this.DebugPrint({msg: "could not get usermesage from user message:", p_msg});
-		}
-
-
-		/* get user settings here */
-
-		`
-		<div class="chatMessageContainer">
-			<div class="chatUserBubble">
-				<div class="chatBubbleTailContainer">
-					<div class="chatBubbleTailContainer"><img class="chatBubbleTail" alt="" src="/content/stream_utils/tib_stuff/whispy_tail.png"></div>
-				</div>
-				<div class="chatUserInfo">
-					<div class="chatUserImageContainer"><img class="chatUserImage" alt="chatUserImage" src="${icon}"></div>		
-					<div class="chatUserStats">
-						<div class="chatUsername">${username}</div>		
-						<div class="chatUserCommendations">
-							community: ${commendments.community || "FAILED TO GET DOOTS1"}, 
-							engagement: ${commendments.engagement  || "FAILED TO GET DOOTS2"}, 
-							support: ${commendments.support || "FAILED TO GET DOOTS3"}, 
-							rep: ${commendments.rep || "FAILED TO GET DOOTS4"}
+	    // 4. RETURN the template literal
+	    return `
+			<div class="chatMessageContainer" id="${messageId}">
+				<div class="chatUserBubble">
+					<div class="chatBubbleTailContainer">
+						<div class="chatBubbleTailContainer"><img class="chatBubbleTail" alt="" src="/content/stream_utils/tib_stuff/whispy_tail.png"></div>
+					</div>
+					<div class="chatUserInfo">
+						<div class="chatUserImageContainer"><img class="chatUserImage" alt="" src="${icon}"></div>		
+						<div class="chatUserStats">
+							<div class="chatUsername">${username}</div>		
+							<div class="chatUserCommendations">
+								C: ${commendments.community}, 
+								E: ${commendments.engagement}, 
+								S: ${commendments.support}, 
+								R: ${commendments.rep}
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-			<div class="chatMessageBubble">
-				<div class="chatCommandContainer">
-					<div class="chatCommand">${command || "command null?"}</div>
+				<div class="chatMessageBubble">
+					<div class="chatCommandContainer">
+						<div class="chatCommand">${commandStr}</div>
+					</div>
+					<div class="chatMessage">${displayMessage}</div>
 				</div>
-				<div class="chatMessage">${message}</div>
 			</div>
-		</div>`;
+		`;
 	}
 
-	PushMessageToChat(processedMsg){
-		if(processedMsg == undefined){
-			this.DebugPrint({
-				msg:"processedMsg is undefined, cannot process", 
-				type: "t", 
-			});
-		}
+	PushMessageToChatWindow(processedMsg) {
+	    if (!processedMsg) return;
 
-		let d;	
-		// verify subwindow exists
-		try{
-			d = this.#state.subWindows[this.#state.windows.chat.key];
-		}			
-		catch(err){
-			this.DebugPrint({
-				msg:"could not get subwindow from chat, ", 
-				type: "t", 
-				err: err,
-			});
-		}
+	    const win = this.#state.subWindows[this.#state.windows.chat.key];
+	    if (!win || win.closed) {
+		this.DebugPrint({ msg: "Sub-window unavailable", type: "w" });
+		return;
+	    }
 
-		let messageId = processedMsg.messageId;
-		let msgHTML = this.CreateMessageHtml(processedMsg, messageId);
-		let state = this.#state;
+	    const msgHTML = this.CreateMessageHtml(processedMsg, processedMsg.messageId);
 
-		//this.#state.config.windows.chat.key;
-
-		// create create manager
-		class MessageManager {
-			timer = new IntTimer({
-				timeoutDuration: state.subWindows[state.windows.chat.key].messageDisplayDuration,
-				killOnTimeout: true,
-				timeoutListeners: [(()=>{
-					console.log("removing message from chat");
-					d.getElementById(messageId).remove();
-				}),],
-			});
-			constructor(){
-				
-			}
-		}
-		let mm = new MessageManager();
+	    win.postMessage({ 
+		type: 'new_chat_msg', 
+		payload: { html: msgHTML } 
+	    }, "*");
 	}
 
-	Init(){
-
-		/*
-		this.DebugPrint({msg:"getting trigrams"});
-		this.trigrams  = this.GetTrigramsFromFile();
-		this.DebugPrint({msg:"getting trigrams"});
-		*/
-
-// Then in your render function
-	
+	InitTimers(){
 		this.#state.timers = {
 			GetMessagesTimer: new IntTimer({
 				name: "GetMessagesTimer",
@@ -4205,41 +4157,9 @@ ProcessTtsCommand(processedMsg) {
 				debug: true,
 			}),
 		};
+	}
 
-		this.#state.timers.ReadTtsTimer.AddTimeoutListener((() => {
-			// 1. Find the oldest unread message that contains a TTS command
-		    // Assuming this.#state.messages is your array of processedMessage objects
-		    const unreadTtsMessage = this.#state.messages.find(msg => {
-			// Check if there are commands, specifically looking for the 'tts' type
-			const hasTts = msg.commands && msg.commands.some(cmd => cmd.command === 'tts');
-			// Ensure we haven't read this one yet
-			const isUnread = !msg.state?.isRead; 
-			
-			return hasTts && isUnread;
-		    });
-
-		    // 2. If no message found, exit early
-		    if (!unreadTtsMessage) {
-			console.log("no unread tts messages");
-			return;
-		    }
-
-		    // 3. Extract the TTS command object from the message
-		    const ttsCommand = unreadTtsMessage.commands.find(cmd => cmd.command === 'tts');
-
-		    if (ttsCommand) {
-			this.DebugPrint({msg:`Playing TTS for: ${unreadTtsMessage.username}`});
-			
-			// 4. Call the TTS function with its specific arguments
-			// Using the flags and message we parsed earlier
-			this.CallTts(ttsCommand.message, ttsCommand.flags);
-
-			// 5. Mark as read so we don't play it again on the next timer tick
-			if (!unreadTtsMessage.state) unreadTtsMessage.state = {};
-			unreadTtsMessage.state.isRead = true;
-		    }		
-		}))
-
+	GenerateUi(){
 		this.DebugPrint({msg: "generating ui for the first time"});
 		let settingsContainer;
 		try{
@@ -4263,7 +4183,7 @@ ProcessTtsCommand(processedMsg) {
 
 		try{
 			let bannedWordsList = this.GenerateBannedWordsConfig();
-			console.log("bannedWordsList:", bannedWordsList);
+			this.DebugPrint({msg: "bannedWordsList:", val: bannedWordsList});
 			settingsContainer.appendChild(bannedWordsList);
 			this.UpdateBannedWordsList();
 		}
@@ -4313,132 +4233,60 @@ ProcessTtsCommand(processedMsg) {
 		catch(err){
 			this.DebugPrint({msg: "cannot append settings container to document", err: err, type: "err"});
 		}
+	}
 
+	GenerateChatWindow(){
 		try{
 			const chatSettings = this.#state.windows.chat;
-			const chatStyle = `
-				* {
-					font-family:monospac;
-				}
-			    .chatMessageContainer {
-				position: relative;
-				max-width: 100%;
-				padding-bottom: 2rem;
-			    }
-			    .chatUserInfo {
-				background-color: #ff8;
-				border-radius: 3rem;
-				color: black;
-				padding: 0.2rem;
-				display: flex;
-			    }
-			    /* Add the rest of your CSS here without escaping anything! */
-			`;
+			const chatStyle = ``;
 
-			this.CreateSubWindow({
-			    ...chatSettings,
-			    style: chatStyle, // Pass the CSS here
-			    script: `
-				window.addEventListener('message', (event) => {
-				    const { type, payload } = event.data;
-				    if (type === 'new_chat_msg') {
-					const view = document.getElementById("${chatSettings.key}-viewport");
-					if(view) {
-					    // No more <style> tags inside the innerHTML!
-					    view.innerHTML += "<div><b>System:</b> " + payload.text + "</div>";
-					}
+		this.CreateSubWindow({
+		    ...chatSettings,
+		    stylesheet: this.#state.windows.chat.defaultStylesheet, 
+		    script: `
+			window.addEventListener("message", (event) => {
+			    const { type, payload } = event.data;
+			    
+			    if (type === 'new_chat_msg' && payload.html) {
+				const view = document.getElementById("${chatSettings.key}-viewport");
+				const target = view || document.body;
+
+				// 1. Create a temporary container to turn the string into an Element
+				const temp = document.createElement('div');
+				temp.innerHTML = payload.html;
+				const newElement = temp.firstElementChild;
+				
+				// 2. Add the element to the page
+				target.appendChild(newElement);
+				
+				// 3. Auto-scroll
+				target.scrollTop = target.scrollHeight;
+
+				// 4. Self-Destruct Timer (Auto-removal)
+				// Using the duration from your chatSettings (converted to ms)
+				const duration = ${chatSettings.messageDisplayDuration || 5} * 1000;
+				
+				setTimeout(() => {
+				    if (newElement) {
+					// Optional: Add a fade-out class before removing
+					newElement.style.opacity = '0';
+					newElement.style.transition = 'opacity 0.5s ease';
+					
+					setTimeout(() => newElement.remove(), 500);
 				    }
-				});
-			    `
-			});	
-		}
+				}, duration);
+			    }
+			});
+		    `
+		});
+}
+
 		catch(err){
 			this.DebugPrint({msg: "could not create chat window", type: "err"});
 		}
+	}
 
-		// ABOVE RUNS
-		// CODE PAST HERE DOES NOT RUN
-
-		try{
-		this.DebugPrint({msg:"adding testUser"});
-			const test_message = {
-				    "channelId": "asdf1234zxcv5689",
-				    "commands": {},
-				    "messageId": "LCC.EhwKGkNNLVB2TkdCNVpJREZlZkJ3Z1FkNExJQzZR",
-				    "platform": "youtube",
-				    "processedMessage": "HELLO SMALLSVILLE",
-				    "rawMessage": "HELLO SMALLSVILLE",
-				    "receivedAt": 1771485470330,
-				    "score": -100,
-				    "state": {},
-				    "streamOrigin": "Cg0KC3JHN3ZGN3BjVlBZKicKGFVDS1ppZ0hiZ3BKRzlsZHhYTXFtaVpVZxILckc3dkY3cGNWUFk",
-				    "userUuid": "88d515ca-531b-45fc-a24b-a65eeb76996d",
-				    "username": "testUser",
-				    "version": 1,
-			}
-			this.CreateUserFromFlags(test_message);
-		}
-		catch(err){
-			this.DebugPrint({msg: "could not add user to users", type: "err"});
-		}
-
-		try{
-			const chatSettings = this.#state.windows.chat;
-			// TEST: Send a message 500ms later to give the window time to load
-			setTimeout(() => {
-			    const win = this.#state.subWindows[chatSettings.key];
-			    if (win) {
-				win.postMessage({ 
-				    type: 'new_chat_msg', 
-				    payload: { text: "Chat window connected successfully!" } 
-				}, "*");
-			    }
-			}, 500);	
-
-			setTimeout(() => {
-				const message = {
-				    "commands": {
-					"tts": {
-					    "commandType": "tts",
-					    "errInfo": {
-						"err": null,
-						"erroredAt": null
-					    },
-					    "executedAt": null,
-					    "flags": {
-						"p": 1.2,
-						"r": 1.9,
-						"v": 51
-					    },
-					    "isValid": true,
-					    "message": "yo was good",
-					    "pointsOffer": 0,
-					    "state": {
-						"readAt": null
-					    },
-					    "version": 1
-					}
-				    },
-				    "messageId": "LCC.EhwKGkNNLVB2TkdCNVpJREZlZkJ3Z1FkNExJQzZR",
-				    "platform": "youtube",
-				    "processedMessage": "yo was good",
-				    "rawMessage": "!tts -v 51 -r 1.9 -p 1.2 yo was good",
-				    "receivedAt": 1771485470330,
-				    "score": -170,
-				    "state": {},
-				    "streamOrigin": "Cg0KC3JHN3ZGN3BjVlBZKicKGFVDS1ppZ0hiZ3BKRzlsZHhYTXFtaVpVZxILckc3dkY3cGNWUFk",
-				    "userUuid": "88d515ca-531b-45fc-a24b-a65eeb76996d",
-				    "username": "testUser",
-				    "version": 1
-				};
-
-				this.PushMessageToChat(message);
-			}, 1000);	
-		}
-		catch(err){
-			this.DebugPrint({msg: "could not add test messages", type: "err", err: err});
-		}
-
+	GenerateEventsWindow(){
 		try{
 			//this.PushToSubWindow("chatMonitor", this.RenderStandbyHTML());
 			let eventWindowSettings = this.#state.windows.events;
@@ -4456,16 +4304,137 @@ ProcessTtsCommand(processedMsg) {
 		catch(err){
 			this.DebugPrint({msg: "could not add test messages", type: "err", err: err});
 		}
+	}
 
+	RunSubWindowTest1(){
+		this.DebugPrint({msg: "running RunSubWindowTest1()"});
 		try{
-			this.EventDisplayManager();
-			this.#state.timers.EventDisplayTimer.Start();
-			//this.PushToSubWindow("events", this.RenderStandbyHTML());	
+		this.DebugPrint({msg:"adding testUser"});
+			const test_message = {
+				    "channelId": "asdf1234zxcv5689",
+				    "commands": {},
+				    "messageId": "LCC.EhwKGkNNLVB2TkdCNVpJREZlZkJ3Z1FkNExJQzZR",
+				    "platform": "youtube",
+				    "processedMessage": "HELLO SMALLSVILLE",
+				    "rawMessage": "HELLO SMALLSVILLE",
+				    "receivedAt": 1771485470330,
+				    "score": -100,
+				    "state": {},
+				    "streamOrigin": "Cg0KC3JHN3ZGN3BjVlBZKicKGFVDS1ppZ0hiZ3BKRzlsZHhYTXFtaVpVZxILckc3dkY3cGNWUFk",
+				    "userUuid": "88d515ca-531b-45fc-a24b-a65eeb76996d",
+				    "username": "testUser",
+				    "version": 1,
+			}
+			try{
+				this.CreateUserFromFlags(test_message);
+			}
+			catch(err){
+				this.DebugPrint({
+					msg: "RunSubWindowTest1 filed", 
+					val: test_message, 
+					type: "e", 
+					err: err,
+				});
+			}
+			this.DebugPrint({msg: "RunSubWindowTest1 pass"});
 		}
 		catch(err){
-			this.DebugPrint({msg: "could not start EventDisplayManager()", type: "err", err: err});
+			this.DebugPrint({msg: "could not add user to users", type: "err", err: err});
+		}
+	}
+
+	RunSubWindowTest2() {
+	    this.DebugPrint({ msg: "1. Entering RunSubWindowTest2", type: "l" });
+
+	    try {
+		const chatSettings = this.#state?.windows?.chat;
+		this.DebugPrint({ msg: "2. Chat Settings Found", val: chatSettings });
+
+		if (!chatSettings) {
+		    this.DebugPrint({ msg: "FAIL: chatSettings is undefined in state", type: "e" });
+		    return;
 		}
 
+		const win = this.#state?.subWindows?.[chatSettings.key];
+		this.DebugPrint({ msg: "3. Target Window Object", val: win ? "Window Found" : "Window Null" });
+
+		if (!win || win.closed) {
+		    this.DebugPrint({ msg: "4. FAIL: Window reference not found or window was closed", type: "w" });
+		    return;
+		}
+
+		this.DebugPrint({ msg: "5. Success: Sending postMessage now..." });
+		
+		// This triggers the listener you injected in CreateSubWindow
+		win.postMessage({ 
+		    type: 'new_chat_msg', 
+		    payload: { html: "<div style='color: #0bd;'>Cockatiel started! </div>" } 
+		}, "*");
+
+	    } catch (err) {
+		this.DebugPrint({ msg: "CRITICAL ERROR in RunSubWindowTest2", type: "err", err: err });
+	    }
+	}
+
+	RunSubWindowTest3() {
+	    this.DebugPrint({ msg: "running RunSubWindowTest3", type: "l" });
+		try{
+			const user = this.#state.users[Object.keys(this.#state.users)[0]];
+			const p_msg = {
+				version: 1,
+				username: "test_user",
+				userUuid: user.uuid, 
+				streamOrigin: "youtube", //what streamid via the platform the message came from
+				receivedAt: Date.now(),
+				commands: [],
+				processedMessage: "",
+				platform: "",
+				rawMessage: "!vote -y",
+				messageId: "",
+				score: "",
+				state: {}
+			};
+	
+			this.PushMessageToChatWindow(p_msg);
+		}
+		catch(err){
+	    		this.DebugPrint({ msg: "ERROR running RunSubWindowTest3", type: "e", err:err });
+		}
+
+	}
+
+	RunSubWindowTest4(){
+		const html = `
+			<div class="chatMessageContainer">
+				<div class="chatUserBubble">
+					<div class="chatBubbleTailContainer">
+						<div class="chatBubbleTailContainer"><img class="chatBubbleTail" alt="" src="/content/stream_utils/tib_stuff/whispy_tail.png"></div>
+					</div>
+					<div class="chatUserInfo">
+						<div class="chatUserImageContainer"><img class="chatUserImage" alt="chatUserImage" src="/assets/headshot_doodle.png"></div>		
+						<div class="chatUserStats">
+							<div class="chatUsername">@usernameUSERNAMEusernameUSERNAME</div>		
+							<div class="chatUserCommendations">community: 1, engagement: 5, support: 2, rep: 8</div>
+						</div>
+					</div>
+				</div>
+				<div class="chatMessageBubble">
+					<div class="chatCommandContainer">
+						<div class="chatCommand">!tts -v 69 -p 1.9 -r 0.8 </div>
+					</div>
+					<div class="chatMessage">
+					Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec pede justo, fringilla vel, aliquet nec, vulputate.
+					</div>
+				</div>
+			</div>
+		`
+	    this.#state.subWindows[this.#state.windows.chat.key].postMessage({ 
+		type: 'new_chat_msg', 
+		payload: { html: html } 
+	    }, "*");
+	}
+
+	AttachHandleUnloadLogic(){
 		try{
 			// Ensure all subwindows are closed if the main app is closed or refreshed
 			window.addEventListener('unload', () => {
@@ -4483,6 +4452,60 @@ ProcessTtsCommand(processedMsg) {
 		}
 	}
 
+	AddTtsTimeoutListeners(){
+		this.#state.timers.ReadTtsTimer.AddTimeoutListener((() => {
+			// 1. Find the oldest unread message that contains a TTS command
+		    // Assuming this.#state.messages is your array of processedMessage objects
+		    const unreadTtsMessage = this.#state.messages.find(msg => {
+			// Check if there are commands, specifically looking for the 'tts' type
+			const hasTts = msg.commands && msg.commands.some(cmd => cmd.command === 'tts');
+			// Ensure we haven't read this one yet
+			const isUnread = !msg.state?.isRead; 
+			
+			return hasTts && isUnread;
+		    });
+
+		    // 2. If no message found, exit early
+		    if (!unreadTtsMessage) {
+			console.log("no unread tts messages");
+			return;
+		    }
+
+		    // 3. Extract the TTS command object from the message
+		    const ttsCommand = unreadTtsMessage.commands.find(cmd => cmd.command === 'tts');
+
+		    if (ttsCommand) {
+			this.DebugPrint({msg:`Playing TTS for: ${unreadTtsMessage.username}`});
+			
+			// 4. Call the TTS function with its specific arguments
+			// Using the flags and message we parsed earlier
+			this.CallTts(ttsCommand.message, ttsCommand.flags);
+
+			// 5. Mark as read so we don't play it again on the next timer tick
+			if (!unreadTtsMessage.state) unreadTtsMessage.state = {};
+			unreadTtsMessage.state.isRead = true;
+		    }		
+		}))
+	}
+
+	Init(){
+		this.InitTimers();
+		this.AddTtsTimeoutListeners();
+
+		this.GenerateUi();
+		this.GenerateChatWindow();
+		this.GenerateEventsWindow();
+
+		this.RunSubWindowTest1();
+		this.RunSubWindowTest2();
+		this.RunSubWindowTest3();
+		this.RunSubWindowTest4();
+
+		this.#state.timers.EventDisplayTimer.Start();
+
+		this.AttachHandleUnloadLogic()
+	}
+
 	/*
 	 * WE CANNOT DELETE THIS AS SOME MADLAD (@Cunningstuntsinc) dropped a 50 banger (thankies ily)*
                                                         .=.@@                   
@@ -4494,7 +4517,7 @@ ProcessTtsCommand(processedMsg) {
                                             .@.@.@=..@@@@@..@@@..               
                                             @@..@@--+*..@..@@@@@.               
                                        ......@@...@@....-@@..#...@@.            
-                             @.#.....-@@@@@=.@@..@.@@@@.@%@.-..@@.@@@.          
+                             @.#.....-@(@@@@=.@@..@.@@@@.@%@.-..@@.@@@.          
                              ..:.@@@@......@@@....@@%.........@.@@@=@@@         
                               .........@@..@#@.++........=@@.@@@@#%%#+@.        
                                    ............=======.@@#..@%+##%%%%#@@.       

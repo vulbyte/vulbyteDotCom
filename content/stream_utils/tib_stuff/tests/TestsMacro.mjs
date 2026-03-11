@@ -498,9 +498,3 @@
 		targetMethod: "CheckMessageForBannedWords",
 		expectedOutput: false,
 	},
-	{
-		name: "LoadBannedWords",
-		input: undefined,
-		targetMethod: "",
-		expectedOutput: [],
-	},
