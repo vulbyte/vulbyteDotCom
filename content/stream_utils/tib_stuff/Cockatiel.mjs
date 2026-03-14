@@ -7,6 +7,7 @@ import {TrieTree} from "../../../lib/trie_tree.mjs";
 let trigrams; // = await fetch('/content/stream_utils/tib_stuff/trigrams.json').then((res) => {return res.json()});
 
 export default class Cockatiel {
+	#isTtsBusy = false;
 	templates = {
 		bannedAt: {
 			version: 1, datetime : "", unbannedAt : [], banAppeals : [],
@@ -1574,7 +1575,7 @@ EventDisplayManager() {
 	    this.DebugPrint({msg: "Banned words Trie updated.", val: this.#state.bannedWordsArray});
 
 	    this.UpdateBannedWordsList();
-	    return this.#state.bannedWordsArray;
+	    return this.#state.bannedWordsArray;;
 	}
 
 	GetUnprocessedQueue(){
@@ -1593,9 +1594,9 @@ EventDisplayManager() {
 		return this.#state.subWindows;
 	}
 
-	async MonitoringStart() {    
+	async MonitoringStart() {
 	    this.DebugPrint({msg: "running the loop once as a test"});
-		this.#state.timers.ReadTtsTimer.Start();
+	    this.#state.timers.ReadTtsTimer.Start();
 	    try{
 		await this.#DaLoop(); 
 	    }
@@ -1626,11 +1627,6 @@ EventDisplayManager() {
 			this.DebugPrint({msg: "error properly starting the loop", err: err, type:'t'});
 		    }
 		}, 3000);
-	}
-
-
-	TtsStart(){
-	
 	}
 
 	CreateUserFromFlags(p_msg) { //returns user object on success
@@ -1680,7 +1676,7 @@ EventDisplayManager() {
 		firstSeen: p_msg.firstSeen || Date.now()
 	    };
 		let color;
-		switch(user.uuid[user.uuid.length-1]){
+		switch(user.uuid[String(user.uuid).length-1]){
 			case('a'):
 			case('b'):
 			case('c'):
@@ -1947,135 +1943,121 @@ FindUserFromChannelIdAndReturnUuid(searchChannelId = undefined) {
 	}
 
 
-	async SafeAddToMessagesQueue(p_msg) {
-	    // 1. UNWRAP: If p_msg is a Promise, wait for it to resolve into an object
-	    const msg = (p_msg instanceof Promise) ? await p_msg : p_msg;
+	/**
+	 * High-performance duplicate check and chronological insertion.
+	 * Optimized for tens of thousands of messages.
+	 * @param {Object} p_msg - Processed message (must contain .messageId and .receivedAt)
+	 */
+async SafeAddToMessagesQueue(p_msg) {
+	this.#state.messages.push(p_msg);
+	/*
+    // 1. Emergency Unwrap: If it's a promise, wait for it
+    const msg = p_msg instanceof Promise ? await p_msg : p_msg;
 
-	    // 2. VALIDATION: Ensure we actually have a valid message object
-	    if (!msg || typeof msg !== 'object' || !msg.messageId) {
-		this.DebugPrint({ msg: "Invalid message object passed to queue", type: "error" });
-		return false;
-	    }
+    const queue = this.#state.messages; 
+    const len = queue.length;
+    const targetId = msg.messageId;
+    const targetTime = msg.receivedAt;
 
-	    const queue = this.#state.messages;
-	    const len = queue.length;
-	    const targetId = msg.messageId;
-	    const targetTime = msg.receivedAt || Date.now();
+    // Check for Duplicates
+    for (let i = len - 1; i >= 0; i--) {
+        // If the queue contains promises, this line will crash!
+        // We assume existing items in the queue are already resolved objects.
+        if (queue[i].messageId === targetId) {
+            this.DebugPrint({msg: "Duplicate message found, ignoring"});
+            return false;
+        }
 
-	    // 3. DUPLICATE & ORDER CHECK: Scan backwards (optimized for new messages)
-	    for (let i = len - 1; i >= 0; i--) {
-		// If a Promise accidentally stayed in the queue, queue[i] will fail here
-		if (queue[i].messageId === targetId) {
-		    this.DebugPrint({ msg: `Duplicate message [${targetId}] ignored` });
-		    return false;
-		}
+        if (queue[i].receivedAt < targetTime) break;
+    }
 
-		// If we've gone back far enough in time, we can stop checking for duplicates
-		if (queue[i].receivedAt < targetTime) {
-		    break;
-		}
-	    }
+    // ... [Binary Search Logic] ...
 
-	    // 4. BINARY SEARCH: Find the exact insertion index to keep the queue sorted
-	    let low = 0;
-	    let high = len;
+    this.DebugPrint({msg: `Adding message at index ${low}`});
 
-	    while (low < high) {
-		const mid = (low + high) >>> 1;
-		// Compare times to find the correct chronological spot
-		if (queue[mid].receivedAt < targetTime) {
-		    low = mid + 1;
-		} else {
-		    high = mid;
-		}
-	    }
+    // Splice the resolved object, NOT the promise
+    queue.splice(low, 0, msg);
 
-	    this.DebugPrint({ msg: `Inserting message ${targetId} at index ${low}` });
-
-	    // 5. INSERTION: Use splice to insert at the calculated index
-	    queue.splice(low, 0, msg);
-
-	    // 6. UPDATE STATE: Re-assign the array to trigger any state listeners
-	    this.#state.messages = queue;
-
-	    return true;
-	}
+    this.#state.messages = queue;
+    return true;
+    */
+}
 
 	async #DaLoop() {
-	    // 1. Start Timers
-	    const timerKeys = Object.keys(this.#state.timers);
-	    for (const key of timerKeys) {
-		try {
-		    this.#state.timers[key].Start();
-		} catch (err) {
-		    this.DebugPrint({ msg: "error starting timer", val: key, err: err, type: 'e' });
+
+		let key;
+		for(let i = 0; i < Object.keys(this.#state.timers).length; ++i){
+			try{
+				key = Object.keys(this.#state.timers)[i];
+				this.#state.timers[key].Start();
+			}
+			catch(err){
+				this.DebugPrint({msg: "error starting timer", val:key, err:err, type:'e'});
+			}
 		}
-	    }
 
-	    // 2. Fetch Data (Wrapped in try/catch to prevent loop death)
-	    let data;
-	    try {
-		this.DebugPrint({ msg: "Fetching messages from youtube" });
-		data = await this.yt.getChatMessages();
+		this.DebugPrint({msg: "Fetching messages from youtube"});
+		const data = await this.yt.getChatMessages();
+		
+		this.DebugPrint({msg: `Received ${data.items?.length || 0} items`});
 
-	        this.DebugPrint({ msg: `Received ${data.items?.length || 0} items` });
-	        if (!data.items || data.items.length === 0) return;
+		if (!data.items || data.items.length === 0) return;
 
-	        // 3. Add to unprocessed
-	        for (const item of data.items) {
-	            this.ParseAndAddYouTubeV3MessagesToUnprocessedQueue(item);
-	        }
-	    } catch (err) {
-		this.DebugPrint({ msg: "FETCH FAILED", error: err, type: 'e' });
-		//return; // Exit this tick and try again next loop
-	    }
+		this.DebugPrint({msg: "adding messages to unprocessed queue"});
+		for (const item of data.items) {
+		    this.ParseAndAddYouTubeV3MessagesToUnprocessedQueue(item);
+		}
 
-	    // 4. Process Queue
-	    while (this.#state.unprocessed_queue.length > 0) {
-		try {
+		// dLive 
+		// facebook here
+		// instagram
+		// kick here
+		// picarto here
+		// tiktok here
+		// trovo
+		// twitch here
+		// twitter here
+
+		this.DebugPrint({msg: "processing unprocecssed_queue"});
+	    	let i = 0
+		while (this.#state.unprocessed_queue.length > 0) {
+		    try {
 		    const raw = this.#state.unprocessed_queue.shift();
 		    const p_msg = await this.ProcessYoutubeV3Message_v1(raw);
 
-		    // Validation check
-		    if (!p_msg || !p_msg.authorId) continue;
-
-		    this.DebugPrint({ msg: "message finished processing", val: p_msg });
+		    this.DebugPrint({msg: "message finished processing", val: p_msg});
 
 		    const exists = this.#state.messages.some(m => 
 			m.receivedAt === p_msg.receivedAt && m.authorId === p_msg.authorId
 		    );
 
-		    let dR = this.#state.windows.chat.displayRate;
-		    let displayDelay = 1; 
+			let dR = this.#state.windows.chat.displayRate;
+			let displayDelay = 1; //(Math.random()*(dR.max - dR.min))+dR.min;
 
-		    setTimeout(async () => {
-			try {
-			    if (!exists) { 
-				this.PushMessageToChatWindow(p_msg);
-				if (!p_msg.state) p_msg.state = {};
-				p_msg.state.displayedAt = Date.now();
-				
-				// Ensure user exists before incrementing
-				if (this.#state.users[p_msg.userUuid]) {
+			/*setTimeout(async ()=>{*/
+				console.log("small delay to make messages more natural");
+			    //push message to display
+			    if (!exists){ 
+				    this.PushMessageToChatWindow(p_msg);
+				    p_msg.state.displayedAt = Date.now();
+				    this.DebugPrint({msg: "message does not exist, adding"});
 				    this.#state.users[p_msg.userUuid].totalMessages += 1;
-				}
-				
-				this.SafeAddToMessagesQueue(p_msg);
-			    } else {
-				// Fixed typo from this.state to this.#state
-				this.#state.errored_queue.push(p_msg);
+				    this.SafeAddToMessagesQueue(p_msg)
 			    }
-			} catch (timeoutErr) {
-			    console.error("Error in display timeout:", timeoutErr);
-			}
-		    }, 1000 * displayDelay);
-
-		} catch (err) {
-		    this.DebugPrint({ msg: "MSG PROCESSING CRASHED: ", error: err });
+			    else{
+				    this.DebugPrint({msg: "message already exists, skipping add"});
+				    this.#state.errored_queue.push(p_msg)
+			    }
+			/*}, 1000*displayDelay);*/
+			i += 1;
+		    }
+		catch (err) {
+			this.DebugPrint({msg: "LOOP CRASHED: ", error: err});
 		}
-	    }
-	}	
-
+		this.DebugPrint({msg: ("Current messages: " + this.#state.messages)});
+		} 
+	}
+	
 
 
 	async MonitoringStop() {
@@ -2095,6 +2077,8 @@ FindUserFromChannelIdAndReturnUuid(searchChannelId = undefined) {
 async ProcessYoutubeV3Message_v1(unprocessedMsg) {
     try {
         const rmo = unprocessedMsg.data;
+	
+	this.DebugPrint({msg: "rmo processed from ProcessYoutubeV3Message_v1():", val: rmo});
         
         // 1. Initialize message from template
         let newMessage = { ...this.templates.messages };
@@ -2203,6 +2187,85 @@ async ProcessYoutubeV3Message_v1(unprocessedMsg) {
 	    }
 	}
 
+	GetOldestUnreadTtsAndMarkRead() {
+	    // 1. Retrieve the messages array
+	let currentTime = Date.now();
+	    for (let i = 0; i < this.#state.messages.length; i++) {
+		    try{
+		    if(
+			    this.#state.messages[i].commands.tts.state.readAt == null
+		    ){
+			    this.DebugPrint({msg: "found tts with null readAt", val: this.#state.messages[i]});
+			    this.#state.messages[i].commands.tts.state.readAt = Date.now();
+			    this.DebugPrint({msg: "updated value so is now read", val: this.#state.messages[i]});
+			return {message: this.#state.messages[i], index: i}
+		    }
+		    }
+		    catch(err){
+			this.DebugPrint({msg: `message at i(${i}) does not have a tts command`});
+		    }
+	    }
+
+	    return null;
+	}
+
+	async FindOldestUnreadTtsAndCall() {
+	    this.DebugPrint({ msg: "find and call tts called" });
+
+	    // 1. Grab the message
+	    let returnObj;
+	    returnObj = this.GetOldestUnreadTtsAndMarkRead();
+
+	    if(returnObj == null){
+		this.DebugPrint({msg: "no tts messages found, queue is empty"});
+		    return false;
+	    }
+
+	    let message = returnObj.message;
+
+	    if (!message) {
+		this.DebugPrint({ msg: "no tts message found, returning", val: message });
+		return false;
+	    }
+
+	    // 2. IMMEDIATE LOCK
+	    // We mark it as read NOW so the next timer tick (which might happen 
+	    // while this one is still speaking) doesn't find the same message.
+	
+		//find message and update object
+		let stateMessage;
+	    for(let i = 0; i < this.#state.messages.length; ++i){
+		stateMessage = this.#state.messages[i];	
+		if (this.#state.messages[i].messageId == message.messageId){
+			this.DebugPrint({msg: "FOUND MATCHING MESSAGE ID, MARKING ID", val: {stateMessage: stateMessage, message: message}});
+			this.#state.messages[returnObj.index].commands.tts.state.readAt = Date.now();
+			//this.#state.messages[i].
+			//this.#state.messages[i].commands.tts.state.readAt = Date.now();
+			//this.#state.messages[i].commands.tts.state.isRead = true;
+			this.#state.messages[returnObj.index].state.readAt = Date.now();
+		}
+	    }
+
+	    if (message.commands && message.commands.tts) {
+		message.commands.tts.readAt = Date.now();
+		if (message.state) message.state.isRead = true;
+	    }
+
+	    this.DebugPrint({ msg: "oldest message found, calling tts", val: message });
+
+	    try {
+		// 3. AWAIT the speech
+		// This ensures the function doesn't finish until the voice stops talking
+		await this.CallTts(message);
+		return true;
+	    } catch (err) {
+		this.DebugPrint({ msg: "TTS Call failed", error: err, type: 'e' });
+		// Optional: Reset readAt if you want to retry on failure
+		// message.commands.tts.readAt = null; 
+		return false;
+	    }
+	}
+
 	/**
 	 * Executes the Text-to-Speech command using the message and flags.
 	 * @param {string} message The clean message text to speak.
@@ -2210,134 +2273,75 @@ async ProcessYoutubeV3Message_v1(unprocessedMsg) {
 	 * @param {Object} messageState - Reference to the message.state object (messageObj.state)
 	 * @returns {Promise<void>}
 	 */
-async CallTts(message) { 
-    this.DebugPrint({ msg: "CallTts: Starting TTS for message:", val: message });
+	async CallTts(message) { 
+	    this.DebugPrint({ msg: "CallTts: Starting TTS for message:", val: message });
 
-    // 1. Validation: Ensure we have a valid message object
-    if (!message) {
-        this.DebugPrint({ msg: "TTS Error: Message object is null or undefined.", type: "e" });
-        return;
-    }
-
-    // 2. Extract TTS text and flags safely
-    // We assume the structure: message.commands.tts = { isValid, params, message }
-    const ttsCmd = message.commands?.tts;
-    
-    if (!ttsCmd || !ttsCmd.isValid) {
-        this.DebugPrint({ msg: "TTS Error: No valid TTS command found in message.", type: "t" });
-        return;
-    }
-
-    const textToSpeak = ttsCmd.message || "No text";
-    const flags = ttsCmd.params || {};
-
-    // 3. Voice Initialization
-    const getVoices = () => new Promise((resolve) => {
-        let voices = window.speechSynthesis.getVoices();
-        if (voices.length > 0) return resolve(voices);
-        
-        window.speechSynthesis.onvoiceschanged = () => {
-            resolve(window.speechSynthesis.getVoices());
-        };
-    });
-
-    const voices = await getVoices();
-    const utterance = new SpeechSynthesisUtterance(textToSpeak);
-
-    // 4. Apply Param Flags
-    utterance.rate = Number(flags.r) || 1; 
-    utterance.pitch = Number(flags.p) || 1;
-
-    // Handle voice selection (v is index)
-    if (flags.v !== undefined && voices[flags.v]) {
-        utterance.voice = voices[flags.v];
-    }
-
-    // 5. Execution & State Update
-    return new Promise((resolve, reject) => {
-        utterance.onstart = () => {
-            // Mark as read the moment it actually starts speaking
-            ttsCmd.readAt = Date.now();
-            if (message.state) message.state.isRead = true;
-            this.DebugPrint({ msg: "TTS: Speech started..." });
-        };
-
-        utterance.onend = () => {
-            this.DebugPrint({ msg: "TTS: Speech completed successfully." });
-            resolve("SUCCESS"); 
-        };
-
-        utterance.onerror = (e) => {
-            console.error("CallTts: TTS error:", e);
-            // Mark as error so the timer doesn't retry this specific message
-            ttsCmd.readAt = "ERROR"; 
-            reject(new Error(`TTS failed: ${e.error}`));
-        };
-
-        // Standard cleanup: stop current audio and speak
-        window.speechSynthesis.cancel();
-        window.speechSynthesis.speak(utterance);
-    });
-}
-
-GetOldestUnreadTts() {
-    // 1. Get the latest array
-    let messages = window.Cockatiel.GetMessages() || [];
-
-    for (let i = 0; i < messages.length; ++i) {
-        let msg = messages[i];
-        
-        // Safety Check: Does the command object even exist?
-        if (!msg.commands || !msg.commands.tts) continue;
-
-        let tts = msg.commands.tts;
-
-        // 2. LOGIC FIX: All of these MUST be true (AND logic)
-        // It must exist AND be valid AND have no read timestamp
-        if (
-            tts !== undefined && 
-            tts.isValid === true && 
-            (tts.readAt === null || tts.readAt === undefined)
-        ) {
-            return msg;
-        }
-    }
-    return null;
-}
-
-	FindOldestUnreadTtsAndCall() {
-	    this.DebugPrint({ msg: "find and call tts called" });
-	    
-	    let message = this.GetOldestUnreadTts();
-	    
-	    // Check if the search returned nothing
+	    // 1. Validation: Ensure we have a valid message object
 	    if (!message) {
-		this.DebugPrint({ msg: "no tts message found, returning", val: message });
-		return false;
+		this.DebugPrint({ msg: "TTS Error: Message object is null or undefined.", type: "e" });
+		return;
 	    }
 
-	    this.DebugPrint({ msg: "oldest message found, calling tts", val: message });
+	    // 2. Extract TTS text and flags safely
+	    // We assume the structure: message.commands.tts = { isValid, params, message }
+	    const ttsCmd = message.commands?.tts;
 	    
-	    // 3. IMPORTANT: You must mark it as read immediately 
-	    // so the next timer tick doesn't grab the same message!
-	    message.commands.tts.readAt = Date.now(); 
+	    if (!ttsCmd || !ttsCmd.isValid) {
+		this.DebugPrint({ msg: "TTS Error: No valid TTS command found in message.", type: "t" });
+		return;
+	    }
 
-	    this.CallTts(message);
-	    return true;
+	    const textToSpeak = ttsCmd.message || "No text";
+	    const flags = ttsCmd.params || {};
+
+	    // 3. Voice Initialization
+	    const getVoices = () => new Promise((resolve) => {
+		let voices = window.speechSynthesis.getVoices();
+		if (voices.length > 0) return resolve(voices);
+		
+		window.speechSynthesis.onvoiceschanged = () => {
+		    resolve(window.speechSynthesis.getVoices());
+		};
+	    });
+
+	    const voices = await getVoices();
+	    const utterance = new SpeechSynthesisUtterance(textToSpeak);
+
+	    // 4. Apply Param Flags
+	    utterance.rate = Number(flags.r) || 1; 
+	    utterance.pitch = Number(flags.p) || 1;
+
+	    // Handle voice selection (v is index)
+	    if (flags.v !== undefined && voices[flags.v]) {
+		utterance.voice = voices[flags.v];
+	    }
+
+	    // 5. Execution & State Update
+	    return new Promise((resolve, reject) => {
+		utterance.onstart = () => {
+		    // Mark as read the moment it actually starts speaking
+		    ttsCmd.readAt = Date.now();
+		    if (message.state) message.state.isRead = true;
+		    this.DebugPrint({ msg: "TTS: Speech started..." });
+		};
+
+		utterance.onend = () => {
+		    this.DebugPrint({ msg: "TTS: Speech completed successfully." });
+		    resolve("SUCCESS"); 
+		};
+
+		utterance.onerror = (e) => {
+		    console.error("CallTts: TTS error:", e);
+		    // Mark as error so the timer doesn't retry this specific message
+		    ttsCmd.readAt = "ERROR"; 
+		    reject(new Error(`TTS failed: ${e.error}`));
+		};
+
+		// Standard cleanup: stop current audio and speak
+		window.speechSynthesis.cancel();
+		window.speechSynthesis.speak(utterance);
+	    });
 	}
-
-	FindOldestUnreadTtsAndCall(){
-		this.DebugPrint({msg:"find and call tts called"});
-		let message = this.GetOldestUnreadTts();
-		if(message == null || message == undefined){
-			this.DebugPrint({msg:"no tts message found, returning", val: message});
-			return false;
-		}
-		this.DebugPrint({msg:"oldest message found, calling tts", val: message});
-		this.CallTts(message);
-		return true;
-	}
-
 
 	/**
 	 * Parses a single raw YouTube Live Chat Message object and adds it to the 
@@ -2494,7 +2498,7 @@ GetOldestUnreadTts() {
 			  };
 
 			  const CheckForSpaces = (message) => {
-			    let score = 0;
+			    let scoreSe = 0;
 			    let spaceCount = 0;
 			    for (let i = 0; i < message.length; ++i) {
 			      if (message[i] == " ") {
@@ -3500,8 +3504,6 @@ ProcessTtsCommand(processedMsg) {
 			cmd.message = message;
 			break;
 		}
-
-		return cmd;
 	}	
 
 	// ensure flags are present
@@ -4510,7 +4512,7 @@ const userIcon = isValidIcon
 			}),
 			ReadTtsTimer: new IntTimer({
 				name: "ReadTtsTimer",
-				timeoutDuration: 10,
+				timeoutDuration: 15,
 			}),
 			EventDisplayTimer: new IntTimer({
 				autoStart: true,
@@ -4521,10 +4523,6 @@ const userIcon = isValidIcon
 		};
 
 		this.#state.timers.GetMessagesTimer.AddTimeoutListener(() => this.#DaLoop()); 
-		this.#state.timers.GetMessagesTimer.AddTimeoutListener(() => {
-			if(this.FindOldestUnreadTtsAndCall()){this.DebugPrint({msg: "tts message found, and reading"})}
-			else{this.DebugPrint({msg: "tts message not found"})}
-		}); 
 	}
 
 	GenerateUi(){
@@ -4917,28 +4915,11 @@ const userIcon = isValidIcon
 		this.DebugPrint({msg:"adding testUser"});
 			const test_message = {
 				    "channelId": "asdf1234zxcv5689",
-				    "commands": {
-					    tts: {
-						isValid: true, // if everything passes, then true, if not (ie not enough credits, not the right perms, etc, then false
-						commandType: 'tts',
-						flags: {},
-						message: "tts assignment test to verify all is working",
-						executedAt: null,
-						pointsOffer: 10000, // amount spent on the command,	
-						version: 1, // version to check
-						errInfo: {
-							err: null,
-							erroredAt: null,
-						},
-						state: {
-							readAt: null,
-						},
-					}
-				    },
+				    "commands": {},
 				    "messageId": "LCC.EhwKGkNNLVB2TkdCNVpJREZlZkJ3Z1FkNExJQzZR",
 				    "platform": "youtube",
 				    "processedMessage": "tts assignment test to verify all is working",
-				    "rawMessage": "!tts -v 50 -p 2 -r 1 tts assignment test to verify all is working",
+				    "raw": "!tts -v 50 -p 2 -r 1 tts assignment test to verify all is working",
 				    "receivedAt": 1771485470330,
 				    "score": -100,
 				    "state": {},
@@ -4949,7 +4930,7 @@ const userIcon = isValidIcon
 				    "version": 1,
 			}
 			try{
-				this.SafeAddToMessagesQueue(test_message);
+				this.ProcessYoutubeV3Message_v1(test_message);
 			}
 			catch(error){
 				this.DebugPrint({
@@ -4992,65 +4973,33 @@ const userIcon = isValidIcon
 		return;
 	    }
 
-	this.#state.timers.ReadTtsTimer.AddTickListener((v)=>{
-		console.log("ReadTtsTimerTick", v)
-	});
-	this.#state.timers.ReadTtsTimer.AddTimeoutListener(() => {
-	    // 1. Normalize the queue (Handles null, undefined, Objects, or Arrays)
-	    const allMessages = Array.isArray(this.#state.messages) 
-		? this.#state.messages 
-		: Object.values(this.#state.messages || {});
+// Add a private property to your class to track status
+// #isTtsBusy = false;
 
-	    // 2. Early exit if queue is empty
-	    if (allMessages.length === 0) {
-		// Silent return to avoid console spam during idle
-		return; 
-	    }
-
-	    // 3. Find the oldest unread TTS message with deep property checking
-	    const unreadTtsMessage = allMessages.find(msg => {
-		// Ensure msg exists and has a commands array
-		if (!msg || !Array.isArray(msg.commands)) return false;
-
-		// Check for the 'tts' command
-		const hasTts = msg.commands.some(cmd => cmd && cmd.command === 'tts');
-		
-		// Ensure state exists; if it doesn't, we assume it's unread (!undefined === true)
-		const isRead = msg.state?.isRead === true;
-		
-		return hasTts && !isRead;
-	    });
-
-	    // 4. Debug Check: If we have messages but none matched the find()
-	    if (!unreadTtsMessage) {
-		this.DebugPrint({
-		    msg: "TTS: No unread commands found in current queue",
-		    queueSize: allMessages.length,
-		    sampleMsg: allMessages[0]?.messageId // Helps track if we are looking at the right data
-		});
+	this.#state.timers.ReadTtsTimer.AddTimeoutListener(async () => {
+	    // 1. Check if we are already speaking. If so, skip this tick.
+	    if (this.#isTtsBusy) {
+		this.DebugPrint({ msg: "TTS is busy, skipping this tick." });
 		return;
 	    }
 
-	    // 5. Execution: Extract the specific command and trigger the voice
-	    const ttsCommand = unreadTtsMessage.commands.find(cmd => cmd.command === 'tts');
+	    try {
+		this.DebugPrint({ msg: "attempting to read oldest tts" });
+		
+		// 2. Set the lock
+		this.#isTtsBusy = true;
 
-	    if (ttsCommand) {
-		// Fallback: If the command doesn't have a specific 'message' string, use the parent msg text
-		const speechText = ttsCommand.message || unreadTtsMessage.cleanText || unreadTtsMessage.message;
+		// 3. Await the full execution of find and call
+		// This ensures readAt is updated and speech is finished
+		await this.FindOldestUnreadTtsAndCall();
 
-		if (speechText) {
-		    this.DebugPrint({ msg: `TTS Initializing: ${unreadTtsMessage.username}` });
-		    
-		    // Execute the audio
-		    this.CallTts(speechText, ttsCommand.flags);
-
-		    // 6. State Update: Mark as read so initialization doesn't loop the same message
-		    if (!unreadTtsMessage.state) unreadTtsMessage.state = {};
-		    unreadTtsMessage.state.isRead = true;
-		    unreadTtsMessage.state.readAt = Date.now();
-		}
+	    } catch (err) {
+		this.DebugPrint({ msg: "Error in ReadTtsTimer listener", error: err, type: 'e' });
+	    } finally {
+		// 4. Release the lock regardless of success or failure
+		this.#isTtsBusy = false;
 	    }
-	});
+	});	
 	}
 
 	Init(){
@@ -5069,10 +5018,8 @@ const userIcon = isValidIcon
 		this.RunSubWindowTest6();
 		this.RunSubWindowTest7();
 
-		//test
-		this.#state.timers.ReadTtsTimer.Start();
-		//real
 		this.#state.timers.EventDisplayTimer.Start();
+	    	this.#state.timers.ReadTtsTimer.Start();
 
 		this.AttachHandleUnloadLogic()
 	}
