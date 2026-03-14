@@ -93,17 +93,19 @@ export default class Cockatiel {
 			error: null, // error info
 		},
 		messages: {
+			//originalData: {},
 			version: 1,
-			username: "",
-			userUuid: "",
-			streamOrigin: "", //what streamid via the platform the message came from
-			receivedAt: "",
+			username: null,
+			userUuid: null,
+			streamOrigin: null, //what streamid via the platform the message came from
+			channelOrigin: null,
+			receivedAt: null, 
 			commands: [],
-			processedMessage: "",
-			platform: "",
-			messageId: "",
-			rawMessage: "",
-			score: "",
+			processedMessage: null,
+			platform: null,
+			messageId: null,
+			rawMessage: null,
+			score: null,
 			state: {}
 		},
 		messageCommand: {
@@ -138,7 +140,13 @@ export default class Cockatiel {
 		user: {
 			version : 1, 
 			username: null,
-			channels : [], 
+			channels : {
+				facebook: [],
+				kick: [],
+				tiktok: [],
+				twitch: [],
+				youtube: [],
+			}, 
 			uuid : null,
 			ttsBans : [], // times they've been restricted from using tts (ie non-english, spam, etc)
 			channelBans : [], // when banned and why
@@ -173,6 +181,63 @@ export default class Cockatiel {
 			isVerified: false, // if they have been verified by the platform
 			firstSeen: null, //Date.now()
 			points : 0,
+			styling: { // ONLY CUSTOMIZABLE PROPERTIES ARE HERE, styles are whiteliste'd
+				chatMessageContainer: {
+					styling: ``,
+					chatUserBubble: {	
+						styling: ``,
+						chatBubbleTailContainer: {
+							styling: ``,
+							chatBubbleTailContainer: {
+								styling: ``,
+								chatBubbleTail: {styling: ``,},
+							},
+						},
+						chatUserInfo: {
+							styling: {
+								backgroundColor: "#ff8",
+								borderRadius: "3rem",
+								color: "black",
+							},
+							chatUserImageContainer: {
+								styling: {
+									backgroundColor: "#000",
+									borderRadius:"100%",
+								},
+								chatUserImage: {styling: ``},
+							},
+							chatUserStats: {
+								styling: ``,
+								chatUsername: {styling: ``},
+								chatUserCommendations: {styling: ``,}
+							}
+						}
+					},
+					chatMessageBubble: {
+						styling: {
+							backgroundColor:"#111",
+							borderRadius:"1.3rem",
+							color: "white",
+						},
+						chatCommandContainer: {
+							styling: {
+								height:"1rem",
+								paddingBottom:"1rem",
+							},
+							chatCommand: {
+								styling: {
+									backgroundColor:"#222",
+									borderRadius:"1rem",
+									color: "cyan",
+								},
+							},
+						},
+
+						chatMessage: { styling: `` },
+					},
+				},
+			}, //end of styling
+			totalMessages: 0,
 		}
 	};	
 
@@ -211,25 +276,25 @@ export default class Cockatiel {
 				flags: [
 					{ flag: ['l'], value: 1, description: "approximate duration of the clip in minutes", range: { min: 0.1, max: 10 } },
 				],
-				func: '', //function to call when triggered
+				func: 'ProcessClipCommand', //function to call when triggered
 				AuthNeeded: { owner: false, admin: false, mod: false, trused: false
 				},
 				cost: 0,
 				state: {},
 				errInfo: {err: null, errMsg: null},
 			},
-			/* not implimented
-			{
+			help: {
 				version: 1,
 				command: "help",
-				flags: [{ flag: ['h'], value: 1, description: "show commands and other stuff"},],
-				func: '', //function to call when triggered
+				description: "",
+				flags: [],
+				func: 'ProcessHelpCommand', //function to call when triggered
 				AuthNeeded: { owner: false, admin: false, mod: false, }
 			},
-			*/
 			tts: {
 				version: 1,
 				command: "tts",
+				description: "",
 				flags: {
 					p: {value: 1, type:"number", description: "modifys the pitch of the tts", range: { min: 0.5, max: 3 } },
 					/* below is an alias for speed*/
@@ -237,7 +302,7 @@ export default class Cockatiel {
 					v: {value: 1, type:"number", description: "modifys the voice of the tts message", range: { min: 0, max: 180 } },
 				},
 				AuthNeeded: { owner: false, admin: false, mod: false, trused: false},
-				func: this.CallTts, //function to call when triggered
+				func: 'CallTts', //function to call when triggered
 				cost: 10000,
 				state: {readAt: null},
 				errInfo: {err: null, errMsg: null},
@@ -245,13 +310,14 @@ export default class Cockatiel {
 			prediction: {
 				version : 1,
 				command : "predition",
+				description: "",
 				flags : {
 					p: {value: "", type: "string", description: "prompt to be shown to the users"},
 					r: {value: "", type: "string", description: "refunds the points, value if for reason"},
 					e: {value: "", type: "string", description: "ends the current prediction and rewards based on distribution, value is for reason"},
 				},
 				AuthNeeded: { owner: false, admin: false, mod: true, },
-				func: this.ProcessPredictionCommand, // function to call when triggered
+				func: 'ProcessPredictionCommand', // function to call when triggered
 				//will check the highest perm first, the first to return true will be assumed. if none true assumed to be public
 				cost: 0,
 				state: {},
@@ -260,6 +326,7 @@ export default class Cockatiel {
 			vote: {
 				version : 1,
 				command : "vote",
+				description: "",
 				flags : {
 					a: {type: "number", value: "", description: "amount to wager", range: {min: 100, max: 1000000}},
 					dd: { type: "number", value: "", description: "triggers double down, (no payout, but next payout will be double)"},
@@ -267,7 +334,7 @@ export default class Cockatiel {
 					n: {type: "boolean", value: "", description: "makes a vote for no"},
 
 				},
-				func: this.ProcessVoteCommand, // function to call when triggered
+				func: 'ProcessVoteCommand', // function to call when triggered
 				//will check the highest perm first, the first to return true will be assumed. if none true assumed to be public
 				AuthNeeded: { 
 					owner: false,
@@ -284,6 +351,7 @@ export default class Cockatiel {
 			{
 				version: 1,
 				command: "rank",
+				description: "",
 				flags: { d: { flag: ['d'], value: 1, description: "for people to add/update their rankings on a game", range: { min: 0.1, max: 10 } },
 				],
 				func: '', //function to call when triggered
@@ -292,9 +360,10 @@ export default class Cockatiel {
 			*/ 
 		},
 		debug: true,
+		doubleDownQueue: [],
 		errored_queue: [], //queue for any/all messages that have errored for ANY reason
 		events: [],
-		doubleDownQueue: [],
+		flaggedMessageQueue: [],
 		logs: new Array(), //history for all messages, stats, bans, etc
 		messages: [],
 		subWindows: {},
@@ -308,7 +377,8 @@ export default class Cockatiel {
 				width: 420,  // this was an accident lol
 				background: "#0f0",
 				color: undefined,
-				messageDisplayDuration: 30,
+				messageDisplayDuration: 7,
+				displayRate: {min: 1.1, max: 5}, // min and max values for when to add the next message to chat display
 				defaultStylesheet: "http://127.0.0.1:8080/content/stream_utils/tib_stuff/stylesheets/chatMessage-modernMinimal.css", 
 				//"./stylesheets/chatMessage-modernMinimal.css",
 			},
@@ -393,7 +463,7 @@ export default class Cockatiel {
 	    switch(type) {
 		case "throw":
 		case "t":
-		    throw new Error(statement); // Use 'throw' to actually stop execution
+		    throw new Error(msg/*statement*/); // Use 'throw' to actually stop execution
 		case "error":
 		case "err":
 		case "e":
@@ -1523,94 +1593,57 @@ EventDisplayManager() {
 		return this.#state.subWindows;
 	}
 
-	async ProcessUnprocessedMessagesQueue(maxAmount = 50) {
-	    let i = 0;
-	    while (this.#state.unprocessed_queue.length > 0 && i < maxAmount) {
-		const currentItem = this.#state.unprocessed_queue.shift();
+	async MonitoringStart() {    
+	    this.DebugPrint({msg: "running the loop once as a test"});
+		this.#state.timers.ReadTtsTimer.Start();
+	    try{
+		await this.#DaLoop(); 
+	    }
+	    catch(err){
+	    	this.DebugPrint({msg: "could not start monitoring, there was an error in the loop.", err:err, type:'t'});	    
+	    }
 
-		try {
-		    let processedResult = null;
-		    // Route to platform processor
-		    switch (String(`${currentItem.platform}_v${currentItem.apiVersion}`).toLowerCase()) {
-			case 'youtube_v3':
-			    processedResult = await this.ProcessYoutubeV3(currentItem);
-			    break;
-			default:
-			    console.warn(`No processor found for ${currentItem.platform} v${currentItem.apiVersion}`);
-			    break;
-		    }
+	    	this.DebugPrint({msg: "test loop ran successfully, starting real loop in 3 seconds"});	    
 
-		    if (processedResult) {
-			const messageText = processedResult.processedMessage;
+		setTimeout(()=>{
+		    try {
+			this.DebugPrint({msg: "starting timers"});
+			// Wrap it so 'this' remains correct when called by the timer
+			//this.#state.timers.GetMessagesTimer.Start();
 			
-			// Initialize state object if missing (should not happen with fix)
-			if (!processedResult.state) processedResult.state = {};
-
-			// Process commands if they exist
-			if (processedResult.commands && processedResult.commands.length > 0) {
-			    
-			    let hasTtsCommand = false;
-
-			    // Bind all commands with state
-			    processedResult.commands.forEach(cmd => {
-				const commandDefinition = this.#state.commands.find(
-				    def => def.command === cmd.command
-				);
-				if (!commandDefinition || typeof commandDefinition.func !== 'function') return;
-
-				const originalFuncRef = commandDefinition.func; 
-				const params = cmd.params;
-				
-				if (cmd.command === 'tts') {
-				    hasTtsCommand = true;
-				    // Initialize ttsHasRead only if it's a tts command
-				    processedResult.state.ttsHasRead = false;
+			let key;
+			for(let i = 0; i < Object.keys(this.#state.timers).length; ++i){
+				try{
+					key = Object.keys(this.#state.timers)[i];
+					this.#state.timers[key].Stop();
 				}
-				
-				cmd.func = () => originalFuncRef.call(this, messageText, params, processedResult.state); 
-			    });
-
-			    if (hasTtsCommand && processedResult.state.ttsHasRead === undefined) {
-				processedResult.state.ttsHasRead = false;
-			    }
+				catch(err){		
+					this.DebugPrint({msg: "error stopping timer", val: key});
+				}
 			}
 		    }
-		} catch (error) {
-		    console.error("Error processing message:", error);
-		}
-		i = ++i;
-	    }
+		    catch (err) {
+			this.DebugPrint({msg: "error properly starting the loop", err: err, type:'t'});
+		    }
+		}, 3000);
 	}
 
-	async MonitoringStart() {
-		this.#state.timers.ReadTtsTimer.Start();
-	    this.DebugPrint({msg: "running the loop once as a test"});
-	    try {
-		await this.#DaLoop(); 
 
-	    //nothing below here runs 
-		// Wrap it so 'this' remains correct when called by the timer
-		this.#state.timers.GetMessagesTimer.AddTimeoutListener(() => this.#DaLoop()); 
-		this.#state.timers.GetMessagesTimer.AddTimeoutListener(() => this._playOldestUnreadTts()); 
-		
-		this.#state.timers.GetMessagesTimer.Start();
-	    }
-	    catch (err) {
-		console.error("error with monitoring start\n", err);
-	    }
+	TtsStart(){
+	
 	}
 
-	CreateUserFromFlags(p_msg) {
+	CreateUserFromFlags(p_msg) { //returns user object on success
 	    // 1. Validation check
-	    if (!p_msg.channelId) {
-		this.DebugPrint({ msg: "channelId CANNOT be null", type: "w" });
-		return null; // Stop here if we don't have an ID
+	    this.DebugPrint({ msg: "checking for chaannelOrigin"});
+	    if (!p_msg.channelOrigin) {
+		this.DebugPrint({ msg: "channelOrigin CANNOT be null", type: "t"});
 	    }
 
 	    // 2. Check for existing user (Fixed the variable name casing)
 	    let existingUuid; 
 	    try {
-		existingUuid = this.FindUserFromChannelIdAndReturnUuid(p_msg.channelId);
+		existingUuid = this.FindUserFromChannelIdAndReturnUuid(p_msg.channelOrigin);
 		
 		// Simplified check: if it's truthy, return it
 		if (existingUuid) {
@@ -1621,7 +1654,7 @@ EventDisplayManager() {
 		this.DebugPrint({
 		    msg: "Error checking for existing UUID", 
 		    val: p_msg,
-		    type: "w", 
+		    type: "t", 
 		    err: err
 		});
 		// Decide if you want to continue or return here
@@ -1634,13 +1667,81 @@ EventDisplayManager() {
 		...this.templates.user,
 		username: p_msg.username,
 		icon: p_msg.icon,
-		channels: [p_msg.channelId],
+		channels: [{
+			version: 1,
+			channelId: p_msg.channelOrigin,
+			platform: p_msg.platform,
+			channelName: p_msg.username,
+		}],
 		isSponser: p_msg.isSponser || false,
 		isChatModerator: p_msg.isChatModerator || false,
 		isChatAdmin: p_msg.isChatAdmin || false,
-		uuid: p_msg.userUuid || p_msg.uuid || crypto.randomUUID(), 
+		uuid: crypto.randomUUID(), 
 		firstSeen: p_msg.firstSeen || Date.now()
 	    };
+		let color;
+		switch(user.uuid[user.uuid.length-1]){
+			case('a'):
+			case('b'):
+			case('c'):
+			case('d'):
+			case('e'):
+				color = "#f00";
+				break;
+			case('f'):
+			case('g'):
+			case('h'):
+			case('i'):
+			case('j'):
+				color = "#ff0";
+				break;
+			case('k'):
+			case('l'):
+			case('m'):
+			case('n'):
+			case('o'):
+				color = "#000"; //can't be green because of bg
+				break;
+			case('p'):
+			case('q'):
+			case('r'):
+			case('s'):
+			case('t'):
+				color  = "#0ff";
+				break;
+			case('u'):
+			case('v'):
+			case('w'):
+			case('x'):
+			case('y'):
+			case('z'):
+				color = "#00f";
+				break;
+			case('0'):
+			case('1'):
+			case('2'):
+			case('3'):
+			case('4'):
+				color = "#f0f";
+				break;
+			case('5'):
+			case('6'):
+			case('7'):
+			case('8'):
+			case('9'):
+				color = "#fff";
+				break;
+			default: 
+				color = "#555";
+				break
+		}
+		user.styling.chatMessageContainer.chatUserBubble.chatUserInfo.styling.backgroundColor = color;
+
+		/*
+		channel: {
+			version : 1, platform : "", channelName : "", channelId : ""
+		},
+		*/
 
 	    // 4. Add and return
 	    try {
@@ -1650,8 +1751,7 @@ EventDisplayManager() {
 		this.DebugPrint({ msg: `User created: ${user.username}.` });
 		return user;
 	    } catch (err) {
-		this.DebugPrint({ msg: "Failed to add user to state", err: err, type: "e" });
-		return null;
+		this.DebugPrint({ msg: "Failed to add user to state", err: err, type: "t" });
 	    }
 	}
 
@@ -1672,31 +1772,30 @@ EventDisplayManager() {
 		return user;
 	}
 
-	FindUserFromChannelIdAndReturnUuid(channelId = undefined){ // returns uuid of user, undefined if null
-		if(this.#state.users < 1){
-			return null;
-		}
-		const users = this.#state.users;
-		/*
-		users.channels[i].channelId
-		channel: {
-			version : 1, platform : "", channelName : "", channelId : ""
-		},
-		*/
-		if(this.#state.users.length > 0){
-			let key;
-			for(let i = 0; i < Object.keys(users).length; ++i){
-				key = Object.keys(users)[i]; //uuid of user
-				for(let j = 0; j < users[key].channels.length; ++j){
-					if(channelId == users[key].channels[j].channelId){
-						return key;
-					}
-				}
-			}
-		}
-		return null;
-	}
+FindUserFromChannelIdAndReturnUuid(searchChannelId = undefined) {
+    if (!searchChannelId) return null;
 
+    const users = this.#state.users;
+    if (!users) return null;
+
+    const userList = Object.values(users);
+
+    for (let i = 0; i < userList.length; i++) {
+        const user = userList[i];
+        
+        // Based on your log: channels is an Array [ {channelId: "..."} ]
+        const channelsArray = user.channels;
+
+        if (Array.isArray(channelsArray)) {
+            for (let j = 0; j < channelsArray.length; j++) {
+                if (channelsArray[j].channelId === searchChannelId) {
+                    return user.uuid; // Found him!
+                }
+            }
+        }
+    }
+    return null; // Not found
+}
 
 	AddPointsToUserWithUuid(score, uuid) {
 	    if (!uuid) {
@@ -1713,26 +1812,33 @@ EventDisplayManager() {
 
 	    // 1. Locate the user
 	    let user = this.#state.users[uuid];
-	
-	    if(!user){
-		this.DebugPrint({msg: `user is not found, cannot add points to user.`, val: {uuid: uuid}});    
+		
+	    try{
+	            if(!user){
+	                this.DebugPrint({msg: `user is not found, attempting to create user.`, val: {uuid: uuid}, type:"w"});    
+			    return false;
+	                //this.DebugPrint({msg: `AddPointsToUser: User with UUID ${uuid} not found.`, type:"error"});
+	            }
+	    }
+	    catch(err){
+	    	this.DebugPrint({msg: `user is not found, cannot add points to user.`, val: {uuid: uuid}, err: err, type:'e'});    
+	    	return false;
 	    }
 
-	    if (user) {
-		// 2. Consistent naming: Use .points everywhere
+		try{
 		if (user.points === undefined || isNaN(user.points)) {
-		    user.points = 0;
+				user.points = 0;
+			}
+
+			// 3. Add the new points
+			user.points += score;
+
+			this.DebugPrint({msg: `Points updated for ${user.username}: +${score} (Total: ${user.points}})`});
+			return true;
 		}
-
-		// 3. Add the new points
-		user.points += score;
-
-		this.DebugPrint({msg: `Points updated for ${user.username}: +${score} (Total: ${user.points}})`});
-		return true;
-	    } else {
-		this.DebugPrint({msg: `AddPointsToUser: User with UUID ${uuid} not found.`, type:"error"});
-		return false;
-	    }
+		catch(err){
+			this.DebugPrint({msg: "failure adding points to user", type: 'e', err:err})
+		}
 	}	
 
 	AddUserToUsers(user) {
@@ -1841,225 +1947,227 @@ EventDisplayManager() {
 	}
 
 
-	/**
-	 * High-performance duplicate check and chronological insertion.
-	 * Optimized for tens of thousands of messages.
-	 * @param {Object} p_msg - Processed message (must contain .messageId and .receivedAt)
-	 */
-	SafeAddToMessagesQueue(p_msg) {
-	    const queue = this.#state.messages; 
-	    const len = queue.length;
-	    const targetId = p_msg.messageId;
-	    const targetTime = p_msg.receivedAt;
+	async SafeAddToMessagesQueue(p_msg) {
+	    // 1. UNWRAP: If p_msg is a Promise, wait for it to resolve into an object
+	    const msg = (p_msg instanceof Promise) ? await p_msg : p_msg;
 
-	    for (let i = len - 1; i >= 0; i--) {
-	        if (queue[i].messageId === targetId) {
-	            this.DebugPrint({msg: "Duplicate message found, ignoring"});
-	            return false;
-	        }
-
-	        if (queue[i].receivedAt < targetTime) {
-	            break;
-	        }
+	    // 2. VALIDATION: Ensure we actually have a valid message object
+	    if (!msg || typeof msg !== 'object' || !msg.messageId) {
+		this.DebugPrint({ msg: "Invalid message object passed to queue", type: "error" });
+		return false;
 	    }
 
+	    const queue = this.#state.messages;
+	    const len = queue.length;
+	    const targetId = msg.messageId;
+	    const targetTime = msg.receivedAt || Date.now();
+
+	    // 3. DUPLICATE & ORDER CHECK: Scan backwards (optimized for new messages)
+	    for (let i = len - 1; i >= 0; i--) {
+		// If a Promise accidentally stayed in the queue, queue[i] will fail here
+		if (queue[i].messageId === targetId) {
+		    this.DebugPrint({ msg: `Duplicate message [${targetId}] ignored` });
+		    return false;
+		}
+
+		// If we've gone back far enough in time, we can stop checking for duplicates
+		if (queue[i].receivedAt < targetTime) {
+		    break;
+		}
+	    }
+
+	    // 4. BINARY SEARCH: Find the exact insertion index to keep the queue sorted
 	    let low = 0;
 	    let high = len;
 
-	    //sort
 	    while (low < high) {
-	        const mid = (low + high) >>> 1;
-	        if (queue[mid].receivedAt < targetTime) {
-	            low = mid + 1;
-	        } else {
-	            high = mid;
-	        }
+		const mid = (low + high) >>> 1;
+		// Compare times to find the correct chronological spot
+		if (queue[mid].receivedAt < targetTime) {
+		    low = mid + 1;
+		} else {
+		    high = mid;
+		}
 	    }
 
-	    this.DebugPrint({msg: `Adding message at index ${low}`});
+	    this.DebugPrint({ msg: `Inserting message ${targetId} at index ${low}` });
 
-	    if (low === len) {
-		queue.push(p_msg);
-	    } else {
-		queue.splice(low, 0, p_msg);
-	    }
+	    // 5. INSERTION: Use splice to insert at the calculated index
+	    queue.splice(low, 0, msg);
+
+	    // 6. UPDATE STATE: Re-assign the array to trigger any state listeners
+	    this.#state.messages = queue;
 
 	    return true;
 	}
 
 	async #DaLoop() {
-	    try {
-		this.DebugPrint({msg: "Fetching messages from youtube"});
-		const data = await this.yt.getChatMessages();
-		
-		this.DebugPrint({msg: `Received ${data.items?.length || 0} items`});
-
-		if (!data.items || data.items.length === 0) return;
-
-		this.DebugPrint({msg: "adding messages to unprocessed queue"});
-		for (const item of data.items) {
-		    this.ParseAndAddYouTubeV3MessagesToUnprocessedQueue(item);
+	    // 1. Start Timers
+	    const timerKeys = Object.keys(this.#state.timers);
+	    for (const key of timerKeys) {
+		try {
+		    this.#state.timers[key].Start();
+		} catch (err) {
+		    this.DebugPrint({ msg: "error starting timer", val: key, err: err, type: 'e' });
 		}
+	    }
 
-		// dLive 
-		// facebook here
-		// instagram
-		// kick here
-		// picarto here
-		// tiktok here
-		// trovo
-		// twitch here
-		// twitter here
+	    // 2. Fetch Data (Wrapped in try/catch to prevent loop death)
+	    let data;
+	    try {
+		this.DebugPrint({ msg: "Fetching messages from youtube" });
+		data = await this.yt.getChatMessages();
 
-		this.DebugPrint({msg: "processing unprocecssed_queue"});
-		while (this.#state.unprocessed_queue.length > 0) {
+	        this.DebugPrint({ msg: `Received ${data.items?.length || 0} items` });
+	        if (!data.items || data.items.length === 0) return;
+
+	        // 3. Add to unprocessed
+	        for (const item of data.items) {
+	            this.ParseAndAddYouTubeV3MessagesToUnprocessedQueue(item);
+	        }
+	    } catch (err) {
+		this.DebugPrint({ msg: "FETCH FAILED", error: err, type: 'e' });
+		//return; // Exit this tick and try again next loop
+	    }
+
+	    // 4. Process Queue
+	    while (this.#state.unprocessed_queue.length > 0) {
+		try {
 		    const raw = this.#state.unprocessed_queue.shift();
 		    const p_msg = await this.ProcessYoutubeV3Message_v1(raw);
+
+		    // Validation check
+		    if (!p_msg || !p_msg.authorId) continue;
+
+		    this.DebugPrint({ msg: "message finished processing", val: p_msg });
 
 		    const exists = this.#state.messages.some(m => 
 			m.receivedAt === p_msg.receivedAt && m.authorId === p_msg.authorId
 		    );
 
-		    if (!exists) this.SafeAddToMessagesQueue(p_msg);
+		    let dR = this.#state.windows.chat.displayRate;
+		    let displayDelay = 1; 
+
+		    setTimeout(async () => {
+			try {
+			    if (!exists) { 
+				this.PushMessageToChatWindow(p_msg);
+				if (!p_msg.state) p_msg.state = {};
+				p_msg.state.displayedAt = Date.now();
+				
+				// Ensure user exists before incrementing
+				if (this.#state.users[p_msg.userUuid]) {
+				    this.#state.users[p_msg.userUuid].totalMessages += 1;
+				}
+				
+				this.SafeAddToMessagesQueue(p_msg);
+			    } else {
+				// Fixed typo from this.state to this.#state
+				this.#state.errored_queue.push(p_msg);
+			    }
+			} catch (timeoutErr) {
+			    console.error("Error in display timeout:", timeoutErr);
+			}
+		    }, 1000 * displayDelay);
+
+		} catch (err) {
+		    this.DebugPrint({ msg: "MSG PROCESSING CRASHED: ", error: err });
 		}
-		this.DebugPrint({msg: ("Current messages: " + this.#state.messages)});
-	    } catch (err) {
-		this.DebugPrint({msg: "LOOP CRASHED: ", error: err});
 	    }
-	}
+	}	
+
 
 
 	async MonitoringStop() {
-		this.#state.timers.ReadTtsTimer.Stop();
-	  this.#state.timers.GetMessagesTimer.Stop(); 
-	  this.#state.timers.GetMessagesTimer.RemoveTimeoutListener(this.#DaLoop);
-	}
-
-	async ProcessYoutubeV3Message_v1(unprocessedMsg) {
-		this.DebugPrint({msg: "input into ProcessYtm_v1 to get rata from:", val: unprocessedMsg});
-		const rmo = unprocessedMsg.data; // rawMessageObject
-
-		// 1. Initialize the new processed message object
-		let newMessage = { ...this.templates.messages };
-		this.DebugPrint({msg: "current message object is:", val: newMessage});
-		/*
-		messages: {
-			version: 1,
-			username: "",
-			userUuid: "",
-			streamOrigin: "", //what streamid via the platform the message came from
-			receivedAt: "",
-			commands: [],
-			processedMessage: "",
-			platform: "",
-			messageId: "",
-			rawMessage: "",
-			score: "",
-			state: {}
-		},
-		*/
-
-		try{
-		this.DebugPrint({msg: "parsing out information from object", unprocessedMsg});
-		// VERSION_VERSION_VERSION_VERSION_VERSION_VERSION_VERSION_VERSION_VERSION_VERSION_VERSION_VERSION_VERSION_VERSION_
-		newMessage.version = 1; // WARN: make new function if this needs to be changed.
-		this.DebugPrint({msg: "current message object is:", val: newMessage});
-
-		// username_username_username_username_username_username_username_username_username_username_username_username_username_
-		let name = rmo.authorDetails.displayName;
-		if(name[0] == "@"){name = name.slice(1, name.length);}
-		newMessage.username = name;
-		this.DebugPrint({msg: "current message object is:", val: newMessage});
-
-		// userUuid_userUuid_userUuid_userUuid_userUuid_userUuid_userUuid_userUuid_userUuid_userUuid_userUuid_userUuid_
-		newMessage.userUuid = this.FindUserFromChannelIdAndReturnUuid(rmo.authorDetails.channelId);
-		if(newMessage.userUuid == undefined){
-			this.DebugPrint({msg: "no uuid found for user, attempting to add the user", rmo});
-			let cId = rmo.authorDetails.channelId;
-			this.DebugPrint({msg: `attempting to create user with id: ${cId}`});
-			try{newMessage.userUuid = this.CreateUserFromFlags({channelId: cId,}).userUuid;}
-			catch(err){return this.DebugPrint({msg: "could not create new user with the id given", type: "throw"});}
-			newMessage.userUuid = crypto.randomUUID();
-		}
-		this.DebugPrint({msg: "current message object is:", val: newMessage});
-
-		// streamOrigin_streamOrigin_streamOrigin_streamOrigin_streamOrigin_streamOrigin_streamOrigin_streamOrigin_
-		newMessage.streamOrigin = rmo.snippet.liveChatId; //what streamid via the platform the message came from
-		this.DebugPrint({msg: "current message object is:", val: newMessage});
-
-		// receivedAt_receivedAt_receivedAt_receivedAt_receivedAt_receivedAt_receivedAt_receivedAt_receivedAt_receivedAt_
-		newMessage.receivedAt = Date.parse(unprocessedMsg.data.snippet.publishedAt); //use when received by server/app to help reduce dependancies
-		this.DebugPrint({msg: "current message object is:", val: newMessage});
-
-		// rawMessage_rawMessage_rawMessage_rawMessage_rawMessage_rawMessage_rawMessage_rawMessage_rawMessage_rawMessage_
-		newMessage.rawMessage= rmo.snippet.textMessageDetails.messageText;
-		this.DebugPrint({msg: "current message object is:", val: newMessage});
-
-		// processedMessage_processedMessage_processedMessage_processedMessage_processedMessage_processedMessage_
-		let message = rmo.snippet.textMessageDetails.messageText; 
-		this.DebugPrint({msg: "checking for banned words in message", message});
-		if(this.CheckMessageForBannedWords(message)){
-			// TODO: shadow ban user, and flag for review
-		};
-		newMessage.processedMessage = this.SanitizeString(message);
-		this.DebugPrint({msg: "current message object is:", val: newMessage});
-
-		// platform_platform_platform_platform_platform_platform_platform_platform_platform_platform_platform_platform_
-		newMessage.platform = "youtube";	
-		this.DebugPrint({msg: "current message object is:", val: newMessage});
-
-		// messageId_messageId_messageId_messageId_messageId_messageId_messageId_messageId_messageId_messageId_messageId_
-		this.DebugPrint({msg: "current RMO object is:", val: rmo});
-		newMessage.messageId = rmo.id; // TODO: find messageId
-		this.DebugPrint({msg: "current message object is:", val: newMessage});
-
-		// commands_commands_commands_commands_commands_commands_commands_commands_commands_commands_commands_commands_
-		let commandObject = this.ParseCommandFromMessage(newMessage);
-		this.DebugPrint({msg: `got commands ${JSON.stringify(commandObject, null, 2)}`, val: commandObject});
-		
+		this.DebugPrint({msg: "stopping timers"});
+		let key;
+		for(let i = 0; i < Object.keys(this.#state.timers).length; ++i){
 			try{
-				this.DebugPrint({msg: "checking value to determine command:", val: newMessage.commands});
-				for(let i = 0; i < Object.keys(commandObject).length; ++i){
-					try{
-						let val = commandObject[Object.keys(commandObject)[0]].message;
-						this.DebugPrint({
-							msg: `attempting to assign to val "${val}" to newMessage.processedMessage from commandObject:`, 
-							val: commandObject,
-						});
-						// processedMessage_processedMessage_processedMessage_processedMessage_processedMessage_
-						newMessage["processedMessage"] = val;
-					}
-					catch(err){
-						this.DebugPrint({msg: "tts command found, reassigning processedMessage", error: err});
-					}
-
-					if(newMessage.commands[i].type == "tts"){
-						this.DebugPrint({msg: "tts command found, reassigning processedMessage", error: err});
-						newMessage.processedMessage = newMessage.commands[0].message;
-					}
-				}
+				key = Object.keys(this.#state.timers)[i];
+				this.#state.timers[key].Stop();
 			}
-			catch(err){
-				this.DebugPrint({msg: "there's no command on this message so skipping", error: err});
+			catch(err){		
+				this.DebugPrint({msg: "error stopping timer", val: key});
 			}
-		newMessage.commands = commandObject || {};
-		this.DebugPrint({msg: "current message object is:", val: newMessage});
-
-		// score_score_score_score_score_score_score_score_score_score_score_score_score_score_score_score_score_score_
-		newMessage.score = await this.ScoreMessage(message);
-		this.AddPointsToUserWithUuid(newMessage.score, newMessage.userUuid);
-		this.DebugPrint({msg: "current message object is:", val: newMessage});
-
-		// state_state_state_state_state_state_state_state_state_state_state_state_state_state_state_state_state_state_state_
-		this.DebugPrint({msg: "added message to the command, insuring state is present"});
-		newMessage.state = {};
-		this.DebugPrint({msg: "current message object is:", val: newMessage});
-
-		this.DebugPrint({msg: "returning the processed message", val: newMessage});
-		return newMessage;
 		}
-		catch(err){return this.DebugPrint({msg: `could not process unprocessed youtube v1 message: ${err.stack}`, type: "throw", error: err})}
 	}
+
+async ProcessYoutubeV3Message_v1(unprocessedMsg) {
+    try {
+        const rmo = unprocessedMsg.data;
+        
+        // 1. Initialize message from template
+        let newMessage = { ...this.templates.messages };
+        newMessage.version = 1;
+        newMessage.platform = "youtube";
+        newMessage.rawMessage = rmo.snippet.textMessageDetails.messageText;
+        newMessage.messageId = rmo.id;
+        newMessage.channelOrigin = rmo.authorDetails.channelId;
+        newMessage.receivedAt = Date.parse(rmo.snippet.publishedAt);
+        
+        // Handle @ in username
+        let name = rmo.authorDetails.displayName;
+        newMessage.username = name.startsWith("@") ? name.slice(1) : name;
+
+        // 2. SEARCH FOR EXISTING USER (CRITICAL STEP)
+        const inputChannelId = rmo.authorDetails.channelId;
+        let foundUuid = this.FindUserFromChannelIdAndReturnUuid(inputChannelId);
+        
+        let user;
+        if (!foundUuid) {
+            this.DebugPrint({ msg: "NEW USER: Creating profile", val: name });
+            // This function should return a brand new user object and add it to #state.users
+            user = this.CreateUserFromFlags(newMessage); 
+            newMessage.userUuid = user.uuid;
+        } else {
+            this.DebugPrint({ msg: "EXISTING USER: Mapping to UUID", val: foundUuid });
+            user = this.#state.users[foundUuid];
+            newMessage.userUuid = foundUuid;
+        }
+
+        // 3. Process Message Content (Sanitization & Commands)
+        if (this.CheckMessageForBannedWords(newMessage.rawMessage)) {
+            // Logic for banned words here
+        }
+        newMessage.processedMessage = this.SanitizeString(newMessage.rawMessage);
+
+        // 4. Handle Commands
+        const commandObject = this.ParseCommandFromMessage(newMessage);
+        newMessage.commands = commandObject || {};
+        
+        // If a command has a custom message (like TTS), use it for processedMessage
+        const firstCmdKey = Object.keys(newMessage.commands)[0];
+        if (firstCmdKey && newMessage.commands[firstCmdKey].message) {
+            newMessage.processedMessage = newMessage.commands[firstCmdKey].message;
+        }
+
+        // 5. Score and Update Points
+        newMessage.score = await this.ScoreMessage(newMessage.processedMessage);
+        this.AddPointsToUserWithUuid(newMessage.score, newMessage.userUuid);
+
+        // 6. Sync User Metadata (Updates icons/roles if they changed)
+        if (user) {
+            user.icon = rmo.authorDetails.profileImageUrl;
+            user.isVerified = rmo.authorDetails.isVerified;
+            user.isChatOwner = rmo.authorDetails.isChatOwner;
+            user.isChatSponsor = rmo.authorDetails.isChatSponsor;
+            user.isChatModerator = rmo.authorDetails.isChatModerator;
+        }
+
+        newMessage.state = {
+		displayedAt: false
+	};
+        return newMessage;
+
+    } catch (err) {
+        this.DebugPrint({ 
+            msg: "CRITICAL ERROR in ProcessYoutubeV3Message_v1", 
+            type: "e", 
+            err: err
+        });
+        return null;
+    }
+}
 
 	async ProcessPendingTts() {
 	    this.DebugPrint({msg: "Scanning for pending TTS commands..."});
@@ -2102,96 +2210,132 @@ EventDisplayManager() {
 	 * @param {Object} messageState - Reference to the message.state object (messageObj.state)
 	 * @returns {Promise<void>}
 	 */
-	async CallTts(
-		message, // message which contains tts params
-		messages_index= undefined
-	) { 
-		this.DebugPrint({msg: "CallTts: Starting TTS for message:", val: message});
+async CallTts(message) { 
+    this.DebugPrint({ msg: "CallTts: Starting TTS for message:", val: message });
 
-		if (!message) {
-			//message.messageState.ttsHasRead = true;
-			this.DebugPrint({msg: "TTS message is empty.", type: "t"});
+    // 1. Validation: Ensure we have a valid message object
+    if (!message) {
+        this.DebugPrint({ msg: "TTS Error: Message object is null or undefined.", type: "e" });
+        return;
+    }
+
+    // 2. Extract TTS text and flags safely
+    // We assume the structure: message.commands.tts = { isValid, params, message }
+    const ttsCmd = message.commands?.tts;
+    
+    if (!ttsCmd || !ttsCmd.isValid) {
+        this.DebugPrint({ msg: "TTS Error: No valid TTS command found in message.", type: "t" });
+        return;
+    }
+
+    const textToSpeak = ttsCmd.message || "No text";
+    const flags = ttsCmd.params || {};
+
+    // 3. Voice Initialization
+    const getVoices = () => new Promise((resolve) => {
+        let voices = window.speechSynthesis.getVoices();
+        if (voices.length > 0) return resolve(voices);
+        
+        window.speechSynthesis.onvoiceschanged = () => {
+            resolve(window.speechSynthesis.getVoices());
+        };
+    });
+
+    const voices = await getVoices();
+    const utterance = new SpeechSynthesisUtterance(textToSpeak);
+
+    // 4. Apply Param Flags
+    utterance.rate = Number(flags.r) || 1; 
+    utterance.pitch = Number(flags.p) || 1;
+
+    // Handle voice selection (v is index)
+    if (flags.v !== undefined && voices[flags.v]) {
+        utterance.voice = voices[flags.v];
+    }
+
+    // 5. Execution & State Update
+    return new Promise((resolve, reject) => {
+        utterance.onstart = () => {
+            // Mark as read the moment it actually starts speaking
+            ttsCmd.readAt = Date.now();
+            if (message.state) message.state.isRead = true;
+            this.DebugPrint({ msg: "TTS: Speech started..." });
+        };
+
+        utterance.onend = () => {
+            this.DebugPrint({ msg: "TTS: Speech completed successfully." });
+            resolve("SUCCESS"); 
+        };
+
+        utterance.onerror = (e) => {
+            console.error("CallTts: TTS error:", e);
+            // Mark as error so the timer doesn't retry this specific message
+            ttsCmd.readAt = "ERROR"; 
+            reject(new Error(`TTS failed: ${e.error}`));
+        };
+
+        // Standard cleanup: stop current audio and speak
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(utterance);
+    });
+}
+
+GetOldestUnreadTts() {
+    // 1. Get the latest array
+    let messages = window.Cockatiel.GetMessages() || [];
+
+    for (let i = 0; i < messages.length; ++i) {
+        let msg = messages[i];
+        
+        // Safety Check: Does the command object even exist?
+        if (!msg.commands || !msg.commands.tts) continue;
+
+        let tts = msg.commands.tts;
+
+        // 2. LOGIC FIX: All of these MUST be true (AND logic)
+        // It must exist AND be valid AND have no read timestamp
+        if (
+            tts !== undefined && 
+            tts.isValid === true && 
+            (tts.readAt === null || tts.readAt === undefined)
+        ) {
+            return msg;
+        }
+    }
+    return null;
+}
+
+	FindOldestUnreadTtsAndCall() {
+	    this.DebugPrint({ msg: "find and call tts called" });
+	    
+	    let message = this.GetOldestUnreadTts();
+	    
+	    // Check if the search returned nothing
+	    if (!message) {
+		this.DebugPrint({ msg: "no tts message found, returning", val: message });
+		return false;
+	    }
+
+	    this.DebugPrint({ msg: "oldest message found, calling tts", val: message });
+	    
+	    // 3. IMPORTANT: You must mark it as read immediately 
+	    // so the next timer tick doesn't grab the same message!
+	    message.commands.tts.readAt = Date.now(); 
+
+	    this.CallTts(message);
+	    return true;
+	}
+
+	FindOldestUnreadTtsAndCall(){
+		this.DebugPrint({msg:"find and call tts called"});
+		let message = this.GetOldestUnreadTts();
+		if(message == null || message == undefined){
+			this.DebugPrint({msg:"no tts message found, returning", val: message});
+			return false;
 		}
-		if (!message_index){
-			this.DebugPrint({msg: "TTS index is empty, this means the message would be read forever so ignoring", type: "t"});
-		}
-
-		const getVoices = () => new Promise((resolve) => {
-		let voices = window.speechSynthesis.getVoices();
-		if (voices.length > 0) {
-		    resolve(voices);
-		} else {
-		    window.speechSynthesis.onvoiceschanged = () => {
-			voices = window.speechSynthesis.getVoices();
-			resolve(voices);
-		    };
-		}
-		});
-
-		const voices = await getVoices();
-		const textToSpeak = message.processedMessage ? message.processedMessage.replace("!tts", "").trim() : "No text";
-		const TTS = new SpeechSynthesisUtterance(textToSpeak);
-
-		let flags;
-		if(message.commands){
-			for(let i = 0; i < message.commands.length; ++i){
-				if(message.commands[i].command == "tts"){
-					flags = message.commands[i].params;
-				}
-			}
-		}
-		if(flags == null){
-			console.warn("no params found for flag, this is an unexpected state. here's the object:\n", JSON.stringify(message, null, 2));
-		}
-		if(flags != null){
-			// Apply flags
-			TTS.rate = Number(flags.r) || 1; 
-			TTS.pitch = Number(flags.p) || 1;
-
-			if (flags.v !== undefined && voices[flags.v]) {
-				TTS.voice = voices[flags.v];
-			}
-		}
-
-		/*
-		if(messages_index != undefined){
-			this.DebugPrint({msg: "no messages_index given, attempting to find message"});
-			for(let i = 0; i < this.#state.messages.length; ++i){
-				if( //check auth, msg, and receivedAt to verify that the message is very very likely the same message
-					message.authorId == this.#state.messages[i].authorId
-					&& message.rawMessage.data.displayMessage == this.#state.messages[i].rawMessage.data.displayMessage 
-					&& message.receivedAt == this.#state.messages[i].receivedAt
-				){
-					messages_index= i;	
-					this.DebugPrint({msg: "message found at index: " + i});
-					break;
-				}
-			}
-			if(messages_index){
-				console.warn("could not find matching message from queue, it is possible this is a text or something else, IF THIS IS UNINTENTIONAL YOU GOT SOME DEBUGGING TO DO");
-			}
-		};
-		*/
-
-		return new Promise((resolve, reject) => {
-			TTS.onend = () => {
-				let log = "CallTts: Speech completed successfully."; 
-				this.DebugPrint({msg: log});
-				resolve(log); 
-			};
-
-			TTS.onerror = (e) => {
-				console.error("CallTts: TTS error:", e);
-				// Set flag on error to prevent re-reading failing messages
-				messageState.ttsHasRead = 'ERROR'; 
-				reject(new Error(`TTS failed: ${e.error}`));
-			}
-			this.DebugPrint({msg: "CallTts: Starting speech synthesis..."});
-			window.speechSynthesis.cancel();
-			window.speechSynthesis.speak(TTS);
-		});
-
-		// Cancel any ongoing speech and start new one
+		this.DebugPrint({msg:"oldest message found, calling tts", val: message});
+		this.CallTts(message);
+		return true;
 	}
 
 
@@ -2941,25 +3085,26 @@ EventDisplayManager() {
 
 	    // 4. Command Switchboard
 	    // We return the result of the specific processor back to the caller
-	    this.DebugPrint("passing commandName to switch:", commandName);
+	    this.DebugPrint({msg: "passing commandName to switch:", val: commandName});
 	    switch (commandName) {
-		case 'tts':
-			this.DebugPrint("tts command found");
-		    return {tts: this.ProcessTtsCommand(processedMessage)};
-		case 'prediction':
-		case 'predict':
-			this.DebugPrint("prediction command found");
-		    // Ensure this function exists to handle !predict logic
-		    return {prediction: this.ProcessPredictionCommand(processedMessage)};
-
-		case 'vote':
-			this.DebugPrint("vote command found");
-		    return {vote: this.ProcessVoteCommand(processedMessage)};
-
-		case 'clip':
-			this.DebugPrint("clip command found");
+		case ('clip'):
+		    this.DebugPrint({msg: "clip command found"});
 		    // Ensure this function exists to handle clipping logic
 		    return {clip: this.ProcessClipCommand(processedMessage)};
+		case ('help'):
+			    return {help: this.ProcessHelpCommand(processedMessage)};
+		case ('prediction'):
+		case ('predict'):
+		    this.DebugPrint({msg: "prediction command found"});
+// Ensure this function exists to handle !predict logic
+		    return {prediction: this.ProcessPredictionCommand(processedMessage)};
+		case ('tts'):
+		    this.DebugPrint({msg: "tts command found"});
+		    return {tts: this.ProcessTtsCommand(processedMessage)};
+		case ('vote'):
+		    this.DebugPrint({msg: "vote command found"});
+		    return {vote: this.ProcessVoteCommand(processedMessage)};
+
 
 		default:
 		    this.DebugPrint(`Unknown command: ${commandName}`);
@@ -3139,7 +3284,6 @@ EventDisplayManager() {
 			this.DebugPrint({msg:"cannot process clip, could not set message slice", val: {in: processedMsg, state: cmd}, type: 'e', err: err});		
 			isValid == false;
 		}
-		cmd.executedAt = null;
 		cmd.pointsOffer = 0;		
 		cmd.errInfo = {
 			err: null,
@@ -3147,10 +3291,160 @@ EventDisplayManager() {
 		},
 		cmd.state = {};
 
-		if(cmd.isValid == null){cmd.isValid = true;}
+		if(cmd.isValid == null){
+			cmd.isValid = true;
+			cmd.executedAt = Date.now();
+			this.#state.clip_queue.push(cmd);
+		}
 		
 		return cmd;
 	}
+
+ProcessHelpCommand(processedMsg){
+	/*
+		messageCommand: {
+			isValid: false, // if everything passes, then true, if not (ie not enough credits, not the right perms, etc, then false
+			commandType: null,
+			flags: {}, // flags will be a key value, such as: {-y: true}
+			message: null,
+			executedAt: null,
+			pointsOffer: 0, // amount spent on the command,	
+			message: null,
+			version: 1, // version to check
+			errInfo: {
+				err: null,
+				erroredAt: null,
+			},
+			state: {},
+		},
+		*/
+	let cmd = this.templates.messageCommand;
+	cmd.version = 1;
+	cmd.isValid = null;
+	cmd.commandType = "help";
+	cmd.flags = {};
+	cmd.errInfo = {
+		err: null,
+		erroredAt: null,
+	},
+	cmd.state = {};
+
+	let token = this.#state.config.flag.token;
+	cmd.message = processedMsg.rawMessage.slice(0, Number(token.length + String("help").length));
+	cmd.pointsOffer = 0;
+
+	//made it here so we good
+	cmd.isValid = true;
+
+	//push to window
+	if(document == undefined){
+		return cmd;
+	}
+
+	if (cmd.isValid) {
+	    const commands = this.#state.commands;
+	    const commandContainers = [];
+
+	    for (const key in commands) {
+		const cmdObj = commands[key];
+		
+		if (!cmdObj || typeof cmdObj !== 'object' || !cmdObj.command) continue;
+		const auth = cmdObj.AuthNeeded || {};
+		if (auth.owner || auth.admin || auth.mod) continue;
+
+		// 1. The Wrapper
+		const cmdWrapper = this.CHE({ 
+		    type: 'div', 
+		    className: 'system-command-card',
+		    style: "overflow: hidden; width: 100%; font-family: system-ui, sans-serif; height: 100%;" 
+		});
+
+		// 2. Header (Command Name)
+		const header = this.CHE({ 
+		    type: 'div', 
+		    style: "border-bottom: 1px solid #444; padding-bottom: 4px; margin-bottom: 8px;"
+		});
+		header.innerHTML = `<strong style="color: #ff0; font-size: 1.1rem;">!${cmdObj.command.toUpperCase()}</strong>`;
+		cmdWrapper.appendChild(header);
+
+		// 3. Flags Table (using CSS Grid for alignment)
+		const flagsData = cmdObj.flags;
+		if (flagsData) {
+		    let normalizedFlags = Array.isArray(flagsData) 
+			? flagsData 
+			: Object.keys(flagsData).map(k => ({ flag: k, ...flagsData[k] }));
+
+		    if (normalizedFlags.length > 0) {
+			const grid = this.CHE({
+			    type: 'div',
+			    style: "display: grid; grid-template-columns: auto 1fr auto; gap: 8px 12px; align-items: start; font-size: 0.8rem;"
+			});
+
+			// Table Headers
+			grid.innerHTML = `
+			    <div style="color: #888; font-weight: bold; border-bottom: 1px solid #222;">FLAG</div>
+			    <div style="color: #888; font-weight: bold; border-bottom: 1px solid #222;">DESCRIPTION</div>
+			    <div style="color: #888; font-weight: bold; border-bottom: 1px solid #222;">RANGE</div>
+			`;
+
+			const exampleFlags = [];
+
+			normalizedFlags.forEach(f => {
+			    const flagKey = Array.isArray(f.flag) ? f.flag[0] : f.flag;
+			    const rangeText = f.range ? `${f.range.min}-${f.range.max}` : "—";
+			    
+			    // Add rows to grid
+			    grid.innerHTML += `
+				<div style="color: #0f0; font-family: monospace;">-${flagKey}</div>
+				<div style="color: #eee; white-space: normal; word-break: break-word;">${f.description || ""}</div>
+				<div style="color: #666; text-align: right;">${rangeText}</div>
+			    `;
+
+			    // Logic for Random Example: pick one or two flags to showcase
+			    if (Math.random() > 0.3 || exampleFlags.length === 0) {
+				let val = "";
+				if (f.range) {
+				    // Pick a random number in range or just the min
+				    val = ` ${f.range.min}`;
+				} else if (f.type === "string") {
+				    val = " text";
+				}
+				exampleFlags.push(`-${flagKey}${val}`);
+			    }
+			});
+
+			cmdWrapper.appendChild(grid);
+
+			// 4. Random Example Generator
+			const exampleMsg = `!${cmdObj.command} ${exampleFlags.join(' ')} ${cmdObj.command === 'tts' ? 'Hello world!' : ''}`;
+			const exampleBox = this.CHE({
+			    type: 'div',
+			    style: "margin-top: 10px; padding: 6px; background: #222; border-radius: 4px; border: 1px dashed #444;"
+			});
+			exampleBox.innerHTML = `
+			    <div style="font-size: 0.65rem; color: #888; margin-bottom: 2px;">EXAMPLE USAGE:</div>
+			    <code style="color: #0af; font-size: 0.8rem; word-break: break-all;">${exampleMsg}</code>
+			`;
+			cmdWrapper.appendChild(exampleBox);
+		    }
+		}
+
+		commandContainers.push(cmdWrapper.outerHTML);
+	    }
+
+	    // Staggered push
+	    commandContainers.forEach((htmlString, index) => {
+		setTimeout(() => {
+		    this.PushSystemNotificaitonToChatWindow(htmlString);
+		}, index * 1250);
+	    });
+	    
+	    cmd.executedAt = Date.now();
+	}
+
+	return cmd;
+}
+
 	
 ProcessTtsCommand(processedMsg) {
 	this.DebugPrint({msg: "processing tts command from message", val: processedMsg});
@@ -3165,48 +3459,50 @@ ProcessTtsCommand(processedMsg) {
 	}
 	cmd.commandType = "tts";
 
-		//find all flags and parse
-		for(let k = 1; k < msg.length; k = ++k){ // start at 1 to skip flag, skip every other flag because key value pairs
-			let flag, value;
-			if(msg[k][0] == "-"){
-				if (msg[k].length < 2){this.DebugPrint({msg: "cannot complete command, flag is improper", type: "t"})};	
-				flag = msg[k].slice(1, msg[k].length);
+	//find all flags and parse
+	for(let k = 1; k < msg.length; k = ++k){ // start at 1 to skip flag, skip every other flag because key value pairs
+		let flag, value;
+		if(msg[k][0] == "-"){
+			if (msg[k].length < 2){this.DebugPrint({msg: "cannot complete command, flag is improper", type: "t"})};	
+			flag = msg[k].slice(1, msg[k].length);
 
-				if(
-					flag.toLowerCase() == "s"
-				){
-					if(flag.toLowerCase() == "s"){
-					this.DebugPrint({msg: "s flag found, converting to r (rate) to align with the web voice std"});	
-						flag = "r";
-						cmd.flags[flag] = true;
-					}
+			if(
+				flag.toLowerCase() == "s"
+			){
+				if(flag.toLowerCase() == "s"){
+				this.DebugPrint({msg: "s flag found, converting to r (rate) to align with the web voice std"});	
+					flag = "r";
 					cmd.flags[flag] = true;
 				}
-				
-				if(msg.length > k+1){
-					value = msg[k+1];
-					cmd.flags[flag] = value;
-					++k;
-				}
-				else if(k == msg.length-1){
-					this.DebugPrint({msg: "last items doesn't have a value, is likely message:", val: msg[k]});	
-					msg = msg[k];
-					break;
-				}
+				cmd.flags[flag] = true;
 			}
-			else{
-				this.DebugPrint({msg: "command not found, skipping to verify flags"});
-				let message = "";
-				for(let l = k; l < msg.length; ++l){
-					message += String(msg[l] + " ");
-				}
-				message = message.trim(); // to clean space often left at end
-
-				this.DebugPrint({msg: "assign msg value to:", val: message});
-				cmd.message = message;
+			
+			if(msg.length > k+1){
+				value = msg[k+1];
+				cmd.flags[flag] = value;
+				++k;
+			}
+			else if(k == msg.length-1){
+				this.DebugPrint({msg: "last items doesn't have a value, is likely message:", val: msg[k]});	
+				msg = msg[k];
 				break;
 			}
-		}	
+		}
+		else{
+			this.DebugPrint({msg: "command not found, skipping to verify flags"});
+			let message = "";
+			for(let l = k; l < msg.length; ++l){
+				message += String(msg[l] + " ");
+			}
+			message = message.trim(); // to clean space often left at end
+
+			this.DebugPrint({msg: "assign msg value to:", val: message});
+			cmd.message = message;
+			break;
+		}
+
+		return cmd;
+	}	
 
 	// ensure flags are present
 	const manditoryFlags = Object.keys(this.#state.commands.tts.flags);
@@ -3233,25 +3529,25 @@ ProcessTtsCommand(processedMsg) {
 	this.DebugPrint({msg: "checking casts of cmd.flag", val: cmd.flags});
 	for(let i = 0; i < Object.keys(cmd.flags).length; ++i){
 		try{
-		let key = Object.keys(cmd.flags)[i];
-		let type = this.#state.commands.tts.flags[key].type;
-		let newVal = this.CastValueToType(cmd.flags[key], type);
-		this.DebugPrint({msg: "checking cast of key:", val: {key: key, type: type, newVal: newVal}});
+			let key = Object.keys(cmd.flags)[i];
+			let type = this.#state.commands.tts.flags[key].type;
+			let newVal = this.CastValueToType(cmd.flags[key], type);
+			this.DebugPrint({msg: "checking cast of key:", val: {key: key, type: type, newVal: newVal}});
 
-		if(typeof newVal != type){
-			this.DebugPrint({
-				msg: `value ${cmd.flags[flag]} after casting ${newVal} does not match expected type ${type}`, 
-				type: 'w'
-			});
-			cmd.errInfo = {
-				err: `value '${cmd.flags[key]}' after casting ${newVal} does not match expected type '${newVal}'`,
-				erroredAt: Date.now(),
-			}
-			cmd.isValid;
-		}		
+			if(typeof newVal != type){
+				this.DebugPrint({
+					msg: `value ${cmd.flags[flag]} after casting ${newVal} does not match expected type ${type}`, 
+					type: 'w'
+				});
+				cmd.errInfo = {
+					err: `value '${cmd.flags[key]}' after casting ${newVal} does not match expected type '${newVal}'`,
+					erroredAt: Date.now(),
+				}
+				cmd.isValid;
+			}		
 
-		this.DebugPrint({msg: `updating key '${key} to new value`, val: newVal})
-		cmd.flags[key] = newVal;
+			this.DebugPrint({msg: `updating key '${key} to new value`, val: newVal})
+			cmd.flags[key] = newVal;
 		}
 		catch(err){
 			this.DebugPrint({
@@ -3791,146 +4087,181 @@ ProcessTtsCommand(processedMsg) {
 	    }
 	}
 
-	GenerateUserManagement(parentId = "user-display-list"){
-		this.DebugPrint("generating user management item");
-		if(document == undefined){this.DebugPrint({msg:"cannot generate user management because there's no document"}); return}
+	GenerateUserManagement(parentId = "user-display-list") {
+	    this.DebugPrint("Generating user management item");
+	    if (typeof document === 'undefined') return;
 
 	    let listElement = document.getElementById(parentId);
-	    if (listElement){
-		    this.DebugPrint("user management element found, updating");
-	    }
-	    else{
-		    this.DebugPrint("no user management with id found, creating custom");
-		    listElement = this.CHE({type:'div', id: parentId});
+	    let listContainer;
+
+	    // 1. Create structure if it doesn't exist
+	    if (!listElement) {
+		this.DebugPrint("No user management id found, creating structure");
+		
+		// Note: 'details' not 'detail' (HTML tag is <details>)
+		listContainer = this.CHE({ type: 'details', id: parentId + "-container" });
+		const listSummary = this.CHE({ type: 'summary', innerText: "User Details" });
+		listElement = this.CHE({ type: 'div', id: parentId });
+
+		listContainer.appendChild(listSummary);
+		listContainer.appendChild(listElement); // Attach the list to the container!
+		
+		// Crucial: Attach to the UI! 
+		// You might want to append this to a specific settings panel instead of body
+		//document.body.appendChild(listContainer); 
 	    }
 
-	    // Clear existing list
+	    // 2. Clear existing list
 	    listElement.innerHTML = "";
 
-	    const users = this.#state.users; 
-	    
-	    // Safety check
-	    if (!users || !Array.isArray(users)) {
-		this.DebugPrint("User list is empty or not an array");
+		/*
+	    // 3. Handle Object Data Structure
+	    const users = this.#state.users;
+	    const userList = (users && typeof users === 'object') ? Object.values(users) : [];
+
+	    if (userList.length === 0) {
+		this.DebugPrint("User list is empty");
+		listElement.innerText = "No users found.";
 		return listElement;
 	    }
-	    return listElement;
-	}
-	
-	UpdateUserDisplay() {
-	    if(document == undefined){this.DebugPrint({msg: "no document, cannot update user display", type:"log"}); return;}
 
-	    let listElement = document.getElementById("user-display-list");
-	    if (!listElement) return;
-
-	    listElement.innerHTML = "";
-
-	    // 1. Sort Alphabetically
-	    if(this.#state.users > 1){
-		    let users = [...this.#state.users].sort((a, b) => 
-			(a.username || "").localeCompare(b.username || "", undefined, { sensitivity: 'base' })
-		    );
+	    // 4. Generate the Items
+	    for (const user of userList) {
+		const userItem = this.CHE({ 
+		    type: 'div', 
+		    innerText: `${user.username} (Points: ${user.points})`,
+		    className: 'user-management-row' 
+		});
+		listElement.appendChild(userItem);
 	    }
+	    */
 
-	    if(this.#state.users > 0){
-		    for (let u of this.#state.users) {
-			// --- PRE-CALCULATIONS ---
-			let cs = u.conduct_score || 0;
-			let csColor = "#fff";
-			if (cs < 0) {
-			    csColor = `rgb(255, ${Math.max(0, 255 + (cs * 51))}, ${Math.max(0, 255 + (cs * 51))})`;
-			    if (cs <= -5) csColor = "#f00";
-			} else if (cs > 0) {
-			    csColor = `rgb(${Math.max(0, 255 - (cs * 51))}, 255, ${Math.max(0, 255 - (cs * 51))})`;
-			    if (cs >= 5) csColor = "#0f0";
-			}
+	    // Always return the top-level element created/found
+	    return listContainer; //|| document.getElementById(parentId + "-container");
+	}	
 
-			// --- ROOT CONTAINER (Details) ---
-			const details = this.CHE({
-			    type: 'details',
-			    style: "border-bottom: 1px solid #333; font-family: monospace; font-size: 0.75rem; color: #ccc;"
-			});
+UpdateUserDisplay() {
+    if (typeof document === 'undefined') return;
 
-			// --- SUMMARY (Visible Info) ---
-			const summary = this.CHE({
-			    type: 'summary',
-			    style: "display: flex; align-items: center; padding: 6px; cursor: pointer; gap: 8px; outline: none;"
-			});
-			// Note: We remove the default triangle with CSS later or just let it be.
-			summary.style.listStyle = "none"; 
+    const listElement = document.getElementById("user-display-list");
+    if (!listElement) return;
 
-			// Identity Block
-			const identity = this.CHE({ type: 'div', style: "display: flex; gap: 5px; width: 160px; align-items: center; flex-shrink: 0;" });
-			const flags = [
-			    { cond: u.isChatAdmin, col: '#f44', char: 'A', desc: 'Admin' },
-			    { cond: u.isChatModerator, col: '#5b5', char: 'M', desc: 'Moderator' },
-			    { cond: u.isSponser, col: '#0af', char: 'S', desc: 'Sponsor' },
-			    { cond: u.isVerified, col: '#ff0', char: 'V', desc: 'Verified' }
-			].map(f => f.cond ? `<span title="${f.desc}" style="color:${f.col}; font-weight:bold; cursor:help;">${f.char}</span>` : '').join(' ');
+    // 1. Convert Object to Array and Sort
+    const userMap = this.#state.users || {};
+    // Get the values (user objects) so we can actually sort them
+    let userList = Object.values(userMap);
 
-			identity.innerHTML = `<span>${u.icon || "👤"}</span><div style="overflow:hidden;"><div style="font-weight:bold; color:#fff;">${u.username || "???"}</div><div style="font-size:0.6rem;">${flags}</div></div>`;
+    if (userList.length > 1) {
+        userList.sort((a, b) => 
+            (a.username || "").localeCompare(b.username || "", undefined, { sensitivity: 'base' })
+        );
+    }
 
-			// Standing Block
-			const standing = this.CHE({ type: 'div', style: "display: flex; gap: 8px; width: 220px; flex-shrink: 0; border-left: 1px solid #444; padding-left: 8px;" });
-			standing.innerHTML = `
-			    <span title="Points">PTS:<b style="color:#0ff;">${u.points}</b></span>
-			    <span title="Conduct Score">CS:<b style="color:${csColor};">${cs}</b></span>
-			    <span title="TTS/Channel Bans" style="color:#f44;">B:<b>${u.ttsBans.length}/${u.channelBans.length}</b></span>
-			`;
+    // 2. Clear the list only after we know we have data to draw
+    listElement.innerHTML = "";
 
-			// Metrics Block
-			const metrics = this.CHE({ type: 'div', style: "display: flex; gap: 10px; flex-grow: 1; border-left: 1px solid #444; padding-left: 8px;" });
-			const c = u.commendments;
-			const m = u.misconduct;
-			metrics.innerHTML = `
-			    <span style="color:#5f5;" title="Commendments (C/E/S)">C:${c.community.length}/${c.engagement.length}/${c.support.length}</span> | 
-			    <span style="color:#f55;" title="Misconduct (D/H/S/I)">M:${m.discrimination.length}/${m.harassment.length}/${m.spam.length}/${m.integrity.length}</span>
-			`;
+    // 3. Loop through the sorted array
+    for (const u of userList) {
+        // --- PRE-CALCULATIONS (Your CS color logic is great, keeping it) ---
+        let cs = u.conduct_score || 0;
+        let csColor = "#fff";
+        if (cs < 0) {
+            csColor = `rgb(255, ${Math.max(0, 255 + (cs * 51))}, ${Math.max(0, 255 + (cs * 51))})`;
+            if (cs <= -5) csColor = "#f00";
+        } else if (cs > 0) {
+            csColor = `rgb(${Math.max(0, 255 - (cs * 51))}, 255, ${Math.max(0, 255 - (cs * 51))})`;
+            if (cs >= 5) csColor = "#0f0";
+        }
 
-			summary.append(identity, standing, metrics);
+        const details = this.CHE({
+            type: 'details',
+            style: "border-bottom: 1px solid #333; font-family: monospace; font-size: 0.75rem; color: #ccc;"
+        });
 
-			// --- ACTIONS PANEL (The Hidden Part) ---
-			const actions = this.CHE({
-			    type: 'div',
-			    style: "display: flex; gap: 10px; align-items: center; padding: 10px; background: #1a1a1a; border-top: 1px solid #444; justify-content: flex-end;"
-			});
+        const summary = this.CHE({
+            type: 'summary',
+            style: "display: flex; align-items: center; padding: 6px; cursor: pointer; gap: 8px; outline: none; list-style: none;"
+        });
 
-			const timeoutBtn = this.CHE({ type: 'div', innerText: 'TIMEOUT USER', style: "background:#f80; color:#000; padding: 5px 10px; cursor:pointer; font-weight:bold;" });
-			const banBtn = this.CHE({ type: 'div', innerText: 'BAN USER', style: "background:#f44; color:#fff; padding: 5px 10px; cursor:pointer; font-weight:bold;" });
+        // Identity Block (Simplified for brevity, but matches your logic)
+        const identity = this.CHE({ type: 'div', style: "display: flex; gap: 5px; width: 160px; align-items: center; flex-shrink: 0;" });
+        const flags = [
+            { cond: u.isChatAdmin, col: '#f44', char: 'A', desc: 'Admin' },
+            { cond: u.isChatModerator, col: '#5b5', char: 'M', desc: 'Moderator' },
+            { cond: u.isSponser, col: '#0af', char: 'S', desc: 'Sponsor' },
+            { cond: u.isVerified, col: '#ff0', char: 'V', desc: 'Verified' }
+        ].map(f => f.cond ? `<span title="${f.desc}" style="color:${f.col}; font-weight:bold;">${f.char}</span>` : '').join(' ');
 
-			const ptsIn = this.CHE({ 
-			    type: 'input', 
-			    attributes: { type: 'number', value: '100' }, 
-			    style: "width: 5rem; background: #000; color: #0f0; border: 1px solid #555; padding: 4px; font-weight: bold;" 
-			});
-			
-			// Color Logic for Input
-			ptsIn.addEventListener("input", (e) => {
-			    const val = Number(e.target.value);
-			    e.target.style.color = val < 0 ? "#f00" : (val > 0 ? "#0f0" : "#fff");
-			});
+	    //console.warn(u);
 
-			const giveBtn = this.CHE({ 
-			    type: 'div', 
-			    innerText: 'GIVE POINTS', 
-			    style: "background:#ff0; color:black; padding: 5px 10px; cursor:pointer; font-weight:bold;",
-			    onClick: () => {
-				const amount = parseInt(ptsIn.value);
-				if (!isNaN(amount)) { 
-				    this.ModifyUserPoints(u.uuid, amount); 
-				    this.UpdateUserDisplay(); 
-				}
-			    }
-			});
+// 1. Create a "Primitive" copy of the icon string right now
+const currentIcon = u.icon ? String(u.icon) : null;
 
-			actions.append(timeoutBtn, banBtn, ptsIn, giveBtn);
+// 2. Validate the string content specifically
+const isValidIcon = currentIcon && currentIcon !== "undefined" && currentIcon !== "null";
 
-			// Assemble
-			details.append(summary, actions);
-			listElement.appendChild(details);
-		    }
-	    }
-	}
+// 3. Build the tag using the isolated variable
+const userIcon = isValidIcon 
+    ? `<img src="${currentIcon}" style="width:24px; height:24px; border-radius:50%; display:block;" referrerpolicy="no-referrer">` 
+    : `<span style="font-size:20px;">👤</span>`;
+
+	identity.innerHTML = `
+	    <span>${userIcon}</span>
+	    <div style="overflow:hidden;">
+		<div style="font-weight:bold; color:#fff;">${u.username || "???"}</div>
+		<div style="font-size:0.6rem;">${flags}</div>
+	    </div>`;
+
+        // Standing Block
+        const standing = this.CHE({ type: 'div', style: "display: flex; gap: 8px; width: 220px; flex-shrink: 0; border-left: 1px solid #444; padding-left: 8px;" });
+        standing.innerHTML = `
+            <span title="Points">PTS:<b style="color:#0ff;">${u.points}</b></span>
+            <span title="Conduct Score">CS:<b style="color:${csColor};">${cs}</b></span>
+            <span title="Bans" style="color:#f44;">B:<b>${(u.ttsBans || []).length}/${(u.channelBans || []).length}</b></span>
+        `;
+
+        // Metrics Block
+        const metrics = this.CHE({ type: 'div', style: "display: flex; gap: 10px; flex-grow: 1; border-left: 1px solid #444; padding-left: 8px;" });
+        const c = u.commendments || { community: [], engagement: [], support: [] };
+        const m = u.misconduct || { discrimination: [], harassment: [], spam: [], integrity: [] };
+        metrics.innerHTML = `
+            <span style="color:#5f5;">C:${c.community.length}/${c.engagement.length}/${c.support.length}</span> | 
+            <span style="color:#f55;">M:${m.discrimination.length}/${m.harassment.length}/${m.spam.length}/${m.integrity.length}</span>
+        `;
+
+        summary.append(identity, standing, metrics);
+
+        // Actions Panel
+        const actions = this.CHE({
+            type: 'div',
+            style: "display: flex; gap: 10px; align-items: center; padding: 10px; background: #1a1a1a; border-top: 1px solid #444; justify-content: flex-end;"
+        });
+
+        const ptsIn = this.CHE({ 
+            type: 'input', 
+            attributes: { type: 'number', value: '100' }, 
+            style: "width: 5rem; background: #000; color: #0f0; border: 1px solid #555; padding: 4px; font-weight: bold;" 
+        });
+
+        const giveBtn = this.CHE({ 
+            type: 'div', 
+            innerText: 'GIVE POINTS', 
+            style: "background:#ff0; color:black; padding: 5px 10px; cursor:pointer; font-weight:bold;",
+            // Use arrow function to preserve 'this' context
+            onClick: () => {
+                const amount = parseInt(ptsIn.value);
+                if (!isNaN(amount)) { 
+                    this.ModifyUserPoints(u.uuid, amount); 
+                    this.UpdateUserDisplay(); 
+                }
+            }
+        });
+
+        actions.append(ptsIn, giveBtn);
+        details.append(summary, actions);
+        listElement.appendChild(details);
+    }
+}
 
 	/*PushToSubWindow(window_key, htmlString) {
 	    if(document == undefined){this.DebugPrint({msg: "cannot push to sub window, no document"}); return;}
@@ -4017,20 +4348,17 @@ ProcessTtsCommand(processedMsg) {
 	<div id="${args.key}-viewport" style="
 	    width: 100%; 
 	    height: 100vh; 
-	    overflow-x: hidden; 
 	    overflow-y: auto; 
-	    padding: 1rem; 
-	    box-sizing: border-box; 
+	    overflow-x: hidden; 
 	    display: flex; 
-	    /* This anchors new items to the bottom */
-	    flex-direction: column-reverse; 
-	    /* Important: 'justify-content: flex-start' in reverse mode means 'start at the bottom' */
+	    flex-direction: column; /* Normal flow: top to bottom */
 	    justify-content: flex-start; 
 	    gap: 12px;
-	    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+	    padding: 1rem;
+	    box-sizing: border-box;
+	    scroll-behavior: smooth; /* Makes the auto-scroll look nice */
 	"></div>
 	`;
-
 	    // 3. Inject the Script
 	    if (args.script) {
 		const scriptEl = doc.createElement("script");
@@ -4100,7 +4428,9 @@ ProcessTtsCommand(processedMsg) {
 					<div class="chatBubbleTailContainer">
 						<div class="chatBubbleTailContainer"><img class="chatBubbleTail" alt="" src="/content/stream_utils/tib_stuff/whispy_tail.png"></div>
 					</div>
-					<div class="chatUserInfo">
+					<div class="chatUserInfo" style="background-color:${
+		user.styling.chatMessageContainer.chatUserBubble.chatUserInfo.styling.backgroundColor
+					};">
 						<div class="chatUserImageContainer"><img class="chatUserImage" alt="" src="${icon}"></div>		
 						<div class="chatUserStats">
 							<div class="chatUsername">${username}</div>		
@@ -4140,6 +4470,38 @@ ProcessTtsCommand(processedMsg) {
 	    }, "*");
 	}
 
+	PushSystemNotificaitonToChatWindow(strang) {
+	    if(!strang){
+		this.DebugPrint({msg: "strang is undefined, cannot print", type: 't'});
+		return false;
+	    }
+
+	    const win = this.#state.subWindows[this.#state.windows.chat.key];
+	    if (!win || win.closed) {
+		this.DebugPrint({ msg: "Sub-window unavailable", type: "w" });
+		return false;
+	    }
+
+	    let html = `
+		    <div style="
+		    	border: 0.2em solid #0ff;
+		    	border-radius:3rem;
+			background-color: #022;
+			color: #0ff;
+			padding: 0.8rem;
+		    ">
+			${strang}	
+		    </div>
+		`
+
+	    win.postMessage({ 
+		type: 'new_chat_msg', 
+		payload: { html: html } 
+	    }, "*");
+
+	    return true;
+	}
+
 	InitTimers(){
 		this.#state.timers = {
 			GetMessagesTimer: new IntTimer({
@@ -4157,6 +4519,12 @@ ProcessTtsCommand(processedMsg) {
 				debug: true,
 			}),
 		};
+
+		this.#state.timers.GetMessagesTimer.AddTimeoutListener(() => this.#DaLoop()); 
+		this.#state.timers.GetMessagesTimer.AddTimeoutListener(() => {
+			if(this.FindOldestUnreadTtsAndCall()){this.DebugPrint({msg: "tts message found, and reading"})}
+			else{this.DebugPrint({msg: "tts message not found"})}
+		}); 
 	}
 
 	GenerateUi(){
@@ -4240,46 +4608,66 @@ ProcessTtsCommand(processedMsg) {
 			const chatSettings = this.#state.windows.chat;
 			const chatStyle = ``;
 
-		this.CreateSubWindow({
-		    ...chatSettings,
-		    stylesheet: this.#state.windows.chat.defaultStylesheet, 
-		    script: `
-			window.addEventListener("message", (event) => {
-			    const { type, payload } = event.data;
-			    
-			    if (type === 'new_chat_msg' && payload.html) {
-				const view = document.getElementById("${chatSettings.key}-viewport");
-				const target = view || document.body;
+			this.CreateSubWindow({
+			    ...chatSettings,
+			    stylesheet: this.#state.windows.chat.defaultStylesheet, 
+			    script: `
+			    window.addEventListener("message", (event) => {
+				const { type, payload } = event.data;
+				
+				if (type === 'new_chat_msg' && payload.html) {
+				    const view = document.getElementById("${chatSettings.key}-viewport");
+				    const target = view || document.body;
 
-				// 1. Create a temporary container to turn the string into an Element
-				const temp = document.createElement('div');
-				temp.innerHTML = payload.html;
-				const newElement = temp.firstElementChild;
-				
-				// 2. Add the element to the page
-				target.appendChild(newElement);
-				
-				// 3. Auto-scroll
-				target.scrollTop = target.scrollHeight;
+				    const temp = document.createElement('div');
+				    temp.innerHTML = payload.html;
+				    const newElement = temp.firstElementChild;
 
-				// 4. Self-Destruct Timer (Auto-removal)
-				// Using the duration from your chatSettings (converted to ms)
-				const duration = ${chatSettings.messageDisplayDuration || 5} * 1000;
-				
-				setTimeout(() => {
-				    if (newElement) {
-					// Optional: Add a fade-out class before removing
-					newElement.style.opacity = '0';
-					newElement.style.transition = 'opacity 0.5s ease';
-					
-					setTimeout(() => newElement.remove(), 500);
-				    }
-				}, duration);
-			    }
+				    // 1. Initial State (Hidden to the right or just faded)
+				    //newElement.style.opacity = '0';
+				    newElement.style.height = '0px';
+				    newElement.style.transform = 'translateX(20px)'; // Small nudge from right
+				    newElement.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)'; // Adding a slight bounce
+				    newElement.style.padding = '0px';
+				    newElement.style.margin = '0px';
+				    
+				    target.appendChild(newElement);
+
+				    // 2. Animate In
+				    setTimeout(() => {
+					view.scrollTo(0, view.scrollHeight);
+					newElement.style.opacity = '1';
+					newElement.style.transform = 'translateX(0)';
+					newElement.style.height = 'auto';
+					    newElement.style.padding = 'inherit';
+					    newElement.style.margin = 'inherit';
+				    }, 10);
+
+				    // 3. Self-Destruct Timer (Slide to Left)
+				    const duration = ${chatSettings.messageDisplayDuration || 5} * 1000;
+				    setTimeout(() => {
+					if (newElement) {
+					    // Slide off to the left
+					    newElement.style.transition = 'all 0.6s ease-in'; 
+					    //newElement.style.opacity = '0';
+					    newElement.style.height = '0px';
+					    newElement.style.transform = 'translateX(-120%)'; // Push it off-screen to the left
+					    newElement.style.padding = '0px';
+					    newElement.style.margin = '0px';
+					    
+					    // Wait for the animation to finish before removing from DOM
+					    setTimeout(() => {
+						newElement.remove();
+						// Optional: if the removal causes a "jump", you can animate 
+						// the height to 0 here as well.
+					    }, 600);
+					}
+				    }, duration);
+				}
+			    });
+			    `
 			});
-		    `
-		});
-}
+		}
 
 		catch(err){
 			this.DebugPrint({msg: "could not create chat window", type: "err"});
@@ -4308,6 +4696,7 @@ ProcessTtsCommand(processedMsg) {
 
 	RunSubWindowTest1(){
 		this.DebugPrint({msg: "running RunSubWindowTest1()"});
+		this.PushSystemNotificaitonToChatWindow("running RunSubWindowTest1");
 		try{
 		this.DebugPrint({msg:"adding testUser"});
 			const test_message = {
@@ -4321,6 +4710,7 @@ ProcessTtsCommand(processedMsg) {
 				    "score": -100,
 				    "state": {},
 				    "streamOrigin": "Cg0KC3JHN3ZGN3BjVlBZKicKGFVDS1ppZ0hiZ3BKRzlsZHhYTXFtaVpVZxILckc3dkY3cGNWUFk",
+				    "channelOrigin": "1234qwer4678asdf",
 				    "userUuid": "88d515ca-531b-45fc-a24b-a65eeb76996d",
 				    "username": "testUser",
 				    "version": 1,
@@ -4328,12 +4718,12 @@ ProcessTtsCommand(processedMsg) {
 			try{
 				this.CreateUserFromFlags(test_message);
 			}
-			catch(err){
+			catch(error){
 				this.DebugPrint({
-					msg: "RunSubWindowTest1 filed", 
+					msg: "RunSubWindowTest1 failed", 
 					val: test_message, 
 					type: "e", 
-					err: err,
+					err: error,
 				});
 			}
 			this.DebugPrint({msg: "RunSubWindowTest1 pass"});
@@ -4344,6 +4734,7 @@ ProcessTtsCommand(processedMsg) {
 	}
 
 	RunSubWindowTest2() {
+		this.PushSystemNotificaitonToChatWindow("running RunSubWindowTest2");
 	    this.DebugPrint({ msg: "1. Entering RunSubWindowTest2", type: "l" });
 
 	    try {
@@ -4378,6 +4769,7 @@ ProcessTtsCommand(processedMsg) {
 
 	RunSubWindowTest3() {
 	    this.DebugPrint({ msg: "running RunSubWindowTest3", type: "l" });
+		this.PushSystemNotificaitonToChatWindow("running RunSubWindowTest3");
 		try{
 			const user = this.#state.users[Object.keys(this.#state.users)[0]];
 			const p_msg = {
@@ -4385,6 +4777,7 @@ ProcessTtsCommand(processedMsg) {
 				username: "test_user",
 				userUuid: user.uuid, 
 				streamOrigin: "youtube", //what streamid via the platform the message came from
+				channelOrigin: "1234qwer5678asdf",
 				receivedAt: Date.now(),
 				commands: [],
 				processedMessage: "",
@@ -4404,6 +4797,7 @@ ProcessTtsCommand(processedMsg) {
 	}
 
 	RunSubWindowTest4(){
+		this.PushSystemNotificaitonToChatWindow("running RunSubWindowTest4");
 		const html = `
 			<div class="chatMessageContainer">
 				<div class="chatUserBubble">
@@ -4434,6 +4828,144 @@ ProcessTtsCommand(processedMsg) {
 	    }, "*");
 	}
 
+	RunSubWindowTest5(){
+		this.PushSystemNotificaitonToChatWindow("running RunSubWindowTest5");
+		this.DebugPrint({msg: "Running RunSubWindowTest5"});
+		this.DebugPrint({msg: "attempting to create user from unprocessedMsg"});
+		let val = {
+		    "version": 1,
+		    "apiVersion": 3,
+		    "platform": "YouTube",
+		    "data": {
+			"kind": "youtube#liveChatMessage",
+			"etag": "w3nSofTpFw3me4dFSjvLF3BmC44",
+			"id": "LCC.EhwKGkNJNkhtNlM5bVpNREZSRVlyUVlkc25zejhB",
+			"snippet": {
+			    "type": "textMessageEvent",
+			    "liveChatId": "Cg0KCzhlUFk0ellmX0tjKicKGFVDS1ppZ0hiZ3BKRzlsZHhYTXFtaVpVZxILOGVQWTR6WWZfS2M",
+			    "authorChannelId": "UCiYflTancqoI-CvKoixE2Fw",
+			    "publishedAt": "2026-03-12T04:03:07.947947+00:00",
+			    "hasDisplayContent": true,
+			    "displayMessage": "I'm still calling this the worst run",
+			    "textMessageDetails": {
+				"messageText": "I'm still calling this the worst run"
+			    }
+			},
+			"authorDetails": {
+			    "channelId": "UCiYflTancqoI-CvKoixE2Fw",
+			    "channelUrl": "http://www.youtube.com/channel/UCiYflTancqoI-CvKoixE2Fw",
+			    "displayName": "NotBluWalled",
+			    "profileImageUrl": "https://yt3.ggpht.com/2Z--UpGm0bLVlXExSiev6a9J2c883R0jYx68fPwYAx6vmg1gIdzymYmnfiQ08-hfUgVqPOzIWlQ=s88-c-k-c0x00ffffff-no-rj",
+			    "isVerified": false,
+			    "isChatOwner": false,
+			    "isChatSponsor": false,
+			    "isChatModerator": true
+			}
+		    },
+		    "receivedAt": 1773288187947
+		} 
+		let msg = this.ProcessYoutubeV3Message_v1(val);
+		this.SafeAddToMessagesQueue(msg);
+
+
+	//	this.Process
+
+		//this.CreateUserFromFlags(val);
+	}
+
+	RunSubWindowTest6(){
+		this.PushSystemNotificaitonToChatWindow("running RunSubWindowTest6");
+		let val = {
+		    "version": 1,
+		    "apiVersion": 3,
+		    "platform": "YouTube",
+		    "data": {
+			"kind": "youtube#liveChatMessage",
+			"etag": "w3nSofTpFw3me4dFSjvLF3BmC44",
+			"id": "LCC.EhwKGkNJNkhtNlM5bVpNREZSRVlyUVlkc25zejhB",
+			"snippet": {
+			    "type": "textMessageEvent",
+			    "liveChatId": "Cg0KCzhlUFk0ellmX0tjKicKGFVDS1ppZ0hiZ3BKRzlsZHhYTXFtaVpVZxILOGVQWTR6WWZfS2M",
+			    "authorChannelId": "UCiYflTancqoI-CvKoixE2Fw",
+			    "publishedAt": "2026-03-12T04:03:07.947947+00:00",
+			    "hasDisplayContent": true,
+			    "displayMessage": "!help aaaaaaaaa",
+			    "textMessageDetails": {
+				"messageText": "!help aaaaaaaaa"
+			    }
+			},
+			"authorDetails": {
+			    "channelId": "UCiYflTancqoI-CvKoixE2Fw",
+			    "channelUrl": "http://www.youtube.com/channel/UCiYflTancqoI-CvKoixE2Fw",
+			    "displayName": "@BluWalled",
+			    "prof}ileImageUrl": "https://yt3.ggpht.com/2Z--UpGm0bLVlXExSiev6a9J2c883R0jYx68fPwYAx6vmg1gIdzymYmnfiQ08-hfUgVqPOzIWlQ=s88-c-k-c0x00ffffff-no-rj",
+			    "isVerified": false,
+			    "isChatOwner": false,
+			    "isChatSponsor": false,
+			    "isChatModerator": true
+			}
+		    },
+		    "receivedAt": 1773288187947
+		} 
+		this.ProcessYoutubeV3Message_v1(val);
+	}
+	
+	RunSubWindowTest7(){
+		this.DebugPrint({msg: "running RunSubWindowTest7()"});
+		this.PushSystemNotificaitonToChatWindow("running RunSubWindowTest7");
+		try{
+		this.DebugPrint({msg:"adding testUser"});
+			const test_message = {
+				    "channelId": "asdf1234zxcv5689",
+				    "commands": {
+					    tts: {
+						isValid: true, // if everything passes, then true, if not (ie not enough credits, not the right perms, etc, then false
+						commandType: 'tts',
+						flags: {},
+						message: "tts assignment test to verify all is working",
+						executedAt: null,
+						pointsOffer: 10000, // amount spent on the command,	
+						version: 1, // version to check
+						errInfo: {
+							err: null,
+							erroredAt: null,
+						},
+						state: {
+							readAt: null,
+						},
+					}
+				    },
+				    "messageId": "LCC.EhwKGkNNLVB2TkdCNVpJREZlZkJ3Z1FkNExJQzZR",
+				    "platform": "youtube",
+				    "processedMessage": "tts assignment test to verify all is working",
+				    "rawMessage": "!tts -v 50 -p 2 -r 1 tts assignment test to verify all is working",
+				    "receivedAt": 1771485470330,
+				    "score": -100,
+				    "state": {},
+				    "streamOrigin": "Cg0KC3JHN3ZGN3BjVlBZKicKGFVDS1ppZ0hiZ3BKRzlsZHhYTXFtaVpVZxILckc3dkY3cGNWUFk",
+				    "channelOrigin": "1234qwer4678asdf",
+				    "userUuid": "88d515ca-531b-45fc-a24b-a65eeb76996d",
+				    "username": "testUser",
+				    "version": 1,
+			}
+			try{
+				this.SafeAddToMessagesQueue(test_message);
+			}
+			catch(error){
+				this.DebugPrint({
+					msg: "RunSubWindowTest7 failed", 
+					val: test_message, 
+					type: "e", 
+					err: error,
+				});
+			}
+			this.DebugPrint({msg: "RunSubWindowTest7 pass"});
+		}
+		catch(err){
+			this.DebugPrint({msg: "could not add user to users", type: "err", err: err});
+		}
+	}
+
 	AttachHandleUnloadLogic(){
 		try{
 			// Ensure all subwindows are closed if the main app is closed or refreshed
@@ -4452,40 +4984,73 @@ ProcessTtsCommand(processedMsg) {
 		}
 	}
 
-	AddTtsTimeoutListeners(){
-		this.#state.timers.ReadTtsTimer.AddTimeoutListener((() => {
-			// 1. Find the oldest unread message that contains a TTS command
-		    // Assuming this.#state.messages is your array of processedMessage objects
-		    const unreadTtsMessage = this.#state.messages.find(msg => {
-			// Check if there are commands, specifically looking for the 'tts' type
-			const hasTts = msg.commands && msg.commands.some(cmd => cmd.command === 'tts');
-			// Ensure we haven't read this one yet
-			const isUnread = !msg.state?.isRead; 
-			
-			return hasTts && isUnread;
-		    });
+	AddTtsTimeoutListeners() {
+	    this.DebugPrint({msg: "initing tts timeout listener"});
+	    // Ensure the timer exists before trying to add a listener
+	    if (!this.#state.timers?.ReadTtsTimer) {
+		this.DebugPrint({ msg: "TTS Timer not initialized!" });
+		return;
+	    }
 
-		    // 2. If no message found, exit early
-		    if (!unreadTtsMessage) {
-			console.log("no unread tts messages");
-			return;
-		    }
+	this.#state.timers.ReadTtsTimer.AddTickListener((v)=>{
+		console.log("ReadTtsTimerTick", v)
+	});
+	this.#state.timers.ReadTtsTimer.AddTimeoutListener(() => {
+	    // 1. Normalize the queue (Handles null, undefined, Objects, or Arrays)
+	    const allMessages = Array.isArray(this.#state.messages) 
+		? this.#state.messages 
+		: Object.values(this.#state.messages || {});
 
-		    // 3. Extract the TTS command object from the message
-		    const ttsCommand = unreadTtsMessage.commands.find(cmd => cmd.command === 'tts');
+	    // 2. Early exit if queue is empty
+	    if (allMessages.length === 0) {
+		// Silent return to avoid console spam during idle
+		return; 
+	    }
 
-		    if (ttsCommand) {
-			this.DebugPrint({msg:`Playing TTS for: ${unreadTtsMessage.username}`});
-			
-			// 4. Call the TTS function with its specific arguments
-			// Using the flags and message we parsed earlier
-			this.CallTts(ttsCommand.message, ttsCommand.flags);
+	    // 3. Find the oldest unread TTS message with deep property checking
+	    const unreadTtsMessage = allMessages.find(msg => {
+		// Ensure msg exists and has a commands array
+		if (!msg || !Array.isArray(msg.commands)) return false;
 
-			// 5. Mark as read so we don't play it again on the next timer tick
-			if (!unreadTtsMessage.state) unreadTtsMessage.state = {};
-			unreadTtsMessage.state.isRead = true;
-		    }		
-		}))
+		// Check for the 'tts' command
+		const hasTts = msg.commands.some(cmd => cmd && cmd.command === 'tts');
+		
+		// Ensure state exists; if it doesn't, we assume it's unread (!undefined === true)
+		const isRead = msg.state?.isRead === true;
+		
+		return hasTts && !isRead;
+	    });
+
+	    // 4. Debug Check: If we have messages but none matched the find()
+	    if (!unreadTtsMessage) {
+		this.DebugPrint({
+		    msg: "TTS: No unread commands found in current queue",
+		    queueSize: allMessages.length,
+		    sampleMsg: allMessages[0]?.messageId // Helps track if we are looking at the right data
+		});
+		return;
+	    }
+
+	    // 5. Execution: Extract the specific command and trigger the voice
+	    const ttsCommand = unreadTtsMessage.commands.find(cmd => cmd.command === 'tts');
+
+	    if (ttsCommand) {
+		// Fallback: If the command doesn't have a specific 'message' string, use the parent msg text
+		const speechText = ttsCommand.message || unreadTtsMessage.cleanText || unreadTtsMessage.message;
+
+		if (speechText) {
+		    this.DebugPrint({ msg: `TTS Initializing: ${unreadTtsMessage.username}` });
+		    
+		    // Execute the audio
+		    this.CallTts(speechText, ttsCommand.flags);
+
+		    // 6. State Update: Mark as read so initialization doesn't loop the same message
+		    if (!unreadTtsMessage.state) unreadTtsMessage.state = {};
+		    unreadTtsMessage.state.isRead = true;
+		    unreadTtsMessage.state.readAt = Date.now();
+		}
+	    }
+	});
 	}
 
 	Init(){
@@ -4500,7 +5065,13 @@ ProcessTtsCommand(processedMsg) {
 		this.RunSubWindowTest2();
 		this.RunSubWindowTest3();
 		this.RunSubWindowTest4();
+		this.RunSubWindowTest5();
+		this.RunSubWindowTest6();
+		this.RunSubWindowTest7();
 
+		//test
+		this.#state.timers.ReadTtsTimer.Start();
+		//real
 		this.#state.timers.EventDisplayTimer.Start();
 
 		this.AttachHandleUnloadLogic()

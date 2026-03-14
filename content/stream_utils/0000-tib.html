@@ -132,6 +132,7 @@
 	<br>
 
 	<!-- DO NOT DELETE, is template for chat messages -->
+	<!--
 	<div style="width:400px; height:800px; background-color: #030;">
 		<div class="chatMessageContainer">
 			<div class="chatUserBubble">
@@ -179,13 +180,14 @@
 			</div>
 		</div>
 	</div>
-	<!-- -->
+	-->
 
 	<style>
 		#checklist>li>input {max-width:3rem !important;}
 		#checklist>li>ul>input {max-width:3rem !important;}
 		#checklist>li>ul>li>input {max-width:3rem !important;}
 	</style>
+	<!--
 	<ul id="checklist">
 		<li><input type="checkbox" value="false">decouple tts from getting messages</li>	
 		<li>
@@ -219,6 +221,15 @@
 		<hr>
 		<li><input type="checkbox" value="false">if someone in chat says frozen, restart obs capture automagically</li>	
 	</ul>
+	-->
 	<h1>TiB</h1>	
+	<div>
+		<label>systemMessageTest</label>
+		<input id="systemMessageTest" type="text">
+		<button type="button" onclick="((e)=>{
+			window.Cockatiel.PushSystemNotificaitonToChatWindow(document.getElementById('systemMessageTest').value);
+		})()">sent to chat window</button>
+	</div>
+			
 </body>
 </html>

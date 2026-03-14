@@ -540,8 +540,10 @@ function Footer() {
 
 		let hr = document.createElement("hr");
 		hr.style.marginTop = "10em";
-		document.body.insertAdjacentHTML('beforeend', hr.outerHTML);
-		document.body.insertAdjacentHTML('beforeend', f.outerHTML);
+		//document.body.insertAdjacentHTML('beforeend', hr.outerHTML);
+		//document.body.insertAdjacentHTML('beforeend', f.outerHTML);
+		document.body.insertAdjacentHTML('afterend', hr.outerHTML);
+		document.body.insertAdjacentHTML('afterend', f.outerHTML);
 		console.log('🦶 footer added');
 	}
 	catch (err) {
