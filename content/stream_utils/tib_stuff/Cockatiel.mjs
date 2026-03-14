@@ -1,4 +1,4 @@
-import YoutubeV3 from "./imports/youtubeV3ApiAccessor/youtube_state.mjs"
+import {YoutubeV3} from "./imports/youtubeV3ApiAccessor/youtube_state.mjs"
 import TTSManager from "./imports/webTTSManager/TTSManager.mjs";
 import {IntTimer} from "../../../lib/imports/intTimer/intTimer.mjs";
 import {TrieTree} from "../../../lib/trie_tree.mjs";
