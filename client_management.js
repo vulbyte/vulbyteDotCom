@@ -1,3 +1,6 @@
+import Networking from "/lib/networking.mjs";
+window.Netowrking = new Networking();
+
 function LSGI(id = undefined) {
 	if (id = undefined) {
 		throw new Error("LSGI, id is undefined");
@@ -691,219 +694,61 @@ catch {
 //}}}2
 //{{{2 see if images in storage, if not then load
 
-let favicon_links = [
-	'icon_red',
-	'icon_yellow',
-	'icon_green',
-	'icon_cyan',
-	'icon_blue',
-	'icon_magenta',
-	'icon',
+const favicon_names = [
+    'icon.svg', 'icon_blue.svg', 'icon_cyan.svg', 'icon_green.svg',
+    'icon_magenta.svg', 'icon_red.svg', 'icon_yellow.svg'
 ];
 
-let animatible = true;
-(() => {
-	try {
-		console.log('attempting to get icons from github');
+const storageKey = 'vulbyte_favicon_cache';
+let blobURLs = []; // We will store the "memory addresses" here
 
-		for (let i = 0; i < favicon_links.length; ++i) {
-			const url = `https://raw.githubusercontent.com/vulbyte/vulbyteDotCom/87deeda52a94496a53f0cbb26e17862dc6548b53/assets/${favicon_links[i]}.svg`;
+let favicon = document.getElementById('favicon') || document.querySelector("link[rel*='icon']");
+if (!favicon) {
+    favicon = document.createElement('link');
+    favicon.id = 'favicon';
+    favicon.rel = 'icon';
+    document.head.appendChild(favicon);
+}
 
-			// Fetch the image
-			const response = fetch(url);
-			if (!response.ok) {
-				throw new Error(`Failed to fetch ${url}: ${response.status}`);
-			}
+(async () => {
+    try {
+        let base64Strings = JSON.parse(localStorage.getItem(storageKey));
 
-			// Convert to Blob and create a URL
-			const imageBlob = response.blob();
-			const src = URL.createObjectURL(imageBlob);
+        if (!base64Strings) {
+            base64Strings = await downloadAndStoreIcons();
+        }
 
-			// Set the Blob URL to favicon_links[i]
-			favicon_links[i] = src;
+        // Convert Base64 back to Blobs, then to Object URLs
+        blobURLs = base64Strings.map(base64 => {
+            const byteString = atob(base64.split(',')[1]);
+            const mimeString = base64.split(',')[0].split(':')[1].split(';')[0];
+            const ab = new ArrayBuffer(byteString.length);
+            const ia = new Uint8Array(ab);
+            for (let i = 0; i < byteString.length; i++) {
+                ia[i] = byteString.charCodeAt(i);
+            }
+            const blob = new Blob([ab], {type: mimeString});
+            return URL.createObjectURL(blob); // This creates a 'blob:...' address
+        });
 
-			console.log(`Successfully set icon for ${favicon_links[i]}`);
-		}
-
-		console.log('got icons from github');
-	} catch (err) {
-		animatible = false;
-		favicon_links = ['/assets/icon.svg']; // Reset to default
-		console.warn(`failed to get icons, setting icon to default ${favicon_links}`, err);
-	}
+        startAnimation();
+    } catch (err) {
+        console.warn("Animation failed:", err);
+    }
 })();
-//}}}2
-//{{{2 determine if is animatible
-//animatable moved to above async check
-try {
-	console.log('editing favicon');
-	let favicon_link = document.querySelector(`link[rel='icon']`);
 
-	if (!favicon_link) {
-		favicon_link = document.createElement('link');
-		favicon_link.rel = 'icon'
-		favicon_link = document.head.appendChild(favicon_link);
-	}
+function startAnimation() {
+    let index = 0;
+    setInterval(() => {
+        if (blobURLs.length === 0) return;
+        
+        // Swapping these 'blob:' addresses is "silent" in most Network tabs
+        favicon.href = blobURLs[index];
+        
+        index = (index + 1) % blobURLs.length;
+    }, 300);
+}
 
-	favicon_link.id = 'favicon'
-
-	//check url, to see what dev location we're in
-	if (String(window.location).includes('vulbyte.com')) {
-		animatible = true;
-		favicon_link.href = favicon_links[0];
-	}
-	else if (String(window.location).includes('pages.dev')) {
-		favicon_link.href = favicon_links[1];
-	}
-	else {
-		console.log('non-pup environment detected');
-		favicon_link.href = favicon_links[3];
-	}
-
-	console.log('favicon changed');
-}
-catch (err) {
-	animatible = false;
-	console.warn('failed to change favicon', err);
-}
-//}}}2
-//{{{2 set font
-try {
-
-}
-catch (err) {
-	console.warn(err);
-}
-//}}}2
-if (animatible == true) {
-	let icon = 0;
-
-	setInterval(() => {
-		if (icon <= 5) {
-			icon += 1;
-		}
-		else {
-			icon = 0;
-		}
-
-		document.getElementById('favicon').href = favicon_links[icon];
-	}, 300);
-}
-else {
-	console.log("I'M NOT ANIMATING BECAUSE I DON'T HAVE INTERNET");
-	document.getElementById('favicon').href = favicon_links[0];
-}
-//{{{2 show disclaimer
-/*
-try {
-	console.log("checking for agreement");
-	if (
-		localStorage.getItem("user_has_agreed_to_terms_and_polices") == null
-		|| localStorage.getItem("user_has_agreed_to_terms_and_polices") == false
-		&& localStorage.getItem("is_not_ai") == null
-		|| localStorage.getItem("is_not_ai") == false
-	) { //if not agree'd to TOS/policy, and not reviewing said pages
-		if (
-			String(window.location).includes("privacy_policy") == false
-			&& String(window.location).includes("terms_of_service") == false
-		) {
-			console.log(`agreement not found, nor on TOS page, creating popup`);
-	
-			const agree_container = document.createElement("div");
-			agree_container.style.width = "20em";
-			agree_container.style.margin = "auto";
-			{
-				//TODO: add image
-	
-				document.body.innerText = "";
-				const agree_title = document.createElement("h2");
-				agree_title.innerText = "hold on, we have some terms you need to agree to first!";
-				agree_container.appendChild(agree_title);
-	
-				const agree_text = document.createElement("p");
-				agree_text.innerText = "please review our Terms of Service, and Privacy Policy before continuing! using the website after this popup will be acceptance";
-				agree_container.appendChild(agree_text);
-	
-				const review_tos = document.createElement("a");
-				review_tos.href = "/terms_of_service.html";
-				review_tos.innerText = "click here to review: terms_of_service";
-				review_tos.target = "_blank";
-				review_tos.style.display = "block";
-				agree_container.appendChild(review_tos);
-	
-				const review_pp = document.createElement("a");
-				review_pp.href = "/privacy_policy.html";
-				review_pp.innerText = "click here to review: privacy_policy";
-				review_pp.target = "_blank";
-				review_pp.style.display = "block";
-				agree_container.appendChild(review_pp);
-	
-				const not_ai_label = document.createElement("label");
-				not_ai_label.innerText = `please verify you are not ai, if you are and continue to use the website you agree to the TOS and Privacy Policy. To prove you're not ai please click the boxe(s) that add upto: ${Math.floor(Math.random() * 15)}! \n (tip, start with the largest number that doesn't go over, then work your way down)`;
-				agree_container.appendChild(not_ai_label);
-	
-				const number_container = document.createElement("div");
-				number_container.style.display = "flex";
-				number_container.style.justifyContent = "space-evenly";
-				number_container.style.width = "100%";
-				const checkbox_container = document.createElement("div");
-				checkbox_container.style.display = "flex";
-				checkbox_container.style.justifyContent = "space-evenly";
-				checkbox_container.style.width = "100%";
-				{
-					const numbers = [8, 4, 2, 1, 0.5, 0.2];
-					for (let i = 0; i < 6; ++i) {
-						let value = Math.floor(Math.random() * numbers.length);
-						let num = document.createElement("span");
-						num.innerText = numbers[value];
-						numbers.splice(value, 1);
-						console.log(numbers);
-						number_container.appendChild(num);
-	
-						const checkbox = document.createElement("input");
-						checkbox.type = "checkbox";
-						checkbox_container.appendChild(checkbox);
-					}
-				}
-				agree_container.appendChild(number_container);
-				agree_container.appendChild(checkbox_container);
-	
-	
-				const btn_container = document.createElement("div");
-				btn_container.style.display = "grid";
-				btn_container.style.justifyContent = "space_appart";
-				{
-					const agree_accept = document.createElement("button");
-					agree_accept.innerText = "agree ✅";
-					agree_accept.style.position = "relative";
-					agree_accept.style.left = "0px";
-					btn_container.appendChild(agree_accept);
-	
-					const agree_deny = document.createElement("button");
-					agree_deny.innerText = "deny ❌";
-					agree_deny.style.right = "relative";
-					agree_deny.style.right = "0px";
-					btn_container.appendChild(agree_deny);
-				}
-				agree_container.appendChild(btn_container);
-	
-			}
-			document.body.appendChild(agree_container)
-		}
-		else {
-			console.log("agreement not found, but is reviewing terms/polices so allowing access");
-		}
-	}
-}
-catch (err) {
-	console.log(err);
-	document.body.innerText = "error, unable to check for data compliance, please reload the page, restart the app, restart the device, or try a new device"
-}
-*/
-//}}}2
-//}}}1
-//{{{1 styling
-//{{{2
 // WARN: THIS NEEDS TO BE BEFORE THE MARQUEE ELEMENT OR WEBSITE WILL HANG
 let Ps = document.getElementsByTagName("p");
 window.addEventListener('scroll', () => {

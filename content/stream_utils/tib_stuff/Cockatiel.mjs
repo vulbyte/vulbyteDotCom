@@ -540,22 +540,33 @@ export default class Cockatiel {
 	}
 
 	ExportState() {
+	    const seen = new WeakSet(); // Track visited objects
+
 	    const jsonString = JSON.stringify(this.#state, (key, value) => {
-		// Convert Trie to Array
+		// 1. Handle Objects/Circular Refs
+		if (typeof value === "object" && value !== null) {
+		    if (seen.has(value)) {
+			return; // Discard circular reference
+		    }
+		    seen.add(value);
+		}
+
+		// 2. Convert Trie to Array
 		if (key === 'bannedWords' && value instanceof TrieTree) {
 		    return value.ToArray();
 		}
 
-		// Remove functions (JSON can't save code pointers)
+		// 3. Remove functions
 		if (typeof value === 'function') {
 		    return undefined;
 		}
 
 		return value;
-	    }, 4); 
+	    }, 4);
 
 	    return jsonString;
 	}
+
 	async ImportState(input) {
 	    this.DebugPrint({msg: "ImportState: Determining input type..."});
 	    let data;
