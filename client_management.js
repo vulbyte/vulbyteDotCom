@@ -421,20 +421,35 @@ function Footer() {
 			f_c.appendChild(title);
 
 			let list = [
-				'privacy_policy',
+				'/policies/privacy',
 				'terms_of_service',
 				'gift_art',
 			];
 			let ol = document.createElement('ol');
+			let li, a;
 			for (let i = 0; i < list.length; ++i) {
-				let li = document.createElement('li');
-				let a = document.createElement('a');
+				switch(list[i]){
+					case("/policies/privacy"):
+						li = document.createElement('li');
+						a = document.createElement('a');
 
-				a.innerText = list[i];
-				a.href = (list[i] + '.html');
+						a.innerText = list[i];
+						a.href = (list[i] + '.html');
 
-				li.appendChild(a);
-				f_c.appendChild(li);
+						li.appendChild(a);
+						f_c.appendChild(li);
+						return f_c;
+					default:
+						li = document.createElement('li');
+						a = document.createElement('a');
+
+						a.innerText = list[i];
+						a.href = (list[i] + '.html');
+
+						li.appendChild(a);
+						f_c.appendChild(li);
+						return f_c;
+				}
 			}
 			return f_c;
 		};
