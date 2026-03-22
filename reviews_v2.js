@@ -22,6 +22,29 @@ const reviews_v2 =
 		},
 		*/
 		{
+				name: "cruelty squad",
+				img: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1388770/header.jpg?t=1740330233",
+				datePlayed: "2026_03_21",
+				completed: false,
+				stream: "https://www.youtube.com/watch?v=CSLr4PYR3Sg",
+				pros: [
+					"high player expression",
+					"no 'right way to play'",
+				],
+				cons: [
+					"visuals dispite being intentional can be an eyesore to the point of being overstimulating at times",
+				],
+				rankings: {
+						gameplay: 10,
+						graphics: 7,
+						audio: 8,
+						story: 7,
+						uniqueness: 10,
+				},
+				links: {steam: "https://store.steampowered.com/app/1388770/Cruelty_Squad/"},
+				review: "fun game with intentionally bizzar visuals, most of the 'oddoties' most complain about at a glance melt away, only asterisk is some places are so agressively oversaturated i found it exhausing after a bit."
+		},
+		{
 				name: "ultrakill layer 8 update",
 				img: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1229490/capsule_616x353.jpg?t=1771983912",
 				datePlayed: "",
