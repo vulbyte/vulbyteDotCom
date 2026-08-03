@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Game Picker Wheel</title>
+    <script type="module" src='/client_management.js'></script>
+    <style>
+        body { font-family: sans-serif; text-align: center; }
+        #wheel-wrapper {
+            width: 300px;
+            height: 300px;
+            margin: 20px auto;
+            position: relative;
+        }
+        #wheelCanvas {
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+        /* Triangle on the right (3 o'clock position) */
+        #marker {
+            position: absolute;
+            top: 50%;
+            right: 0;
+            margin-top: -15px;
+            width: 0;
+            height: 0;
+            border-top: 15px solid transparent;
+            border-bottom: 15px solid transparent;
+            border-right: 30px solid red;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Steam Collection Wheel</h2>
+    <input type="file" id="fileInput" accept=".json">
+    <br><br>
+    
+    <select id="categorySelect" disabled>
+        <option>Select a category...</option>
+    </select>
+    
+    <button id="spinBtn" disabled>Spin the Wheel!</button>
+
+    <div id="wheel-wrapper">
+        <div id="marker"></div>
+        <canvas id="wheelCanvas" width="600" height="600"></canvas>
+    </div>
+    
+    <h3 id="result"></h3>
+
+    <script>
+        let collections = {};
+        let currentPalette = [];
+        let rotationAngle = 0;
+        let angularVelocity = 0;
+        let isSpinning = false;
+        
+        const canvas = document.getElementById('wheelCanvas');
+        const ctx = canvas.getContext('2d');
+        const spinBtn = document.getElementById('spinBtn');
+        const resultDisplay = document.getElementById('result');
+        const categorySelect = document.getElementById('categorySelect');
+
+        const palettes = [
+            ['#FFB3BA', '#FFDFBA', '#FFFFBA', '#BAFFC9', '#BAE1FF', '#E1BAFF'],
+            ['#000000', '#FFFFFF'],
+            ['#FF00FF', '#00FFFF', '#FFFF00'],
+            ['#0077BE', '#00A86B', '#E0F7FA'],
+            ['#FF5733', '#C70039', '#900C3F', '#581845']
+        ];
+
+        function getContrastYIQ(hexcolor){
+            const r = parseInt(hexcolor.substr(1,2),16);
+            const g = parseInt(hexcolor.substr(3,2),16);
+            const b = parseInt(hexcolor.substr(5,2),16);
+            return (((r*299)+(g*587)+(b*114))/1000 >= 128) ? 'black' : 'white';
+        }
+
+        function drawWheel() {
+            const centerX = 300, centerY = 300, radius = 280;
+            const items = collections[categorySelect.value] || [];
+            if (items.length === 0) return;
+
+            ctx.clearRect(0, 0, 600, 600);
+            const sliceAngle = (2 * Math.PI) / items.length;
+            
+            ctx.save();
+            ctx.translate(centerX, centerY);
+            ctx.rotate(rotationAngle);
+
+            items.forEach((item, i) => {
+                const startAngle = i * sliceAngle;
+                const color = currentPalette[i % currentPalette.length];
+                
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.arc(0, 0, radius, startAngle, startAngle + sliceAngle);
+                ctx.closePath();
+                ctx.fillStyle = color;
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.save();
+                ctx.rotate(startAngle + sliceAngle / 2);
+                ctx.textAlign = "right";
+                ctx.fillStyle = getContrastYIQ(color);
+                ctx.font = "bold 16px sans-serif";
+                ctx.fillText(String(item), radius - 10, 5); 
+                ctx.restore();
+            });
+            ctx.restore();
+        }
+
+        function animate() {
+            if (isSpinning) {
+                rotationAngle += angularVelocity;
+                angularVelocity *= 0.95; 
+
+                if (Math.abs(angularVelocity) < 0.001) {
+                    isSpinning = false;
+                    angularVelocity = 0;
+                    determineWinner();
+                }
+                drawWheel(); 
+                requestAnimationFrame(animate);
+            }
+        }
+        
+        function determineWinner() {
+            const items = collections[categorySelect.value];
+            const sliceAngle = (2 * Math.PI) / items.length;
+            let normalizedAngle = (-rotationAngle % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+            const winningIndex = Math.floor(normalizedAngle / sliceAngle) % items.length;
+            const appId = items[winningIndex];
+            resultDisplay.innerHTML = `Result: <a href="https://store.steampowered.com/app/${appId}" target="_blank">Click to reveal (ID: ${appId})</a>`;
+        }
+
+        document.getElementById('fileInput').addEventListener('change', (e) => {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const data = JSON.parse(event.target.result);
+                collections = {};
+                data.forEach(item => {
+                    if (item[0]?.startsWith('user-collections.')) {
+                        try {
+                            const val = JSON.parse(item[1].value);
+                            collections[val.name] = val.added || [];
+                        } catch(e) {}
+                    }
+                });
+
+                // Robust sorting using localeCompare
+                const allNames = Object.keys(collections);
+                const active = allNames.filter(n => collections[n].length > 0).sort((a, b) => a.localeCompare(b));
+                const empty = allNames.filter(n => collections[n].length === 0).sort((a, b) => a.localeCompare(b));
+
+                categorySelect.innerHTML = '<option>Select a category...</option>';
+                
+                active.forEach(name => {
+                    categorySelect.add(new Option(name, name));
+                });
+                
+                empty.forEach(name => {
+                    categorySelect.add(new Option(`<empty> ${name}`, name));
+                });
+
+                categorySelect.disabled = false;
+            };
+            reader.readAsText(e.target.files[0]);
+        });
+
+        spinBtn.addEventListener('click', () => {
+            if (isSpinning) return;
+            angularVelocity = 1 + (Math.random() * 0.5); 
+            isSpinning = true;
+            resultDisplay.innerHTML = "Spinning...";
+            requestAnimationFrame(animate);
+        });
+
+        categorySelect.addEventListener('change', () => {
+            if(!collections[categorySelect.value]) return;
+            currentPalette = palettes[Math.floor(Math.random() * palettes.length)];
+            rotationAngle = 0;
+            drawWheel();
+            spinBtn.disabled = false;
+        });
+    </script>
+</body>
+</html>
