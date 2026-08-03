@@ -5,38 +5,116 @@
     <title>Game Picker Wheel</title>
     <script type="module" src='/client_management.js'></script>
     <style>
-        body { font-family: sans-serif; text-align: center; }
+        body { 
+		font-family: sans-serif;
+		margin:auto;
+		align-content:center;
+		text-align:center;
+	}
+	body>* {
+		max-width: 50rem !important;
+	}
         #wheel-wrapper {
-            width: 300px;
-            height: 300px;
-            margin: 20px auto;
+            width: 100%;
+            height: 100%;
+            margin: 1.5rem auto;
             position: relative;
+	    text-align: center;
         }
+
         #wheelCanvas {
             width: 100%;
             height: 100%;
             cursor: pointer;
+	    text-align: center;
         }
         /* Triangle on the right (3 o'clock position) */
         #marker {
             position: absolute;
             top: 50%;
             right: 0;
-            margin-top: -15px;
+            margin-top: -0.9rem;
             width: 0;
             height: 0;
-            border-top: 15px solid transparent;
-            border-bottom: 15px solid transparent;
-            border-right: 30px solid red;
+            border-top: 1rem solid transparent;
+            border-bottom: 1rem solid transparent;
+            border-right: 1.6rem  solid red;
             z-index: 10;
+	    text-align: center;
+	    user-select: none;
         }
+
+	.stepCompleted{
+		background-color: #77f;
+	}
+
+	.stepNext {
+		background-color: #c70;
+	}
+
+
+	@keyframes gradientShift {
+	    0% { background-position: 0% 50%; }
+	    50% { background-position: 100% 50%; }
+	    100% { background-position: 0% 50%; }
+	}
+
+	#result {
+	    margin: auto;
+	    padding: 0.8rem;
+	    background-size: 200% 200%; /* Large size to allow movement */
+	    animation: gradientShift 5s ease infinite;
+	    color: white;
+	    text-shadow: 1px 1px 2px black; /* Improves readability against various colors */
+	    border-radius: 8px;
+	    width: fit-content;
+	}
     </style>
 </head>
 <body>
-
     <h2>Steam Collection Wheel</h2>
-    <input type="file" id="fileInput" accept=".json">
+    <input type="file" id="fileInput" accept=".json" class="stepNext">
     <br><br>
+    <details style="
+		    border-radius: 0.7rem;
+	    margin:auto; 
+	    margin-bottom: 2rem;
+	    text-align:center; 
+	    content-align: center; 
+	    background-color: #222; 
+	    border: 0.1rem solid #aaa;
+	    padding: 1rem;
+	    ">
+	    <summary> where do i find the file? click here! </summary>
+	<table>
+  <thead>
+	  <p>the file you are looking for is <span style="font-weight:bold;">"cloud-storage-namespace-1.json"</span</p>
+	  <aside>hint: if it doesn't work, generally whatever file has the largest size is likely the file you need</aside>
+    <tr>
+      <th>Platform</th>
+      <th>Base Directory Path</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Window*>
+      <td><code>C:\Program Files (x86)\Steam\userdata\(YOUR_USER_CODE)\config\cloudstorage\</code></td>
+    </tr>
+    <tr>
+      <td><strong>macOS</strong></td>
+      <td><code>~/Library/Application Support/Steam/userdata/(YOUR_USER_CODE)/config/cloudstorage/</code></td>
+    </tr>
+    <tr>
+      <td><strong>Linux (Native)</strong></td>
+      <td><code>~/.local/share/Steam/userdata/(YOUR_USER_CODE)/config/cloudstorage/</code></td>
+    </tr>
+    <tr>
+      <td><strong>Linux (Flatpak)</strong></td>
+      <td><code>~/.var/app/com.valvesoftware.Steam/.local/share/Steam/userdata/(YOUR_USER_CODE)/config/cloudstorage/</code></td>
+    </tr>
+  </tbody>
+</table>
+</details>
     
     <select id="categorySelect" disabled>
         <option>Select a category...</option>
@@ -49,7 +127,7 @@
         <canvas id="wheelCanvas" width="600" height="600"></canvas>
     </div>
     
-    <h3 id="result"></h3>
+    <h3 id="result" style=""></h3>
 
     <script>
         let collections = {};
@@ -72,6 +150,11 @@
             ['#FF5733', '#C70039', '#900C3F', '#581845']
         ];
 
+	document.addEventListener('DOMContentLoaded', () => {
+	    document.getElementById('fileInput').value = "";
+		drawWheel();
+	});
+
         function getContrastYIQ(hexcolor){
             const r = parseInt(hexcolor.substr(1,2),16);
             const g = parseInt(hexcolor.substr(3,2),16);
@@ -79,12 +162,24 @@
             return (((r*299)+(g*587)+(b*114))/1000 >= 128) ? 'black' : 'white';
         }
 
-        function drawWheel() {
-            const centerX = 300, centerY = 300, radius = 280;
-            const items = collections[categorySelect.value] || [];
-            if (items.length === 0) return;
+	function drawWheel() {
+	    const centerX = 300, centerY = 300, radius = 280;
+	    const items = collections[categorySelect.value] || [];
 
-            ctx.clearRect(0, 0, 600, 600);
+	    ctx.clearRect(0, 0, 600, 600);
+
+	    // If no category is selected or items are empty, show the placeholder
+	    if (items.length === 0) {
+		ctx.beginPath();
+		ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+		ctx.fillStyle = '#333333';
+		ctx.fill();
+		ctx.fillStyle = 'white';
+		ctx.textAlign = 'center';
+		ctx.font = 'bold 1.6rem sans-serif';
+		ctx.fillText('No category selected yet', centerX, centerY);
+		return;
+	    }
             const sliceAngle = (2 * Math.PI) / items.length;
             
             ctx.save();
@@ -107,7 +202,7 @@
                 ctx.rotate(startAngle + sliceAngle / 2);
                 ctx.textAlign = "right";
                 ctx.fillStyle = getContrastYIQ(color);
-                ctx.font = "bold 16px sans-serif";
+                ctx.font = "bold 1rem sans-serif";
                 ctx.fillText(String(item), radius - 10, 5); 
                 ctx.restore();
             });
@@ -170,7 +265,26 @@
                 categorySelect.disabled = false;
             };
             reader.readAsText(e.target.files[0]);
+
+		const fileInput = document.getElementById('fileInput');
+		fileInput.classList.replace("stepNext", "stepCompleted");
+
+		categorySelect.classList.add("stepNext");
         });
+
+	categorySelect.addEventListener('change', () => {
+		if(!collections[categorySelect.value]) return;
+		currentPalette = palettes[Math.floor(Math.random() * palettes.length)];
+		rotationAngle = 0;
+		drawWheel();
+		spinBtn.disabled = false;
+		spinBtn.style.backgroundColor = "";
+
+		resultDisplay.style.backgroundImage = `linear-gradient(45deg, ${currentPalette.join(', ')})`;
+
+		categorySelect.classList.replace("stepNext", "stepCompleted");
+		spinBtn.classList.add("stepNext");
+	});
 
         spinBtn.addEventListener('click', () => {
             if (isSpinning) return;
@@ -180,13 +294,6 @@
             requestAnimationFrame(animate);
         });
 
-        categorySelect.addEventListener('change', () => {
-            if(!collections[categorySelect.value]) return;
-            currentPalette = palettes[Math.floor(Math.random() * palettes.length)];
-            rotationAngle = 0;
-            drawWheel();
-            spinBtn.disabled = false;
-        });
     </script>
 </body>
 </html>
