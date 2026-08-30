@@ -25,7 +25,7 @@
 		</div>
 	    <div style="display:inline-block; flex-direction:row;">
 		<label style="margin-top:0.5rem;  justify-conent: left">
-		    <input type="checkbox" id="capsToggle" checked>
+			<input type="checkbox" id="capsToggle" checked>
 		    <div> ALL CAPS</div>
 		</label>
 	    </div>
@@ -48,6 +48,7 @@
     import { GIFEncoder, quantize, applyPalette } from "https://cdn.jsdelivr.net/npm/gifenc@1.0.3/+esm";
 
     let animationInterval = null;
+    let lastFile = null; // remembered so toggles (like ALL CAPS) can re-render without reloading
 
     document.addEventListener('DOMContentLoaded', () => {
         const imageInput = document.getElementById('imageInput');
@@ -193,6 +194,9 @@
 
         async function processFile(file) {
             if (!file) return;
+
+            // Remember this file so re-toggling settings (like ALL CAPS) can re-render it
+            lastFile = file;
 
             // Clear any previous animation loop
             if (animationInterval) {
@@ -350,6 +354,14 @@
                 processFile(event.target.files[0]);
             });
         }
+
+        // Re-render whatever's currently loaded whenever a rendering-affecting
+        // control (like the caps toggle) changes — no need to reselect the file.
+        capsToggle.addEventListener('change', () => {
+            if (lastFile) {
+                processFile(lastFile);
+            }
+        });
 
         // Klipy share pages (klipy.com/gifs/...) are HTML, not direct media, and
         // klipy.com does not send CORS headers on that page — so the browser can't
