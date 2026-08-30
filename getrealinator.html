@@ -16,13 +16,22 @@
                src="https://tr.rbxcdn.com/180DAY-5b5c671a68c176d93cb6050cb2fccdcc/420/420/Hat/Webp/noFilter"
             >
         </div>
-        <input type="file" id="imageInput" accept="image/*,.gif">
+        <input type="file" id="imageInput" accept="image/*,.gif,video/*,.mp4,.webm,.mov,.m4v">
         <br>
         <div style="margin-top:0.5rem;">
-            <input type="text" id="urlInput" placeholder="Paste a direct GIF/image link (e.g. media.tenor.com/...)" style="width:50%;">
-            <button id="loadUrlBtn">Load from URL</button>
+		<div style="display:inline-block;">
+		    <input type="text" id="urlInput" placeholder="Paste a direct GIF/image/video link, or a Klipy page link" style="width:30rem;">
+		    <button id="loadUrlBtn">Load from URL</button>
+		</div>
+	    <div style="display:inline-block; flex-direction:row;">
+		<label style="margin-top:0.5rem;  justify-conent: left">
+		    <input type="checkbox" id="capsToggle" checked>
+		    <div> ALL CAPS</div>
+		</label>
+	    </div>
         </div>
         <span id="urlError" style="color:red; display:none;"></span>
+        <br>
         <br>
 
         <canvas id="memeCanvas" style="width:50%; max-height:70%; overflow:scroll; margin:auto; display:none;"></canvas>
@@ -50,9 +59,16 @@
         const urlInput = document.getElementById('urlInput');
         const loadUrlBtn = document.getElementById('loadUrlBtn');
         const urlError = document.getElementById('urlError');
+        const capsToggle = document.getElementById('capsToggle');
+
+        function getBannerText() {
+            return capsToggle.checked ? 'GET REAL' : 'get real';
+        }
 
         // Draws the white "GET REAL" banner + source image onto the given canvas/context
         function drawBanner(ctx, canvas, sourceCanvasOrImg, bannerHeight, drawOffsetY) {
+            const bannerText = getBannerText();
+
             ctx.fillStyle = '#FFFFFF';
             ctx.fillRect(0, 0, canvas.width, bannerHeight);
 
@@ -61,7 +77,7 @@
             let fontSize = bannerHeight * 0.65;
             ctx.font = `bold ${fontSize}px Impact, sans-serif`;
             const maxAllowedWidth = canvas.width * 0.92;
-            const textWidth = ctx.measureText('GET REAL').width;
+            const textWidth = ctx.measureText(bannerText).width;
 
             if (textWidth > maxAllowedWidth) {
                 fontSize = fontSize * (maxAllowedWidth / textWidth);
@@ -71,7 +87,108 @@
             ctx.fillStyle = '#000000';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText('GET REAL', canvas.width / 2, bannerHeight / 2);
+            ctx.fillText(bannerText, canvas.width / 2, bannerHeight / 2);
+        }
+
+        // Waits for a <video> element to finish seeking to a given time
+        function seekVideo(video, time) {
+            return new Promise((resolve) => {
+                function onSeeked() {
+                    video.removeEventListener('seeked', onSeeked);
+                    resolve();
+                }
+                video.addEventListener('seeked', onSeeked);
+                video.currentTime = time;
+            });
+        }
+
+        // Extracts sampled frames from a video file and returns them in the same
+        // shape gifuct-js frames come in ({ dims, patch: null }) isn't used here —
+        // instead this draws straight to the temp canvas per frame via a callback.
+        async function processVideo(file) {
+            const video = document.createElement('video');
+            video.preload = 'auto';
+            video.muted = true;
+            video.playsInline = true;
+            const objectUrl = URL.createObjectURL(file);
+            video.src = objectUrl;
+
+            try {
+                await new Promise((resolve, reject) => {
+                    video.addEventListener('loadedmetadata', resolve, { once: true });
+                    video.addEventListener('error', () => reject(new Error('Failed to load video — the format may not be supported by this browser.')), { once: true });
+                });
+
+                const duration = video.duration;
+                if (!isFinite(duration) || duration <= 0) {
+                    throw new Error('Could not read video duration.');
+                }
+
+                const desiredFps = 10;
+                const maxFrames = 100;
+                const frameCount = Math.min(Math.max(Math.floor(duration * desiredFps), 1), maxFrames);
+                const interval = duration / frameCount;
+                const delayMs = Math.round(interval * 1000);
+
+                const originalWidth = video.videoWidth;
+                const originalHeight = video.videoHeight;
+                const bannerHeight = Math.max(60, originalHeight * 0.15);
+
+                canvas.width = originalWidth;
+                canvas.height = originalHeight + bannerHeight;
+
+                progressContainer.style.display = 'block';
+                progressBar.style.width = '0%';
+
+                const processedFrames = [];
+                const gifWriter = GIFEncoder();
+
+                for (let i = 0; i < frameCount; i++) {
+                    const t = Math.min(i * interval, duration - 0.001);
+                    await seekVideo(video, t);
+
+                    drawBanner(ctx, canvas, video, bannerHeight, bannerHeight);
+
+                    const frameSnapshot = document.createElement('canvas');
+                    frameSnapshot.width = canvas.width;
+                    frameSnapshot.height = canvas.height;
+                    frameSnapshot.getContext('2d').drawImage(canvas, 0, 0);
+                    processedFrames.push({ canvas: frameSnapshot, delay: delayMs });
+
+                    const fullFrameData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    const palette = quantize(fullFrameData.data, 256);
+                    const index = applyPalette(fullFrameData.data, palette);
+                    gifWriter.writeFrame(index, canvas.width, canvas.height, { palette, delay: delayMs });
+
+                    const percent = Math.round(((i + 1) / frameCount) * 100);
+                    progressBar.style.width = percent + '%';
+                    await new Promise(resolve => setTimeout(resolve, 0));
+                }
+
+                gifWriter.finish();
+                const gifBytes = gifWriter.bytes();
+
+                const blob = new Blob([gifBytes], { type: 'image/gif' });
+                downloadBtn.href = URL.createObjectURL(blob);
+                downloadBtn.download = 'get-real.gif';
+                progressContainer.style.display = 'none';
+
+                canvas.style.display = 'block';
+                downloadBtn.style.display = 'inline-block';
+
+                let currentFrameIndex = 0;
+                function playPreview() {
+                    const current = processedFrames[currentFrameIndex];
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(current.canvas, 0, 0);
+                    currentFrameIndex = (currentFrameIndex + 1) % processedFrames.length;
+                    animationInterval = setTimeout(playPreview, current.delay);
+                }
+                playPreview();
+
+            } finally {
+                URL.revokeObjectURL(objectUrl);
+            }
         }
 
         async function processFile(file) {
@@ -84,6 +201,17 @@
             }
 
             const isGif = file.type === 'image/gif' || file.name.toLowerCase().endsWith('.gif');
+            const isVideo = file.type.startsWith('video/') || /\.(mp4|webm|mov|m4v)$/i.test(file.name);
+
+            if (isVideo) {
+                try {
+                    await processVideo(file);
+                } catch (err) {
+                    console.error("Error processing video:", err);
+                    progressContainer.style.display = 'none';
+                }
+                return;
+            }
 
             if (isGif) {
                 progressContainer.style.display = 'block';
@@ -223,14 +351,52 @@
             });
         }
 
-        // Load from a pasted direct media URL (e.g. a Tenor/Giphy direct .gif link)
+        // Klipy share pages (klipy.com/gifs/...) are HTML, not direct media, and
+        // klipy.com does not send CORS headers on that page — so the browser can't
+        // read it directly. We route through a public CORS proxy (api.allorigins.win)
+        // as a workaround; note that means the proxy operator sees the URL requested.
+        async function resolveKlipyUrl(pageUrl) {
+            const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(pageUrl);
+
+            let response;
+            try {
+                response = await fetch(proxyUrl);
+            } catch (err) {
+                throw new Error('KLIPY_PAGE_BLOCKED');
+            }
+            if (!response.ok) {
+                throw new Error('KLIPY_PAGE_BLOCKED');
+            }
+
+            const html = await response.text();
+            const doc = new DOMParser().parseFromString(html, 'text/html');
+
+            const ogImage = doc.querySelector('meta[property="og:image"]')?.getAttribute('content');
+            const ogVideo = doc.querySelector('meta[property="og:video:secure_url"]')?.getAttribute('content')
+                         || doc.querySelector('meta[property="og:video:url"]')?.getAttribute('content');
+
+            const mediaUrl = ogImage || ogVideo;
+            if (!mediaUrl) {
+                throw new Error('KLIPY_NO_MEDIA_FOUND');
+            }
+            return mediaUrl;
+        }
+
+        // Load from a pasted direct media URL (e.g. a Tenor/Giphy direct .gif link),
+        // or a Klipy share page link, which gets resolved to its direct media URL first.
         loadUrlBtn.addEventListener('click', async () => {
-            const url = urlInput.value.trim();
+            let url = urlInput.value.trim();
             if (!url) return;
 
             urlError.style.display = 'none';
 
+            const isKlipyPage = /^https?:\/\/(www\.)?klipy\.com\/gifs\//i.test(url);
+
             try {
+                if (isKlipyPage) {
+                    url = await resolveKlipyUrl(url);
+                }
+
                 const response = await fetch(url, { mode: 'cors' });
                 if (!response.ok) {
                     throw new Error(`Server responded with ${response.status}`);
@@ -239,15 +405,25 @@
                 const blob = await response.blob();
 
                 const contentType = blob.type || 'image/png';
-                const isGifUrl = contentType === 'image/gif' || url.toLowerCase().split('?')[0].endsWith('.gif');
-                const filename = isGifUrl ? 'from-url.gif' : 'from-url.png';
+                const pathPart = url.toLowerCase().split('?')[0];
+                const isGifUrl = contentType === 'image/gif' || pathPart.endsWith('.gif');
+                const isVideoUrl = contentType.startsWith('video/') || /\.(mp4|webm|mov|m4v)$/.test(pathPart);
+
+                let filename = 'from-url.png';
+                if (isGifUrl) filename = 'from-url.gif';
+                else if (isVideoUrl) filename = 'from-url.mp4';
 
                 const file = new File([blob], filename, { type: contentType });
                 processFile(file);
 
             } catch (err) {
                 console.error('Error loading from URL:', err);
-                urlError.textContent = "Couldn't load that link — make sure it's a direct link to the image/GIF file, not a share page.";
+
+                if (isKlipyPage) {
+                    urlError.textContent = "Klipy doesn't want you to link to their gifs, so we can't do this easily.";
+                } else {
+                    urlError.textContent = "Couldn't load that link — make sure it's a direct link to the image/GIF/video file, not a share page.";
+                }
                 urlError.style.display = 'inline';
             }
         });
