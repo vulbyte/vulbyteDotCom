@@ -22,6 +22,1803 @@ const reviews_v2 =
 		},
 		*/
 		{
+				name: "TUROK",
+				img: "",
+				datePlayed: "",
+				completed: false,
+				stream: "",
+				pros: [],
+				cons: [],
+				rankings: {
+						gameplay: 5,
+						graphics: 5,
+						audio: 5,
+						story: 5,
+						microtransactions: 5,
+						uniqueness: 5,
+				},
+				links: {steam: ""},
+				review: ""
+		},
+		{
+				name: "ROKI",
+				img: "",
+				datePlayed: "",
+				completed: false,
+				stream: "",
+				pros: [],
+				cons: [],
+				rankings: {
+						gameplay: 5,
+						graphics: 5,
+						audio: 5,
+						story: 5,
+						microtransactions: 5,
+						uniqueness: 5,
+				},
+				links: {steam: ""},
+				review: ""
+		},
+		{
+				name: "122 operator",
+				img: "",
+				datePlayed: "",
+				completed: false,
+				stream: "",
+				pros: [],
+				cons: [],
+				rankings: {
+						gameplay: 5,
+						graphics: 5,
+						audio: 5,
+						story: 5,
+						microtransactions: 5,
+						uniqueness: 5,
+				},
+				links: {steam: ""},
+				review: ""
+		},
+		{
+				name: "europa universalis IV",
+				img: "",
+				datePlayed: "",
+				completed: false,
+				stream: "",
+				pros: [],
+				cons: [],
+				rankings: {
+						gameplay: 5,
+						graphics: 5,
+						audio: 5,
+						story: 5,
+						microtransactions: 5,
+						uniqueness: 5,
+				},
+				links: {steam: ""},
+				review: ""
+		},
+		{
+				name: "little big workshop",
+				img: "",
+				datePlayed: "",
+				completed: false,
+				stream: "",
+				pros: [],
+				cons: [],
+				rankings: {
+						gameplay: 5,
+						graphics: 5,
+						audio: 5,
+						story: 5,
+						microtransactions: 5,
+						uniqueness: 5,
+				},
+				links: {steam: ""},
+				review: ""
+		},
+		{
+				name: "were cleaner",
+				img: "",
+				datePlayed: "",
+				completed: false,
+				stream: "",
+				pros: [],
+				cons: [],
+				rankings: {
+						gameplay: 5,
+						graphics: 5,
+						audio: 5,
+						story: 5,
+						microtransactions: 5,
+						uniqueness: 5,
+				},
+				links: {steam: ""},
+				review: ""
+		},
+		{
+				name: "half-life alyx",
+				img: "",
+				datePlayed: "",
+				completed: false,
+				stream: "",
+				pros: [],
+				cons: [],
+				rankings: {
+						gameplay: 5,
+						graphics: 5,
+						audio: 5,
+						story: 5,
+						microtransactions: 5,
+						uniqueness: 5,
+				},
+				links: {steam: ""},
+				review: ""
+		},
+		{
+				name: "mr pompys extravagant quiz",
+				img: "",
+				datePlayed: "",
+				completed: false,
+				stream: "",
+				pros: [],
+				cons: [],
+				rankings: {
+						gameplay: 5,
+						graphics: 5,
+						audio: 5,
+						story: 5,
+						microtransactions: 5,
+						uniqueness: 5,
+				},
+				links: {steam: ""},
+				review: ""
+		},
+		{
+				name: "living forest",
+				img: "",
+				datePlayed: "",
+				completed: false,
+				stream: "",
+				pros: [],
+				cons: [],
+				rankings: {
+						gameplay: 5,
+						graphics: 5,
+						audio: 5,
+						story: 5,
+						microtransactions: 5,
+						uniqueness: 5,
+				},
+				links: {steam: ""},
+				review: ""
+		},
+		{
+			name: "edge: now extended",
+				img: "",
+				datePlayed: "",
+				completed: false,
+				stream: "",
+				pros: [],
+				cons: [],
+				rankings: {
+						gameplay: 5,
+						graphics: 5,
+						audio: 5,
+						story: 5,
+						microtransactions: 5,
+						uniqueness: 5,
+				},
+				links: {steam: ""},
+				review: ""
+		},
+		{
+				name: "neo cab",
+				img: "",
+				datePlayed: "",
+				completed: false,
+				stream: "",
+				pros: [],
+				cons: [],
+				rankings: {
+						gameplay: 5,
+						graphics: 5,
+						audio: 5,
+						story: 5,
+						microtransactions: 5,
+						uniqueness: 5,
+				},
+				links: {steam: ""},
+				review: ""
+		},
+		{
+			name: "endless space: definitive edition",
+				img: "",
+				datePlayed: "",
+				completed: false,
+				stream: "",
+				pros: [],
+				cons: [],
+				rankings: {
+						gameplay: 5,
+						graphics: 5,
+						audio: 5,
+						story: 5,
+						microtransactions: 5,
+						uniqueness: 5,
+				},
+				links: {steam: ""},
+				review: ""
+		},
+	  {
+	    "name": "ninja kiwi archive: Bloons TD 5",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Monkey City",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Bloons TD Battles",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Bloons TD 4",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Bloons TD 4 Expansion",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: SAS: Zombie Assault 4",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Bloons TD",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Bloons TD 3",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: SAS: Zombie Assault 3",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Bloons Super Monkey 2",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Destructotruck",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Bloons",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Countersnipe",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: SAS: Zombie Assault TD",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Battle Panic",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Bloons 2",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Bloons 2 Spring",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Bloons 2 Christmas",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Knight Orc Assault",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: SAS: Zombie Assault",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: SAS: Zombie Assault 2",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Boombot",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Boombot 2",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: SAS2: Insane Asylum",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Bloons Junior",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Last Line of Defense",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: More Bloons",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Even More Bloons",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 10,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Bloons Pop 3",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Zombie Trailer Park",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Meebling",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Meeblings Player Pack",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Meeblings 2",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Brilliant Crystals",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Bloons Player Pack 1",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Powerpool",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Powerpool Frenzy",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Powerpool 2",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Bloons Insanity",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Bloons TD 2",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Bloons Player Pack 2",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Bloons Player Pack 3",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Bloons Player Pack 4",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Bloons Player Pack 5",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Bloons Super Monkey",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Potion Panic 2",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Shinju",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Hotcorn",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Another Box of Hotcorn",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Straight Dice",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Guesstimation",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Zeba",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Rings",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Hunt or Die",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Battle Blocks",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Megan The Fox",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Power Pinball",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Magnetic Defense",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Guns n Angel",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Sinta",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Potion Panic",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Hot Air Bloon",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Flur",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Keypad Kaos",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Powergolf",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Robomaro",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "ninja kiwi archive: Awesome Ghosts vs Stupid Zombies",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 0,
+	      "graphics": 0,
+	      "audio": 0,
+	      "story": 0,
+	      "microtransactions": 0,
+	      "uniqueness": 0
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+		{
+				name: "super bernie world",
+				img: "",
+				datePlayed: "",
+				completed: false,
+				stream: "",
+				pros: [],
+				cons: [],
+				rankings: {
+						gameplay: 5,
+						graphics: 5,
+						audio: 5,
+						story: 5,
+						microtransactions: 5,
+						uniqueness: 5,
+				},
+				links: {steam: ""},
+				review: ""
+		},
+		{
+				name: "black ops 1",
+				img: "",
+				datePlayed: "",
+				completed: false,
+				stream: "",
+				pros: [],
+				cons: [],
+				rankings: {
+						gameplay: 5,
+						graphics: 5,
+						audio: 5,
+						story: 5,
+						microtransactions: 5,
+						uniqueness: 5,
+				},
+				links: {steam: ""},
+				review: ""
+		},
+		{
+				name: "palworld",
+				img: "",
+				datePlayed: "",
+				completed: false,
+				stream: "",
+				pros: [],
+				cons: [],
+				rankings: {
+						gameplay: 5,
+						graphics: 5,
+						audio: 5,
+						story: 5,
+						microtransactions: 5,
+						uniqueness: 5,
+				},
+				links: {steam: ""},
+				review: ""
+		},
+		{
+				name: "berry bury berry",
+				img: "",
+				datePlayed: "",
+				completed: false,
+				stream: "",
+				pros: [],
+				cons: [],
+				rankings: {
+						gameplay: 5,
+						graphics: 5,
+						audio: 5,
+						story: 5,
+						microtransactions: 5,
+						uniqueness: 5,
+				},
+				links: {steam: ""},
+				review: ""
+		},
+		{
+				name: "hotdogs, horseshoes, and hand grenades",
+				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/450540/header.jpg?t=1783183368",
+				datePlayed: "",
+				completed: false,
+				stream: "",
+				pros: [],
+				cons: [],
+				rankings: {
+						gameplay: 5,
+						graphics: 5,
+						audio: 5,
+						story: 5,
+						microtransactions: 5,
+						uniqueness: 5,
+				},
+				links: {steam: "https://store.steampowered.com/app/450540/Hot_Dogs_Horseshoes__Hand_Grenades/"},
+				review: ":"
+		},
+		{
 			name: "Wasteland Bites: DEMO",
 				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/3820720/7790a3e490eb9069f320d0d346ae6f687a76e590/header.jpg?t=1774983840",
 				datePlayed: "2026-09-20",

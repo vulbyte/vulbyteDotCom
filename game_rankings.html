@@ -81,6 +81,10 @@
             display: inline-block;
         }
 
+        .store-icon.iconsteam {
+            filter: invert(1);
+	    width:10rem !important;
+        }
         .store-icon.iconitch {
             filter: invert(1);
         }
@@ -386,7 +390,7 @@
         nintendo: `https://avatars.mds.yandex.net/get-mpic/15406152/2a0000019813155773b80c2b06a01e852603/orig`,
         playstation: "https://brandlogos.net/wp-content/uploads/2022/09/playstation_store-logo_brandlogos.net_q6kzh-512x512.png",
         playstore: "https://storage.googleapis.com/gweb-uniblog-publish-prod/images/Logo_Play_512px_clr_nGVTgYY.max-1440x810.png",
-        steam: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/1024px-Steam_icon_logo.svg.png",
+        steam: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Steam_2016_logo_black.svg/1280px-Steam_2016_logo_black.svg.png",
         website: "/assets/website_icon.svg",
         xbox: "https://www.freepnglogos.com/uploads/xbox-png/xbox-png-download-best-xbox-png-clipartmagm-15.png",
         youtube: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/1024px-YouTube_full-color_icon_%282017%29.svg.png?20240107144800"
@@ -397,7 +401,7 @@
 		let reviews = [...reviews_v2, ...reviews_v1]; // reviews are LIFO sorted
 
 
-    function CE(args = {}) {
+function CE(args = {}) {
         let elem = document.createElement(args.elem || "div");
         if (args.innerText != undefined) elem.innerText = args.innerText;
         if (args.innerHTML != undefined) elem.innerHTML = args.innerHTML;
@@ -421,6 +425,7 @@
         }
         
         if (args.title != undefined) {elem.setAttribute('data-title', args.title)};
+        if (args.style != undefined) {elem.style.cssText = args.style};
 
         return elem;
     }
@@ -662,12 +667,23 @@
                 Object.keys(data.links).forEach(storeName => {
                     let a = CE({ elem: "a", href: data.links[storeName] });
                     let iconSrc = icons[storeName] || icons.website;
-                    let storeIcon = CE({
-                        elem: "img",
-                        src: iconSrc,
-                        alt: storeName,
-                        class: `store-icon icon${storeName}` 
-                    });
+		    let storeIcon;
+		    switch(storeName.toLowerCase()){
+		    	case("steam"):	
+			    storeIcon = CE({
+				elem: "img",
+				src: iconSrc,
+				alt: storeName,
+				class: `store-icon icon${storeName}` 
+			    });
+			default:
+			    storeIcon = CE({
+				elem: "img",
+				src: iconSrc,
+				alt: storeName,
+				class: `store-icon icon${storeName}` 
+			    });
+		    }
                     a.appendChild(storeIcon);
                     links.appendChild(a);
                 });
@@ -690,17 +706,21 @@
             let overallDiv = CE({ elem: "div", innerText: `${overallVal.toFixed(1)}/10`, id: "overall" });
             overallDiv.style.color = r8_color;
             td2.appendChild(overallDiv);
+	    // If you want the name included in the row:
+	    let nameSpan = CE({ elem: "span", style:"font-family:sans-serif; font-size:1.4rem; font-weight:black; color:white;", innerText: data.name, class: "ranking-game-name" });
+	    td2.appendChild(nameSpan);
 
-            Object.entries(data.rankings).forEach(([rKey, rVal]) => {
-                if(rKey === 'overall') return;
-                let container = CE({ elem: "div", innerText: rKey, id: rKey });
-                let ratingSpan = CE({ elem: "span", innerText: `${rVal}/10` });
-                let subColor = "#" + Math.floor((((rVal - 11) * -1) / 10) * 255).toString(16) + Math.floor(rVal / 11 * 255).toString(16) + "00";
-                ratingSpan.style.color = subColor;
-                container.appendChild(ratingSpan);
-                td2.appendChild(container);
-            });
-            row.appendChild(td2);
+	Object.entries(data.rankings).forEach(([rKey, rVal]) => {
+	    if(rKey === 'overall') return;
+	    let container = CE({ elem: "div", innerText: rKey, id: rKey });
+	    
+	    let ratingSpan = CE({ elem: "span", innerText: `${rVal}/10` });
+	    let subColor = "#" + Math.floor((((rVal - 11) * -1) / 10) * 255).toString(16) + Math.floor(rVal / 11 * 255).toString(16) + "00";
+	    ratingSpan.style.color = subColor; 
+	    container.appendChild(ratingSpan); 
+	    td2.appendChild(container);
+	});
+		row.appendChild(td2);
 
             // --- COLUMN 3: TLDR (Replaces nth-child(3)) ---
             let td3 = CE({ 

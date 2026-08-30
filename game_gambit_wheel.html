@@ -6,27 +6,28 @@
     <script type="module" src='/client_management.js'></script>
     <style>
         body { 
-		font-family: sans-serif;
-		margin:auto;
-		align-content:center;
-		text-align:center;
-	}
-	body>* {
-		max-width: 50rem !important;
-	}
+            font-family: sans-serif;
+            margin: auto;
+            align-content: center;
+            text-align: center;
+        }
+        body>* {
+            max-width: 50rem !important;
+        }
         #wheel-wrapper {
             width: 100%;
-            height: 100%;
+            max-width: 600px;
+            aspect-ratio: 1 / 1;
             margin: 1.5rem auto;
             position: relative;
-	    text-align: center;
+            text-align: center;
         }
 
         #wheelCanvas {
             width: 100%;
             height: 100%;
+            display: block;
             cursor: pointer;
-	    text-align: center;
         }
         /* Triangle on the right (3 o'clock position) */
         #marker {
@@ -36,39 +37,71 @@
             margin-top: -0.9rem;
             width: 0;
             height: 0;
-            border-top: 1rem solid transparent;
-            border-bottom: 1rem solid transparent;
-            border-right: 1.6rem  solid red;
+            border-top: 1.0rem solid transparent;
+            border-bottom: 1.0rem solid transparent;
+            border-right: 1.6rem solid red;
             z-index: 10;
-	    text-align: center;
-	    user-select: none;
+            text-align: center;
+            user-select: none;
         }
 
-	.stepCompleted{
-		background-color: #77f;
-	}
+        .stepCompleted {
+            background-color: #77f;
+        }
 
-	.stepNext {
-		background-color: #c70;
-	}
+        .stepNext {
+            background-color: #c70;
+        }
 
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
 
-	@keyframes gradientShift {
-	    0% { background-position: 0% 50%; }
-	    50% { background-position: 100% 50%; }
-	    100% { background-position: 0% 50%; }
-	}
+        #result {
+            margin: auto;
+            padding: 0.8rem;
+            background-size: 200% 200%;
+            animation: gradientShift 5s ease infinite;
+            color: white;
+            text-shadow: 1px 1px 2px black;
+            border-radius: 8px;
+            width: fit-content;
+        }
 
-	#result {
-	    margin: auto;
-	    padding: 0.8rem;
-	    background-size: 200% 200%; /* Large size to allow movement */
-	    animation: gradientShift 5s ease infinite;
-	    color: white;
-	    text-shadow: 1px 1px 2px black; /* Improves readability against various colors */
-	    border-radius: 8px;
-	    width: fit-content;
-	}
+        #remaining-list {
+            margin: 1.5rem auto;
+            padding: 0;
+            list-style: none;
+            max-width: 30rem;
+            text-align: left;
+        }
+
+        #remaining-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #222;
+            color: #fff;
+            padding: 0.5rem 1rem;
+            margin-bottom: 0.4rem;
+            border-radius: 4px;
+        }
+
+        #remaining-list button {
+            background: #c70;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 0.2rem 0.6rem;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        #remaining-list button:hover {
+            background: #e90;
+        }
     </style>
 </head>
 <body>
@@ -76,45 +109,44 @@
     <input type="file" id="fileInput" accept=".json" class="stepNext">
     <br><br>
     <details style="
-		    border-radius: 0.7rem;
-	    margin:auto; 
-	    margin-bottom: 2rem;
-	    text-align:center; 
-	    content-align: center; 
-	    background-color: #222; 
-	    border: 0.1rem solid #aaa;
-	    padding: 1rem;
-	    ">
-	    <summary> where do i find the file? click here! </summary>
-	<table>
-  <thead>
-	  <p>the file you are looking for is <span style="font-weight:bold;">"cloud-storage-namespace-1.json"</span</p>
-	  <aside>hint: if it doesn't work, generally whatever file has the largest size is likely the file you need</aside>
-    <tr>
-      <th>Platform</th>
-      <th>Base Directory Path</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td><strong>Window*>
-      <td><code>C:\Program Files (x86)\Steam\userdata\(YOUR_USER_CODE)\config\cloudstorage\</code></td>
-    </tr>
-    <tr>
-      <td><strong>macOS</strong></td>
-      <td><code>~/Library/Application Support/Steam/userdata/(YOUR_USER_CODE)/config/cloudstorage/</code></td>
-    </tr>
-    <tr>
-      <td><strong>Linux (Native)</strong></td>
-      <td><code>~/.local/share/Steam/userdata/(YOUR_USER_CODE)/config/cloudstorage/</code></td>
-    </tr>
-    <tr>
-      <td><strong>Linux (Flatpak)</strong></td>
-      <td><code>~/.var/app/com.valvesoftware.Steam/.local/share/Steam/userdata/(YOUR_USER_CODE)/config/cloudstorage/</code></td>
-    </tr>
-  </tbody>
-</table>
-</details>
+            border-radius: 0.7rem;
+            margin: auto; 
+            margin-bottom: 2rem;
+            text-align: center; 
+            background-color: #222; 
+            border: 0.1rem solid #aaa;
+            padding: 1rem;
+        ">
+        <summary>where do i find the file? click here!</summary>
+        <table>
+            <thead>
+                <p>the file you are looking for is <span style="font-weight:bold;">"cloud-storage-namespace-1.json"</span></p>
+                <aside>hint: if it doesn't work, generally whatever file has the largest size is likely the file you need</aside>
+                <tr>
+                    <th>Platform</th>
+                    <th>Base Directory Path</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Windows</strong></td>
+                    <td><code>C:\Program Files (x86)\Steam\userdata\(YOUR_USER_CODE)\config\cloudstorage\</code></td>
+                </tr>
+                <tr>
+                    <td><strong>macOS</strong></td>
+                    <td><code>~/Library/Application Support/Steam/userdata/(YOUR_USER_CODE)/config/cloudstorage/</code></td>
+                </tr>
+                <tr>
+                    <td><strong>Linux (Native)</strong></td>
+                    <td><code>~/.local/share/Steam/userdata/(YOUR_USER_CODE)/config/cloudstorage/</code></td>
+                </tr>
+                <tr>
+                    <td><strong>Linux (Flatpak)</strong></td>
+                    <td><code>~/.var/app/com.valvesoftware.Steam/.local/share/Steam/userdata/(YOUR_USER_CODE)/config/cloudstorage/</code></td>
+                </tr>
+            </tbody>
+        </table>
+    </details>
     
     <select id="categorySelect" disabled>
         <option>Select a category...</option>
@@ -127,20 +159,26 @@
         <canvas id="wheelCanvas" width="600" height="600"></canvas>
     </div>
     
-    <h3 id="result" style=""></h3>
+    <h3 id="result"></h3>
+    <ul id="remaining-list"></ul>
 
     <script>
         let collections = {};
+        let activeWheelItems = [];
         let currentPalette = [];
         let rotationAngle = 0;
         let angularVelocity = 0;
         let isSpinning = false;
+        let gameNameCache = {};
+        let fetchQueue = Promise.resolve();
         
         const canvas = document.getElementById('wheelCanvas');
         const ctx = canvas.getContext('2d');
         const spinBtn = document.getElementById('spinBtn');
         const resultDisplay = document.getElementById('result');
         const categorySelect = document.getElementById('categorySelect');
+        const fileInput = document.getElementById('fileInput');
+        const remainingList = document.getElementById('remaining-list');
 
         const palettes = [
             ['#FFB3BA', '#FFDFBA', '#FFFFBA', '#BAFFC9', '#BAE1FF', '#E1BAFF'],
@@ -150,10 +188,10 @@
             ['#FF5733', '#C70039', '#900C3F', '#581845']
         ];
 
-	document.addEventListener('DOMContentLoaded', () => {
-	    document.getElementById('fileInput').value = "";
-		drawWheel();
-	});
+        document.addEventListener('DOMContentLoaded', () => {
+            fileInput.value = "";
+            drawWheel();
+        });
 
         function getContrastYIQ(hexcolor){
             const r = parseInt(hexcolor.substr(1,2),16);
@@ -162,31 +200,87 @@
             return (((r*299)+(g*587)+(b*114))/1000 >= 128) ? 'black' : 'white';
         }
 
-	function drawWheel() {
-	    const centerX = 300, centerY = 300, radius = 280;
-	    const items = collections[categorySelect.value] || [];
+        async function getGameTitle(appId) {
+            if (gameNameCache[appId]) return gameNameCache[appId];
+            
+            fetchQueue = fetchQueue.then(async () => {
+                if (gameNameCache[appId]) return;
+                try {
+                    const targetUrl = `https://store.steampowered.com/api/appdetails?appids=${appId}&l=english`;
+                    const response = await fetch(`https://corsproxy.io/?url=${encodeURIComponent(targetUrl)}`);
+                    const data = await response.json();
+                    
+                    if (data[appId] && data[appId].success) {
+                        gameNameCache[appId] = data[appId].data.name;
+                    } else {
+                        gameNameCache[appId] = `App ID: ${appId}`;
+                    }
+                } catch (err) {
+                    gameNameCache[appId] = `App ID: ${appId}`;
+                }
+                drawWheel();
+                updateRemainingList();
+            });
 
-	    ctx.clearRect(0, 0, 600, 600);
+            return gameNameCache[appId] || `App ID: ${appId}`;
+        }
 
-	    // If no category is selected or items are empty, show the placeholder
-	    if (items.length === 0) {
-		ctx.beginPath();
-		ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
-		ctx.fillStyle = '#333333';
-		ctx.fill();
-		ctx.fillStyle = 'white';
-		ctx.textAlign = 'center';
-		ctx.font = 'bold 1.6rem sans-serif';
-		ctx.fillText('No category selected yet', centerX, centerY);
-		return;
-	    }
+        function updateRemainingList() {
+            remainingList.innerHTML = '';
+            
+            activeWheelItems.forEach((appId) => {
+                const li = document.createElement('li');
+                const title = gameNameCache[appId] || `App ID: ${appId}`;
+                
+                li.innerHTML = `<span>${title}</span>`;
+                
+                const removeBtn = document.createElement('button');
+                removeBtn.textContent = '-';
+                removeBtn.onclick = () => removeGame(appId);
+                
+                li.appendChild(removeBtn);
+                remainingList.appendChild(li);
+            });
+        }
+
+        function removeGame(appId) {
+            activeWheelItems = activeWheelItems.filter(id => id !== appId);
+            
+            drawWheel();
+            updateRemainingList();
+            
+            if (activeWheelItems.length === 0) {
+                spinBtn.disabled = true;
+                resultDisplay.innerHTML = "No games left on the wheel!";
+            }
+        }
+
+        function drawWheel() {
+            const centerX = 300, centerY = 300, radius = 280;
+            const items = activeWheelItems;
+
+            ctx.clearRect(0, 0, 600, 600);
+
+            if (items.length === 0) {
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+                ctx.fillStyle = '#333333';
+                ctx.fill();
+                ctx.fillStyle = 'white';
+                ctx.textAlign = 'center';
+                ctx.font = 'bold 1.6rem sans-serif';
+                ctx.fillText('No category selected yet', centerX, centerY);
+                return;
+            }
+
             const sliceAngle = (2 * Math.PI) / items.length;
             
             ctx.save();
             ctx.translate(centerX, centerY);
             ctx.rotate(rotationAngle);
 
-            items.forEach((item, i) => {
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i];
                 const startAngle = i * sliceAngle;
                 const color = currentPalette[i % currentPalette.length];
                 
@@ -202,10 +296,16 @@
                 ctx.rotate(startAngle + sliceAngle / 2);
                 ctx.textAlign = "right";
                 ctx.fillStyle = getContrastYIQ(color);
-                ctx.font = "bold 1rem sans-serif";
-                ctx.fillText(String(item), radius - 10, 5); 
+                ctx.font = "bold 14px sans-serif";
+                
+                if (!gameNameCache[item]) {
+                    getGameTitle(item);
+                }
+                
+                const displayName = gameNameCache[item] || String(item);
+                ctx.fillText(displayName.substring(0, 15) + (displayName.length > 15 ? "..." : ""), radius - 10, 5); 
                 ctx.restore();
-            });
+            }
             ctx.restore();
         }
 
@@ -224,16 +324,19 @@
             }
         }
         
-        function determineWinner() {
-            const items = collections[categorySelect.value];
+        async function determineWinner() {
+            const items = activeWheelItems;
+            if (!items || items.length === 0) return;
             const sliceAngle = (2 * Math.PI) / items.length;
             let normalizedAngle = (-rotationAngle % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
             const winningIndex = Math.floor(normalizedAngle / sliceAngle) % items.length;
             const appId = items[winningIndex];
-            resultDisplay.innerHTML = `Result: <a href="https://store.steampowered.com/app/${appId}" target="_blank">Click to reveal (ID: ${appId})</a>`;
+            
+            const title = await getGameTitle(appId);
+            resultDisplay.innerHTML = `Result: <a href="https://store.steampowered.com/app/${appId}" target="_blank">${title}</a>`;
         }
 
-        document.getElementById('fileInput').addEventListener('change', (e) => {
+        fileInput.addEventListener('change', (e) => {
             const reader = new FileReader();
             reader.onload = (event) => {
                 const data = JSON.parse(event.target.result);
@@ -242,58 +345,78 @@
                     if (item[0]?.startsWith('user-collections.')) {
                         try {
                             const val = JSON.parse(item[1].value);
-                            collections[val.name] = val.added || [];
+                            const games = val.added || [];
+                            collections[val.name] = games;
                         } catch(e) {}
                     }
                 });
 
-                // Robust sorting using localeCompare
                 const allNames = Object.keys(collections);
                 const active = allNames.filter(n => collections[n].length > 0).sort((a, b) => a.localeCompare(b));
                 const empty = allNames.filter(n => collections[n].length === 0).sort((a, b) => a.localeCompare(b));
 
                 categorySelect.innerHTML = '<option>Select a category...</option>';
-                
-                active.forEach(name => {
-                    categorySelect.add(new Option(name, name));
-                });
-                
-                empty.forEach(name => {
-                    categorySelect.add(new Option(`<empty> ${name}`, name));
-                });
+                active.forEach(name => categorySelect.add(new Option(name, name)));
+                empty.forEach(name => categorySelect.add(new Option(`<empty> ${name}`, name)));
 
                 categorySelect.disabled = false;
             };
             reader.readAsText(e.target.files[0]);
 
-		const fileInput = document.getElementById('fileInput');
-		fileInput.classList.replace("stepNext", "stepCompleted");
-
-		categorySelect.classList.add("stepNext");
+            fileInput.classList.replace("stepNext", "stepCompleted");
+            categorySelect.classList.add("stepNext");
         });
 
-	categorySelect.addEventListener('change', () => {
-		if(!collections[categorySelect.value]) return;
-		currentPalette = palettes[Math.floor(Math.random() * palettes.length)];
-		rotationAngle = 0;
-		drawWheel();
-		spinBtn.disabled = false;
-		spinBtn.style.backgroundColor = "";
+        categorySelect.addEventListener('change', () => {
+            const selectedCat = categorySelect.value;
+            const categoryGames = collections[selectedCat];
+            if (!categoryGames) return;
 
-		resultDisplay.style.backgroundImage = `linear-gradient(45deg, ${currentPalette.join(', ')})`;
+            // Apply explicit length check and random selection logic
+            if (categoryGames.length > 10) {
+                let pool = [...categoryGames];
+                activeWheelItems = [];
+                for (let i = 0; i < 10; i++) {
+                    const randomIndex = Math.floor(Math.random() * pool.length);
+                    activeWheelItems.push(pool.splice(randomIndex, 1)[0]);
+                }
+            } else {
+                activeWheelItems = [...categoryGames];
+            }
 
-		categorySelect.classList.replace("stepNext", "stepCompleted");
-		spinBtn.classList.add("stepNext");
-	});
+            currentPalette = palettes[Math.floor(Math.random() * palettes.length)];
+            rotationAngle = 0;
+            drawWheel();
+            updateRemainingList();
+            spinBtn.disabled = false;
+            spinBtn.style.backgroundColor = "";
+
+            resultDisplay.style.backgroundImage = `linear-gradient(45deg, ${currentPalette.join(', ')})`;
+
+            categorySelect.classList.replace("stepNext", "stepCompleted");
+            spinBtn.classList.add("stepNext");
+        });
 
         spinBtn.addEventListener('click', () => {
             if (isSpinning) return;
-            angularVelocity = 1 + (Math.random() * 0.5); 
+            
+            const items = activeWheelItems;
+            if (!items || items.length === 0) return;
+
+            const winningIndex = Math.floor(Math.random() * items.length);
+            const sliceAngle = (2 * Math.PI) / items.length;
+            
+            const targetSliceCenter = (winningIndex * sliceAngle) + (sliceAngle / 2);
+            const extraSpins = (5 + Math.floor(Math.random() * 5)) * 2 * Math.PI; 
+            
+            let currentDelta = extraSpins + targetSliceCenter;
+            rotationAngle = -currentDelta;
+            angularVelocity = currentDelta * 0.08; 
+            
             isSpinning = true;
             resultDisplay.innerHTML = "Spinning...";
             requestAnimationFrame(animate);
         });
-
     </script>
 </body>
 </html>

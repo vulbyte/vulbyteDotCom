@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complete Character Creation Engine</title>
+  <style>
+    /* Monochrome Layout - No Accent Colors */
+    :root {
+      --bg-main: #ffffff;
+      --bg-alt: #f8f9fa;
+      --border-color: #121212;
+      --border-subtle: #d0d0d0;
+      --text-main: #111111;
+      --text-muted: #555555;
+      --disabled-bg: #eeeeee;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-alt);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 760px;
+      background: var(--bg-main);
+      border: 2px solid var(--border-color);
+      padding: 2rem;
+    }
+
+    .header {
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 1rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .section {
+      border: 1px solid var(--border-color);
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+      background-color: var(--bg-main);
+    }
+
+    .section-title {
+      font-size: 0.85rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.25rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+    }
+
+    .full-width {
+      grid-column: span 2;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 0.55rem 0.75rem;
+      font-size: 0.9rem;
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      outline: none;
+      border-radius: 0;
+    }
+
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    select:focus,
+    textarea:focus {
+      outline: 2px solid var(--border-color);
+      outline-offset: -2px;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    /* Toggle Switch Component */
+    .toggle-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem;
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-alt);
+    }
+
+    .toggle-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .toggle-info .title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .toggle-info .desc {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 46px;
+      height: 24px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: var(--bg-main);
+      border: 2px solid var(--border-color);
+      transition: 0.15s;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 14px;
+      width: 14px;
+      left: 3px;
+      bottom: 3px;
+      background-color: var(--border-color);
+      transition: 0.15s;
+    }
+
+    input:checked + .slider {
+      background-color: var(--border-color);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(22px);
+      background-color: var(--bg-main);
+    }
+
+    .checkbox-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-transform: none;
+      cursor: pointer;
+    }
+
+    .checkbox-label input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--border-color);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .btn {
+      padding: 0.6rem 1.25rem;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      border: 2px solid var(--border-color);
+      cursor: pointer;
+      border-radius: 0;
+    }
+
+    .btn:hover {
+      background-color: var(--border-color);
+      color: var(--bg-main);
+    }
+
+    .btn-secondary {
+      border-style: dashed;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 1.5rem;
+      border-top: 2px solid var(--border-color);
+      padding-top: 1.5rem;
+    }
+
+    .file-input-wrapper {
+      position: relative;
+      overflow: hidden;
+      display: inline-block;
+    }
+
+    .file-input-wrapper input[type=file] {
+      font-size: 100px;
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <h1>Character Creator</h1>
+      <div class="header-actions">
+        <div class="file-input-wrapper">
+          <button type="button" class="btn btn-secondary">Import JSON</button>
+          <input type="file" id="importFile" accept=".json">
+        </div>
+        <button type="button" id="exportBtn" class="btn btn-secondary">Export JSON</button>
+      </div>
+    </div>
+
+    <form id="characterForm">
+      <!-- Section 1: Content Filter Controls -->
+      <div class="section">
+        <div class="section-title">Content Settings</div>
+        <div class="toggle-container">
+          <div class="toggle-info">
+            <span class="title">Allow NSFW / Sensitive Attributes</span>
+            <span class="desc">Toggle to show or hide genitalia, fluids, capacity, and physiological flags</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="nsfw_allowed">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Section 2: General Identification -->
+      <div class="section">
+        <div class="section-title">General Information</div>
+        <div class="grid">
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" placeholder="Character Name">
+          </div>
+          <div class="form-group">
+            <label for="gender">Gender Identity</label>
+            <select id="gender" name="gender">
+              <option value="unspecified">Unspecified</option>
+              <option value="female">Female</option>
+              <option value="male">Male</option>
+              <option value="nonbinary">Non-Binary</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="age">Age</label>
+            <input type="number" id="age" name="age" min="0" placeholder="Years">
+          </div>
+          <div class="form-group">
+            <label for="height">Height (cm)</label>
+            <input type="number" id="height" name="height" min="0" placeholder="170">
+          </div>
+          <div class="form-group full-width">
+            <label for="description">Physical Description</label>
+            <textarea id="description" name="description" placeholder="General appearance details..."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Attributes & Base Stats -->
+      <div class="section">
+        <div class="section-title">Attributes & Abilities</div>
+        <div class="grid">
+          <div class="form-group">
+            <label for="statStrength">Strength</label>
+            <input type="number" id="statStrength" name="stats.strength" value="10">
+          </div>
+          <div class="form-group">
+            <label for="statAgility">Agility</label>
+            <input type="number" id="statAgility" name="stats.agility" value="10">
+          </div>
+          <div class="form-group">
+            <label for="statEndurance">Endurance</label>
+            <input type="number" id="statEndurance" name="stats.endurance" value="10">
+          </div>
+          <div class="form-group">
+            <label for="statIntelligence">Intelligence</label>
+            <input type="number" id="statIntelligence" name="stats.intelligence" value="10">
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 4: Sensitive / NSFW Attributes -->
+      <div id="sensitiveSection" class="section hidden">
+        <div class="section-title">Sensitive Attributes</div>
+        <div class="grid">
+          
+          <!-- Genitalia Selection -->
+          <div class="form-group full-width">
+            <label for="genitaliaType">Genitalia Type</label>
+            <select id="genitaliaType" name="sensitive.genitaliaType">
+              <option value="none">None / Unspecified</option>
+              <option value="female">Female Genitalia</option>
+              <option value="male">Male Genitalia</option>
+              <option value="both">Both / Intersex</option>
+            </select>
+          </div>
+
+          <!-- Male Genitalia Specific Measurements -->
+          <div id="maleGenitaliaFields" class="full-width grid hidden">
+            <div class="form-group">
+              <label for="penisLength">Genitalia Length (cm)</label>
+              <input type="number" id="penisLength" name="sensitive.penisLength" min="0" step="0.5" placeholder="15">
+            </div>
+            <div class="form-group">
+              <label for="penisCircumference">Genitalia Circumference (cm)</label>
+              <input type="number" id="penisCircumference" name="sensitive.penisCircumference" min="0" step="0.5" placeholder="12">
+            </div>
+          </div>
+
+          <!-- Physiological Capacity Metrics -->
+          <div class="form-group">
+            <label for="bladderCapacity">Bladder Capacity (ml)</label>
+            <input type="number" id="bladderCapacity" name="sensitive.bladderCapacity" min="0" placeholder="400">
+          </div>
+
+          <div class="form-group">
+            <label for="semenVolume">Semen Volume (ml)</label>
+            <input type="number" id="semenVolume" name="sensitive.semenVolume" min="0" step="0.1" placeholder="3.5">
+          </div>
+
+          <div class="form-group full-width">
+            <label for="lactationRate">Lactation Rate (ml/hr)</label>
+            <input type="number" id="lactationRate" min="0" name="sensitive.lactationRate" step="0.1" placeholder="0">
+          </div>
+
+          <!-- Physiological Flags -->
+          <div class="form-group full-width">
+            <label>Physiological & Sensitive Flags</label>
+            <div class="checkbox-grid">
+              <label class="checkbox-label">
+                <input type="checkbox" id="flagLactating" name="sensitive.flags.lactating"> Lactating
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="flagHeatCycle" name="sensitive.flags.heatCycle"> Heat / Rut Cycle
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="flagHyperSensitivity" name="sensitive.flags.hypersensitivity"> Hypersensitive
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="flagIncontinence" name="sensitive.flags.incontinence"> Bladder Incontinence
+              </label>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Actions Footer -->
+      <div class="actions">
+        <button type="button" id="resetBtn" class="btn btn-secondary">Reset Form</button>
+        <button type="submit" class="btn">Save Character</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    // System State Engine
+    const App = {
+      elements: {
+        form: document.getElementById('characterForm'),
+        nsfwToggle: document.getElementById('nsfw_allowed'),
+        sensitiveSection: document.getElementById('sensitiveSection'),
+        genitaliaTypeSelect: document.getElementById('genitaliaType'),
+        maleGenitaliaFields: document.getElementById('maleGenitaliaFields'),
+        exportBtn: document.getElementById('exportBtn'),
+        importFile: document.getElementById('importFile'),
+        resetBtn: document.getElementById('resetBtn')
+      },
+
+      init() {
+        this.bindEvents();
+        this.updateVisibility();
+      },
+
+      bindEvents() {
+        // Toggle Listeners
+        this.elements.nsfwToggle.addEventListener('change', () => this.updateVisibility());
+        this.elements.genitaliaTypeSelect.addEventListener('change', () => this.updateVisibility());
+
+        // Import / Export / Save / Reset Handlers
+        this.elements.form.addEventListener('submit', (e) => this.handleSubmit(e));
+        this.elements.exportBtn.addEventListener('click', () => this.exportJSON());
+        this.elements.importFile.addEventListener('change', (e) => this.importJSON(e));
+        this.elements.resetBtn.addEventListener('click', () => this.resetForm());
+      },
+
+      updateVisibility() {
+        const isNSFWAllowed = this.elements.nsfwToggle.checked;
+        const selectedGenitalia = this.elements.genitaliaTypeSelect.value;
+        const hasMaleGenitalia = (selectedGenitalia === 'male' || selectedGenitalia === 'both');
+
+        // Sensitive Section Visiblity
+        if (isNSFWAllowed) {
+          this.elements.sensitiveSection.classList.remove('hidden');
+        } else {
+          this.elements.sensitiveSection.classList.add('hidden');
+        }
+
+        // Male Genitalia Dimension Fields Visibility
+        if (isNSFWAllowed && hasMaleGenitalia) {
+          this.elements.maleGenitaliaFields.classList.remove('hidden');
+        } else {
+          this.elements.maleGenitaliaFields.classList.add('hidden');
+        }
+      },
+
+      // Serializes Form fields into structured JSON state
+      getSerializedData() {
+        const formData = new FormData(this.elements.form);
+        const data = {
+          nsfw_allowed: this.elements.nsfwToggle.checked,
+          name: formData.get('name') || '',
+          gender: formData.get('gender') || 'unspecified',
+          age: Number(formData.get('age')) || null,
+          height: Number(formData.get('height')) || null,
+          description: formData.get('description') || '',
+          stats: {
+            strength: Number(formData.get('stats.strength')) || 0,
+            agility: Number(formData.get('stats.agility')) || 0,
+            endurance: Number(formData.get('stats.endurance')) || 0,
+            intelligence: Number(formData.get('stats.intelligence')) || 0,
+          },
+          sensitive: {
+            genitaliaType: formData.get('sensitive.genitaliaType') || 'none',
+            penisLength: Number(formData.get('sensitive.penisLength')) || null,
+            penisCircumference: Number(formData.get('sensitive.penisCircumference')) || null,
+            bladderCapacity: Number(formData.get('sensitive.bladderCapacity')) || null,
+            semenVolume: Number(formData.get('sensitive.semenVolume')) || null,
+            lactationRate: Number(formData.get('sensitive.lactationRate')) || null,
+            flags: {
+              lactating: document.getElementById('flagLactating').checked,
+              heatCycle: document.getElementById('flagHeatCycle').checked,
+              hypersensitivity: document.getElementById('flagHyperSensitivity').checked,
+              incontinence: document.getElementById('flagIncontinence').checked
+            }
+          }
+        };
+
+        // Strip non-allowed sensitive data if NSFW is false during export
+        if (!data.nsfw_allowed) {
+          data.sensitive = {
+            genitaliaType: 'none',
+            penisLength: null,
+            penisCircumference: null,
+            bladderCapacity: null,
+            semenVolume: null,
+            lactationRate: null,
+            flags: {
+              lactating: false,
+              heatCycle: false,
+              hypersensitivity: false,
+              incontinence: false
+            }
+          };
+        }
+
+        return data;
+      },
+
+      // Deserializes state back into DOM elements
+      loadDataIntoForm(data) {
+        if (!data) return;
+
+        // Settings
+        this.elements.nsfwToggle.checked = Boolean(data.nsfw_allowed);
+
+        // General
+        document.getElementById('name').value = data.name || '';
+        document.getElementById('gender').value = data.gender || 'unspecified';
+        document.getElementById('age').value = data.age || '';
+        document.getElementById('height').value = data.height || '';
+        document.getElementById('description').value = data.description || '';
+
+        // Stats
+        if (data.stats) {
+          document.getElementById('statStrength').value = data.stats.strength ?? 10;
+          document.getElementById('statAgility').value = data.stats.agility ?? 10;
+          document.getElementById('statEndurance').value = data.stats.endurance ?? 10;
+          document.getElementById('statIntelligence').value = data.stats.intelligence ?? 10;
+        }
+
+        // Sensitive Attributes
+        if (data.sensitive) {
+          document.getElementById('genitaliaType').value = data.sensitive.genitaliaType || 'none';
+          document.getElementById('penisLength').value = data.sensitive.penisLength || '';
+          document.getElementById('penisCircumference').value = data.sensitive.penisCircumference || '';
+          document.getElementById('bladderCapacity').value = data.sensitive.bladderCapacity || '';
+          document.getElementById('semenVolume').value = data.sensitive.semenVolume || '';
+          document.getElementById('lactationRate').value = data.sensitive.lactationRate || '';
+
+          if (data.sensitive.flags) {
+            document.getElementById('flagLactating').checked = Boolean(data.sensitive.flags.lactating);
+            document.getElementById('flagHeatCycle').checked = Boolean(data.sensitive.flags.heatCycle);
+            document.getElementById('flagHyperSensitivity').checked = Boolean(data.sensitive.flags.hypersensitivity);
+            document.getElementById('flagIncontinence').checked = Boolean(data.sensitive.flags.incontinence);
+          }
+        }
+
+        // Refresh dynamic UI elements
+        this.updateVisibility();
+      },
+
+      exportJSON() {
+        const payload = this.getSerializedData();
+        const jsonStr = JSON.stringify(payload, null, 2);
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${payload.name.toLowerCase().replace(/\s+/g, '_') || 'character'}_data.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      },
+
+      importJSON(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const parsed = JSON.parse(e.target.result);
+            this.loadDataIntoForm(parsed);
+          } catch (err) {
+            alert('Error parsing JSON file. Please check file structure.');
+          }
+        };
+        reader.readAsText(file);
+        event.target.value = ''; // Reset input
+      },
+
+      handleSubmit(e) {
+        e.preventDefault();
+        const characterData = this.getSerializedData();
+        console.log('Character Saved:', characterData);
+        alert(`Character "${characterData.name || 'Unnamed'}" saved successfully! Check console for full output object.`);
+      },
+
+      resetForm() {
+        if (confirm('Are you sure you want to reset all attributes?')) {
+          this.elements.form.reset();
+          this.elements.nsfwToggle.checked = false;
+          this.updateVisibility();
+        }
+      }
+    };
+
+    // Initialize Application
+    document.addEventListener('DOMContentLoaded', () => App.init());
+  </script>
+</body>
+</html>
