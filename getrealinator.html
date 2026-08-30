@@ -11,12 +11,18 @@
     <div class="container">
         <div style="display:flex; flex-direction:row; align-items:center; justify-content:center;">
             <h2>getrealinator</h2>
-            <img 
+            <img
                style="height:3rem; width:3rem; margin-left:1.5rem;"
                src="https://tr.rbxcdn.com/180DAY-5b5c671a68c176d93cb6050cb2fccdcc/420/420/Hat/Webp/noFilter"
             >
         </div>
         <input type="file" id="imageInput" accept="image/*,.gif">
+        <br>
+        <div style="margin-top:0.5rem;">
+            <input type="text" id="urlInput" placeholder="Paste a direct GIF/image link (e.g. media.tenor.com/...)" style="width:50%;">
+            <button id="loadUrlBtn">Load from URL</button>
+        </div>
+        <span id="urlError" style="color:red; display:none;"></span>
         <br>
 
         <canvas id="memeCanvas" style="width:50%; max-height:70%; overflow:scroll; margin:auto; display:none;"></canvas>
@@ -30,189 +36,226 @@
 
 <script type="module">
     import { parseGIF, decompressFrames } from "https://cdn.jsdelivr.net/npm/gifuct-js@2.1.0/+esm";
-	import { GIFEncoder, quantize, applyPalette } from "https://cdn.jsdelivr.net/npm/gifenc@1.0.3/+esm";
-        let animationInterval = null;
+    import { GIFEncoder, quantize, applyPalette } from "https://cdn.jsdelivr.net/npm/gifenc@1.0.3/+esm";
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const imageInput = document.getElementById('imageInput');
-            const canvas = document.getElementById('memeCanvas');
-            const ctx = canvas.getContext('2d');
-            const downloadBtn = document.getElementById('download');
-            const progressContainer = document.getElementById('progressContainer');
-            const progressBar = document.getElementById('progressBar');
+    let animationInterval = null;
 
-            if (imageInput) {
-                imageInput.addEventListener('change', async (event) => {
-                    const file = event.target.files[0];
-                    if (!file) return;
+    document.addEventListener('DOMContentLoaded', () => {
+        const imageInput = document.getElementById('imageInput');
+        const canvas = document.getElementById('memeCanvas');
+        const ctx = canvas.getContext('2d');
+        const downloadBtn = document.getElementById('download');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressBar = document.getElementById('progressBar');
+        const urlInput = document.getElementById('urlInput');
+        const loadUrlBtn = document.getElementById('loadUrlBtn');
+        const urlError = document.getElementById('urlError');
 
-                    // Clear any previous animation loop
-                    if (animationInterval) {
-                        clearInterval(animationInterval);
-                        animationInterval = null;
+        // Draws the white "GET REAL" banner + source image onto the given canvas/context
+        function drawBanner(ctx, canvas, sourceCanvasOrImg, bannerHeight, drawOffsetY) {
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillRect(0, 0, canvas.width, bannerHeight);
+
+            ctx.drawImage(sourceCanvasOrImg, 0, drawOffsetY);
+
+            let fontSize = bannerHeight * 0.65;
+            ctx.font = `bold ${fontSize}px Impact, sans-serif`;
+            const maxAllowedWidth = canvas.width * 0.92;
+            const textWidth = ctx.measureText('GET REAL').width;
+
+            if (textWidth > maxAllowedWidth) {
+                fontSize = fontSize * (maxAllowedWidth / textWidth);
+                ctx.font = `bold ${fontSize}px Impact, sans-serif`;
+            }
+
+            ctx.fillStyle = '#000000';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('GET REAL', canvas.width / 2, bannerHeight / 2);
+        }
+
+        async function processFile(file) {
+            if (!file) return;
+
+            // Clear any previous animation loop
+            if (animationInterval) {
+                clearInterval(animationInterval);
+                animationInterval = null;
+            }
+
+            const isGif = file.type === 'image/gif' || file.name.toLowerCase().endsWith('.gif');
+
+            if (isGif) {
+                progressContainer.style.display = 'block';
+                progressBar.style.width = '0%';
+
+                try {
+                    const buffer = await file.arrayBuffer();
+
+                    const gif = parseGIF(buffer);
+                    const frames = decompressFrames(gif, true);
+
+                    if (!frames || frames.length === 0) return;
+
+                    const originalWidth = frames[0].dims.width;
+                    const originalHeight = frames[0].dims.height;
+                    const bannerHeight = Math.max(60, originalHeight * 0.15);
+
+                    canvas.width = originalWidth;
+                    canvas.height = originalHeight + bannerHeight;
+
+                    const tempCanvas = document.createElement('canvas');
+                    tempCanvas.width = originalWidth;
+                    tempCanvas.height = originalHeight;
+                    const tempCtx = tempCanvas.getContext('2d');
+
+                    const processedFrames = [];
+                    const gifWriter = GIFEncoder();
+
+                    for (let i = 0; i < frames.length; i++) {
+                        const frame = frames[i];
+
+                        // Draw frame patch
+                        const imgData = tempCtx.createImageData(frame.dims.width, frame.dims.height);
+                        imgData.data.set(frame.patch);
+                        tempCtx.putImageData(imgData, frame.dims.left, frame.dims.top);
+
+                        // Draw banner + frame
+                        drawBanner(ctx, canvas, tempCanvas, bannerHeight, bannerHeight);
+
+                        // Save frame snapshot for canvas preview playback
+                        const frameSnapshot = document.createElement('canvas');
+                        frameSnapshot.width = canvas.width;
+                        frameSnapshot.height = canvas.height;
+                        frameSnapshot.getContext('2d').drawImage(canvas, 0, 0);
+                        processedFrames.push({
+                            canvas: frameSnapshot,
+                            delay: frame.delay || 100
+                        });
+
+                        // Encode frame for final GIF output
+                        const fullFrameData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                        const palette = quantize(fullFrameData.data, 256);
+                        const index = applyPalette(fullFrameData.data, palette);
+
+                        gifWriter.writeFrame(index, canvas.width, canvas.height, {
+                            palette,
+                            delay: frame.delay || 100
+                        });
+
+                        // Update progress bar
+                        const percent = Math.round(((i + 1) / frames.length) * 100);
+                        progressBar.style.width = percent + '%';
+                        await new Promise(resolve => setTimeout(resolve, 0));
                     }
 
-                    const isGif = file.type === 'image/gif' || file.name.toLowerCase().endsWith('.gif');
+                    gifWriter.finish();
+                    const gifBytes = gifWriter.bytes();
 
-                    if (isGif) {
-                        progressContainer.style.display = 'block';
-                        progressBar.style.width = '0%';
-                        
+                    const blob = new Blob([gifBytes], { type: 'image/gif' });
+                    downloadBtn.href = URL.createObjectURL(blob);
+                    downloadBtn.download = 'get-real.gif';
+                    progressContainer.style.display = 'none';
+
+                    // Show UI elements
+                    canvas.style.display = 'block';
+                    downloadBtn.style.display = 'inline-block';
+
+                    // Start preview animation loop
+                    let currentFrameIndex = 0;
+                    function playPreview() {
+                        const current = processedFrames[currentFrameIndex];
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        ctx.drawImage(current.canvas, 0, 0);
+                        currentFrameIndex = (currentFrameIndex + 1) % processedFrames.length;
+                        animationInterval = setTimeout(playPreview, current.delay);
+                    }
+                    playPreview();
+
+                } catch (err) {
+                    console.error("Error processing GIF:", err);
+                    progressContainer.style.display = 'none';
+                }
+
+            } else {
+                // Static image — now also exported as a single-frame .gif
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const img = new Image();
+                    img.onload = function () {
                         try {
-                            const buffer = await file.arrayBuffer();
-                            
-				// after
-				const gif = parseGIF(buffer);
-				const frames = decompressFrames(gif, true);
+                            const bannerHeight = Math.max(60, img.height * 0.15);
 
-                            if (!frames || frames.length === 0) return;
+                            canvas.width = img.width;
+                            canvas.height = img.height + bannerHeight;
 
-                            const originalWidth = frames[0].dims.width;
-                            const originalHeight = frames[0].dims.height;
-                            const bannerHeight = Math.max(60, originalHeight * 0.15);
-                            
-                            canvas.width = originalWidth;
-                            canvas.height = originalHeight + bannerHeight;
+                            drawBanner(ctx, canvas, img, bannerHeight, bannerHeight);
 
-                            const tempCanvas = document.createElement('canvas');
-                            tempCanvas.width = originalWidth;
-                            tempCanvas.height = originalHeight;
-                            const tempCtx = tempCanvas.getContext('2d');
+                            canvas.style.display = 'block';
 
-                            const processedFrames = []; // Initialized correctly here
-
+                            // Encode as a single-frame GIF instead of PNG
                             const gifWriter = GIFEncoder();
+                            const fullFrameData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                            const palette = quantize(fullFrameData.data, 256);
+                            const index = applyPalette(fullFrameData.data, palette);
 
-                            for (let i = 0; i < frames.length; i++) {
-                                const frame = frames[i];
-
-                                // Draw frame patch
-                                const imgData = tempCtx.createImageData(frame.dims.width, frame.dims.height);
-                                imgData.data.set(frame.patch);
-                                tempCtx.putImageData(imgData, frame.dims.left, frame.dims.top);
-
-                                // Draw banner background
-                                ctx.fillStyle = '#FFFFFF';
-                                ctx.fillRect(0, 0, canvas.width, bannerHeight);
-
-                                // Draw frame image below banner
-                                ctx.drawImage(tempCanvas, 0, bannerHeight);
-
-                                // Render "GET REAL" text dynamically
-                                let fontSize = bannerHeight * 0.65;
-                                ctx.font = `bold ${fontSize}px Impact, sans-serif`;
-                                const maxAllowedWidth = canvas.width * 0.92;
-                                const textWidth = ctx.measureText('GET REAL').width;
-
-                                if (textWidth > maxAllowedWidth) {
-                                    fontSize = fontSize * (maxAllowedWidth / textWidth);
-                                    ctx.font = `bold ${fontSize}px Impact, sans-serif`;
-                                }
-
-                                ctx.fillStyle = '#000000';
-                                ctx.textAlign = 'center';
-                                ctx.textBaseline = 'middle';
-                                ctx.fillText('GET REAL', canvas.width / 2, bannerHeight / 2);
-
-                                // Save frame snapshot for canvas preview playback
-                                const frameSnapshot = document.createElement('canvas');
-                                frameSnapshot.width = canvas.width;
-                                frameSnapshot.height = canvas.height;
-                                frameSnapshot.getContext('2d').drawImage(canvas, 0, 0);
-                                processedFrames.push({
-                                    canvas: frameSnapshot,
-                                    delay: frame.delay || 100
-                                });
-
-                                // Encode frame for final GIF output
-                                const fullFrameData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                                const palette = quantize(fullFrameData.data, 256);
-                                const index = applyPalette(fullFrameData.data, palette);
-
-                                gifWriter.writeFrame(index, canvas.width, canvas.height, {
-                                    palette,
-                                    delay: frame.delay || 100
-                                });
-
-                                // Update progress bar
-                                const percent = Math.round(((i + 1) / frames.length) * 100);
-                                progressBar.style.width = percent + '%';
-                                await new Promise(resolve => setTimeout(resolve, 0));
-                            }
-
+                            gifWriter.writeFrame(index, canvas.width, canvas.height, { palette });
                             gifWriter.finish();
                             const gifBytes = gifWriter.bytes();
 
                             const blob = new Blob([gifBytes], { type: 'image/gif' });
                             downloadBtn.href = URL.createObjectURL(blob);
                             downloadBtn.download = 'get-real.gif';
-                            progressContainer.style.display = 'none';
-
-                            // Show UI elements
-                            canvas.style.display = 'block';
                             downloadBtn.style.display = 'inline-block';
-
-                            // Start preview animation loop
-                            let currentFrameIndex = 0;
-                            function playPreview() {
-                                const current = processedFrames[currentFrameIndex];
-                                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                                ctx.drawImage(current.canvas, 0, 0);
-                                currentFrameIndex = (currentFrameIndex + 1) % processedFrames.length;
-                                animationInterval = setTimeout(playPreview, current.delay);
-                            }
-                            playPreview();
-
                         } catch (err) {
-                            console.error("Error processing GIF:", err);
-                            progressContainer.style.display = 'none';
+                            console.error("Error processing image:", err);
                         }
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
 
-                    } else {
-                        // Standard Static Image Handling (PNG, JPG, WebP, etc.)
-                        const reader = new FileReader();
-                        reader.onload = function (e) {
-                            const img = new Image();
-                            img.onload = function () {
-                                const bannerHeight = Math.max(60, img.height * 0.15);
-                                
-                                canvas.width = img.width;
-                                canvas.height = img.height + bannerHeight;
+        if (imageInput) {
+            imageInput.addEventListener('change', (event) => {
+                processFile(event.target.files[0]);
+            });
+        }
 
-                                ctx.fillStyle = '#FFFFFF';
-                                ctx.fillRect(0, 0, canvas.width, bannerHeight);
+        // Load from a pasted direct media URL (e.g. a Tenor/Giphy direct .gif link)
+        loadUrlBtn.addEventListener('click', async () => {
+            const url = urlInput.value.trim();
+            if (!url) return;
 
-                                ctx.drawImage(img, 0, bannerHeight);
+            urlError.style.display = 'none';
 
-                                let fontSize = bannerHeight * 0.65;
-                                ctx.font = `bold ${fontSize}px Impact, sans-serif`;
-                                
-                                const maxAllowedWidth = canvas.width * 0.92;
-                                const textWidth = ctx.measureText('GET REAL').width;
-                                
-                                if (textWidth > maxAllowedWidth) {
-                                    fontSize = fontSize * (maxAllowedWidth / textWidth);
-                                    ctx.font = `bold ${fontSize}px Impact, sans-serif`;
-                                }
+            try {
+                const response = await fetch(url, { mode: 'cors' });
+                if (!response.ok) {
+                    throw new Error(`Server responded with ${response.status}`);
+                }
 
-                                ctx.fillStyle = '#000000';
-                                ctx.textAlign = 'center';
-                                ctx.textBaseline = 'middle';
-                                
-                                ctx.fillText('GET REAL', canvas.width / 2, bannerHeight / 2);
+                const blob = await response.blob();
 
-                                canvas.style.display = 'block';
-                                downloadBtn.style.display = 'inline-block';
-                                downloadBtn.href = canvas.toDataURL('image/png');
-                                downloadBtn.download = 'get-real.png';
-                            };
-                            img.src = e.target.result;
-                        };
-                        reader.readAsDataURL(file);
-                    }
-                });
+                const contentType = blob.type || 'image/png';
+                const isGifUrl = contentType === 'image/gif' || url.toLowerCase().split('?')[0].endsWith('.gif');
+                const filename = isGifUrl ? 'from-url.gif' : 'from-url.png';
+
+                const file = new File([blob], filename, { type: contentType });
+                processFile(file);
+
+            } catch (err) {
+                console.error('Error loading from URL:', err);
+                urlError.textContent = "Couldn't load that link — make sure it's a direct link to the image/GIF file, not a share page.";
+                urlError.style.display = 'inline';
             }
         });
-    </script>
+
+        urlInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') loadUrlBtn.click();
+        });
+    });
+</script>
 </body>
 </html>
