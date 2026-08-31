@@ -28,6 +28,10 @@
 			<input type="checkbox" id="capsToggle" checked>
 		    <div> ALL CAPS</div>
 		</label>
+		<label style="margin-top:0.5rem; margin-left:1rem; justify-conent: left">
+			<input type="checkbox" id="twitchyToggle">
+		    <div> TWITCHY MODE</div>
+		</label>
 	    </div>
         </div>
         <span id="urlError" style="color:red; display:none;"></span>
@@ -61,6 +65,7 @@
         const loadUrlBtn = document.getElementById('loadUrlBtn');
         const urlError = document.getElementById('urlError');
         const capsToggle = document.getElementById('capsToggle');
+        const twitchyToggle = document.getElementById('twitchyToggle');
 
         // Silly easter eggs: rare alternate banner text, and rare bottom placement.
         // Checked in priority order (rarest first), so "get bent"'s effective rate
@@ -69,8 +74,8 @@
         function pickBannerText() {
             const roll = Math.random();
             if (roll < 1 / 1000) return '67';
-            if (roll < 1 / 100) return capsToggle.checked ? 'GET BENT' : 'get bent';
-            return capsToggle.checked ? 'GET REAL' : 'get real';
+            if (roll < 1 / 100) return capsToggle.checked ? 'GET BENT' : 'Get Bent';
+            return capsToggle.checked ? 'GET REAL' : 'Get Real';
         }
 
         function pickBannerPosition() {
@@ -120,7 +125,7 @@
         // Extracts sampled frames from a video file and returns them in the same
         // shape gifuct-js frames come in ({ dims, patch: null }) isn't used here —
         // instead this draws straight to the temp canvas per frame via a callback.
-        async function processVideo(file, bannerText, bannerPosition) {
+        async function processVideo(file, bannerText, bannerPosition, twitchy) {
             const video = document.createElement('video');
             video.preload = 'auto';
             video.muted = true;
@@ -162,7 +167,9 @@
                     const t = Math.min(i * interval, duration - 0.001);
                     await seekVideo(video, t);
 
-                    drawBanner(ctx, canvas, video, bannerHeight, originalHeight, bannerPosition, bannerText);
+                    const frameText = twitchy ? pickBannerText() : bannerText;
+                    const framePosition = twitchy ? pickBannerPosition() : bannerPosition;
+                    drawBanner(ctx, canvas, video, bannerHeight, originalHeight, framePosition, frameText);
 
                     const frameSnapshot = document.createElement('canvas');
                     frameSnapshot.width = canvas.width;
@@ -224,10 +231,11 @@
             // Roll once per render so it's consistent across every frame
             const bannerText = pickBannerText();
             const bannerPosition = pickBannerPosition();
+            const twitchy = twitchyToggle.checked;
 
             if (isVideo) {
                 try {
-                    await processVideo(file, bannerText, bannerPosition);
+                    await processVideo(file, bannerText, bannerPosition, twitchy);
                 } catch (err) {
                     console.error("Error processing video:", err);
                     progressContainer.style.display = 'none';
@@ -271,7 +279,9 @@
                         tempCtx.putImageData(imgData, frame.dims.left, frame.dims.top);
 
                         // Draw banner + frame
-                        drawBanner(ctx, canvas, tempCanvas, bannerHeight, originalHeight, bannerPosition, bannerText);
+                        const frameText = twitchy ? pickBannerText() : bannerText;
+                        const framePosition = twitchy ? pickBannerPosition() : bannerPosition;
+                        drawBanner(ctx, canvas, tempCanvas, bannerHeight, originalHeight, framePosition, frameText);
 
                         // Save frame snapshot for canvas preview playback
                         const frameSnapshot = document.createElement('canvas');
@@ -376,6 +386,12 @@
         // Re-render whatever's currently loaded whenever a rendering-affecting
         // control (like the caps toggle) changes — no need to reselect the file.
         capsToggle.addEventListener('change', () => {
+            if (lastFile) {
+                processFile(lastFile);
+            }
+        });
+
+        twitchyToggle.addEventListener('change', () => {
             if (lastFile) {
                 processFile(lastFile);
             }
