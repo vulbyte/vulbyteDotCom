@@ -62,18 +62,32 @@
         const urlError = document.getElementById('urlError');
         const capsToggle = document.getElementById('capsToggle');
 
-        function getBannerText() {
+        // Silly easter eggs: rare alternate banner text, and rare bottom placement.
+        // Checked in priority order (rarest first), so "get bent"'s effective rate
+        // is slightly under 1% (the 0.1% "67" cases get intercepted first) — fine
+        // for a silly feature, just not mathematically exact.
+        function pickBannerText() {
+            const roll = Math.random();
+            if (roll < 1 / 1000) return '67';
+            if (roll < 1 / 100) return capsToggle.checked ? 'GET BENT' : 'get bent';
             return capsToggle.checked ? 'GET REAL' : 'get real';
         }
 
-        // Draws the white "GET REAL" banner + source image onto the given canvas/context
-        function drawBanner(ctx, canvas, sourceCanvasOrImg, bannerHeight, drawOffsetY) {
-            const bannerText = getBannerText();
+        function pickBannerPosition() {
+            return Math.random() < 1 / 20 ? 'bottom' : 'top';
+        }
+
+        // Draws the banner + source image onto the given canvas/context.
+        // bannerPosition is 'top' (default) or 'bottom'; bannerText is precomputed
+        // once per render so it stays consistent across every frame of a GIF/video.
+        function drawBanner(ctx, canvas, sourceCanvasOrImg, bannerHeight, imageHeight, bannerPosition, bannerText) {
+            const imageY = bannerPosition === 'bottom' ? 0 : bannerHeight;
+            const bannerY = bannerPosition === 'bottom' ? imageHeight : 0;
 
             ctx.fillStyle = '#FFFFFF';
-            ctx.fillRect(0, 0, canvas.width, bannerHeight);
+            ctx.fillRect(0, bannerY, canvas.width, bannerHeight);
 
-            ctx.drawImage(sourceCanvasOrImg, 0, drawOffsetY);
+            ctx.drawImage(sourceCanvasOrImg, 0, imageY);
 
             let fontSize = bannerHeight * 0.65;
             ctx.font = `bold ${fontSize}px Impact, sans-serif`;
@@ -88,7 +102,7 @@
             ctx.fillStyle = '#000000';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.fillText(bannerText, canvas.width / 2, bannerHeight / 2);
+            ctx.fillText(bannerText, canvas.width / 2, bannerY + bannerHeight / 2);
         }
 
         // Waits for a <video> element to finish seeking to a given time
@@ -106,7 +120,7 @@
         // Extracts sampled frames from a video file and returns them in the same
         // shape gifuct-js frames come in ({ dims, patch: null }) isn't used here —
         // instead this draws straight to the temp canvas per frame via a callback.
-        async function processVideo(file) {
+        async function processVideo(file, bannerText, bannerPosition) {
             const video = document.createElement('video');
             video.preload = 'auto';
             video.muted = true;
@@ -148,7 +162,7 @@
                     const t = Math.min(i * interval, duration - 0.001);
                     await seekVideo(video, t);
 
-                    drawBanner(ctx, canvas, video, bannerHeight, bannerHeight);
+                    drawBanner(ctx, canvas, video, bannerHeight, originalHeight, bannerPosition, bannerText);
 
                     const frameSnapshot = document.createElement('canvas');
                     frameSnapshot.width = canvas.width;
@@ -207,9 +221,13 @@
             const isGif = file.type === 'image/gif' || file.name.toLowerCase().endsWith('.gif');
             const isVideo = file.type.startsWith('video/') || /\.(mp4|webm|mov|m4v)$/i.test(file.name);
 
+            // Roll once per render so it's consistent across every frame
+            const bannerText = pickBannerText();
+            const bannerPosition = pickBannerPosition();
+
             if (isVideo) {
                 try {
-                    await processVideo(file);
+                    await processVideo(file, bannerText, bannerPosition);
                 } catch (err) {
                     console.error("Error processing video:", err);
                     progressContainer.style.display = 'none';
@@ -253,7 +271,7 @@
                         tempCtx.putImageData(imgData, frame.dims.left, frame.dims.top);
 
                         // Draw banner + frame
-                        drawBanner(ctx, canvas, tempCanvas, bannerHeight, bannerHeight);
+                        drawBanner(ctx, canvas, tempCanvas, bannerHeight, originalHeight, bannerPosition, bannerText);
 
                         // Save frame snapshot for canvas preview playback
                         const frameSnapshot = document.createElement('canvas');
@@ -321,7 +339,7 @@
                             canvas.width = img.width;
                             canvas.height = img.height + bannerHeight;
 
-                            drawBanner(ctx, canvas, img, bannerHeight, bannerHeight);
+                            drawBanner(ctx, canvas, img, bannerHeight, img.height, bannerPosition, bannerText);
 
                             canvas.style.display = 'block';
 
