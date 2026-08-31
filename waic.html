@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="module" src="client_management.js"></script>
+    <title>Worms Armageddon Map Converter</title>
+</head>
+<body>
+
+    <h1>Worms Armageddon Image Converter</h1>
+    <p>Drag and drop your image file here to convert it into a Worms Armageddon compliant indexed PNG map (max 112 colors, black = index 0, dimensions padded to a multiple of 8).</p>
+
+    <div id="dropzone" dropzone="copy" style="border:2px dashed #888;padding:40px;text-align:center;">
+        <p><strong>[ DRAG AND DROP IMAGE HERE ]</strong></p>
+    </div>
+
+    <hr>
+
+    <h2>Output Map</h2>
+    <a id="download-link" download="wa_custom_map.png" hidden>Download WA Compliant PNG</a>
+    <br><br>
+    <img id="output-image" alt="Converted map will appear here">
+
+    <script>
+        const dropzone = document.getElementById('dropzone');
+        const outputImage = document.getElementById('output-image');
+        const downloadLink = document.getElementById('download-link');
+
+        const MAX_COLORS = 112; // includes the forced black at index 0
+
+        dropzone.addEventListener('dragover', (event) => event.preventDefault());
+
+        dropzone.addEventListener('drop', (event) => {
+            event.preventDefault();
+            const file = event.dataTransfer.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => convertToWAMap(img).catch(err => {
+                    console.error(err);
+                    alert('Conversion failed: ' + err.message);
+                });
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+
+        async function convertToWAMap(img) {
+            // --- 1. Pad dimensions to a multiple of 8 (required by W:A) ---
+            const padTo8 = (n) => Math.ceil(n / 8) * 8;
+            const width = padTo8(img.width);
+            const height = padTo8(img.height);
+
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+
+            // Fill with pure black first: this becomes the padding color AND
+            // flattens any transparency (W:A maps have no alpha channel).
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, width, height);
+            ctx.drawImage(img, 0, 0);
+
+            const imageData = ctx.getImageData(0, 0, width, height);
+            const data = imageData.data;
+
+            // --- 2. Build a palette, forcing pure black into index 0 ---
+            const colorCounts = new Map();
+            for (let i = 0; i < data.length; i += 4) {
+                const key = (data[i] << 16) | (data[i + 1] << 8) | data[i + 2];
+                colorCounts.set(key, (colorCounts.get(key) || 0) + 1);
+            }
+            colorCounts.delete(0); // pure black handled separately, always index 0
+
+            const sorted = [...colorCounts.entries()].sort((a, b) => b[1] - a[1]);
+            const palette = [[0, 0, 0]]; // index 0 MUST be pure black
+            for (const [key] of sorted) {
+                if (palette.length >= MAX_COLORS) break;
+                palette.push([(key >> 16) & 0xff, (key >> 8) & 0xff, key & 0xff]);
+            }
+            // Pad palette to at least 17 entries so encoders/tools treat this as
+            // 8-bit indexed rather than collapsing it to 1/4-bit.
+            while (palette.length < 17) palette.push([0, 0, 0]);
+
+            // --- 3. Map every pixel to its nearest palette index ---
+            const indices = new Uint8Array(width * height);
+            for (let p = 0, i = 0; i < data.length; i += 4, p++) {
+                const r = data[i], g = data[i + 1], b = data[i + 2];
+                let best = 0, bestDist = Infinity;
+                for (let j = 0; j < palette.length; j++) {
+                    const [pr, pg, pb] = palette[j];
+                    const d = (r - pr) ** 2 + (g - pg) ** 2 + (b - pb) ** 2;
+                    if (d < bestDist) { bestDist = d; best = j; }
+                }
+                indices[p] = best;
+            }
+
+            // --- 4. Encode as a real indexed (color type 3) PNG ---
+            const pngBytes = await encodeIndexedPNG(width, height, palette, indices);
+            const blob = new Blob([pngBytes], { type: 'image/png' });
+            const url = URL.createObjectURL(blob);
+
+            outputImage.src = url;
+            downloadLink.href = url;
+            downloadLink.hidden = false;
+        }
+
+        // ---------- Minimal indexed-PNG encoder ----------
+
+        async function encodeIndexedPNG(width, height, palette, indices) {
+            const chunks = [];
+            chunks.push(pngSignature());
+            chunks.push(makeChunk('IHDR', buildIHDR(width, height)));
+            chunks.push(makeChunk('PLTE', buildPLTE(palette)));
+
+            const raw = buildRawScanlines(width, height, indices);
+            const compressed = await deflateZlib(raw);
+            chunks.push(makeChunk('IDAT', compressed));
+
+            chunks.push(makeChunk('IEND', new Uint8Array(0)));
+            return concatUint8Arrays(chunks);
+        }
+
+        function pngSignature() {
+            return new Uint8Array([137, 80, 78, 71, 13, 10, 26, 10]);
+        }
+
+        function buildIHDR(width, height) {
+            const buf = new Uint8Array(13);
+            const view = new DataView(buf.buffer);
+            view.setUint32(0, width);
+            view.setUint32(4, height);
+            buf[8] = 8;  // bit depth
+            buf[9] = 3;  // color type 3 = indexed/palette
+            buf[10] = 0; // compression
+            buf[11] = 0; // filter
+            buf[12] = 0; // interlace
+            return buf;
+        }
+
+        function buildPLTE(palette) {
+            const buf = new Uint8Array(palette.length * 3);
+            palette.forEach(([r, g, b], i) => {
+                buf[i * 3] = r; buf[i * 3 + 1] = g; buf[i * 3 + 2] = b;
+            });
+            return buf;
+        }
+
+        function buildRawScanlines(width, height, indices) {
+            // Each row: 1 filter byte (0 = None) + width index bytes
+            const raw = new Uint8Array(height * (width + 1));
+            for (let y = 0; y < height; y++) {
+                const rowStart = y * (width + 1);
+                raw[rowStart] = 0; // filter type None
+                raw.set(indices.subarray(y * width, (y + 1) * width), rowStart + 1);
+            }
+            return raw;
+        }
+
+        async function deflateZlib(data) {
+            // 'deflate' (not 'deflate-raw') gives zlib-wrapped output, which is
+            // exactly what PNG IDAT chunks require.
+            const cs = new CompressionStream('deflate');
+            const writer = cs.writable.getWriter();
+            writer.write(data);
+            writer.close();
+            const compressedBuf = await new Response(cs.readable).arrayBuffer();
+            return new Uint8Array(compressedBuf);
+        }
+
+        function makeChunk(type, data) {
+            const typeBytes = new TextEncoder().encode(type);
+            const chunk = new Uint8Array(4 + 4 + data.length + 4);
+            const view = new DataView(chunk.buffer);
+            view.setUint32(0, data.length);
+            chunk.set(typeBytes, 4);
+            chunk.set(data, 8);
+            const crc = crc32(concatUint8Arrays([typeBytes, data]));
+            view.setUint32(8 + data.length, crc >>> 0);
+            return chunk;
+        }
+
+        function concatUint8Arrays(arrays) {
+            const total = arrays.reduce((sum, a) => sum + a.length, 0);
+            const out = new Uint8Array(total);
+            let offset = 0;
+            for (const a of arrays) { out.set(a, offset); offset += a.length; }
+            return out;
+        }
+
+        // Standard CRC32 (used by PNG chunks)
+        let crcTable = null;
+        function crc32(buf) {
+            if (!crcTable) {
+                crcTable = new Uint32Array(256);
+                for (let n = 0; n < 256; n++) {
+                    let c = n;
+                    for (let k = 0; k < 8; k++) {
+                        c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+                    }
+                    crcTable[n] = c;
+                }
+            }
+            let crc = 0xFFFFFFFF;
+            for (let i = 0; i < buf.length; i++) {
+                crc = crcTable[(crc ^ buf[i]) & 0xFF] ^ (crc >>> 8);
+            }
+            return (crc ^ 0xFFFFFFFF);
+        }
+    </script>
+</body>
+</html>
