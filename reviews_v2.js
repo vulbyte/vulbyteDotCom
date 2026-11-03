@@ -22,231 +22,396 @@ const reviews_v2 =
 		},
 		*/
 		{
-				name: "TUROK",
-				img: "",
-				datePlayed: "",
-				completed: false,
-				stream: "",
+			name: "resident evil: village [8]",
+				img: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1196590/header.jpg?t=1776927117",
+				datePlayed: "2026-10-31",
+				completed: true,
+				stream: "https://www.youtube.com/watch?v=th3bKPHDm78",
 				pros: [],
 				cons: [],
 				rankings: {
-						gameplay: 5,
-						graphics: 5,
-						audio: 5,
-						story: 5,
-						microtransactions: 5,
-						uniqueness: 5,
+						gameplay: 3,
+						graphics: 9,
+						audio: 9,
+						story: 1,
+						microtransactions: 4,
+						uniqueness: 7,
 				},
-				links: {steam: ""},
+				links: {steam: "https://store.steampowered.com/app/1196590/Resident_Evil_Village/"},
+				review: "https://www.reddit.com/r/residentevil/comments/18kjtuo/did_anyone_even_find_out_why_chris_redfield_is/"
+		},
+		{
+			name: "portal: reloaded",
+				img: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1255980/header.jpg?t=1732736194",
+				datePlayed: "2026-10-28",
+				completed: true,
+				stream: "https://www.youtube.com/watch?v=gVV7DXO1Hm4",
+				pros: [],
+				cons: [],
+				rankings: {
+						gameplay: 9,
+						graphics: 8,
+						audio: 9,
+						story: 7,
+						uniqueness: 10,
+				},
+				links: {steam: "https://store.steampowered.com/app/1255980/Portal_Reloaded/"},
+				review: ""
+		},
+		{
+				name: "battleblock theater",
+				img: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/238460/header.jpg?t=1779296698",
+				datePlayed: "2026-10-26",
+				completed: true,
+				stream: "https://www.youtube.com/watch?v=ymk67ViD8mw",
+				pros: [],
+				cons: [],
+				rankings: {
+						gameplay: 8,
+						graphics: 9,
+						audio: 8,
+						story: 6.5,
+						uniqueness: 9,
+				},
+				links: {steam: "https://store.steampowered.com/app/238460/BattleBlock_Theater/"},
+				review: ""
+		},
+		{
+			name: "scp: containment breach",
+				img: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2178380/efb81a4d472afc2251121c0d4c940d1dec4d70dc/header.jpg?t=1786191283",
+				datePlayed: "2026-10-21",
+				completed: true,
+				stream: "https://www.youtube.com/watch?v=VOfweeQtREY",
+				pros: [],
+				cons: [],
+				rankings: {
+						gameplay: 7.75,
+						graphics: 8,
+						audio: 7,
+						story: 8.5,
+						uniqueness: 10,
+				},
+				links: {steam: "https://store.steampowered.com/app/2178380/SCP_Containment_Breach/"},
+				review: ""
+		},
+		{
+				name: "inscription",
+				img: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1092790/header.jpg?t=1777572925",
+				datePlayed: "2026-10-17",
+				completed: true,
+				stream: "https://www.youtube.com/watch?v=noOQ7LJ2S8k",
+				pros: [],
+				cons: [],
+				rankings: {
+						gameplay: 7.5,
+						graphics: 8,
+						audio: 9,
+						story: 4,
+						uniqueness: 10,
+				},
+				links: {steam: "https://store.steampowered.com/app/1092790/Inscryption/"},
+				review: ""
+		},
+		{
+			name: "resident evil: biohazard [7]",
+				img: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/418370/header.jpg?t=1778464947",
+				datePlayed: "2026-10-13",
+				completed: true,
+				stream: "https://www.youtube.com/watch?v=gAGTnsoUpQg",
+				pros: [],
+				cons: [],
+				rankings: {
+						gameplay: 8,
+						graphics: 10,
+						audio: 10,
+						story: 9,
+						microtransactions: 6,
+						uniqueness: 10,
+				},
+				links: {steam: "https://store.steampowered.com/app/418370/Resident_Evil_7_Biohazard/"},
+				review: ""
+		},
+		{
+				name: "luigis mansion",
+				img: "https://upload.wikimedia.org/wikipedia/en/5/5e/Lmbox.jpg?utm_source=en.wikipedia.org&utm_campaign=parser&utm_content=thumbnail_unscaled",
+				datePlayed: "2026-10-12",
+				completed: true,
+				stream: "https://www.youtube.com/watch?v=EIPRamA4Ibc",
+				pros: [],
+				cons: [],
+				rankings: {
+						gameplay: 9,
+						graphics: 9,
+						audio: 9,
+						story: 7,
+						uniqueness: 10,
+				},
+				links: {website: "nintendo.com"},
+				review: ""
+		},
+		{
+				name: "project p.i.t.t",
+				img: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4026250/066d9c477e4883dd31e5db4d3b0236a3c70cec3f/header.jpg?t=1790073225",
+				datePlayed: "2026-10-10",
+				completed: true,
+				stream: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4026250/066d9c477e4883dd31e5db4d3b0236a3c70cec3f/header.jpg?t=1790073225",
+				pros: [],
+				cons: [],
+				rankings: {
+						gameplay: 8,
+						graphics: 8,
+						audio: 8,
+						uniqueness: 9,
+				},
+				links: {steam: "https://store.steampowered.com/app/4026250/Project_PITT/"},
+				review: ""
+		},
+		{
+				name: "cluster truck",
+				img: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/397950/header.jpg?t=1785515783",
+				datePlayed: "2026-09-02",
+				completed: true,
+				stream: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/397950/header.jpg?t=1785515783",
+				pros: [],
+				cons: [],
+				rankings: {
+						gameplay: 8.5,
+						graphics: 9,
+						audio: 9,
+						uniqueness: 10,
+				},
+				links: {steam: "https://store.steampowered.com/app/397950/Clustertruck/"},
+				review: ""
+		},
+		{
+				name: "worms armageddon",
+				img: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/217200/header.jpg?t=1787678950",
+				datePlayed: "2026-09-01",
+				completed: true,
+				stream: "https://www.youtube.com/watch?v=l4Oough40eg",
+				pros: [],
+				cons: [],
+				rankings: {
+						gameplay: 9,
+						graphics: 9,
+						audio: 8,
+						uniqueness: 8,
+				},
+				links: {steam: "https://store.steampowered.com/app/217200/Worms_Armageddon/"},
+				review: ""
+		},
+		{
+				name: "TUROK",
+				img: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/405820/header.jpg?t=1774276477",
+				datePlayed: "",
+				completed: true,
+				stream: "https://www.youtube.com/watch?v=5fW7j-EOUrs",
+				pros: [],
+				cons: [],
+				rankings: {
+						gameplay: 7,
+						graphics: 8,
+						audio: 9,
+						story: 4,
+						uniqueness: 7,
+				},
+				links: {steam: "https://store.steampowered.com/app/405820/Turok/"},
 				review: ""
 		},
 		{
 				name: "ROKI",
-				img: "",
-				datePlayed: "",
+				img: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1067540/header.jpg?t=1728376743",
+				datePlayed: "2026-04-10",
 				completed: false,
-				stream: "",
+				stream: "https://www.youtube.com/watch?v=t-TXUnmBXP4",
 				pros: [],
 				cons: [],
 				rankings: {
-						gameplay: 5,
-						graphics: 5,
-						audio: 5,
-						story: 5,
-						microtransactions: 5,
-						uniqueness: 5,
+						gameplay: 6.5,
+						graphics: 10,
+						audio: 6.5,
+						story: 7,
+						uniqueness: 7,
 				},
-				links: {steam: ""},
+				links: {steam: "https://store.steampowered.com/app/1067540/R%C3%B6ki/"},
 				review: ""
 		},
 		{
-				name: "122 operator",
-				img: "",
-				datePlayed: "",
+				name: "112 operator",
+				img: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/793460/70a6ea2dae4c05cc1760189e87004608f1bc2f93/header.jpg?t=1791828263",
+				datePlayed: "2026-04-10",
 				completed: false,
-				stream: "",
+				stream: "https://www.youtube.com/watch?v=aYs86flncRs",
 				pros: [],
 				cons: [],
 				rankings: {
-						gameplay: 5,
-						graphics: 5,
-						audio: 5,
-						story: 5,
+						gameplay: 8,
+						graphics: 8,
+						audio: 8,
 						microtransactions: 5,
-						uniqueness: 5,
+						uniqueness: 8,
 				},
-				links: {steam: ""},
+				links: {steam: "https://store.steampowered.com/app/793460/112_Operator/"},
 				review: ""
 		},
 		{
 				name: "europa universalis IV",
-				img: "",
-				datePlayed: "",
+				img: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/236850/header.jpg?t=1790873960",
+				datePlayed: "2026-04-10",
 				completed: false,
-				stream: "",
+				stream: "https://www.youtube.com/watch?v=b92Yv-Ls7oM&t",
 				pros: [],
 				cons: [],
 				rankings: {
-						gameplay: 5,
+						gameplay: 2,
 						graphics: 5,
 						audio: 5,
-						story: 5,
-						microtransactions: 5,
+						microtransactions: 3,
 						uniqueness: 5,
 				},
-				links: {steam: ""},
+				links: {steam: "https://store.steampowered.com/app/236850/Europa_Universalis_IV/"},
 				review: ""
 		},
 		{
 				name: "little big workshop",
-				img: "",
-				datePlayed: "",
+				img: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/574720/4ff5560c7503df436fd54fc6c28296e2c56df826/header.jpg",
+				datePlayed: "2026-04-10",
 				completed: false,
-				stream: "",
+				stream: "https://www.youtube.com/watch?v=LWJIqiEjHdI",
 				pros: [],
 				cons: [],
 				rankings: {
-						gameplay: 5,
+						gameplay: 4,
 						graphics: 5,
-						audio: 5,
-						story: 5,
-						microtransactions: 5,
-						uniqueness: 5,
+						audio: 6.2,
+						story: 5.1,
+						uniqueness: 7
 				},
 				links: {steam: ""},
-				review: ""
+				review: "",
 		},
 		{
-				name: "were cleaner",
-				img: "",
-				datePlayed: "",
-				completed: false,
-				stream: "",
+				name: "the werecleaner",
+				img: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2795000/header.jpg?t=1743640867",
+				datePlayed: "2026-04-10",
+				completed: true,
+				stream: "https://www.youtube.com/watch?v=t17PTIRZPbY",
 				pros: [],
 				cons: [],
 				rankings: {
-						gameplay: 5,
-						graphics: 5,
-						audio: 5,
-						story: 5,
-						microtransactions: 5,
-						uniqueness: 5,
+						gameplay: 8,
+						graphics: 8.9,
+						audio: 7.5,
+						story: 7.9,
+						uniqueness: 8,
 				},
-				links: {steam: ""},
+				links: {steam: "https://store.steampowered.com/app/2795000/The_WereCleaner/"},
 				review: ""
 		},
 		{
 				name: "half-life alyx",
-				img: "",
-				datePlayed: "",
+				img: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/546560/header.jpg?t=1790202165",
+				datePlayed: "2026-04-07",
 				completed: false,
-				stream: "",
+				stream: "https://www.youtube.com/watch?v=e98n-V7MILI",
 				pros: [],
 				cons: [],
 				rankings: {
 						gameplay: 5,
-						graphics: 5,
-						audio: 5,
-						story: 5,
-						microtransactions: 5,
-						uniqueness: 5,
+						graphics: 10,
+						audio: 10,
+						story: 8,
+						uniqueness: 8,
 				},
-				links: {steam: ""},
+				links: {steam: "https://store.steampowered.com/app/546560/HalfLife_Alyx/"},
 				review: ""
 		},
 		{
 				name: "mr pompys extravagant quiz",
-				img: "",
-				datePlayed: "",
-				completed: false,
-				stream: "",
+				img: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2998260/c179dca0dbc5014557a3792493af00daf30bca59/header.jpg?t=1759553811",
+				datePlayed: "2026-04-03",
+				completed: true,
+				stream: "https://www.youtube.com/watch?v=76uOMVH38Fo",
 				pros: [],
 				cons: [],
 				rankings: {
-						gameplay: 5,
-						graphics: 5,
-						audio: 5,
-						story: 5,
-						microtransactions: 5,
-						uniqueness: 5,
+						gameplay: 4,
+						graphics: 10,
+						audio: 9,
+						story: 6.5,
+						uniqueness: 10,
 				},
-				links: {steam: ""},
+				links: {steam: "https://store.steampowered.com/app/2998260/Mr_Pompys_Extravagant_Quiz/"},
 				review: ""
 		},
 		{
 				name: "living forest",
-				img: "",
+				img: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3027490/header.jpg",
 				datePlayed: "",
 				completed: false,
-				stream: "",
+				stream: "https://www.youtube.com/watch?v=oDsg8Ww_AkE",
 				pros: [],
 				cons: [],
 				rankings: {
-						gameplay: 5,
-						graphics: 5,
-						audio: 5,
-						story: 5,
-						microtransactions: 5,
-						uniqueness: 5,
+						gameplay: 2,
+						graphics: 7,
+						audio: 4,
+						microtransactions: 2,
+						uniqueness: 3,
 				},
-				links: {steam: ""},
+				links: {steam: "https://store.steampowered.com/app/3027490/LivingForest/"},
 				review: ""
 		},
 		{
 			name: "edge: now extended",
 				img: "",
-				datePlayed: "",
+				datePlayed: "2026-04-03",
 				completed: false,
-				stream: "",
+				stream: "https://www.youtube.com/watch?v=Ts4N2stABjI",
 				pros: [],
 				cons: [],
 				rankings: {
-						gameplay: 5,
-						graphics: 5,
-						audio: 5,
-						story: 5,
-						microtransactions: 5,
-						uniqueness: 5,
+						gameplay: 6.7,
+						graphics: 9,
+						audio: 7,
+						uniqueness: 7,
 				},
-				links: {steam: ""},
+				links: {steam: "https://store.steampowered.com/app/38740/EDGE/"},
 				review: ""
 		},
 		{
 				name: "neo cab",
-				img: "",
-				datePlayed: "",
+				img: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/794540/49a19a9728c31c147540151a06e5f1398d29f776/header.jpg",
+				datePlayed: "2026-04-03",
 				completed: false,
-				stream: "",
+				stream: "https://www.youtube.com/watch?v=RmY_c1W6RjI",
 				pros: [],
-				cons: [],
+				cons: ["this game is the reason why i feel like writers are a nessisary position in gamedevelopment"],
 				rankings: {
-						gameplay: 5,
-						graphics: 5,
-						audio: 5,
-						story: 5,
-						microtransactions: 5,
-						uniqueness: 5,
+						gameplay: 4,
+						graphics: 6,
+						audio: 4,
+						story: 2,
+						uniqueness: 4,
 				},
-				links: {steam: ""},
-				review: ""
+				links: {steam: "https://store.steampowered.com/app/794540/Neo_Cab/"},
+				review: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/794540/49a19a9728c31c147540151a06e5f1398d29f776/header.jpg"
 		},
 		{
 			name: "endless space: definitive edition",
-				img: "",
-				datePlayed: "",
+				img: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/208140/header.jpg?t=1789465751",
+				datePlayed: "2026-04-03",
 				completed: false,
-				stream: "",
+				stream: "https://www.youtube.com/watch?v=SfkIRqrigR0",
 				pros: [],
 				cons: [],
 				rankings: {
-						gameplay: 5,
-						graphics: 5,
-						audio: 5,
-						story: 5,
-						microtransactions: 5,
-						uniqueness: 5,
+						gameplay: 3,
+						graphics: 8,
+						audio: 7,
+						uniqueness: 6,
 				},
-				links: {steam: ""},
+				links: {steam: "https://store.steampowered.com/app/208140/ENDLESS_Space_Definitive_Edition/"},
 				review: ""
 		},
 	  {
@@ -258,12 +423,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 9,
+	      "graphics": 9,
+	      "audio": 8,
+	      "uniqueness": 9
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -346,34 +509,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
-	    },
-	    "links": {
-	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
-	      "website": ""
-	    },
-	    "review": ""
-	  },
-	  {
-	    "name": "ninja kiwi archive: SAS: Zombie Assault 4",
-	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
-	    "datePlayed": "2026-08-02",
-	    "completed": false,
-	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
-	    "pros": [],
-	    "cons": [],
-	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 7.4,
+	      "graphics": 6,
+	      "audio": 6,
+	      "uniqueness": 7
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -390,12 +529,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 5.8,
+	      "graphics": 6,
+	      "audio": 5.5,
+	      "uniqueness": 8
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -412,56 +549,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
-	    },
-	    "links": {
-	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
-	      "website": ""
-	    },
-	    "review": ""
-	  },
-	  {
-	    "name": "ninja kiwi archive: SAS: Zombie Assault 3",
-	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
-	    "datePlayed": "2026-08-02",
-	    "completed": false,
-	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
-	    "pros": [],
-	    "cons": [],
-	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
-	    },
-	    "links": {
-	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
-	      "website": ""
-	    },
-	    "review": ""
-	  },
-	  {
-	    "name": "ninja kiwi archive: Bloons Super Monkey 2",
-	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
-	    "datePlayed": "2026-08-02",
-	    "completed": false,
-	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
-	    "pros": [],
-	    "cons": [],
-	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 7,
+	      "graphics": 6,
+	      "audio": 5.5,
+	      "uniqueness": 8
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -478,34 +569,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
-	    },
-	    "links": {
-	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
-	      "website": ""
-	    },
-	    "review": ""
-	  },
-	  {
-	    "name": "ninja kiwi archive: Bloons",
-	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
-	    "datePlayed": "2026-08-02",
-	    "completed": false,
-	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
-	    "pros": [],
-	    "cons": [],
-	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 7,
+	      "graphics": 7,
+	      "audio": 6,
+	      "uniqueness": 6
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -522,34 +589,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
-	    },
-	    "links": {
-	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
-	      "website": ""
-	    },
-	    "review": ""
-	  },
-	  {
-	    "name": "ninja kiwi archive: SAS: Zombie Assault TD",
-	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
-	    "datePlayed": "2026-08-02",
-	    "completed": false,
-	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
-	    "pros": [],
-	    "cons": [],
-	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 6,
+	      "graphics": 6.5,
+	      "audio": 6,
+	      "uniqueness": 6
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -577,29 +620,7 @@ const reviews_v2 =
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
 	      "website": ""
 	    },
-	    "review": ""
-	  },
-	  {
-	    "name": "ninja kiwi archive: Bloons 2",
-	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
-	    "datePlayed": "2026-08-02",
-	    "completed": false,
-	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
-	    "pros": [],
-	    "cons": [],
-	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
-	    },
-	    "links": {
-	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
-	      "website": ""
-	    },
-	    "review": ""
+	    "review": "could not play, bjorked"
 	  },
 	  {
 	    "name": "ninja kiwi archive: Bloons 2 Spring",
@@ -610,12 +631,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 7,
+	      "graphics": 6.5,
+	      "audio": 6,
+	      "uniqueness": 8
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -632,12 +651,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 7,
+	      "graphics": 6.5,
+	      "audio": 6,
+	      "uniqueness": 8
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -654,12 +671,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 5,
+	      "graphics": 6,
+	      "audio": 4,
+	      "uniqueness": 3
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -676,12 +691,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 5.8,
+	      "graphics": 7,
+	      "audio": 4,
+	      "uniqueness": 7
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -698,56 +711,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
-	    },
-	    "links": {
-	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
-	      "website": ""
-	    },
-	    "review": ""
-	  },
-	  {
-	    "name": "ninja kiwi archive: Boombot",
-	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
-	    "datePlayed": "2026-08-02",
-	    "completed": false,
-	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
-	    "pros": [],
-	    "cons": [],
-	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
-	    },
-	    "links": {
-	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
-	      "website": ""
-	    },
-	    "review": ""
-	  },
-	  {
-	    "name": "ninja kiwi archive: Boombot 2",
-	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
-	    "datePlayed": "2026-08-02",
-	    "completed": false,
-	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
-	    "pros": [],
-	    "cons": [],
-	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 5.8,
+	      "graphics": 7,
+	      "audio": 4,
+	      "uniqueness": 7
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -764,12 +731,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 6,
+	      "graphics": 7,
+	      "audio": 4,
+	      "uniqueness": 7
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -786,12 +751,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 4,
+	      "graphics": 5.8,
+	      "audio": 4,
+	      "uniqueness": 1
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -808,12 +771,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 9,
+	      "graphics": 9,
+	      "audio": 8,
+	      "uniqueness": 9
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -830,12 +791,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 4,
+	      "graphics": 5.8,
+	      "audio": 4,
+	      "uniqueness": 1
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -852,12 +811,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 10,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 4,
+	      "graphics": 5.8,
+	      "audio": 4,
+	      "uniqueness": 1
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -874,12 +831,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 4,
+	      "graphics": 5.8,
+	      "audio": 4,
+	      "uniqueness": 1
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -896,12 +851,30 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 9,
+	      "graphics": 9,
+	      "audio": 7,
+	      "uniqueness": 7
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	  {
+	    "name": "bloons: pop3",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 4,
+	      "graphics": 5.8,
+	      "audio": 4,
+	      "uniqueness": 1
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -918,12 +891,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 7,
+	      "graphics": 7,
+	      "audio": 5.4,
+	      "uniqueness": 7.8
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -940,12 +911,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 7,
+	      "graphics": 7,
+	      "audio": 5.4,
+	      "uniqueness": 7.8
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -962,12 +931,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 7,
+	      "graphics": 7,
+	      "audio": 5.4,
+	      "uniqueness": 7.8
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -984,12 +951,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 4,
+	      "graphics": 8,
+	      "audio": 4,
+	      "uniqueness": 4
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -1006,12 +971,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 7,
+	      "graphics": 6.5,
+	      "audio": 6,
+	      "uniqueness": 8
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -1028,12 +991,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 7,
+	      "graphics": 7,
+	      "audio": 4,
+	      "uniqueness": 7
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -1050,12 +1011,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 7,
+	      "graphics": 7,
+	      "audio": 4,
+	      "uniqueness": 7
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -1072,12 +1031,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 7,
+	      "graphics": 7,
+	      "audio": 4,
+	      "uniqueness": 7
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -1094,12 +1051,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 7,
+	      "graphics": 6.5,
+	      "audio": 6,
+	      "uniqueness": 8
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -1116,12 +1071,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 6.9,
+	      "graphics": 7,
+	      "audio": 7,
+	      "uniqueness": 7
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -1138,12 +1091,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 7,
+	      "graphics": 6.5,
+	      "audio": 6,
+	      "uniqueness": 8
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -1160,12 +1111,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 7,
+	      "graphics": 6.5,
+	      "audio": 6,
+	      "uniqueness": 8
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -1182,12 +1131,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 7,
+	      "graphics": 6.5,
+	      "audio": 6,
+	      "uniqueness": 8
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -1204,12 +1151,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 7,
+	      "graphics": 6.5,
+	      "audio": 6,
+	      "uniqueness": 8
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -1226,12 +1171,30 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 7,
+	      "graphics": 6,
+	      "audio": 5,
+	      "uniqueness": 5
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+	{
+	    "name": "ninja kiwi archive: Bloons",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 7,
+	      "graphics": 6.5,
+	      "audio": 6,
+	      "uniqueness": 8
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -1248,12 +1211,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 6,
+	      "graphics": 4,
+	      "audio": 4,
+	      "uniqueness": 7
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -1270,34 +1231,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
-	    },
-	    "links": {
-	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
-	      "website": ""
-	    },
-	    "review": ""
-	  },
-	  {
-	    "name": "ninja kiwi archive: Hotcorn",
-	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
-	    "datePlayed": "2026-08-02",
-	    "completed": false,
-	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
-	    "pros": [],
-	    "cons": [],
-	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 5,
+	      "graphics": 6.5,
+	      "audio": 4,
+	      "uniqueness": 4
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -1314,12 +1251,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 8,
+	      "graphics": 6,
+	      "audio": 5.6,
+	      "uniqueness": 7
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -1336,12 +1271,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 4,
+	      "graphics": 6,
+	      "audio": 4,
+	      "uniqueness": 6
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -1358,12 +1291,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 8,
+	      "graphics": 6.5,
+	      "audio": 4,
+	      "uniqueness": 6
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -1380,12 +1311,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 7,
+	      "graphics": 7,
+	      "audio": 4,
+	      "uniqueness": 6.6
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -1402,12 +1331,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 6,
+	      "graphics": 4,
+	      "audio": 4,
+	      "uniqueness": 5
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -1415,6 +1342,48 @@ const reviews_v2 =
 	    },
 	    "review": ""
 	  },
+{
+	    "name": "boombot 2",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 9,
+	      "graphics": 7,
+	      "audio": 5,
+	      "uniqueness": 9
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+
+{
+	    "name": "boombot 1",
+	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
+	    "datePlayed": "2026-08-02",
+	    "completed": false,
+	    "stream": "https://www.youtube.com/watch?v=7gd4XvZwJrc",
+	    "pros": [],
+	    "cons": [],
+	    "rankings": {
+	      "gameplay": 8,
+	      "graphics": 7,
+	      "audio": 5,
+	      "uniqueness": 9
+	    },
+	    "links": {
+	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
+	      "website": ""
+	    },
+	    "review": ""
+	  },
+
 	  {
 	    "name": "ninja kiwi archive: Hunt or Die",
 	    "img": "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/1275350/header.jpg",
@@ -1424,12 +1393,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 3,
+	      "graphics": 3,
+	      "audio": 3,
+	      "uniqueness": 4
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -1446,12 +1413,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 7,
+	      "graphics": 6,
+	      "audio": 4,
+	      "uniqueness": 8
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -1468,12 +1433,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 4,
+	      "graphics": 7,
+	      "audio": 4,
+	      "uniqueness": 3
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -1490,12 +1453,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 6,
+	      "graphics": 6,
+	      "audio": 4,
+	      "uniqueness": 5
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -1512,12 +1473,11 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 6.5,
+	      "graphics": 6,
+	      "audio": 4,
+	      "story": 3,
+	      "uniqueness": 8
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -1534,12 +1494,11 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 7.5,
+	      "graphics": 6,
+	      "audio": 4,
+	      "story": 4,
+	      "uniqueness": 6
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -1556,12 +1515,11 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 7,
+	      "graphics": 6,
+	      "audio": 4,
+	      "story": 4,
+	      "uniqueness": 3
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -1578,12 +1536,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 4,
+	      "graphics": 4,
+	      "audio": 4,
+	      "uniqueness": 8
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -1600,12 +1556,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 6,
+	      "graphics": 5,
+	      "audio": 4,
+	      "uniqueness": 5
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -1622,12 +1576,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 6.7,
+	      "graphics": 9,
+	      "audio": 4,
+	      "uniqueness": 6
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -1644,12 +1596,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 3,
+	      "graphics": 4,
+	      "audio": 4,
+	      "uniqueness": 3
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -1666,12 +1616,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 9,
+	      "graphics": 6.8,
+	      "audio": 6,
+	      "uniqueness": 8
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -1688,12 +1636,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 6,
+	      "graphics": 6,
+	      "audio": 4,
+	      "uniqueness": 3
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -1710,12 +1656,10 @@ const reviews_v2 =
 	    "pros": [],
 	    "cons": [],
 	    "rankings": {
-	      "gameplay": 0,
-	      "graphics": 0,
-	      "audio": 0,
-	      "story": 0,
-	      "microtransactions": 0,
-	      "uniqueness": 0
+	      "gameplay": 6,
+	      "graphics": 8,
+	      "audio": 5,
+	      "uniqueness": 5
 	    },
 	    "links": {
 	      "steam": "https://store.steampowered.com/app/1275350/Ninja_Kiwi_Archive/",
@@ -1725,98 +1669,93 @@ const reviews_v2 =
 	  },
 		{
 				name: "super bernie world",
-				img: "",
-				datePlayed: "",
-				completed: false,
-				stream: "",
-				pros: [],
-				cons: [],
+				img: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1258040/header.jpg?t=1663054367",
+				datePlayed: "2026-08-02",
+				completed: true,
+				stream: "https://www.youtube.com/watch?v=XhMLv3otdRs",
+				pros: ["fun lil platformer"],
+				cons: ["very short, and some sprites are a bit flat compared to the irl counterpart"],
 				rankings: {
-						gameplay: 5,
-						graphics: 5,
-						audio: 5,
-						story: 5,
-						microtransactions: 5,
-						uniqueness: 5,
+						gameplay: 8,
+						graphics: 8,
+						audio: 7,
+						story: 6,
+						uniqueness: 8,
 				},
-				links: {steam: ""},
+				links: {steam: "https://store.steampowered.com/app/1258040/Super_Bernie_World/"},
 				review: ""
 		},
 		{
 				name: "black ops 1",
-				img: "",
-				datePlayed: "",
-				completed: false,
-				stream: "",
-				pros: [],
-				cons: [],
+				img: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/42700/header.jpg?t=1780962720",
+				datePlayed: "2026-08-01",
+				completed: true,
+				stream: "https://www.youtube.com/watch?v=x47afYIRBdo",
+				pros: ["defining fps"],
+				cons: ["all the guns sound the same, and audio mixing is a bit rough"],
 				rankings: {
-						gameplay: 5,
-						graphics: 5,
-						audio: 5,
-						story: 5,
-						microtransactions: 5,
-						uniqueness: 5,
+						gameplay: 8,
+						graphics: 9.5,
+						audio: 7,
+						story: 10,
+						microtransactions: 10,
+						uniqueness: 10,
 				},
-				links: {steam: ""},
+				links: {steam: "https://store.steampowered.com/app/42700/Call_of_Duty_Black_Ops/"},
 				review: ""
 		},
 		{
 				name: "palworld",
-				img: "",
-				datePlayed: "",
+				img: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1623730/6912f19c43a95ff5fe514eedd35e68bf12335459/header.jpg?t=1790336367",
+				datePlayed: "2026-07-09",
 				completed: false,
-				stream: "",
-				pros: [],
-				cons: [],
+				stream: "https://www.youtube.com/watch?v=A_FOwgNxqBs",
+				pros: ["pokemon but better"],
+				cons: ["stylistically inconsistent", "has indie vibes in the bad way"],
 				rankings: {
-						gameplay: 5,
-						graphics: 5,
-						audio: 5,
-						story: 5,
-						microtransactions: 5,
-						uniqueness: 5,
+						gameplay: 8,
+						graphics: 7.7,
+						audio: 7,
+						story: 6,
+						uniqueness: 8,
 				},
-				links: {steam: ""},
+				links: {steam: "https://store.steampowered.com/app/1623730/Palworld/"},
 				review: ""
 		},
 		{
 				name: "berry bury berry",
-				img: "",
-				datePlayed: "",
-				completed: false,
-				stream: "",
-				pros: [],
-				cons: [],
+				img: "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3370870/4622468af31c1bbd2d87e53a1971719d1cead354/header.jpg?t=1790698296",
+				datePlayed: "2026-07-22",
+				completed: true,
+				stream: "https://www.youtube.com/watch?v=yz8j4YNrsys",
+				pros: ["satifying gameplay", "simple but fun"],
+				cons: ["story payoff isn't very good", "completion is very tedious", "colors? yes"],
 				rankings: {
-						gameplay: 5,
-						graphics: 5,
-						audio: 5,
-						story: 5,
-						microtransactions: 5,
-						uniqueness: 5,
+						gameplay: 8,
+						graphics: 8,
+						audio: 7,
+						story: 5.5,
+						uniqueness: 9,
 				},
-				links: {steam: ""},
+				links: {steam: "https://store.steampowered.com/app/3370870/Berry_Bury_Berry/"},
 				review: ""
 		},
 		{
 				name: "hotdogs, horseshoes, and hand grenades",
 				img: "https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/450540/header.jpg?t=1783183368",
-				datePlayed: "",
-				completed: false,
-				stream: "",
-				pros: [],
-				cons: [],
+				datePlayed: "2026-07-26",
+				completed: true,
+				stream: "https://www.youtube.com/watch?v=mAKHi_3bACM",
+				pros: ["the defacto vr gunplay with take and hold is amazing"],
+				cons: ["no story/campeign :c",],
 				rankings: {
-						gameplay: 5,
-						graphics: 5,
-						audio: 5,
-						story: 5,
-						microtransactions: 5,
-						uniqueness: 5,
+						gameplay: 10,
+						graphics: 7,
+						audio: 9,
+						uniqueness: 10,
 				},
 				links: {steam: "https://store.steampowered.com/app/450540/Hot_Dogs_Horseshoes__Hand_Grenades/"},
-				review: ":"
+				review: ""
 		},
 		{
 			name: "Wasteland Bites: DEMO",

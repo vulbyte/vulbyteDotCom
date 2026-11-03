@@ -1,0 +1,33 @@
+name: Daily Stream Schedule Update
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Runs once every 24 hours (00:00 UTC)
+  workflow_dispatch:      # Allows manual trigger anytime from GitHub UI
+
+permissions:
+  contents: write
+
+jobs:
+  update-schedule:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Generate events.json
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: python scripts/generate_events.py
+
+      - name: Commit and Push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add events.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: daily stream schedule update" && git push)
