@@ -1,1 +1,19 @@
-[]
+[
+  {
+    "title": "vulbyte stream",
+    "start": "2026-11-05 02:08:19",
+    "description": "Category: Just Chatting (Currently Live!)",
+    "backgroundColor": "#53FC18",
+    "borderColor": "#00B301",
+    "textColor": "#000000",
+    "extendedProps": {
+      "links": [
+        {
+          "name": "Watch on Kick",
+          "url": "https://kick.com/vulbyte",
+          "icon": "fa-solid fa-play"
+        }
+      ]
+    }
+  }
+]
